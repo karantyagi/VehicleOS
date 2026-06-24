@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: vehicleos
+      POSTGRES_PASSWORD: vehicleos
+      POSTGRES_DB: vehicleos
+    volumes:
+      - vehicleos_pg:/var/lib/postgresql/data
+
+volumes:
+  vehicleos_pg:
