@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MaintenanceRecommendation",
+  "type": "object",
+  "required": ["title", "reason", "confidence", "evidenceIds"],
+  "properties": {
+    "title": { "type": "string" },
+    "reason": { "type": "string" },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "evidenceIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

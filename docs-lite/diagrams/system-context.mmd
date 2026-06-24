@@ -1,0 +1,11 @@
+flowchart TD
+  U[Owner] --> W[Web App]
+  W --> API[API Service]
+  API --> EV[(Event Store)]
+  API --> PR[(Projections)]
+  API --> TS[Task Engine]
+  API --> AG[Agent Orchestrator]
+  AG --> MEM[(Memory + pgvector)]
+  API --> Q[Queue]
+  Q --> WK[Worker]
+  WK --> OBJ[(Object Storage)]
