@@ -50,3 +50,11 @@ Receipt upload -> extraction -> `service.recorded` event -> projection update ->
 - Full conversational co-pilot for every workflow
 
 See `docs-lite/adr` for key decisions and `docs/` for planning artifacts migrated from the workspace.
+
+## v2 lakehouse path (Databricks)
+
+Branch `feature/v2-lakehouse-databricks` adds the scale-evolution story without replacing v1:
+
+- `docs-lite/adr/ADR-003-lakehouse-evolution.md` — medallion mapping from event sourcing
+- `docs/04-lakehouse-v2/databricks-notebook-checklist.md` — one-week notebook plan
+- `platform/databricks/` — notebook workspace (see README there)

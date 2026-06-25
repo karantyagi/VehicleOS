@@ -7,6 +7,7 @@ This workspace holds planning and architecture material outside the code reposit
 - `docs/01-architecture/`: concrete system architecture and core design decisions
 - `docs/02-repo-design/`: proposed code repo structure and the initial design-doc set
 - `docs/03-mvp-spec/`: MVP scope, workflows, schemas, and delivery plan
+- `docs/04-lakehouse-v2/`: Databricks medallion evolution (ADR-003, one-week checklist, demo script)
 - `context/source-notes/`: distilled source material that informed the docs
 - `context/working-notes/`: assumptions and temporary planning notes
 

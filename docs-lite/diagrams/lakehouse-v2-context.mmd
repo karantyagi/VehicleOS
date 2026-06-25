@@ -1,0 +1,28 @@
+flowchart TB
+  subgraph app [App tier v1]
+    WEB[Next.js]
+    API[API]
+    PG[(Postgres OLTP + pgvector)]
+    WEB --> API --> PG
+  end
+
+  subgraph workers [Workers v1]
+    WK[ocr / extract / project]
+    API --> WK
+    WK --> PG
+  end
+
+  subgraph lakehouse [Data plane v2 - Databricks]
+    BRZ[(Bronze - domain_events)]
+    SLV[(Silver - timelines)]
+    GLD[(Gold - features)]
+    MLF[MLflow]
+    EMB[(Embeddings)]
+    BRZ --> SLV --> GLD
+    SLV --> EMB
+    WK -.->|replicate events| BRZ
+    WK -.-> MLF
+  end
+
+  OBJ[(Object Storage)]
+  WK --> OBJ
