@@ -5,9 +5,11 @@
 ```text
 VehicleOS/
   README.md
+  LICENSE                    MIT — open core
   .gitignore
   apps/
-    web/
+    marketing/               Public landing → vehicleos.app (resume link)
+    web/                     Product app → app.vehicleos.app
     api/
     worker/
   packages/
@@ -38,3 +40,5 @@ VehicleOS/
 3. ADR-001 choosing Postgres + pgvector.
 4. ADR-002 choosing event-sourced domain model.
 5. One end-to-end vertical slice: receipt upload to recommendation.
+6. `docs/05-marketing-site/sitemap.md` — phased landing page plan.
+7. Open core + hosted product model documented in workspace `strategy/business-model.md`.
