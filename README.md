@@ -12,6 +12,14 @@ This repository contains the product code and lightweight architecture artifacts
 - Monorepo architecture with separate marketing, product, API, and worker apps
 - AI-native build: human-led architecture + agent-assisted implementation
 
+## How this repo is built
+
+VehicleOS is developed with [Cursor](https://cursor.com) under a human-led, AI-assisted model.
+
+**Workflow:** branch from `master` → open PRs with a [shared template](.github/pull_request_template.md) → CI builds affected frontends on every PR. Cursor rules in [`.cursor/rules/`](.cursor/rules/) encode the same flow so AI-assisted work matches human contributions.
+
+Details: [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+
 ## License
 
 **MIT** — see [`LICENSE`](./LICENSE). Core code is public for credibility and learning.
