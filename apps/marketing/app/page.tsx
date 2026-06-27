@@ -4,6 +4,7 @@ import {
   aiNativeBlurb,
   coreLoopSteps,
   heroContent,
+  productPathsContent,
   siteConfig,
   statusRows,
   trustSignals,
@@ -60,12 +61,12 @@ export default function HomePage() {
             {siteConfig.name}
           </a>
           <nav className="nav-links" aria-label="Primary">
+            <a href="#paths">Owners &amp; Builders</a>
             <a href="#loop">How it works</a>
-            <a href="#demo">Demo</a>
             <a href="#architecture">Architecture</a>
             <a href="#status">Roadmap</a>
-            <a className="nav-cta" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
-              GitHub
+            <a className="nav-cta" href="#demo">
+              Watch demo
             </a>
           </nav>
         </div>
@@ -80,12 +81,13 @@ export default function HomePage() {
                 <span className="pill-dot" />
                 In active development
               </span>
-              <span className="pill">Open core · MIT</span>
-              <span className="pill">AI-native architecture</span>
+              <span className="pill">MIT open core</span>
+              <span className="pill">Event-sourced</span>
+              <span className="pill">Rules-first AI</span>
             </div>
 
             <h1>
-              Operational memory for{" "}
+              {heroContent.headline}{" "}
               <span className="highlight">{heroContent.headlineHighlight}</span>
             </h1>
 
@@ -93,16 +95,18 @@ export default function HomePage() {
               <span className="hero-hook-ai">Explainable AI</span> maintenance for vehicle ownership
             </p>
 
+            <p className="hero-outcome">{heroContent.outcomeLine}</p>
+            <p className="hero-engineering">{heroContent.engineeringLine}</p>
+
             <p className="hero-sub">{heroContent.problem}</p>
             <p className="hero-proof">{heroContent.oneLiner}</p>
 
             <div className="cta-row">
-              <a className="btn btn-primary" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
-                View source
-                <ExternalIcon />
+              <a className="btn btn-primary" href="#paths">
+                Choose your path
               </a>
-              <a className="btn btn-secondary" href={siteConfig.linkedInUrl} target="_blank" rel="noreferrer">
-                Get in touch
+              <a className="btn btn-secondary" href="#architecture">
+                See architecture
               </a>
             </div>
 
@@ -114,6 +118,53 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="section shell" id="paths">
+          <div className="section-header-centered">
+            <span className="section-label">{productPathsContent.sectionLabel}</span>
+            <h2>{productPathsContent.sectionTitle}</h2>
+            <p className="section-desc">{productPathsContent.sectionDesc}</p>
+          </div>
+
+          <div className="path-grid">
+            {productPathsContent.paths.map((path) => (
+              <article
+                className={`path-card path-card-${path.id}`}
+                key={path.id}
+                id={path.id}
+              >
+                <div className="path-card-header">
+                  <span className={`path-badge path-badge-${path.id}`}>{path.badge}</span>
+                  <span className="path-price">{path.priceNote}</span>
+                </div>
+                <h3>{path.title}</h3>
+                <p className="path-tagline">{path.tagline}</p>
+                <p className="path-desc">{path.description}</p>
+                <ul className="path-highlights">
+                  {path.highlights.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+                <div className="path-cta-row">
+                  <a
+                    className={`btn ${path.id === "owners" ? "btn-primary" : "btn-secondary"} path-cta`}
+                    href={path.cta.href}
+                    target={path.id === "builders" ? "_blank" : undefined}
+                    rel={path.id === "builders" ? "noreferrer" : undefined}
+                  >
+                    {path.cta.label}
+                    {path.id === "builders" ? <ExternalIcon /> : null}
+                  </a>
+                  {"ctaSecondary" in path && path.ctaSecondary ? (
+                    <a className="path-cta-secondary" href={path.ctaSecondary.href}>
+                      {path.ctaSecondary.label}
+                    </a>
+                  ) : null}
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -266,15 +317,15 @@ export default function HomePage() {
         </section>
 
         <section className="cta-band shell">
-          <h2>Explore the codebase</h2>
-          <p>Open source core. Hosted product on the roadmap.</p>
+          <h2>See the architecture — or run it yourself</h2>
+          <p>Free early access for Owners. MIT open core for Builders.</p>
           <div className="cta-row">
-            <a className="btn btn-primary" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
-              GitHub
-              <ExternalIcon />
+            <a className="btn btn-primary" href="#demo">
+              Watch demo
             </a>
-            <a className="btn btn-secondary" href={siteConfig.linkedInUrl} target="_blank" rel="noreferrer">
-              LinkedIn
+            <a className="btn btn-secondary" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
+              View on GitHub
+              <ExternalIcon />
             </a>
           </div>
         </section>
@@ -288,14 +339,15 @@ export default function HomePage() {
               {siteConfig.name}
             </a>
             <p>
-              Operational memory for vehicle ownership. MIT open core with a hosted
-              product layer.
+              Operational memory for vehicle ownership. Owners use the app. Builders run
+              the open core.
             </p>
           </div>
           <div className="footer-col">
             <h3>Product</h3>
             <ul>
-              <li><a href="#loop">How it works</a></li>
+              <li><a href="#paths">Owners</a></li>
+              <li><a href="#paths">Builders</a></li>
               <li><a href="#demo">Demo</a></li>
               <li><a href="#status">Roadmap</a></li>
             </ul>

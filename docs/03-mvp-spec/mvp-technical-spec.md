@@ -1,5 +1,12 @@
 # VehicleOS MVP Technical Spec
 
+## Audiences
+
+**Daily drivers** (primary) use the web app and Vehicle OS Connect desktop — no terminal required.  
+**Power users** get CLI, self-host, and optional MCP/skills. See [`user-surfaces.md`](./user-surfaces.md).
+
+---
+
 ## MVP Goal
 
 Deliver one credible, end-to-end ownership workflow that proves the architecture:
