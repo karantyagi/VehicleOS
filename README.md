@@ -1,8 +1,8 @@
 # VehicleOS
 
-[![CI](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml/badge.svg?branch=master)](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml)
-[![License: MIT](https://img.shields.io/github/license/karantyagi/VehicleOS)](./LICENSE)
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Fvehicleos.app&label=vehicleos.app)](https://vehicleos.app)
+[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Website](https://img.shields.io/badge/vehicleos.app-deploy%20pending-lightgrey)](https://vehicleos.app)
 
 VehicleOS is an AI-native operations platform for long-lived vehicle maintenance and ownership.
 MIT-licensed open core with a planned hosted product layer.
