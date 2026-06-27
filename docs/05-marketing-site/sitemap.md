@@ -20,11 +20,11 @@ Single-page home + small footer. No mega-menu.
 **Footer columns (minimal):**
 
 ```text
-Product          Learn            Connect
-────────         ─────            ───────
-How it works     Docs (GitHub)    GitHub
-Demo             Architecture     Contact
-Roadmap          —                —
+Product          Learn            Trust            Connect
+────────         ─────            ─────            ───────
+How it works     Docs (GitHub)    Privacy          GitHub
+Demo             Architecture     Security         Contact
+Roadmap          —                —                —
 ```
 
 ---
@@ -41,6 +41,10 @@ Add journey-shaped Product links (Linear-inspired):
 | `/roadmap` | Honest v1 / v2 / v3 |
 | `/changelog` | Version tags as chapters |
 | `/about` | Founder story + AI-native operating model |
+| `/privacy` | **Data privacy** — plain English: what we collect, why, retention, delete/export, no selling data |
+| `/security` | **Data security** — encryption, hosting, access controls, Connect local import, AI data boundaries (or merge with `/privacy` as Trust section) |
+
+**Ship privacy/security before or with hosted app** — Owners path requires trust. See `strategy/task-queue.md` P2 #12.
 
 **CTA pattern:** "Open app" → `app.vehicleos.app` | "View source" → GitHub
 
