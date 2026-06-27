@@ -100,3 +100,22 @@ Vercel is the default for frontends in this stack, not the only option. API/work
 - System architecture: `docs/01-architecture/system-architecture.md`
 - MVP spec: `docs/03-mvp-spec/mvp-technical-spec.md`
 - Marketing sitemap: `docs/05-marketing-site/sitemap.md`
+
+<details>
+<summary>Maintainer links</summary>
+
+### Dashboards
+
+| System | Link |
+|--------|------|
+| **CI** | [GitHub Actions](https://github.com/karantyagi/VehicleOS/actions) · [workflow](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml) |
+| **Marketing (Vercel)** | [Project dashboard](https://vercel.com/create-os/vehicle-os-marketing) |
+| **Live site** | [vehicleos.app](https://vehicleos.app) |
+
+### Docs
+
+- [CONTRIBUTING.md](./CONTRIBUTING.md) — branches, PRs, CI
+- [Vercel CD setup](./docs/deployment/vercel-setup.md)
+- [GitHub repo polish](./docs/maintainer/github-repo-polish.md)
+
+</details>
