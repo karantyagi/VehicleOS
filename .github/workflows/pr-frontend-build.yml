@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: [master]
 
+permissions:
+  contents: read
+  pull-requests: read
+
 concurrency:
   group: pr-frontend-${{ github.head_ref }}
   cancel-in-progress: true
@@ -16,6 +20,8 @@ jobs:
       web: ${{ steps.filter.outputs.web }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: dorny/paths-filter@v3
         id: filter
         with:
