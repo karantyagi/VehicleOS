@@ -1,0 +1,73 @@
+---
+description: VehicleOS git branch, commit, and PR workflow — always branch from origin/master
+alwaysApply: true
+---
+
+# VehicleOS Git & PR Workflow
+
+Repository: `karantyagi/VehicleOS` (local path may be `github repo/VehicleOS`).
+
+## Default branch
+
+**`master`** — never target `main` unless the user explicitly says the default changed.
+
+## Before every new feature branch
+
+Run in order:
+
+```bash
+git fetch origin
+git checkout master
+git pull origin master
+git checkout -b <type>/<area>-<short-name>
+```
+
+Do not create feature branches from other feature branches unless the user explicitly requests a stacked PR.
+
+## Branch naming
+
+`<type>/<area>-<short-name>`
+
+- `feature/` — product or user-facing work
+- `chore/` — CI, tooling, repo standards
+- `docs/` — documentation only
+- `fix/` — bug fixes
+
+Examples: `feature/apps-marketing-landing`, `chore/dev-workflow-repo-standards`
+
+## Scope and commits
+
+- One feature per PR; do not mix unrelated areas
+- Never commit: `.env`, secrets, `node_modules/`, `.next/`, build artifacts
+- Commit only when the user asks (unless their instructions say to ship a PR)
+- Subject: imperative, concise. Body: why, not a file inventory
+
+## Pre-PR verification
+
+Build apps affected by the change:
+
+```bash
+pnpm install
+pnpm --filter @vehicleos/marketing build   # if marketing changed
+pnpm --filter @vehicleos/web build           # if web changed
+```
+
+## Pull requests
+
+- Use **`gh`** for all GitHub operations (PR create, comments, checks)
+- Base branch: **`master`**
+- Title: clear outcome (e.g. `Add Phase A marketing site (recruiter landing)`)
+- Body: follow `.github/pull_request_template.md` (Summary, Type, Apps affected, Test plan)
+- Push: `git push -u origin HEAD`
+- Create: `gh pr create --base master --title "..." --body "..."`
+- Do not merge unless the user explicitly asks
+
+## Parallel work
+
+- Independent apps: branch from `master` in parallel
+- Overlapping files (`README.md`, `package.json`, `pnpm-lock.yaml`): merge or rebase first
+- If `master` advanced: `git fetch origin && git rebase origin/master` on the feature branch
+
+## Reference
+
+Human-readable guide: `CONTRIBUTING.md`
