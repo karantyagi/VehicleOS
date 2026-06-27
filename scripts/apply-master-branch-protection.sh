@@ -2,6 +2,7 @@
 # Apply branch protection on master: PRs required + CI check required.
 # Run once after the CI workflow is merged (needs the "CI" check to exist).
 # Requires: gh CLI, repo admin access.
+# Note: private repos on GitHub Free need Pro or public visibility (HTTP 403 otherwise).
 
 set -euo pipefail
 

@@ -24,6 +24,8 @@ VehicleOS is developed with [Cursor](https://cursor.com) under a human-led, AI-a
 
 **`master` is protected** — all changes land via PR; direct pushes are not allowed.
 
+**Maintainer (private repo):** live CI status → `./scripts/ci-status.sh` · showcase checklist → [`docs/maintainer/showcase-readiness.md`](docs/maintainer/showcase-readiness.md)
+
 Details: [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 
 ## License

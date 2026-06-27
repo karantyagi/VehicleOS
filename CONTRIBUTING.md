@@ -21,13 +21,23 @@ chmod +x scripts/apply-master-branch-protection.sh
 
 That enforces: PR required + **CI** check must pass before merge.
 
+> **Note:** Branch protection on private free repos requires **GitHub Pro** or making the repo **public**. If the script returns 403, see [`docs/maintainer/showcase-readiness.md`](docs/maintainer/showcase-readiness.md).
+
 ### README badges (private repo)
 
 This repository is **private**. Dynamic badges (GitHub Actions status, shields.io license API, website uptime) often show **no status** / **repo not found** / **down** on the README.
 
 Until the repo is public and `vehicleos.app` is deployed, README uses **static** shields that link to Actions, `LICENSE`, and the target domain.
 
-When going public + live, swap to dynamic badges in `README.md`:
+**Your live CI status (maintainer only):**
+
+```bash
+./scripts/ci-status.sh
+```
+
+Full showcase checklist: [`docs/maintainer/showcase-readiness.md`](docs/maintainer/showcase-readiness.md)
+
+When going public + live, swap to dynamic badges in `README.md` (snippet in showcase-readiness doc):
 
 ```markdown
 [![CI](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml/badge.svg?branch=master)](...)

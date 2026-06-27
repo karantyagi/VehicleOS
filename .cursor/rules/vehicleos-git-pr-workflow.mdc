@@ -71,4 +71,6 @@ pnpm --filter @vehicleos/web build           # if web changed
 
 ## Reference
 
-Human-readable guide: `CONTRIBUTING.md`
+Human-readable guide: `CONTRIBUTING.md`  
+Maintainer checklist (private repo, badges, protection): `docs/maintainer/showcase-readiness.md`  
+Live CI status (owner, local): `./scripts/ci-status.sh`
