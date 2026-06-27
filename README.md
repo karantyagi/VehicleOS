@@ -13,17 +13,7 @@ This repository contains the product code and lightweight architecture artifacts
 - Deterministic policy engine for maintenance recommendations
 - AI-assisted extraction and explanation with human approval gates
 - Monorepo architecture with separate marketing, product, API, and worker apps
-- AI-native build: human-led architecture + agent-assisted implementation
-
-## How this repo is built
-
-VehicleOS is developed with [Cursor](https://cursor.com) under a human-led, AI-assisted model.
-
-**Workflow:** branch from `master` → open PRs with a [shared template](.github/pull_request_template.md) → [**CI**](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml) builds affected frontends → [**Vercel**](docs/deployment/vercel-setup.md) deploys preview URLs on PRs and production on merge. Cursor rules in [`.cursor/rules/`](.cursor/rules/) encode the same flow so AI-assisted work matches human contributions.
-
-**`master` is protected** — all changes land via PR; direct pushes are not allowed.
-
-Details: [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+- AI-native build: human-led architecture + agent-assisted implementation ([Cursor](https://cursor.com))
 
 ## License
 
@@ -32,11 +22,11 @@ The commercial product is the **hosted service** (managed ops, notifications, in
 
 Business model detail: workspace [`strategy/business-model.md`](../../strategy/business-model.md) (mirror to `docs/` when publishing).
 
-## Public URLs (target)
+## Public URLs
 
 | URL | App | Purpose |
 |-----|-----|---------|
-| `vehicleos.app` | `apps/marketing` | Resume link — recruiter landing page |
+| [vehicleos.app](https://vehicleos.app) | `apps/marketing` | Resume link — recruiter landing page (live) |
 | `app.vehicleos.app` | `apps/web` | Product app (logged-in users) |
 | GitHub (this repo) | — | Living case study — code, ADRs, evals |
 
