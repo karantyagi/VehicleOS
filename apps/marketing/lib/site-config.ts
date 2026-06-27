@@ -6,8 +6,8 @@ export const siteConfig = {
     "Explainable AI maintenance for vehicle ownership. Event-sourced state, deterministic policy, and AI-assisted extraction — built for owners who want proof, not another chat thread.",
   githubUrl: process.env.NEXT_PUBLIC_GITHUB_URL ?? "https://github.com/karantyagi/VehicleOS",
   appUrl: process.env.NEXT_PUBLIC_APP_URL ?? "https://app.vehicleos.app",
-  linkedInUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL ?? "https://www.linkedin.com/in/karantyagi",
-  contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@vehicleos.app",
+  linkedInUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL ?? "https://www.linkedin.com/in/karantyagi-21",
+  contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "contact@vehicleos.app",
 } as const;
 
 export const heroContent = {

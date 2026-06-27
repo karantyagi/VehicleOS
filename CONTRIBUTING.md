@@ -26,14 +26,9 @@ That enforces: PR required + **CI** check must pass before merge.
 | Badge | Type | Notes |
 |-------|------|-------|
 | **CI** | Dynamic | GitHub Actions workflow status on `master` |
-| **License** | Dynamic | shields.io reads repo `LICENSE` |
-| **Website** | Static `deploy pending` | Swap to uptime shield after Vercel + `vehicleos.app` are live |
+| **Website** | Dynamic | shields.io uptime for [vehicleos.app](https://vehicleos.app) |
 
-Website badge after deploy:
-
-```markdown
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Fvehicleos.app&label=vehicleos.app)](https://vehicleos.app)
-```
+License is shown via the GitHub **MIT license** tab and [`LICENSE`](./LICENSE) — no README badge needed.
 
 ## Starting a new feature
 
