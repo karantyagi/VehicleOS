@@ -70,6 +70,8 @@ Receipt upload → extraction → `service.recorded` event → projection update
 2. Run `pnpm install`.
 3. Run `pnpm dev` to start dev targets (`marketing`, `web`, `api`, `worker`).
 
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for branch naming, PR workflow, and CI expectations.
+
 ## Deployment (recommended)
 
 | App | Platform | Why |
@@ -89,6 +91,7 @@ Vercel is the default for frontends in this stack, not the only option. API/work
 
 ## Key docs
 
+- Contributing: [`CONTRIBUTING.md`](./CONTRIBUTING.md) — branches, PRs, CI
 - ADRs: `docs-lite/adr/`
 - System architecture: `docs/01-architecture/system-architecture.md`
 - MVP spec: `docs/03-mvp-spec/mvp-technical-spec.md`
