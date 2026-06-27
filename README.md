@@ -17,10 +17,13 @@ This repository contains the product code and lightweight architecture artifacts
 
 ## License
 
-**MIT** — see [`LICENSE`](./LICENSE). Core code is public for credibility and learning.
-The commercial product is the **hosted service** (managed ops, notifications, integrations) — open core + cloud, same pattern as PostHog, Supabase, Cal.com.
+**MIT** — see [`LICENSE`](./LICENSE). Showcase code is public for credibility and learning.
 
-Business model detail: workspace [`strategy/business-model.md`](../../strategy/business-model.md) (mirror to `docs/` when publishing).
+**Open core boundary:** This repo is a technical whitepaper with representative code — not the full tuned commercial engine. See [`docs/open-core-boundary.md`](./docs/open-core-boundary.md).
+
+The commercial product is the **hosted service** (managed ops, notifications, tuned intelligence) — open showcase + cloud, same pattern as PostHog, Supabase, Cal.com.
+
+Full business model (private strategy): workspace `strategy/business-model.md` and `strategy/ip-and-open-core.md`.
 
 ## Public URLs
 
