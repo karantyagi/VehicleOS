@@ -8,6 +8,7 @@ This workspace holds planning and architecture material outside the code reposit
 - `docs/02-repo-design/`: proposed code repo structure and the initial design-doc set
 - `docs/03-mvp-spec/`: MVP scope, workflows, schemas, and delivery plan
 - `docs/05-marketing-site/`: Public landing sitemap and phased page plan
+- `docs/deployment/`: Vercel CD setup (preview + production)
 - `context/source-notes/`: distilled source material that informed the docs
 - `context/working-notes/`: assumptions and temporary planning notes
 

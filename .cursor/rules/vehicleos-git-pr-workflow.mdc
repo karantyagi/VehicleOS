@@ -54,6 +54,7 @@ pnpm --filter @vehicleos/web build           # if web changed
 
 ## Pull requests
 
+- **Never push directly to `master`** — always use a feature branch + PR
 - Use **`gh`** for all GitHub operations (PR create, comments, checks)
 - Base branch: **`master`**
 - Title: clear outcome (e.g. `Add Phase A marketing site (recruiter landing)`)
