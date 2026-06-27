@@ -12,6 +12,15 @@ Thank you for contributing. This repo uses a consistent feature-branch workflow 
 
 **`master`** is the integration branch. Do not use `main` unless remotes are explicitly updated.
 
+**`master` is protected.** All changes must land via pull request. Do not push directly to `master` (including from Cursor or local CLI). After this repo’s CI workflow is merged, run once (repo admin):
+
+```bash
+chmod +x scripts/apply-master-branch-protection.sh
+./scripts/apply-master-branch-protection.sh
+```
+
+That enforces: PR required + **CI** check must pass before merge.
+
 ## Starting a new feature
 
 Always sync `master` before creating a branch:
@@ -59,7 +68,11 @@ pnpm --filter @vehicleos/marketing build
 pnpm --filter @vehicleos/web build
 ```
 
-CI runs the same checks on pull requests to `master`.
+CI runs the same checks on pull requests to `master`. The required check name is **CI**.
+
+### CD (Vercel preview + production)
+
+Preview deploys and PR comment links come from the [Vercel GitHub integration](docs/deployment/vercel-setup.md) — not from GitHub Actions. Connect two Vercel projects (`apps/marketing`, `apps/web`) once; every PR gets preview URL(s).
 
 ## Commits
 
@@ -79,7 +92,7 @@ CI runs the same checks on pull requests to `master`.
 
    Or use the GitHub UI — the PR template auto-fills.
 
-3. Ensure CI passes (frontend build workflow)
+3. Ensure **CI** passes and Vercel preview deploys (after Vercel is connected)
 4. Request review; merge via GitHub (squash merge preferred for feature PRs)
 
 ### PR scope

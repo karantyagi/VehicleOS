@@ -1,7 +1,9 @@
-name: PR Frontend Build
+name: CI
 
 on:
   pull_request:
+    branches: [master]
+  push:
     branches: [master]
 
 permissions:
@@ -9,7 +11,7 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: pr-frontend-${{ github.head_ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -70,3 +72,21 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @vehicleos/web build
+
+  # Single required check for branch protection (skipped app builds are OK).
+  ci:
+    name: CI
+    needs: [build-marketing, build-web]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify frontend builds
+        run: |
+          check_job() {
+            case "$1" in
+              success|skipped) ;;
+              *) echo "Required job failed: $2 (result=$1)"; exit 1 ;;
+            esac
+          }
+          check_job "${{ needs.build-marketing.result }}" "build-marketing"
+          check_job "${{ needs.build-web.result }}" "build-web"

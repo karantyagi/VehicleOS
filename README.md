@@ -1,5 +1,9 @@
 # VehicleOS
 
+[![CI](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml/badge.svg?branch=master)](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml)
+[![License: MIT](https://img.shields.io/github/license/karantyagi/VehicleOS)](./LICENSE)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fvehicleos.app&label=vehicleos.app)](https://vehicleos.app)
+
 VehicleOS is an AI-native operations platform for long-lived vehicle maintenance and ownership.
 MIT-licensed open core with a planned hosted product layer.
 This repository contains the product code and lightweight architecture artifacts.
@@ -16,7 +20,9 @@ This repository contains the product code and lightweight architecture artifacts
 
 VehicleOS is developed with [Cursor](https://cursor.com) under a human-led, AI-assisted model.
 
-**Workflow:** branch from `master` → open PRs with a [shared template](.github/pull_request_template.md) → CI builds affected frontends on every PR. Cursor rules in [`.cursor/rules/`](.cursor/rules/) encode the same flow so AI-assisted work matches human contributions.
+**Workflow:** branch from `master` → open PRs with a [shared template](.github/pull_request_template.md) → [**CI**](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml) builds affected frontends → [**Vercel**](docs/deployment/vercel-setup.md) deploys preview URLs on PRs and production on merge. Cursor rules in [`.cursor/rules/`](.cursor/rules/) encode the same flow so AI-assisted work matches human contributions.
+
+**`master` is protected** — all changes land via PR; direct pushes are not allowed.
 
 Details: [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 
@@ -100,6 +106,7 @@ Vercel is the default for frontends in this stack, not the only option. API/work
 ## Key docs
 
 - Contributing: [`CONTRIBUTING.md`](./CONTRIBUTING.md) — branches, PRs, CI
+- Vercel CD: [`docs/deployment/vercel-setup.md`](./docs/deployment/vercel-setup.md) — preview + production deploys
 - ADRs: `docs-lite/adr/`
 - System architecture: `docs/01-architecture/system-architecture.md`
 - MVP spec: `docs/03-mvp-spec/mvp-technical-spec.md`
