@@ -21,6 +21,20 @@ chmod +x scripts/apply-master-branch-protection.sh
 
 That enforces: PR required + **CI** check must pass before merge.
 
+### README badges (private repo)
+
+This repository is **private**. Dynamic badges (GitHub Actions status, shields.io license API, website uptime) often show **no status** / **repo not found** / **down** on the README.
+
+Until the repo is public and `vehicleos.app` is deployed, README uses **static** shields that link to Actions, `LICENSE`, and the target domain.
+
+When going public + live, swap to dynamic badges in `README.md`:
+
+```markdown
+[![CI](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml/badge.svg?branch=master)](...)
+[![License: MIT](https://img.shields.io/github/license/karantyagi/VehicleOS)](./LICENSE)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fvehicleos.app&label=vehicleos.app)](https://vehicleos.app)
+```
+
 ## Starting a new feature
 
 Always sync `master` before creating a branch:
