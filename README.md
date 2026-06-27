@@ -1,7 +1,8 @@
 # VehicleOS
 
-VehicleOS is an AI-native operations platform for long-lived vehicle ownership.
+VehicleOS is an AI-native operations platform for long-lived vehicle maintenance and ownership.
 MIT-licensed open core with a planned hosted product layer.
+This repository contains the product code and lightweight architecture artifacts.
 
 ## What this project demonstrates
 
