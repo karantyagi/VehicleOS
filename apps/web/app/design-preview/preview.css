@@ -1,0 +1,61 @@
+.preview-shell .header-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.preview-note {
+  margin-bottom: 28px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  font-size: 0.9375rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.preview-note strong {
+  color: var(--ink);
+}
+
+.preview-note a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.feature-card.accent-owners {
+  border-top: 3px solid var(--accent-bright);
+}
+
+.feature-card.accent-rules {
+  border-top: 3px solid var(--accent);
+}
+
+.feature-card.accent-ai {
+  border-top: 3px solid #3b82f6;
+}
+
+.preview-spec {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.preview-spec-title {
+  margin: 0 0 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.preview-spec-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
