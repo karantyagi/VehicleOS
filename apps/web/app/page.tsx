@@ -1,26 +1,49 @@
+import Link from "next/link";
+import { siteConfig } from "../lib/site-config";
+import { LogoMark } from "../lib/logo-mark";
+
 export default function HomePage() {
   return (
     <main className="shell">
+      <header className="app-header">
+        <a className="logo" href={siteConfig.marketingUrl}>
+          <LogoMark />
+          {siteConfig.name}
+        </a>
+        <Link className="header-link" href={`${siteConfig.marketingUrl}/#demo`}>
+          Watch demo
+        </Link>
+      </header>
+
       <section className="hero">
-        <p className="eyebrow">VehicleOS</p>
-        <h1>Operational memory for long-lived car ownership.</h1>
+        <p className="eyebrow">Owners · Free early access</p>
+        <h1>Your car, remembered.</h1>
         <p>
-          First slice: upload a receipt, extract evidence, create a domain event,
-          project next maintenance, and approve the task.
+          Upload a receipt, confirm what we extracted, and see what&apos;s due next —
+          with plain-English explanations you can trust.
         </p>
       </section>
-      <section className="grid">
-        <article>
-          <h2>Event Stream</h2>
-          <p>Append-only records for explainability and replay.</p>
+
+      <section className="grid" aria-label="How VehicleOS works">
+        <article className="feature-card accent-owners">
+          <h2>Complete timeline</h2>
+          <p>
+            Receipts, mileage, and service history in one place — a complete
+            timeline that doesn&apos;t forget.
+          </p>
         </article>
-        <article>
-          <h2>Deterministic Rules</h2>
-          <p>Mileage and time intervals generate trustworthy actions.</p>
+        <article className="feature-card accent-rules">
+          <h2>Smart reminders</h2>
+          <p>
+            What&apos;s due before it&apos;s urgent — with time to plan, not panic.
+          </p>
         </article>
-        <article>
-          <h2>AI Assistance</h2>
-          <p>Extraction and explanations with evidence-linked confidence.</p>
+        <article className="feature-card accent-ai">
+          <h2>Clear answers</h2>
+          <p>
+            AI reads your receipt and explains recommendations — you confirm
+            before anything changes.
+          </p>
         </article>
       </section>
     </main>

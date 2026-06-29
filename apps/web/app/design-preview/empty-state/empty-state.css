@@ -1,0 +1,364 @@
+.empty-state-preview {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+.empty-state-preview .preview-intro {
+  margin-bottom: 32px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.empty-state-preview .preview-intro strong {
+  color: var(--ink);
+}
+
+.empty-state-preview .compare-row {
+  display: grid;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+@media (min-width: 900px) {
+  .empty-state-preview .compare-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.empty-state-preview .compare-label {
+  margin: 0 0 10px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.empty-state-preview .compare-title {
+  margin: 0 0 16px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.empty-state-preview .device-frame {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+.empty-state-preview .device-chrome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: #faf9f6;
+}
+
+.empty-state-preview .device-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.empty-state-preview .device-dot:nth-child(1) {
+  background: #f87171;
+  opacity: 0.7;
+}
+
+.empty-state-preview .device-dot:nth-child(2) {
+  background: #fbbf24;
+  opacity: 0.7;
+}
+
+.empty-state-preview .device-dot:nth-child(3) {
+  background: var(--accent-bright);
+  opacity: 0.6;
+}
+
+.empty-state-preview .device-url {
+  margin-left: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+
+.empty-state-preview .device-screen {
+  min-height: 340px;
+  padding: 20px;
+}
+
+/* Option A — Zero Reflect (calm / Dub) */
+.empty-state-preview .screen-zero {
+  background: #f4f2ec;
+}
+
+.empty-state-preview .screen-zero .mini-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.empty-state-preview .screen-zero .mini-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.empty-state-preview .screen-zero .mini-logo-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--accent-bright), var(--accent));
+  display: grid;
+  place-items: center;
+}
+
+.empty-state-preview .screen-zero .mini-logo-mark svg {
+  width: 11px;
+  height: 11px;
+}
+
+.empty-state-preview .screen-zero .mini-nav {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.empty-state-preview .screen-zero .empty-calm h2 {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.empty-state-preview .screen-zero .empty-calm p {
+  margin: 0 0 18px;
+  max-width: 36ch;
+  font-size: 0.875rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.empty-state-preview .btn-primary {
+  display: inline-block;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: none;
+  background: var(--ink);
+  color: #fafafa;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: default;
+}
+
+.empty-state-preview .btn-secondary {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  cursor: default;
+}
+
+/* Option B — Branded empty state (Reflect-inspired, one-time) */
+.empty-state-preview .screen-branded {
+  background: radial-gradient(ellipse 90% 70% at 50% -10%, rgba(34, 197, 94, 0.12), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(255, 250, 240, 0.9), transparent 50%),
+    #f4f2ec;
+}
+
+.empty-state-preview .screen-branded .mini-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  opacity: 0.85;
+}
+
+.empty-state-preview .screen-branded .branded-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 28px 12px 8px;
+}
+
+.empty-state-preview .screen-branded .branded-mark {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, var(--accent-bright), var(--accent));
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.15), 0 12px 32px rgba(34, 197, 94, 0.12);
+}
+
+.empty-state-preview .screen-branded .branded-mark svg {
+  width: 22px;
+  height: 22px;
+}
+
+.empty-state-preview .screen-branded .branded-eyebrow {
+  margin: 0 0 8px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+}
+
+.empty-state-preview .screen-branded .branded-center h2 {
+  margin: 0 0 10px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.empty-state-preview .screen-branded .branded-center p {
+  margin: 0 0 20px;
+  max-width: 32ch;
+  font-size: 0.875rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.empty-state-preview .screen-branded .branded-steps {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.empty-state-preview .screen-branded .branded-steps span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.empty-state-preview .screen-branded .step-num {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--accent);
+}
+
+/* Shared — after first vehicle (both options converge) */
+.empty-state-preview .after-section {
+  margin-top: 8px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.empty-state-preview .after-section h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.empty-state-preview .after-section > p {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.empty-state-preview .screen-after {
+  background: #f4f2ec;
+}
+
+.empty-state-preview .dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+
+.empty-state-preview .dash-header h4 {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.empty-state-preview .dash-header span {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.empty-state-preview .timeline-card {
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fffdf7;
+  margin-bottom: 12px;
+}
+
+.empty-state-preview .timeline-card .mono {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--accent-bright);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.empty-state-preview .timeline-card strong {
+  display: block;
+  margin: 4px 0 2px;
+  font-size: 0.875rem;
+}
+
+.empty-state-preview .timeline-card p {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.empty-state-preview .rec-card {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  background: #fffdf7;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.empty-state-preview .rec-card strong {
+  color: var(--ink);
+}
+
+.empty-state-preview .verdict-box {
+  margin-top: 24px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+  font-size: 0.875rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.empty-state-preview .verdict-box strong {
+  color: var(--ink);
+}
