@@ -88,6 +88,34 @@ export const coreLoopSteps = [
   { label: "Memory", detail: "Preferences and explainability" },
 ] as const;
 
+/** Positioning copy — gap cards on main `#positioning`; Option A archived on `/design-preview`. */
+export const positioningContent = {
+  sectionLabel: "Where this fits",
+  sectionTitle: "Three tools people already reach for",
+  intro:
+    "CARFAX is useful for history. ChatGPT is useful for a quick second opinion. Neither was built to remember your car month after month — what's due, what you already paid for, and what to do next without starting over.",
+  footnote:
+    "Vehicle OS isn't a replacement for a history report or a one-off AI answer. It's the layer that keeps your car's story — so reminders, quote checks, and explanations build on what you already know.",
+  gapCards: [
+    {
+      id: "history",
+      label: "History reports",
+      line: "Snapshot — not ongoing memory",
+    },
+    {
+      id: "ai",
+      label: "General AI",
+      line: "Helpful once — starts from zero",
+    },
+    {
+      id: "vehicleos",
+      label: "Vehicle OS",
+      line: "Remembers → reminds → explains with evidence",
+      highlight: true,
+    },
+  ],
+} as const;
+
 export const aiNativeBlurb =
   "Vehicle OS is built AI-native. One architect (human) sets product scope, system boundaries, and trust rules. Cursor agents implement from briefs and ADRs. Deterministic engines own vehicle state and schedules; LLMs handle extraction and explanation only. The result: Staff-level velocity without losing explainability or coherence.";
 

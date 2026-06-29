@@ -10,6 +10,7 @@ import {
   trustSignals,
 } from "../lib/site-config";
 import { LogoMark } from "../lib/logo-marks";
+import { PositioningGapSection } from "./components/positioning-gap-section";
 
 function DemoSection() {
   const hasDemo = Boolean(siteConfig.demoLoomUrl);
@@ -198,6 +199,8 @@ export default function HomePage() {
             ))}
           </div>
         </section>
+
+        <PositioningGapSection />
 
         <section className="section shell" id="loop">
           <div className="section-header-centered">
