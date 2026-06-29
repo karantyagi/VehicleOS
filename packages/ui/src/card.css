@@ -1,0 +1,6 @@
+.vos-card {
+  background: var(--vos-surface, #131316);
+  border: 1px solid var(--vos-border, rgba(255, 255, 255, 0.08));
+  border-radius: var(--vos-radius, 12px);
+  padding: 16px;
+}

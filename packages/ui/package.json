@@ -3,7 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./logo-mark": "./src/logo-mark.tsx",
+    "./tokens.css": "./tokens.css"
+  },
   "peerDependencies": {
     "react": "^18.3.1"
   }
