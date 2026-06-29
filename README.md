@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml/badge.svg?branch=master)](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fvehicleos.app&label=vehicleos.app)](https://vehicleos.app)
+[![App](https://img.shields.io/website?url=https%3A%2F%2Fapp.vehicleos.app&label=app.vehicleos.app)](https://app.vehicleos.app)
 
 VehicleOS is an AI-native operations platform for long-lived vehicle maintenance and ownership.
 MIT-licensed open core with a planned hosted product layer.
@@ -30,7 +31,7 @@ Full business model (private strategy): workspace `strategy/business-model.md` a
 | URL | App | Purpose |
 |-----|-----|---------|
 | [vehicleos.app](https://vehicleos.app) | `apps/marketing` | Resume link — recruiter landing page (live) |
-| `app.vehicleos.app` | `apps/web` | Product app (logged-in users) |
+| [app.vehicleos.app](https://app.vehicleos.app) | `apps/web` | Product app — Owner shell (early access) |
 | GitHub (this repo) | — | Living case study — code, ADRs, evals |
 
 ## Repository layout
@@ -113,7 +114,8 @@ Vercel is the default for frontends in this stack, not the only option. API/work
 |--------|------|
 | **CI** | [GitHub Actions](https://github.com/karantyagi/VehicleOS/actions) · [workflow](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml) |
 | **Marketing (Vercel)** | [Project dashboard](https://vercel.com/create-os/vehicle-os-marketing) |
-| **Live site** | [vehicleos.app](https://vehicleos.app) |
+| **Product (Vercel)** | [Project dashboard](https://vercel.com/create-os/vehicle-os-web) |
+| **Live site** | [vehicleos.app](https://vehicleos.app) · [app.vehicleos.app](https://app.vehicleos.app) |
 
 ### Docs
 
