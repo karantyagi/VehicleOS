@@ -16,12 +16,19 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://vehicleos.app"),
   title: siteConfig.metaTitle,
   description: siteConfig.metaDescription,
   openGraph: {
     title: siteConfig.metaTitle,
     description: siteConfig.metaDescription,
     type: "website",
+    siteName: siteConfig.name,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.metaTitle,
+    description: siteConfig.metaDescription,
   },
 };
 

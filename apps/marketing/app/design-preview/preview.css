@@ -1,0 +1,159 @@
+.preview-page {
+  padding-bottom: 80px;
+}
+
+.preview-main {
+  padding-top: 32px;
+}
+
+.preview-banner {
+  padding: 16px 20px;
+  margin-bottom: 48px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--ink-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.preview-banner strong {
+  color: var(--ink);
+}
+
+.preview-banner a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.preview-section {
+  padding: 40px 0;
+  border-top: 1px solid var(--border);
+}
+
+.preview-section h2 {
+  margin: 0 0 12px;
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.shipped-card {
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.shipped-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.shipped-row:last-child {
+  border-bottom: none;
+}
+
+.shipped-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-tertiary);
+}
+
+.shipped-mono {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--ink-secondary);
+}
+
+.shipped-note {
+  margin: 16px 0 0;
+  font-size: 0.8125rem;
+  color: var(--ink-tertiary);
+}
+
+.preview-logo-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.logo-mark-favicon {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.swatch-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--ink-secondary);
+}
+
+.swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.preview-path-single {
+  margin-top: 16px;
+}
+
+.preview-block {
+  margin-top: 0;
+}
+
+.hero-specimen {
+  text-align: center;
+}
+
+.hero-specimen .pill-row {
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.hero-specimen-title {
+  margin: 0 0 12px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.hero-specimen .hero-hook,
+.hero-specimen .hero-outcome {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.preview-cta-row {
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.preview-footer-note {
+  text-align: center;
+}
+
+.preview-footer-note .section-desc {
+  margin: 0 auto;
+}
+
+.preview-footer-note a {
+  color: var(--accent);
+}

@@ -8,6 +8,7 @@ export const siteConfig = {
   appUrl: process.env.NEXT_PUBLIC_APP_URL ?? "https://app.vehicleos.app",
   linkedInUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL ?? "https://www.linkedin.com/in/karantyagi-21",
   contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "contact@vehicleos.app",
+  demoLoomUrl: process.env.NEXT_PUBLIC_DEMO_LOOM_URL ?? "",
 } as const;
 
 export const heroContent = {

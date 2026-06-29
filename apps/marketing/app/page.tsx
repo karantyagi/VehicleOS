@@ -9,19 +9,50 @@ import {
   statusRows,
   trustSignals,
 } from "../lib/site-config";
+import { LogoMark } from "../lib/logo-marks";
 
-function LogoMark() {
+function DemoSection() {
+  const hasDemo = Boolean(siteConfig.demoLoomUrl);
+
+  if (hasDemo) {
+    return (
+      <div className="demo-player">
+        <div className="demo-chrome">
+          <span className="demo-dot" />
+          <span className="demo-dot" />
+          <span className="demo-dot" />
+          <span className="demo-url">{siteConfig.appUrl}/dashboard</span>
+        </div>
+        <div className="demo-embed">
+          <iframe
+            src={siteConfig.demoLoomUrl}
+            allowFullScreen
+            title="VehicleOS product walkthrough"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <span className="logo-mark" aria-hidden="true">
-      <svg viewBox="0 0 14 14" fill="none">
-        <path
-          d="M2 7h10M7 2v10"
-          stroke="#04140b"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-      </svg>
-    </span>
+    <div className="demo-player">
+      <div className="demo-chrome">
+        <span className="demo-dot" />
+        <span className="demo-dot" />
+        <span className="demo-dot" />
+        <span className="demo-url">{siteConfig.appUrl}/dashboard</span>
+      </div>
+      <div className="demo-body">
+        <div className="demo-play" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M7 5l10 5-10 5V5z" />
+          </svg>
+        </div>
+        <h3>Product walkthrough</h3>
+        <p>Full demo recording ships with v1 core loop.</p>
+        <span className="coming-soon">Coming soon</span>
+      </div>
+    </div>
   );
 }
 
@@ -109,15 +140,15 @@ export default function HomePage() {
                 See architecture
               </a>
             </div>
+          </div>
 
-            <div className="trust-strip">
-              {trustSignals.map((signal) => (
-                <div className="trust-item" key={signal.label}>
-                  <strong>{signal.label}</strong>
-                  <span>{signal.detail}</span>
-                </div>
-              ))}
-            </div>
+          <div className="trust-strip">
+            {trustSignals.map((signal) => (
+              <div className="trust-item" key={signal.label}>
+                <strong>{signal.label}</strong>
+                <span>{signal.detail}</span>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -212,24 +243,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="demo-player">
-            <div className="demo-chrome">
-              <span className="demo-dot" />
-              <span className="demo-dot" />
-              <span className="demo-dot" />
-              <span className="demo-url">{siteConfig.appUrl}/dashboard</span>
-            </div>
-            <div className="demo-body">
-              <div className="demo-play" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M7 5l10 5-10 5V5z" />
-                </svg>
-              </div>
-              <h3>Product walkthrough</h3>
-              <p>Full demo recording ships with v1 core loop.</p>
-              <span className="coming-soon">Coming soon</span>
-            </div>
-          </div>
+          <DemoSection />
         </section>
 
         <section className="section shell" id="architecture">
@@ -335,7 +349,7 @@ export default function HomePage() {
         <div className="footer-grid">
           <div className="footer-brand">
             <a className="logo" href="#top">
-              <LogoMark />
+            <LogoMark />
               {siteConfig.name}
             </a>
             <p>
