@@ -17,4 +17,4 @@
 **Owners** — managed product; no code to run.  
 **Builders** — clone, self-host, extend.
 
-See marketing site `#paths` and workspace `strategy/user-surfaces.md`.
+See marketing site `#paths`, `#positioning` (category gap cards), and workspace `strategy/user-surfaces.md`.
