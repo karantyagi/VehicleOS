@@ -1,7 +1,7 @@
 # Moved to Interview Prep
 
 > **Canonical submodule:** `~/Interview Prep/rounds/02-applied-ai/projects/vehicle-os/repos/VehicleOS/`  
-> **Shadow edits:** `~/Interview Prep/rounds/02-applied-ai/projects/_wip/VehicleOS/` → `projects/scripts/safe-commit.sh VehicleOS` in Terminal  
+> **Edit in Cursor:** this submodule · **commit in Terminal.app only**  
 > **Legacy clone kept** for old Cursor chats — do not commit here.
 
 ---
