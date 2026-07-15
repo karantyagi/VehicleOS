@@ -1,3 +1,11 @@
+# Moved to Interview Prep
+
+> **Canonical submodule:** `~/Interview Prep/rounds/02-applied-ai/projects/vehicle-os/repos/VehicleOS/`  
+> **Shadow edits:** `~/temp_workspace/_wip/VehicleOS/` → `safe-commit.sh VehicleOS` in Terminal  
+> **Legacy clone kept** for old Cursor chats — do not commit here.
+
+---
+
 # VehicleOS
 
 [![CI](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml/badge.svg?branch=master)](https://github.com/karantyagi/VehicleOS/actions/workflows/pr-frontend-build.yml)
