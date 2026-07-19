@@ -57,7 +57,7 @@ pnpm --filter @vehicleos/web build           # if web changed
 - **Never push directly to `master`** — always use a feature branch + PR
 - Use **`gh`** for all GitHub operations (PR create, comments, checks)
 - Base branch: **`master`**
-- Title: clear outcome (e.g. `Add Phase A marketing site (recruiter landing)`)
+- Title: clear outcome (e.g. `Add Phase A marketing site`)
 - Body: follow `.github/pull_request_template.md` (Summary, Type, Apps affected, Test plan)
 - Push: `git push -u origin HEAD`
 - Create: `gh pr create --base master --title "..." --body "..."`
