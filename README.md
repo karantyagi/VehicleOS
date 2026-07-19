@@ -1,10 +1,3 @@
-# Moved to Interview Prep
-
-> **Canonical submodule:** `~/Interview Prep/rounds/02-applied-ai/projects/vehicle-os/repos/VehicleOS/`  
-> **Edit in Cursor:** this submodule · **commit in Terminal.app only**  
-> **Legacy clone kept** for old Cursor chats — do not commit here.
-
----
 
 # VehicleOS
 
@@ -26,19 +19,18 @@ This repository contains the product code and lightweight architecture artifacts
 
 ## License
 
-**MIT** — see [`LICENSE`](./LICENSE). Showcase code is public for credibility and learning.
+**MIT** — see [`LICENSE`](./LICENSE). Showcase code is public for transparency, learning, and contributor review.
 
 **Open core boundary:** This repo is a technical whitepaper with representative code — not the full tuned commercial engine. See [`docs/open-core-boundary.md`](./docs/open-core-boundary.md).
 
 The commercial product is the **hosted service** (managed ops, notifications, tuned intelligence) — open showcase + cloud, same pattern as PostHog, Supabase, Cal.com.
 
-Full business model (private strategy): workspace `strategy/business-model.md` and `strategy/ip-and-open-core.md`.
 
 ## Public URLs
 
 | URL | App | Purpose |
 |-----|-----|---------|
-| [vehicleos.app](https://vehicleos.app) | `apps/marketing` | Resume link — recruiter landing page (live) |
+| [vehicleos.app](https://vehicleos.app) | `apps/marketing` | Product landing page (live) |
 | [app.vehicleos.app](https://app.vehicleos.app) | `apps/web` | Product app — Owner shell (early access) |
 | GitHub (this repo) | — | Living case study — code, ADRs, evals |
 
@@ -46,7 +38,7 @@ Full business model (private strategy): workspace `strategy/business-model.md` a
 
 ```text
 apps/
-  marketing/  Public landing site (recruiter hook) — Phase A live
+  marketing/  Public landing site - Phase A live
   web/        Next.js product application → app.vehicleos.app
   api/        TypeScript API service
   worker/     Background jobs and extraction workers

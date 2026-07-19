@@ -8,7 +8,7 @@ VehicleOS/
   LICENSE                    MIT — open core
   .gitignore
   apps/
-    marketing/               Public landing → vehicleos.app (resume link)
+    marketing/               Public landing -> vehicleos.app (product site)
     web/                     Product app → app.vehicleos.app
     api/
     worker/

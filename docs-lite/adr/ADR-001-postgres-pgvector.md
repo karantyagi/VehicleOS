@@ -18,7 +18,7 @@ Use Postgres as the system of record and enable pgvector for embedding-based ret
 - Single operational data platform for transactional and semantic workloads
 - Strong consistency for event writes, projection updates, and approval workflows
 - Mature ecosystem, hosting options, tooling, and observability
-- Straightforward local development and interview demonstration setup
+- Straightforward local development, demos, and technical review setup
 
 ### Negative
 

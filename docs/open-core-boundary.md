@@ -78,7 +78,7 @@ Owners can audit Connect source because it is open source. Trust details: `/priv
 3. Read ADRs before diving into code
 4. Extend via public interfaces — contribute PRs against contracts
 
-For interview or audit questions about trade-offs, start with `docs-lite/adr/`.
+For audit or architecture review questions about trade-offs, start with `docs-lite/adr/`.
 
 ---
 

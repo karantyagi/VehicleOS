@@ -2,7 +2,7 @@
 
 **Status:** Initial plan (v0). Grow pages only when each link has real content.
 
-**App:** `apps/marketing` → deploy to `vehicleos.app` (resume link)  
+**App:** `apps/marketing` → deploy to `vehicleos.app` (product site)
 **Product app:** `apps/web` → deploy to `app.vehicleos.app`
 
 ---
