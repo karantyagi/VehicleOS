@@ -146,7 +146,7 @@ export const statusRows: StatusRow[] = [
   { item: "Monorepo scaffold (marketing, web, api, worker)", status: "shipped" },
   { item: "Domain model + ADRs", status: "shipped" },
   { item: "MIT open-core license", status: "shipped" },
-  { item: "Recruiter landing page (Phase A)", status: "shipped" },
+  { item: "Public landing page (Phase A)", status: "shipped" },
   { item: "Owners & Builders path chooser on site", status: "shipped" },
   { item: "Receipt → recommendation vertical slice", status: "in-progress" },
   { item: "Demo video (Loom)", status: "in-progress" },

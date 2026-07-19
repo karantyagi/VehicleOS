@@ -1,8 +1,8 @@
 # VehicleOS Marketing Site
 
-Recruiter-ready landing page — Phase A (thin and honest).
+Public product landing page - Phase A (thin and honest).
 
-**Deploy target:** `vehicleos.app` (primary resume link)  
+**Deploy target:** `vehicleos.app` (primary product URL)
 **Local dev:** `pnpm dev` from monorepo root, or `pnpm --filter @vehicleos/marketing dev` → http://localhost:3001
 
 ## Phase A sections (shipped)
@@ -39,7 +39,6 @@ Recruiter-ready landing page — Phase A (thin and honest).
 4. Custom domain: `vehicleos.app` (or apex + www)
 5. Separate project for `apps/web` → `app.vehicleos.app`
 
-See workspace `strategy/business-model.md` for domain strategy.
 
 ## Stack
 
