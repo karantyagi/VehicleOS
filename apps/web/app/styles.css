@@ -80,6 +80,101 @@ body {
   border-top: 3px solid #3b82f6;
 }
 
+.golden-path .golden-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.golden-path .panel label {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.golden-path input,
+.golden-path textarea {
+  font: inherit;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #fff;
+}
+
+.golden-path button {
+  font: inherit;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+}
+
+.golden-path button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.golden-path .muted {
+  color: var(--muted);
+}
+
+.golden-path .timeline-list,
+.golden-path .queue-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.golden-path .timeline-list li,
+.golden-path .queue-list li {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--card);
+}
+
+.golden-path .timeline-list span,
+.golden-path .queue-list p {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.golden-path .badge {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.golden-path .actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.golden-path .actions button {
+  background: var(--card-raised);
+  color: var(--ink);
+  border: 1px solid var(--border);
+}
+
+.golden-path .actions button:first-child {
+  background: var(--accent);
+  color: white;
+  border-color: transparent;
+}
+
 .grid {
   margin-top: 28px;
   display: grid;

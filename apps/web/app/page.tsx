@@ -10,6 +10,9 @@ export default function HomePage() {
           <LogoMark />
           {siteConfig.name}
         </a>
+        <Link className="header-link" href="/golden-path">
+          Run golden path
+        </Link>
         <Link className="header-link" href={`${siteConfig.marketingUrl}/#demo`}>
           Watch demo
         </Link>
