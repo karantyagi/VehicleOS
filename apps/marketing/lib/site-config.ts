@@ -135,6 +135,11 @@ export const adrs = [
     title: "Lakehouse evolution (v2 scale path)",
     href: "https://github.com/karantyagi/VehicleOS/blob/main/docs-lite/adr/ADR-003-lakehouse-evolution.md",
   },
+  {
+    id: "ADR-004",
+    title: "Phase 0 hosted deployment (Vercel + Supabase)",
+    href: "https://github.com/karantyagi/VehicleOS/blob/main/docs-lite/adr/ADR-004-phase0-hosted-deployment.md",
+  },
 ] as const;
 
 export type StatusRow = {
@@ -148,13 +153,16 @@ export const statusRows: StatusRow[] = [
   { item: "MIT open-core license", status: "shipped" },
   { item: "Public landing page (Phase A)", status: "shipped" },
   { item: "Owners & Builders path chooser on site", status: "shipped" },
+  { item: "Golden-path integration test + CI", status: "shipped" },
+  { item: "Evals methodology (public repo)", status: "shipped" },
+  { item: "Vehicle OS Connect v0 CLI (validate / preview)", status: "shipped" },
   { item: "Receipt → recommendation vertical slice", status: "in-progress" },
-  { item: "Demo video (Loom)", status: "in-progress" },
-  { item: "Golden-path integration test + CI", status: "in-progress" },
-  { item: "Hosted app — free early access (app.vehicleos.app)", status: "planned" },
+  { item: "Demo video (YouTube stand-in; full V1 re-record at freeze)", status: "in-progress" },
+  { item: "Hosted Owners app — API + Postgres + golden path", status: "in-progress" },
+  { item: "Auth + vehicle onboarding wizard", status: "planned" },
   { item: "Vehicle OS Connect desktop (Owners)", status: "planned" },
   { item: "SMS / email proactive reminders", status: "planned" },
-  { item: "Builders self-host + CLI path", status: "planned" },
+  { item: "Builders docker self-host path", status: "planned" },
   { item: "Future subscription tiers (documented, not building)", status: "planned" },
   { item: "v2 lakehouse analytics path", status: "planned" },
 ];

@@ -51,8 +51,12 @@ Optional overrides in Vercel project settings:
 
 | Variable | Purpose |
 |----------|---------|
-| `NEXT_PUBLIC_MARKETING_URL` | Cross-links from `/design-preview` → marketing |
-| `NEXT_PUBLIC_APP_URL` | Canonical app URL (preview pages, shell copy) |
+| `DATABASE_URL` | Supabase Postgres URI (pooler recommended) — required for hosted golden path |
+| `NEXT_PUBLIC_MARKETING_URL` | Cross-links to marketing site |
+| `NEXT_PUBLIC_APP_URL` | Canonical app URL (`https://app.vehicleos.app`) |
+| `NEXT_PUBLIC_API_URL` | Optional — only when pointing UI at local Fastify (`http://localhost:4000`) |
+
+See [`supabase-setup.md`](./supabase-setup.md) for DB migrations and smoke tests.
 
 ### 4. Ignored Build Step (optional, saves build minutes)
 

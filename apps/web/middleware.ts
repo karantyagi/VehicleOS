@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { updateSession } from "./lib/supabase/middleware";
 
-/** Design preview routes are local-dev only — not served in production. */
-export function middleware(_request: NextRequest) {
-  if (process.env.VERCEL_ENV === "production") {
-    return new NextResponse(null, { status: 404 });
-  }
-
-  return NextResponse.next();
+export async function middleware(request: import("next/server").NextRequest) {
+  return updateSession(request);
 }
 
 export const config = {
-  matcher: ["/design-preview", "/design-preview/:path*"],
+  matcher: [
+    "/",
+    "/login",
+    "/auth/:path*",
+    "/api/:path*",
+    "/design-preview",
+    "/design-preview/:path*",
+  ],
 };

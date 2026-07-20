@@ -88,10 +88,12 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for branch naming, PR workflow, and C
 | App | Platform | Why |
 |-----|----------|-----|
 | `apps/marketing` | [Vercel](https://vercel.com) | Next.js-native, fast marketing deploys, custom domain |
-| `apps/web` | Vercel | Same monorepo, separate project + subdomain |
-| `apps/api` + `apps/worker` | Railway / Fly.io / AWS | Long-running workers, Postgres, queues — not edge |
+| `apps/web` (+ `/api/*`) | Vercel | Owners UI + golden-path API route handlers on `app.vehicleos.app` |
+| Postgres | [Supabase](https://supabase.com) | Managed Postgres via `DATABASE_URL` — see [`docs/deployment/supabase-setup.md`](./docs/deployment/supabase-setup.md) |
+| `apps/api` | Local / optional | Fastify dev server; same `@vehicleos/server` as Vercel routes |
+| `apps/worker` | Railway / Fly.io (later) | Background jobs when shipped — Postgres stays on Supabase |
 
-Vercel is the default for frontends in this stack, not the only option. API/worker need a compute + DB host; keep them off the marketing deploy path.
+Vercel + Supabase is the default hosted stack for BUILD freeze. Railway/Fly are only needed when you deploy long-running workers, not for Postgres itself.
 
 ## Deliberately not automated yet
 
@@ -104,6 +106,8 @@ Vercel is the default for frontends in this stack, not the only option. API/work
 
 - Contributing: [`CONTRIBUTING.md`](./CONTRIBUTING.md) — branches, PRs, CI
 - Vercel CD: [`docs/deployment/vercel-setup.md`](./docs/deployment/vercel-setup.md) — preview + production deploys
+- Supabase Postgres: [`docs/deployment/supabase-setup.md`](./docs/deployment/supabase-setup.md) — hosted Owners DB + env vars
+- ADR-004: [`docs-lite/adr/ADR-004-phase0-hosted-deployment.md`](./docs-lite/adr/ADR-004-phase0-hosted-deployment.md) — Phase 0 hosted stack decision
 - ADRs: `docs-lite/adr/`
 - System architecture: `docs/01-architecture/system-architecture.md`
 - MVP spec: `docs/03-mvp-spec/mvp-technical-spec.md`
