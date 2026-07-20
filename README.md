@@ -65,6 +65,10 @@ docs-lite/
 tests/
   integration/
   e2e/
+evals/
+  README.md
+connectors/
+  carfax-connect/   OSS import CLI + schema (v0)
 ```
 
 ## First vertical slice target
