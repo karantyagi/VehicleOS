@@ -2,15 +2,20 @@
   "name": "@vehicleos/worker",
   "private": true,
   "version": "0.1.0",
+  "dependencies": {
+    "@vehicleos/domain": "workspace:*"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "typescript": "^5.6.3",
+    "@types/node": "^22.7.5",
     "tsx": "^4.19.1",
-    "@types/node": "^22.7.5"
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.3"
   }
 }
