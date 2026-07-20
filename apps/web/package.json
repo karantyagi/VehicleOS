@@ -10,6 +10,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.49.8",
+    "@vehicleos/server": "workspace:*",
     "next": "14.2.15",
     "react": "18.3.1",
     "react-dom": "18.3.1"

@@ -39,6 +39,7 @@ VehicleOS/
 2. Root README with architecture summary and a single system diagram.
 3. ADR-001 choosing Postgres + pgvector.
 4. ADR-002 choosing event-sourced domain model.
+5. ADR-004 Phase 0 hosted deployment (Vercel + Supabase).
 5. One end-to-end vertical slice: receipt upload to recommendation.
 6. `docs/05-marketing-site/sitemap.md` — phased landing page plan.
 7. Open core + hosted product model documented in workspace `strategy/business-model.md`.
