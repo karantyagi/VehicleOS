@@ -1,0 +1,81 @@
+import { EVENT_TYPES, type CatalogDomainEvent } from "../events/catalog.js";
+import {
+  createEmptyVehicleState,
+  type NowQueueItem,
+  type ServiceTimelineEntry,
+  type VehicleProjectionState,
+} from "./types.js";
+
+export { createEmptyVehicleState };
+
+const taskStatusFromDecision = (
+  decision: "approve" | "dismiss" | "snooze",
+): NowQueueItem["status"] => {
+  if (decision === "approve") return "approved";
+  if (decision === "dismiss") return "dismissed";
+  return "snoozed";
+};
+
+export const applyEvent = (
+  state: VehicleProjectionState,
+  event: CatalogDomainEvent,
+): VehicleProjectionState => {
+  switch (event.eventType) {
+    case EVENT_TYPES.SERVICE_RECORDED: {
+      const entry: ServiceTimelineEntry = {
+        serviceId: event.payload.serviceId,
+        shop: event.payload.shop,
+        serviceDate: event.payload.serviceDate,
+        mileage: event.payload.mileage,
+        lineItems: event.payload.lineItems,
+        total: event.payload.total,
+        evidenceIds: event.payload.evidenceIds,
+      };
+
+      return {
+        ...state,
+        vehicleId: event.payload.vehicleId,
+        currentMileage: Math.max(state.currentMileage, event.payload.mileage),
+        timeline: [...state.timeline, entry],
+      };
+    }
+
+    case EVENT_TYPES.MAINTENANCE_RECOMMENDATION_CREATED:
+      return state;
+
+    case EVENT_TYPES.TASK_CREATED: {
+      const queueItem: NowQueueItem = {
+        taskId: event.payload.taskId,
+        recommendationId: event.payload.recommendationId,
+        title: event.payload.title,
+        reason: event.payload.reason,
+        status: event.payload.status,
+      };
+
+      return {
+        ...state,
+        vehicleId: event.payload.vehicleId,
+        nowQueue: [...state.nowQueue, queueItem],
+      };
+    }
+
+    case EVENT_TYPES.TASK_DECIDED:
+      return {
+        ...state,
+        nowQueue: state.nowQueue.map((item) =>
+          item.taskId === event.payload.taskId
+            ? { ...item, status: taskStatusFromDecision(event.payload.decision) }
+            : item,
+        ),
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const foldEvents = (
+  vehicleId: string,
+  events: CatalogDomainEvent[],
+): VehicleProjectionState =>
+  events.reduce(applyEvent, createEmptyVehicleState(vehicleId));
