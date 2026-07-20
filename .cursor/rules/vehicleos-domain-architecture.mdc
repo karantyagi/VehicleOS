@@ -1,0 +1,68 @@
+---
+description: Vehicle OS domain layer — typed events, port interfaces, open-core boundaries
+globs: packages/domain/**,apps/api/**,apps/worker/**,tests/integration/**
+alwaysApply: false
+---
+
+# Vehicle OS Domain Architecture
+
+Scope: **Vehicle OS only** — no Setup OS, inbox router, or cross-vertical platform code.
+
+## Layer model
+
+```text
+IngestAdapter (port)     PolicyEngine (port)     EventStore (port)
+        │                        │                      │
+        └──────────► packages/domain ◄───────────────────┘
+                     typed events + projection reducers
+                              │
+                     vehicleos-engine (private impl later)
+```
+
+## Public vs private (open-core)
+
+| In `packages/domain` (MIT) | In `vehicleos-engine` (private) |
+|----------------------------|----------------------------------|
+| Event types + versioned payloads | Tuned prompt text |
+| Projection reducers (pure) | Scoring weights / heuristics |
+| `PolicyEngine` interface + stub | Production policy implementation |
+| Port interfaces | Hosted ingest optimizations |
+
+Never land tuned scoring or production prompts in the public repo.
+
+## Coding rules
+
+1. **Typed domain truth** — no `eventType: string` or `Record<string, unknown>` payloads on catalog events. Use discriminated unions + `event_version`.
+2. **Interfaces at boundaries only** — `EventStore`, `IngestAdapter`, `PolicyEngine`, `JobPublisher`. Do not plugin-ify the event catalog.
+3. **Pure projections** — `applyEvent(state, event) → state`. No I/O in reducers.
+4. **Rules-first policy** — schedule truth is deterministic. LLMs belong at ingest/extraction edges (worker), not in `PolicyEngine`.
+5. **Reference implementations OK** — in-memory store and stub policy in public repo for golden-path tests.
+6. **Match DB sketch** — events align with `db/migrations/0001_init.sql` (`aggregate_type`, `event_version`, `payload_json`).
+7. **Minimal scope** — one golden path first: receipt → `service.recorded` → projection → recommendation → task.
+
+## Golden-path event sequence
+
+```text
+document.ingested → document.extraction.completed → service.recorded
+  → maintenance.recommendation.created → task.created
+```
+
+Task decisions: `task.decided` (approve | dismiss | snooze).
+
+## File layout
+
+```text
+packages/domain/src/
+  events/       — catalog + envelope types
+  projections/  — read models + applyEvent reducers
+  policy/       — PolicyEngine port + stub
+  ports/        — EventStore, IngestAdapter, JobPublisher
+  adapters/     — in-memory reference impls
+  golden-path/  — orchestration wiring the loop (uses ports)
+```
+
+## Infra evolution (do not over-build now)
+
+- Event store: in-memory → Postgres (same interface)
+- Queue: in-process → Redis/SQS when scale requires (same JobPublisher port)
+- No Kafka, workflow engine, or microservice abstractions in P0

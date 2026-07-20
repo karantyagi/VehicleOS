@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@vehicleos/domain": "workspace:*",
     "fastify": "^5.0.0"
   },
   "devDependencies": {
