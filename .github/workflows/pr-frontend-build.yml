@@ -41,6 +41,24 @@ jobs:
               - 'pnpm-workspace.yaml'
               - '.github/workflows/pr-frontend-build.yml'
 
+  test-golden-path:
+    name: test-golden-path
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @vehicleos/domain test
+      - run: pnpm --filter @vehicleos/api test
+      - run: pnpm --filter @vehicleos/worker test
+      - run: pnpm --filter @vehicleos/carfax-connect-cli test
+
   build-marketing:
     needs: changes
     if: needs.changes.outputs.marketing == 'true'
@@ -76,11 +94,11 @@ jobs:
   # Single required check for branch protection (skipped app builds are OK).
   ci:
     name: CI
-    needs: [build-marketing, build-web]
+    needs: [build-marketing, build-web, test-golden-path]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Verify frontend builds
+      - name: Verify CI jobs
         run: |
           check_job() {
             case "$1" in
@@ -88,5 +106,6 @@ jobs:
               *) echo "Required job failed: $2 (result=$1)"; exit 1 ;;
             esac
           }
+          check_job "${{ needs.test-golden-path.result }}" "test-golden-path"
           check_job "${{ needs.build-marketing.result }}" "build-marketing"
           check_job "${{ needs.build-web.result }}" "build-web"

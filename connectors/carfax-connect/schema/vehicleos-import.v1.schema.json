@@ -1,0 +1,49 @@
+{
+  "$id": "https://vehicleos.app/schema/vehicleos-import.v1.json",
+  "title": "VehicleOSImportV1",
+  "type": "object",
+  "required": ["version", "vehicle", "services", "source", "exportedAt"],
+  "properties": {
+    "version": { "const": "1" },
+    "source": {
+      "type": "string",
+      "description": "Importer identifier, e.g. carfax-connect-cli"
+    },
+    "exportedAt": { "type": "string", "format": "date-time" },
+    "vehicle": {
+      "type": "object",
+      "required": ["vin", "year", "make", "model", "currentMileage"],
+      "properties": {
+        "vin": { "type": "string", "minLength": 5 },
+        "year": { "type": "integer", "minimum": 1980, "maximum": 2100 },
+        "make": { "type": "string" },
+        "model": { "type": "string" },
+        "trim": { "type": "string" },
+        "currentMileage": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "services": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["shop", "serviceDate", "mileage", "lineItems", "total"],
+        "properties": {
+          "shop": { "type": "string" },
+          "serviceDate": { "type": "string", "format": "date" },
+          "mileage": { "type": "integer", "minimum": 0 },
+          "lineItems": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "total": { "type": "string" },
+          "evidenceIds": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

@@ -54,8 +54,6 @@ Optional overrides in Vercel project settings:
 | `NEXT_PUBLIC_MARKETING_URL` | Cross-links from `/design-preview` → marketing |
 | `NEXT_PUBLIC_APP_URL` | Canonical app URL (preview pages, shell copy) |
 
-`apps/product-playground` is **not** a Vercel project — local design lab on port 3002 only.
-
 ### 4. Ignored Build Step (optional, saves build minutes)
 
 In each Vercel project → Settings → Git → **Ignored Build Step**:

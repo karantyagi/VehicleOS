@@ -1,0 +1,22 @@
+{
+  "version": "1",
+  "source": "carfax-connect-cli",
+  "exportedAt": "2026-07-20T18:00:00.000Z",
+  "vehicle": {
+    "vin": "DEMO-VIN-001",
+    "year": 2019,
+    "make": "Honda",
+    "model": "Civic",
+    "currentMileage": 41800
+  },
+  "services": [
+    {
+      "shop": "Jiffy Lube",
+      "serviceDate": "2026-01-12",
+      "mileage": 41800,
+      "lineItems": ["Oil change (synthetic)", "Filter replaced"],
+      "total": "$67.42",
+      "evidenceIds": ["receipt-001"]
+    }
+  ]
+}
