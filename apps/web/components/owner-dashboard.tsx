@@ -1,15 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getApiBase } from "../lib/api-base";
+import { OnboardingWizard, type OnboardingVehicle } from "./onboarding-wizard";
 
-type Vehicle = {
-  id: string;
-  make: string;
-  model: string;
-  year: number;
-  currentMileage: number;
-};
+type Vehicle = OnboardingVehicle;
 
 type TimelineEntry = {
   shop: string;
@@ -24,6 +19,7 @@ type QueueItem = {
   title: string;
   reason: string;
   status: string;
+  taskKind?: "recommendation" | "verification";
 };
 
 const receiptForm = {
@@ -41,6 +37,7 @@ export function OwnerDashboard() {
   const [nowQueue, setNowQueue] = useState<QueueItem[]>([]);
   const [status, setStatus] = useState<string>("");
   const [isBusy, setIsBusy] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [form, setForm] = useState(receiptForm);
 
   const vehicleLabel = useMemo(() => {
@@ -48,34 +45,68 @@ export function OwnerDashboard() {
     return `${vehicle.year} ${vehicle.make} ${vehicle.model} · ${vehicle.currentMileage.toLocaleString()} mi`;
   }, [vehicle]);
 
-  const createVehicle = async () => {
-    setIsBusy(true);
-    setStatus("Creating vehicle…");
-    try {
-      const response = await fetch(`${apiBase}/api/vehicles`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          vin: "DEMO-VIN-001",
-          year: 2019,
-          make: "Honda",
-          model: "Civic",
-          currentMileage: form.mileage,
-        }),
-      });
-      if (!response.ok) throw new Error("create failed");
-      const body = (await response.json()) as { vehicle: Vehicle };
-      setVehicle(body.vehicle);
-      setStatus("Vehicle ready. Upload a receipt to run the golden path.");
-    } catch {
-      setStatus(
-        apiBase
-          ? "Could not reach API. Check NEXT_PUBLIC_API_URL or start apps/api on port 4000."
-          : "Could not reach API. Set DATABASE_URL on Vercel or run locally with pnpm dev.",
-      );
-    } finally {
-      setIsBusy(false);
-    }
+  const loadVehicleState = useCallback(
+    async (nextVehicle: Vehicle) => {
+      const response = await fetch(`${apiBase}/api/vehicles/${nextVehicle.id}/state`);
+      if (!response.ok) return;
+
+      const body = (await response.json()) as {
+        timeline: TimelineEntry[];
+        nowQueue: QueueItem[];
+        currentMileage?: number;
+      };
+
+      setTimeline(body.timeline);
+      setNowQueue(body.nowQueue);
+      if (body.currentMileage && body.currentMileage > nextVehicle.currentMileage) {
+        setVehicle({ ...nextVehicle, currentMileage: body.currentMileage });
+      }
+      setForm((current) => ({ ...current, mileage: body.currentMileage ?? nextVehicle.currentMileage }));
+    },
+    [apiBase],
+  );
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const bootstrap = async () => {
+      try {
+        const response = await fetch(`${apiBase}/api/vehicles`);
+        if (!response.ok) throw new Error("list failed");
+
+        const body = (await response.json()) as { vehicles: Vehicle[] };
+        const existing = body.vehicles[0];
+        if (!existing) {
+          if (isMounted) setIsLoading(false);
+          return;
+        }
+
+        if (isMounted) {
+          setVehicle(existing);
+          setForm((current) => ({ ...current, mileage: existing.currentMileage }));
+          await loadVehicleState(existing);
+        }
+      } catch {
+        if (isMounted) {
+          setStatus("Could not load your garage. Refresh to try again.");
+        }
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
+
+    void bootstrap();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [apiBase, loadVehicleState]);
+
+  const handleOnboardingComplete = async (created: OnboardingVehicle) => {
+    setVehicle(created);
+    setForm((current) => ({ ...current, mileage: created.currentMileage }));
+    setStatus("Vehicle saved. Upload a receipt below to run the golden path.");
+    await loadVehicleState(created);
   };
 
   const submitReceipt = async () => {
@@ -94,14 +125,20 @@ export function OwnerDashboard() {
           total: form.total,
         }),
       });
-      if (!response.ok) throw new Error("receipt failed");
       const body = (await response.json()) as {
         timeline: TimelineEntry[];
         nowQueue: QueueItem[];
+        conflict?: boolean;
+        error?: string;
       };
+      if (!response.ok && response.status !== 409) throw new Error(body.error ?? "receipt failed");
       setTimeline(body.timeline);
       setNowQueue(body.nowQueue);
-      setStatus("Golden path complete — review the Now queue.");
+      setStatus(
+        body.conflict
+          ? "Conflict detected — review the verification task in your Now queue."
+          : "Golden path complete — review the Now queue.",
+      );
     } catch {
       setStatus("Receipt submission failed.");
     } finally {
@@ -127,28 +164,35 @@ export function OwnerDashboard() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <section className="onboarding-panel">
+        <p className="eyebrow">Loading</p>
+        <h1>Opening your garage…</h1>
+      </section>
+    );
+  }
+
+  if (!vehicle) {
+    return <OnboardingWizard onComplete={handleOnboardingComplete} />;
+  }
+
   return (
     <>
       <section className="hero">
         <p className="eyebrow">Owners · Early access</p>
         <h1>Receipt → recommendation → approve</h1>
-        <p>{status || "Add your vehicle, confirm a receipt, then approve the recommended task."}</p>
+        <p>{status || "Confirm a receipt, then approve the recommended task."}</p>
+      </section>
+
+      <section className="vehicle-summary panel">
+        <h2>Your vehicle</h2>
+        <p>{vehicleLabel}</p>
       </section>
 
       <section className="golden-grid">
         <article className="panel">
-          <h2>1 · Your vehicle</h2>
-          {vehicle ? (
-            <p>{vehicleLabel}</p>
-          ) : (
-            <button type="button" disabled={isBusy} onClick={createVehicle}>
-              Add your vehicle
-            </button>
-          )}
-        </article>
-
-        <article className="panel">
-          <h2>2 · Receipt</h2>
+          <h2>1 · Receipt</h2>
           <label>
             Shop
             <input
@@ -186,13 +230,13 @@ export function OwnerDashboard() {
               onChange={(event) => setForm({ ...form, total: event.target.value })}
             />
           </label>
-          <button type="button" disabled={isBusy || !vehicle} onClick={submitReceipt}>
+          <button type="button" disabled={isBusy} onClick={submitReceipt}>
             Confirm receipt → run loop
           </button>
         </article>
 
         <article className="panel">
-          <h2>3 · Timeline</h2>
+          <h2>2 · Timeline</h2>
           {timeline.length === 0 ? (
             <p className="muted">No services recorded yet.</p>
           ) : (
@@ -208,29 +252,33 @@ export function OwnerDashboard() {
         </article>
 
         <article className="panel">
-          <h2>4 · Now queue</h2>
+          <h2>3 · Now queue</h2>
           {nowQueue.length === 0 ? (
             <p className="muted">No tasks yet.</p>
           ) : (
             <ul className="queue-list">
               {nowQueue.map((item) => (
-                <li key={item.taskId}>
+                <li key={item.taskId} className={item.taskKind === "verification" ? "queue-verification" : undefined}>
                   <div>
                     <strong>{item.title}</strong>
                     <p>{item.reason}</p>
-                    <span className="badge">{item.status}</span>
+                    <span className={`badge ${item.taskKind === "verification" ? "badge-warning" : ""}`}>
+                      {item.status}
+                    </span>
                   </div>
                   {item.status === "pending" ? (
                     <div className="actions">
                       <button type="button" disabled={isBusy} onClick={() => decide(item.taskId, "approve")}>
-                        Approve
+                        {item.taskKind === "verification" ? "Mark resolved" : "Approve"}
                       </button>
                       <button type="button" disabled={isBusy} onClick={() => decide(item.taskId, "dismiss")}>
                         Dismiss
                       </button>
-                      <button type="button" disabled={isBusy} onClick={() => decide(item.taskId, "snooze")}>
-                        Snooze
-                      </button>
+                      {item.taskKind !== "verification" ? (
+                        <button type="button" disabled={isBusy} onClick={() => decide(item.taskId, "snooze")}>
+                          Snooze
+                        </button>
+                      ) : null}
                     </div>
                   ) : null}
                 </li>

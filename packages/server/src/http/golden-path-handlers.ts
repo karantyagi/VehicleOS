@@ -66,6 +66,16 @@ export const createVehicle = async (
   return jsonResponse(201, { vehicle });
 };
 
+export const listVehicles = async (
+  services: ApiServices,
+  auth?: AuthContext,
+): Promise<JsonResponse> => {
+  if (!auth?.userId) return unauthorized();
+
+  const vehicles = await services.vehicles.listByUserId(auth.userId);
+  return jsonResponse(200, { vehicles });
+};
+
 export const getVehicle = async (
   services: ApiServices,
   vehicleId: string,
