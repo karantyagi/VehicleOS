@@ -12,6 +12,7 @@ export {
   type IngestChannel,
   type MaintenanceRecommendationCreatedPayload,
   type ServiceRecordedPayload,
+  type ServiceRecordSource,
   type TaskCreatedPayload,
   type TaskDecidedPayload,
   type TaskDecision,
@@ -90,5 +91,22 @@ export {
   type RecordKnowledgeScheduleInput,
   type RecordKnowledgeScheduleResult,
 } from "./knowledge/record-knowledge-schedule.js";
+export {
+  enrichTimelineForDisplay,
+  resolveServiceSource,
+  serviceSourceLabel,
+  sortTimelineEntries,
+} from "./timeline/timeline-view.js";
+export {
+  classifyNowQueueItem,
+  nowQueueCategoryLabel,
+  splitNowQueue,
+  type NowQueueCategory,
+} from "./now/queue-view.js";
+export {
+  refreshMaintenanceRecommendation,
+  type RefreshMaintenanceRecommendationInput,
+  type RefreshMaintenanceRecommendationResult,
+} from "./now/refresh-maintenance-recommendation.js";
 export type { KnowledgeScheduleEntry } from "./projections/types.js";
 export type { KnowledgeScheduleRow } from "./events/catalog.js";

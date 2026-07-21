@@ -1,4 +1,4 @@
-import type { IngestChannel, TaskStatus } from "../events/catalog.js";
+import type { IngestChannel, ServiceRecordSource, TaskStatus } from "../events/catalog.js";
 
 export type ServiceTimelineEntry = {
   serviceId: string;
@@ -8,6 +8,7 @@ export type ServiceTimelineEntry = {
   lineItems: string[];
   total: string;
   evidenceIds: string[];
+  source?: ServiceRecordSource;
 };
 
 export type NowQueueItem = {

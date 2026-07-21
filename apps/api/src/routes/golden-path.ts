@@ -13,6 +13,8 @@ import {
   refreshSeasonalPrompts,
   confirmManualSchedule,
   previewManualSchedule,
+  submitOwnerServiceNote,
+  refreshNowQueue,
   type ApiServices,
   type ExportHandlerResponse,
 } from "@vehicleos/server";
@@ -92,6 +94,31 @@ export const registerGoldenPathRoutes = (app: FastifyInstance, services: ApiServ
         services,
         request.params.vehicleId,
         request.body as Parameters<typeof refreshSeasonalPrompts>[2],
+        authFromRequest(request),
+      );
+      return reply.code(result.status).send(result.body);
+    },
+  );
+
+  app.post<{ Params: { vehicleId: string } }>(
+    "/api/vehicles/:vehicleId/notes",
+    async (request, reply) => {
+      const result = await submitOwnerServiceNote(
+        services,
+        request.params.vehicleId,
+        request.body as Parameters<typeof submitOwnerServiceNote>[2],
+        authFromRequest(request),
+      );
+      return reply.code(result.status).send(result.body);
+    },
+  );
+
+  app.post<{ Params: { vehicleId: string } }>(
+    "/api/vehicles/:vehicleId/now/refresh",
+    async (request, reply) => {
+      const result = await refreshNowQueue(
+        services,
+        request.params.vehicleId,
         authFromRequest(request),
       );
       return reply.code(result.status).send(result.body);

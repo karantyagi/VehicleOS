@@ -16,6 +16,8 @@ export type DomainEventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];
 
 export type IngestChannel = "receipt_upload" | "voice" | "photo" | "manual";
 
+export type ServiceRecordSource = "receipt" | "voice" | "owner_note" | "dealer";
+
 export type ExtractedServiceFields = {
   shop: string;
   serviceDate: string;
@@ -48,6 +50,7 @@ export type ServiceRecordedPayload = {
   total: string;
   evidenceIds: string[];
   documentId?: string;
+  source?: ServiceRecordSource;
 };
 
 export type MaintenanceRecommendationCreatedPayload = {

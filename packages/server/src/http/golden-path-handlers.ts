@@ -1,5 +1,6 @@
 import type { ApiServices } from "../services/index.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
+import { buildVehicleStateView } from "./vehicle-state-view.js";
 
 type ReceiptBody = {
   shop: string;
@@ -100,12 +101,7 @@ export const getVehicleState = async (
   const snapshot = await services.goldenPath.getVehicleState(vehicleId);
   return jsonResponse(200, {
     vehicle: owned.vehicle,
-    timeline: snapshot.state.timeline,
-    nowQueue: snapshot.state.nowQueue,
-    quoteAnalyses: snapshot.state.quoteAnalyses,
-    evidenceVault: snapshot.state.evidenceVault,
-    knowledgeSchedule: snapshot.state.knowledgeSchedule,
-    currentMileage: snapshot.state.currentMileage,
+    ...buildVehicleStateView(snapshot.state),
     eventCount: snapshot.events.length,
   });
 };
@@ -156,6 +152,7 @@ export const submitReceipt = async (
     evidenceIds: [documentId],
     documentId,
     correlationId,
+    source: "receipt",
   });
 
   if (result.conflict) {
@@ -169,17 +166,19 @@ export const submitReceipt = async (
         reason: result.state.nowQueue.at(-1)?.reason,
         verificationCode: result.state.nowQueue.at(-1)?.verificationCode,
       },
-      timeline: result.state.timeline,
-      nowQueue: result.state.nowQueue,
+      timeline: buildVehicleStateView(result.state).timeline,
+      nowQueue: buildVehicleStateView(result.state).nowQueue,
     });
   }
+
+  const view = buildVehicleStateView(result.result.state);
 
   return jsonResponse(201, {
     documentId,
     recommendation: result.result.recommendation,
     task: result.result.task,
-    timeline: result.result.state.timeline,
-    nowQueue: result.result.state.nowQueue,
+    timeline: view.timeline,
+    nowQueue: view.nowQueue,
   });
 };
 
@@ -208,6 +207,6 @@ export const decideOnTask = async (
   return jsonResponse(200, {
     taskId,
     decision,
-    nowQueue: snapshot.state.nowQueue,
+    nowQueue: buildVehicleStateView(snapshot.state).nowQueue,
   });
 };

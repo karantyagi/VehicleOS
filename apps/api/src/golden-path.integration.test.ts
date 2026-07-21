@@ -478,4 +478,132 @@ Cabin air filter $59.00`,
     expect(stateBody.knowledgeSchedule.length).toBeGreaterThan(0);
     expect(stateBody.evidenceVault.some((entry) => entry.channel === "manual")).toBe(true);
   });
+
+  it("records an owner note on the timeline with source metadata", async () => {
+    const app = await appPromise;
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/api/vehicles",
+      payload: {
+        vin: "TEST-VIN-NOTE",
+        year: 2021,
+        make: "Subaru",
+        model: "Outback",
+        currentMileage: 22_000,
+      },
+    });
+
+    expect(createResponse.statusCode).toBe(201);
+    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+
+    const noteResponse = await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/notes`,
+      payload: {
+        serviceDate: "2026-03-15",
+        mileage: 22_400,
+        note: "Skipped cabin filter — replacing myself",
+        source: "owner_note",
+      },
+    });
+
+    expect(noteResponse.statusCode).toBe(201);
+    const noteBody = noteResponse.json() as {
+      timeline: { source?: string; lineItems: string[] }[];
+    };
+
+    expect(noteBody.timeline).toHaveLength(1);
+    expect(noteBody.timeline[0]?.source).toBe("owner_note");
+    expect(noteBody.timeline[0]?.lineItems[0]).toContain("Skipped cabin filter");
+
+    const stateResponse = await app.inject({
+      method: "GET",
+      url: `/api/vehicles/${vehicle.id}/state`,
+    });
+
+    const stateBody = stateResponse.json() as {
+      timeline: { serviceId: string; source?: string }[];
+    };
+
+    expect(stateBody.timeline[0]?.source).toBe("owner_note");
+  });
+
+  it("refreshes maintenance recommendations into the Now queue", async () => {
+    const app = await appPromise;
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/api/vehicles",
+      payload: {
+        vin: "TEST-VIN-REFRESH",
+        year: 2018,
+        make: "Toyota",
+        model: "RAV4",
+        currentMileage: 16_000,
+      },
+    });
+
+    expect(createResponse.statusCode).toBe(201);
+    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+
+    await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/receipts`,
+      payload: {
+        shop: "Dealer",
+        serviceDate: "2025-06-01",
+        mileage: 10_000,
+        lineItems: ["Oil change"],
+        total: "$55.00",
+        storageKey: `test/${vehicle.id}/refresh-oil.pdf`,
+        channel: "receipt_upload",
+      },
+    });
+
+    const bumpResponse = await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/notes`,
+      payload: {
+        serviceDate: "2026-01-01",
+        mileage: 16_000,
+        note: "Annual inspection — no oil service",
+        source: "dealer",
+      },
+    });
+
+    expect(bumpResponse.statusCode).toBe(201);
+    const bumpBody = bumpResponse.json() as {
+      nowQueue: { taskId: string; status: string; ruleId?: string }[];
+    };
+
+    const pendingTask = bumpBody.nowQueue.find(
+      (item) => item.status === "pending" && item.ruleId?.startsWith("schedule.policy."),
+    );
+    expect(pendingTask).toBeDefined();
+
+    await app.inject({
+      method: "POST",
+      url: `/api/tasks/${pendingTask!.taskId}/decide`,
+      payload: { vehicleId: vehicle.id, decision: "dismiss" },
+    });
+
+    const refreshResponse = await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/now/refresh`,
+    });
+
+    expect(refreshResponse.statusCode).toBe(200);
+    const refreshBody = refreshResponse.json() as {
+      created: boolean;
+      nowQueue: { status: string; ruleId?: string }[];
+    };
+
+    expect(refreshBody.created).toBe(true);
+    expect(
+      refreshBody.nowQueue.some(
+        (item) => item.status === "pending" && item.ruleId?.startsWith("schedule.policy."),
+      ),
+    ).toBe(true);
+  });
 });
