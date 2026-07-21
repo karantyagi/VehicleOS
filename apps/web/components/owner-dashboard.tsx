@@ -10,6 +10,9 @@ import { ResaleReportExport } from "./resale-report-export";
 import { VoiceMemoryPanel } from "./voice-memory-panel";
 import { SeasonalPromptsPanel } from "./seasonal-prompts-panel";
 import { ManualKnowledgePanel } from "./manual-knowledge-panel";
+import { MaintenanceTimelinePanel } from "./maintenance-timeline-panel";
+import { NowQueuePanel } from "./now-queue-panel";
+import { OwnerServiceNotePanel } from "./owner-service-note-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 
 type Vehicle = OnboardingVehicle;
@@ -22,6 +25,7 @@ type TimelineEntry = {
   lineItems: string[];
   total: string;
   evidenceIds: string[];
+  source?: "receipt" | "voice" | "owner_note" | "dealer";
 };
 
 type QueueItem = {
@@ -54,6 +58,7 @@ export function OwnerDashboard() {
   const [captureError, setCaptureError] = useState("");
   const [quoteAnalyses, setQuoteAnalyses] = useState<QuoteAnalysisView[]>([]);
   const [evidenceVault, setEvidenceVault] = useState<EvidenceVaultItem[]>([]);
+  const [isRefreshingNow, setIsRefreshingNow] = useState(false);
   const [knowledgeSchedule, setKnowledgeSchedule] = useState<
     { serviceName: string; intervalMiles?: number; manualTitle: string }[]
   >([]);
@@ -196,6 +201,44 @@ export function OwnerDashboard() {
     }
   };
 
+  const refreshNowQueue = async () => {
+    if (!vehicle) return;
+    setIsRefreshingNow(true);
+    try {
+      const response = await fetch(`${apiBase}/api/vehicles/${vehicle.id}/now/refresh`, {
+        method: "POST",
+      });
+      const body = (await response.json()) as {
+        created: boolean;
+        nowQueue: QueueItem[];
+        recommendation?: { title: string };
+        skippedReason?: string;
+        error?: string;
+      };
+      if (!response.ok) {
+        setStatus(body.error ?? "Could not refresh recommendations.");
+        return;
+      }
+      setNowQueue(body.nowQueue);
+      if (body.created && body.recommendation) {
+        setStatus(`Added to Now queue: ${body.recommendation.title}`);
+      } else if (body.skippedReason === "already_pending") {
+        setStatus("A matching recommendation is already in your Now queue.");
+      } else {
+        setStatus("No new maintenance actions due right now.");
+      }
+    } finally {
+      setIsRefreshingNow(false);
+    }
+  };
+
+  const openEvidence = (documentId: string) => {
+    if (!vehicle) return;
+    void openEvidenceDocument({ apiBase, vehicleId: vehicle.id, documentId }).then((result) => {
+      if (!result.ok) setStatus(result.error);
+    });
+  };
+
   if (isLoading) {
     return (
       <section className="onboarding-panel">
@@ -213,13 +256,35 @@ export function OwnerDashboard() {
     <>
       <section className="hero">
         <p className="eyebrow">Owners · Early access</p>
-        <h1>Receipt → recommendation → approve</h1>
-        <p>{status || "Upload a receipt, confirm fields, then approve the recommended task."}</p>
+        <h1>Your maintenance operator</h1>
+        <p>{status || "Capture evidence, review your timeline, and decide what to do next."}</p>
       </section>
 
       <section className="vehicle-summary panel">
         <h2>Your vehicle</h2>
         <p>{vehicleLabel}</p>
+      </section>
+
+      <section className="operator-grid">
+        <article className="panel panel-wide">
+          <h2>Now queue</h2>
+          <NowQueuePanel
+            items={nowQueue}
+            disabled={isBusy}
+            isRefreshing={isRefreshingNow}
+            onDecide={decide}
+            onRefresh={() => void refreshNowQueue()}
+          />
+        </article>
+
+        <article className="panel panel-wide">
+          <h2>Maintenance timeline</h2>
+          <MaintenanceTimelinePanel
+            entries={timeline}
+            disabled={isBusy}
+            onOpenEvidence={openEvidence}
+          />
+        </article>
       </section>
 
       <section className="golden-grid">
@@ -295,7 +360,28 @@ export function OwnerDashboard() {
         </article>
 
         <article className="panel">
-          <h2>1 · Receipt</h2>
+          <h2>Owner note</h2>
+          <OwnerServiceNotePanel
+            vehicleId={vehicle.id}
+            apiBase={apiBase}
+            defaultMileage={vehicle.currentMileage}
+            disabled={isBusy}
+            onError={(message) => setStatus(message)}
+            onSubmitted={(body) => {
+              setTimeline(body.timeline as TimelineEntry[]);
+              setNowQueue(body.nowQueue as QueueItem[]);
+              setStatus(
+                body.conflict
+                  ? "Conflict detected — review the verification task in your Now queue."
+                  : "Owner note saved to your timeline.",
+              );
+              void loadVehicleState(vehicle);
+            }}
+          />
+        </article>
+
+        <article className="panel">
+          <h2>Receipt capture</h2>
           <ReceiptCapture
             vehicleId={vehicle.id}
             apiBase={apiBase}
@@ -378,96 +464,6 @@ export function OwnerDashboard() {
             evidenceCount={evidenceVault.length}
             onError={(message) => setStatus(message)}
           />
-        </article>
-
-        <article className="panel">
-          <h2>2 · Timeline</h2>
-          {timeline.length === 0 ? (
-            <p className="muted">No services recorded yet.</p>
-          ) : (
-            <ul className="timeline-list">
-              {timeline.map((entry) => (
-                <li key={entry.serviceId}>
-                  <strong>{entry.serviceDate}</strong> · {entry.mileage.toLocaleString()} mi · {entry.shop}
-                  <span>{entry.lineItems.join(", ")}</span>
-                  {entry.evidenceIds.length > 0 ? (
-                    <div className="timeline-evidence">
-                      {entry.evidenceIds.map((documentId) => (
-                        <button
-                          key={documentId}
-                          type="button"
-                          className="link-button"
-                          disabled={isBusy}
-                          onClick={() =>
-                            void openEvidenceDocument({ apiBase, vehicleId: vehicle.id, documentId }).then(
-                              (result) => {
-                                if (!result.ok) setStatus(result.error);
-                              },
-                            )
-                          }
-                        >
-                          View receipt evidence
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          )}
-        </article>
-
-        <article className="panel">
-          <h2>3 · Now queue</h2>
-          {nowQueue.length === 0 ? (
-            <p className="muted">No tasks yet.</p>
-          ) : (
-            <ul className="queue-list">
-              {nowQueue.map((item) => (
-                <li
-                  key={item.taskId}
-                  className={
-                    item.taskKind === "verification"
-                      ? "queue-verification"
-                      : item.ruleId?.startsWith("seasonal.policy.")
-                        ? "queue-seasonal"
-                        : undefined
-                  }
-                >
-                  <div>
-                    <strong>{item.title}</strong>
-                    <p>{item.reason}</p>
-                    <span
-                      className={`badge ${
-                        item.taskKind === "verification"
-                          ? "badge-warning"
-                          : item.ruleId?.startsWith("seasonal.policy.")
-                            ? "badge-seasonal"
-                            : ""
-                      }`}
-                    >
-                      {item.ruleId?.startsWith("seasonal.policy.") ? "seasonal" : item.status}
-                    </span>
-                  </div>
-                  {item.status === "pending" ? (
-                    <div className="actions">
-                      <button type="button" disabled={isBusy} onClick={() => decide(item.taskId, "approve")}>
-                        {item.taskKind === "verification" ? "Mark resolved" : "Approve"}
-                      </button>
-                      <button type="button" disabled={isBusy} onClick={() => decide(item.taskId, "dismiss")}>
-                        Dismiss
-                      </button>
-                      {item.taskKind !== "verification" ? (
-                        <button type="button" disabled={isBusy} onClick={() => decide(item.taskId, "snooze")}>
-                          Snooze
-                        </button>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          )}
         </article>
       </section>
     </>

@@ -86,6 +86,90 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
+.golden-path .operator-grid {
+  display: grid;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.golden-path .panel-wide {
+  grid-column: 1 / -1;
+}
+
+.golden-path .timeline-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.golden-path .timeline-meta {
+  margin: 4px 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.golden-path .now-queue-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.golden-path .now-queue-toolbar button {
+  white-space: nowrap;
+}
+
+.golden-path .now-queue-recent {
+  margin-top: 16px;
+}
+
+.golden-path .queue-list-compact li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.golden-path .owner-note-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.badge-receipt {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-voice {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.badge-owner {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-dealer {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.badge-oem {
+  background: #cffafe;
+  color: #0e7490;
+}
+
+.queue-oem {
+  border-left: 3px solid #0891b2;
+}
+
+.queue-schedule {
+  border-left: 3px solid var(--accent);
+}
+
 .vehicle-summary {
   margin-bottom: 20px;
 }

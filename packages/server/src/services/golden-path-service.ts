@@ -5,6 +5,7 @@ import {
   confirmServiceWithConflictCheck,
   decideTask,
   foldEvents,
+  refreshMaintenanceRecommendation,
   type EventStore,
   type ExtractedServiceFields,
   type IngestChannel,
@@ -88,6 +89,19 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
     async decideOnTask(input: { vehicleId: string; taskId: string; decision: TaskDecision }) {
       await decideTask({ eventStore, ...input });
       return getVehicleState(input.vehicleId);
+    },
+
+    async refreshMaintenanceRecommendation(input: { vehicleId: string }) {
+      const result = await refreshMaintenanceRecommendation({
+        eventStore,
+        policyEngine,
+        vehicleId: input.vehicleId,
+      });
+      const snapshot = await getVehicleState(input.vehicleId);
+      return {
+        ...result,
+        state: snapshot.state,
+      };
     },
   };
 };

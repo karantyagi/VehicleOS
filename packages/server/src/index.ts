@@ -16,5 +16,7 @@ export { exportResaleReport, type ExportFormat, type ExportHandlerResponse } fro
 export { submitVoiceMemory } from "./http/voice-handlers.js";
 export { refreshSeasonalPrompts } from "./http/seasonal-handlers.js";
 export { confirmManualSchedule, previewManualSchedule } from "./http/manual-handlers.js";
+export { submitOwnerServiceNote } from "./http/note-handlers.js";
+export { refreshNowQueue } from "./http/now-handlers.js";
 export { InMemoryVehicleRepository } from "./repositories/in-memory-vehicle-repository.js";
 export type { VehicleRepositoryLike } from "./types/repositories.js";

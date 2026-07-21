@@ -4,7 +4,7 @@ import { detectServiceConflict } from "../conflicts/detect-service-conflict.js";
 import { foldEvents } from "../projections/apply.js";
 import type { PolicyEngine } from "../policy/policy-engine.js";
 import type { EventStore } from "../ports/event-store.js";
-import type { TaskDecision } from "../events/catalog.js";
+import type { ServiceRecordSource, TaskDecision } from "../events/catalog.js";
 
 export type RecordServiceInput = {
   vehicleId: string;
@@ -17,6 +17,7 @@ export type RecordServiceInput = {
   evidenceIds: string[];
   documentId?: string;
   correlationId?: string;
+  source?: ServiceRecordSource;
 };
 
 export type GoldenPathResult = {
@@ -68,6 +69,7 @@ export const recordServiceAndRecommend = async (deps: {
       total: input.total,
       evidenceIds: input.evidenceIds,
       documentId: input.documentId,
+      source: input.source,
     },
     correlationId,
   });

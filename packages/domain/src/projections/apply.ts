@@ -46,6 +46,7 @@ export const applyEvent = (
         lineItems: event.payload.lineItems,
         total: event.payload.total,
         evidenceIds: event.payload.evidenceIds,
+        source: event.payload.source,
       };
 
       return {
