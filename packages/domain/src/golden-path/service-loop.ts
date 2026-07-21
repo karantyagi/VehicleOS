@@ -111,6 +111,7 @@ export const recordServiceAndRecommend = async (deps: {
         reason: recommendation.reason,
         status: "pending",
         taskKind: "recommendation",
+        ruleId: recommendation.ruleId,
       },
       causationId: recommendationEvent.id,
       correlationId,

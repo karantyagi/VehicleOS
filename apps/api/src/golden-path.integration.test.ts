@@ -362,4 +362,51 @@ Cabin air filter $59.00`,
     expect(stateBody.timeline).toHaveLength(1);
     expect(stateBody.evidenceVault.some((entry) => entry.channel === "voice")).toBe(true);
   });
+
+  it("creates rules-driven seasonal prompts for the selected climate context", async () => {
+    const app = await appPromise;
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/api/vehicles",
+      payload: {
+        vin: "TEST-VIN-SEASONAL",
+        year: 2019,
+        make: "Subaru",
+        model: "Outback",
+        currentMileage: 72_000,
+      },
+    });
+
+    expect(createResponse.statusCode).toBe(201);
+    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+
+    const refreshResponse = await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/seasonal/refresh`,
+      payload: { climateZone: "cold", referenceDate: "2026-01-15T12:00:00.000Z" },
+    });
+
+    expect(refreshResponse.statusCode).toBe(200);
+    const refreshBody = refreshResponse.json() as {
+      created: { ruleId: string; title: string }[];
+      nowQueue: { ruleId?: string; status: string }[];
+    };
+
+    expect(refreshBody.created.length).toBeGreaterThan(0);
+    expect(
+      refreshBody.nowQueue.some(
+        (item) => item.ruleId?.startsWith("seasonal.policy.") && item.status === "pending",
+      ),
+    ).toBe(true);
+
+    const duplicateRefresh = await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/seasonal/refresh`,
+      payload: { climateZone: "cold", referenceDate: "2026-01-15T12:00:00.000Z" },
+    });
+
+    const duplicateBody = duplicateRefresh.json() as { created: unknown[] };
+    expect(duplicateBody.created).toHaveLength(0);
+  });
 });

@@ -583,6 +583,24 @@ article h2,
   resize: vertical;
 }
 
+.seasonal-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.seasonal-panel select {
+  width: 100%;
+}
+
+.queue-seasonal {
+  border-left: 3px solid #2563eb;
+}
+
+.badge-seasonal {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
 .quote-result {
   display: grid;
   gap: 10px;
