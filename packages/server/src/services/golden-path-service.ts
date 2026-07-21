@@ -2,9 +2,9 @@ import {
   EVENT_TYPES,
   EVENT_VERSIONS,
   StubPolicyEngine,
+  confirmServiceWithConflictCheck,
   decideTask,
   foldEvents,
-  recordServiceAndRecommend,
   type EventStore,
   type ExtractedServiceFields,
   type PolicyEngine,
@@ -79,7 +79,7 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
     },
 
     async confirmService(input: RecordServiceInput) {
-      return recordServiceAndRecommend({ eventStore, policyEngine, input });
+      return confirmServiceWithConflictCheck({ eventStore, policyEngine, input });
     },
 
     getVehicleState,

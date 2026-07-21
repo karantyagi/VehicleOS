@@ -71,4 +71,64 @@ describe("golden path API", () => {
       decideBody.nowQueue.find((item) => item.taskId === pendingTask!.taskId)?.status,
     ).not.toBe("pending");
   });
+
+  it("creates a verification task when receipt mileage regresses", async () => {
+    const app = await appPromise;
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/api/vehicles",
+      payload: {
+        vin: "TEST-VIN-2",
+        year: 2020,
+        make: "Toyota",
+        model: "Camry",
+        currentMileage: 50_000,
+      },
+    });
+
+    expect(createResponse.statusCode).toBe(201);
+    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+
+    const firstReceipt = await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/receipts`,
+      payload: {
+        shop: "Dealer",
+        serviceDate: "2026-01-10",
+        mileage: 50_500,
+        lineItems: ["Oil change"],
+        total: "$55.00",
+      },
+    });
+
+    expect(firstReceipt.statusCode).toBe(201);
+
+    const conflictReceipt = await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/receipts`,
+      payload: {
+        shop: "Quick Lube",
+        serviceDate: "2026-02-01",
+        mileage: 49_900,
+        lineItems: ["Oil change"],
+        total: "$49.00",
+      },
+    });
+
+    expect(conflictReceipt.statusCode).toBe(409);
+    const conflictBody = conflictReceipt.json() as {
+      conflict: boolean;
+      timeline: unknown[];
+      nowQueue: { taskKind?: string; status: string }[];
+    };
+
+    expect(conflictBody.conflict).toBe(true);
+    expect(conflictBody.timeline).toHaveLength(1);
+    expect(
+      conflictBody.nowQueue.some(
+        (item) => item.taskKind === "verification" && item.status === "pending",
+      ),
+    ).toBe(true);
+  });
 });
