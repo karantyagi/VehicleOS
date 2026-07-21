@@ -5,15 +5,19 @@ import { getApiBase } from "../lib/api-base";
 import { OnboardingWizard, type OnboardingVehicle } from "./onboarding-wizard";
 import { ReceiptCapture, type UploadedReceipt } from "./receipt-capture";
 import { QuoteAnalysisPanel, type QuoteAnalysisView } from "./quote-analysis-panel";
+import { EvidenceVaultPanel, type EvidenceVaultItem } from "./evidence-vault-panel";
+import { openEvidenceDocument } from "../lib/evidence-access";
 
 type Vehicle = OnboardingVehicle;
 
 type TimelineEntry = {
+  serviceId: string;
   shop: string;
   serviceDate: string;
   mileage: number;
   lineItems: string[];
   total: string;
+  evidenceIds: string[];
 };
 
 type QueueItem = {
@@ -44,6 +48,7 @@ export function OwnerDashboard() {
   const [uploadedReceipt, setUploadedReceipt] = useState<UploadedReceipt | null>(null);
   const [captureError, setCaptureError] = useState("");
   const [quoteAnalyses, setQuoteAnalyses] = useState<QuoteAnalysisView[]>([]);
+  const [evidenceVault, setEvidenceVault] = useState<EvidenceVaultItem[]>([]);
 
   const vehicleLabel = useMemo(() => {
     if (!vehicle) return null;
@@ -59,12 +64,14 @@ export function OwnerDashboard() {
         timeline: TimelineEntry[];
         nowQueue: QueueItem[];
         quoteAnalyses?: QuoteAnalysisView[];
+        evidenceVault?: EvidenceVaultItem[];
         currentMileage?: number;
       };
 
       setTimeline(body.timeline);
       setNowQueue(body.nowQueue);
       setQuoteAnalyses(body.quoteAnalyses ?? []);
+      setEvidenceVault(body.evidenceVault ?? []);
       if (body.currentMileage && body.currentMileage > nextVehicle.currentMileage) {
         setVehicle({ ...nextVehicle, currentMileage: body.currentMileage });
       }
@@ -270,15 +277,47 @@ export function OwnerDashboard() {
         </article>
 
         <article className="panel">
+          <h2>Evidence vault</h2>
+          <p className="muted">Immutable receipt artifacts linked to your vehicle history.</p>
+          <EvidenceVaultPanel
+            vehicleId={vehicle.id}
+            apiBase={apiBase}
+            items={evidenceVault}
+            linkedDocumentIds={timeline.flatMap((entry) => entry.evidenceIds)}
+          />
+        </article>
+
+        <article className="panel">
           <h2>2 · Timeline</h2>
           {timeline.length === 0 ? (
             <p className="muted">No services recorded yet.</p>
           ) : (
             <ul className="timeline-list">
               {timeline.map((entry) => (
-                <li key={`${entry.serviceDate}-${entry.mileage}`}>
+                <li key={entry.serviceId}>
                   <strong>{entry.serviceDate}</strong> · {entry.mileage.toLocaleString()} mi · {entry.shop}
                   <span>{entry.lineItems.join(", ")}</span>
+                  {entry.evidenceIds.length > 0 ? (
+                    <div className="timeline-evidence">
+                      {entry.evidenceIds.map((documentId) => (
+                        <button
+                          key={documentId}
+                          type="button"
+                          className="link-button"
+                          disabled={isBusy}
+                          onClick={() =>
+                            void openEvidenceDocument({ apiBase, vehicleId: vehicle.id, documentId }).then(
+                              (result) => {
+                                if (!result.ok) setStatus(result.error);
+                              },
+                            )
+                          }
+                        >
+                          View receipt evidence
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                 </li>
               ))}
             </ul>

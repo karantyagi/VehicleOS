@@ -19,6 +19,7 @@ export {
 } from "./events/catalog.js";
 
 export type {
+  EvidenceVaultEntry,
   NowQueueItem,
   QuoteAnalysisEntry,
   ServiceTimelineEntry,

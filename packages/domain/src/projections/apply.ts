@@ -21,6 +21,22 @@ export const applyEvent = (
   event: CatalogDomainEvent,
 ): VehicleProjectionState => {
   switch (event.eventType) {
+    case EVENT_TYPES.DOCUMENT_INGESTED:
+      return {
+        ...state,
+        vehicleId: event.payload.vehicleId,
+        evidenceVault: [
+          ...state.evidenceVault,
+          {
+            documentId: event.payload.documentId,
+            storageKey: event.payload.storageKey,
+            channel: event.payload.channel,
+            ingestedAt: event.createdAt,
+            immutable: true,
+          },
+        ],
+      };
+
     case EVENT_TYPES.SERVICE_RECORDED: {
       const entry: ServiceTimelineEntry = {
         serviceId: event.payload.serviceId,

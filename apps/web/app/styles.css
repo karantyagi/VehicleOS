@@ -621,6 +621,33 @@ article h2,
   border-left: 3px solid #94a3b8;
 }
 
+.evidence-vault-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.evidence-vault-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.evidence-vault-item p {
+  margin: 4px 0 0;
+}
+
+.timeline-evidence {
+  margin-top: 8px;
+}
+
 .queue-verification {
   border-left: 3px solid #f59e0b;
   padding-left: 12px;
