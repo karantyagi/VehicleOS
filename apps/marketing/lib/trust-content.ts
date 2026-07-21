@@ -19,7 +19,6 @@ export const privacySections = [
     title: "Overview",
     paragraphs: [
       "VehicleOS is operational memory for vehicle ownership. During early access we collect only what we need to run the hosted app at app.vehicleos.app — not to sell data or build ad profiles.",
-      "This page describes the Owners path (hosted SaaS). If you self-host the open-core repo, you control your own infrastructure and this page does not apply to that deployment.",
     ],
   },
   {
@@ -109,7 +108,7 @@ export const securitySections = [
     bullets: [
       "Production database credentials and Supabase service keys live in Vercel environment variables — never in the browser.",
       "API routes require a signed-in session; vehicle rows are scoped to your user id on the server.",
-      "The open-core GitHub repo is public; your hosted account data is not.",
+      "The open-core GitHub repo is public for architecture review; your hosted account data is not.",
     ],
   },
   {

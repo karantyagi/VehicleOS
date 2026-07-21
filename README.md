@@ -5,8 +5,8 @@
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fvehicleos.app&label=vehicleos.app)](https://vehicleos.app)
 [![App](https://img.shields.io/website?url=https%3A%2F%2Fapp.vehicleos.app&label=app.vehicleos.app)](https://app.vehicleos.app)
 
-VehicleOS is an AI-native operations platform for long-lived vehicle maintenance and ownership.
-MIT-licensed open core with a planned hosted product layer.
+VehicleOS is **free early access for car owners** at [app.vehicleos.app](https://app.vehicleos.app).
+MIT-licensed public repo for architecture, ADRs, and evals methodology — not a self-host product.
 This repository contains the product code and lightweight architecture artifacts.
 
 ## What this project demonstrates
@@ -21,18 +21,16 @@ This repository contains the product code and lightweight architecture artifacts
 
 **MIT** — see [`LICENSE`](./LICENSE). Showcase code is public for transparency, learning, and contributor review.
 
-**Open core boundary:** This repo is a technical whitepaper with representative code — not the full tuned commercial engine. See [`docs/open-core-boundary.md`](./docs/open-core-boundary.md).
-
-The commercial product is the **hosted service** (managed ops, notifications, tuned intelligence) — open showcase + cloud, same pattern as PostHog, Supabase, Cal.com.
+**Public repo:** Architecture showcase — see [`docs/open-core-boundary.md`](./docs/open-core-boundary.md). **Product:** hosted early access at `app.vehicleos.app`.
 
 
 ## Public URLs
 
 | URL | App | Purpose |
 |-----|-----|---------|
-| [vehicleos.app](https://vehicleos.app) | `apps/marketing` | Product landing page (live) |
-| [app.vehicleos.app](https://app.vehicleos.app) | `apps/web` | Product app — Owner shell (early access) |
-| GitHub (this repo) | — | Living case study — code, ADRs, evals |
+| [app.vehicleos.app](https://app.vehicleos.app) | `apps/web` | **Product** — free early access (sign in) |
+| [vehicleos.app](https://vehicleos.app) | `apps/marketing` | Landing page |
+| GitHub (this repo) | — | ADRs, domain model, evals — architecture showcase |
 
 ## Repository layout
 
@@ -51,7 +49,7 @@ db/
   migrations/
   seeds/
 infra/
-  docker/     Local / self-host path (open core)
+  docker/     Local dev only (not a supported self-host product)
   terraform/
 docs/
   01-architecture/
@@ -108,6 +106,7 @@ Vercel + Supabase is the default hosted stack for BUILD freeze. Railway/Fly are 
 - Vercel CD: [`docs/deployment/vercel-setup.md`](./docs/deployment/vercel-setup.md) — preview + production deploys
 - Supabase Postgres: [`docs/deployment/supabase-setup.md`](./docs/deployment/supabase-setup.md) — hosted Owners DB + env vars
 - ADR-004: [`docs-lite/adr/ADR-004-phase0-hosted-deployment.md`](./docs-lite/adr/ADR-004-phase0-hosted-deployment.md) — Phase 0 hosted stack decision
+- ADR-005: [`docs-lite/adr/ADR-005-owners-only-positioning.md`](./docs-lite/adr/ADR-005-owners-only-positioning.md) — Owners-only GTM
 - ADRs: `docs-lite/adr/`
 - System architecture: `docs/01-architecture/system-architecture.md`
 - MVP spec: `docs/03-mvp-spec/mvp-technical-spec.md`

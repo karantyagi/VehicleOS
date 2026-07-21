@@ -3,8 +3,8 @@ import {
   adrs,
   aiNativeBlurb,
   coreLoopSteps,
+  earlyAccessContent,
   heroContent,
-  productPathsContent,
   siteConfig,
   statusRows,
   trustSignals,
@@ -69,20 +69,6 @@ function StatusBadge({ status }: { status: "shipped" | "in-progress" | "planned"
   );
 }
 
-function ExternalIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-      <path
-        d="M4 10L10 4M10 4H5M10 4V9"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 export default function HomePage() {
   return (
     <div className="page">
@@ -93,12 +79,12 @@ export default function HomePage() {
             {siteConfig.name}
           </a>
           <nav className="nav-links" aria-label="Primary">
-            <a href="#paths">Owners &amp; Builders</a>
+            <a href="#early-access">Early access</a>
             <a href="#loop">How it works</a>
             <a href="#architecture">Architecture</a>
             <a href="#status">Roadmap</a>
-            <a className="nav-cta" href="#demo">
-              Watch demo
+            <a className="nav-cta" href={siteConfig.appUrl}>
+              Open the app
             </a>
           </nav>
         </div>
@@ -113,7 +99,7 @@ export default function HomePage() {
                 <span className="pill-dot" />
                 In active development
               </span>
-              <span className="pill">MIT open core</span>
+              <span className="pill">Free early access</span>
               <span className="pill">Event-sourced</span>
               <span className="pill">Rules-first AI</span>
             </div>
@@ -134,11 +120,11 @@ export default function HomePage() {
             <p className="hero-proof">{heroContent.oneLiner}</p>
 
             <div className="cta-row">
-              <a className="btn btn-primary" href="#paths">
-                Choose your path
+              <a className="btn btn-primary" href={siteConfig.appUrl}>
+                Get early access
               </a>
-              <a className="btn btn-secondary" href="#architecture">
-                See architecture
+              <a className="btn btn-secondary" href="#demo">
+                Watch demo
               </a>
             </div>
           </div>
@@ -153,51 +139,36 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="section shell" id="paths">
+        <section className="section shell" id="early-access">
           <div className="section-header-centered">
-            <span className="section-label">{productPathsContent.sectionLabel}</span>
-            <h2>{productPathsContent.sectionTitle}</h2>
-            <p className="section-desc">{productPathsContent.sectionDesc}</p>
+            <span className="section-label">{earlyAccessContent.sectionLabel}</span>
+            <h2>{earlyAccessContent.sectionTitle}</h2>
+            <p className="section-desc">{earlyAccessContent.sectionDesc}</p>
+            <p className="section-desc">{earlyAccessContent.wedge}</p>
           </div>
 
-          <div className="path-grid">
-            {productPathsContent.paths.map((path) => (
-              <article
-                className={`path-card path-card-${path.id}`}
-                key={path.id}
-                id={path.id}
+          <article className="path-card path-card-owners path-card-single">
+            <div className="path-card-header">
+              <span className="path-badge path-badge-owners">Owners</span>
+              <span className="path-price">{earlyAccessContent.priceNote}</span>
+            </div>
+            <ul className="path-highlights">
+              {earlyAccessContent.highlights.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+            <div className="path-cta-row">
+              <a
+                className="btn btn-primary path-cta"
+                href={earlyAccessContent.cta.href}
               >
-                <div className="path-card-header">
-                  <span className={`path-badge path-badge-${path.id}`}>{path.badge}</span>
-                  <span className="path-price">{path.priceNote}</span>
-                </div>
-                <h3>{path.title}</h3>
-                <p className="path-tagline">{path.tagline}</p>
-                <p className="path-desc">{path.description}</p>
-                <ul className="path-highlights">
-                  {path.highlights.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-                <div className="path-cta-row">
-                  <a
-                    className={`btn ${path.id === "owners" ? "btn-primary" : "btn-secondary"} path-cta`}
-                    href={path.cta.href}
-                    target={path.id === "builders" ? "_blank" : undefined}
-                    rel={path.id === "builders" ? "noreferrer" : undefined}
-                  >
-                    {path.cta.label}
-                    {path.id === "builders" ? <ExternalIcon /> : null}
-                  </a>
-                  {"ctaSecondary" in path && path.ctaSecondary ? (
-                    <a className="path-cta-secondary" href={path.ctaSecondary.href}>
-                      {path.ctaSecondary.label}
-                    </a>
-                  ) : null}
-                </div>
-              </article>
-            ))}
-          </div>
+                {earlyAccessContent.cta.label}
+              </a>
+              <a className="path-cta-secondary" href={earlyAccessContent.ctaSecondary.href}>
+                {earlyAccessContent.ctaSecondary.label}
+              </a>
+            </div>
+          </article>
         </section>
 
         <PositioningGapSection />
@@ -334,15 +305,14 @@ export default function HomePage() {
         </section>
 
         <section className="cta-band shell">
-          <h2>See the architecture — or run it yourself</h2>
-          <p>Free early access for Owners. MIT open core for Builders.</p>
+          <h2>Try free early access</h2>
+          <p>Sign in at app.vehicleos.app — or explore the architecture and ADRs below.</p>
           <div className="cta-row">
-            <a className="btn btn-primary" href="#demo">
-              Watch demo
+            <a className="btn btn-primary" href={siteConfig.appUrl}>
+              Open the app
             </a>
-            <a className="btn btn-secondary" href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
-              View on GitHub
-              <ExternalIcon />
+            <a className="btn btn-secondary" href="#architecture">
+              See architecture
             </a>
           </div>
         </section>
@@ -356,15 +326,15 @@ export default function HomePage() {
               {siteConfig.name}
             </a>
             <p>
-              Operational memory for vehicle ownership. Owners use the app. Builders run
-              the open core.
+              Operational memory for vehicle ownership. Free early access at{" "}
+              {siteConfig.appUrl.replace("https://", "")}.
             </p>
           </div>
           <div className="footer-col">
             <h3>Product</h3>
             <ul>
-              <li><a href="#paths">Owners</a></li>
-              <li><a href="#paths">Builders</a></li>
+              <li><a href={siteConfig.appUrl}>Early access app</a></li>
+              <li><a href="#early-access">What's included</a></li>
               <li><a href="#demo">Demo</a></li>
               <li><a href="#status">Roadmap</a></li>
             </ul>
@@ -377,11 +347,11 @@ export default function HomePage() {
             </ul>
           </div>
           <div className="footer-col">
-            <h3>Learn</h3>
+            <h3>For engineers</h3>
             <ul>
               <li>
                 <a href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
-                  Documentation
+                  GitHub — ADRs &amp; architecture
                 </a>
               </li>
               <li><a href="#architecture">Architecture</a></li>
@@ -391,17 +361,7 @@ export default function HomePage() {
             <h3>Connect</h3>
             <ul>
               <li>
-                <a href={siteConfig.githubUrl} target="_blank" rel="noreferrer">
-                  GitHub
-                </a>
-              </li>
-              <li>
                 <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>
-              </li>
-              <li>
-                <a href={siteConfig.linkedInUrl} target="_blank" rel="noreferrer">
-                  LinkedIn
-                </a>
               </li>
             </ul>
           </div>
