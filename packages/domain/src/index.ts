@@ -62,3 +62,8 @@ export {
   type VehicleOSResaleReportV1,
 } from "./export/build-resale-report.js";
 export { formatResaleReportMarkdown } from "./export/format-resale-report-markdown.js";
+export {
+  parseVoiceServiceNote,
+  type ParsedVoiceServiceNote,
+  type ParseVoiceServiceNoteInput,
+} from "./voice/parse-voice-service-note.js";

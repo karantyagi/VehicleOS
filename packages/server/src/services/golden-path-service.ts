@@ -7,6 +7,7 @@ import {
   foldEvents,
   type EventStore,
   type ExtractedServiceFields,
+  type IngestChannel,
   type PolicyEngine,
   type RecordServiceInput,
   type TaskDecision,
@@ -34,7 +35,7 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
     async ingestReceipt(input: {
       vehicleId: string;
       storageKey: string;
-      channel?: "receipt_upload" | "photo";
+      channel?: IngestChannel;
     }) {
       const documentId = crypto.randomUUID();
       const correlationId = crypto.randomUUID();

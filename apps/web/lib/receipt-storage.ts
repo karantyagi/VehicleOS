@@ -2,10 +2,12 @@ import { createAdminClient } from "./supabase/admin";
 
 export const RECEIPT_BUCKET = "receipts";
 export const MAX_RECEIPT_BYTES = 10 * 1024 * 1024;
+export const MAX_VOICE_BYTES = 5 * 1024 * 1024;
 
 export type ReceiptUploadChannel = "photo" | "receipt_upload";
+export type VoiceUploadChannel = "voice";
 
-const ALLOWED_CONTENT_TYPES = new Set([
+const ALLOWED_RECEIPT_CONTENT_TYPES = new Set([
   "image/jpeg",
   "image/png",
   "image/webp",
@@ -14,19 +16,30 @@ const ALLOWED_CONTENT_TYPES = new Set([
   "application/pdf",
 ]);
 
+const ALLOWED_VOICE_CONTENT_TYPES = new Set([
+  "audio/webm",
+  "audio/webm;codecs=opus",
+  "audio/mpeg",
+  "audio/mp4",
+  "text/plain",
+]);
+
 export const isReceiptStorageConfigured = (): boolean =>
   process.env.AUTH_DISABLED !== "true" && Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 export const isAllowedReceiptType = (contentType: string): boolean =>
-  ALLOWED_CONTENT_TYPES.has(contentType);
+  ALLOWED_RECEIPT_CONTENT_TYPES.has(contentType);
+
+export const isAllowedVoiceType = (contentType: string): boolean =>
+  ALLOWED_VOICE_CONTENT_TYPES.has(contentType);
 
 export const inferReceiptChannel = (contentType: string): ReceiptUploadChannel =>
   contentType === "application/pdf" ? "receipt_upload" : "photo";
 
-export const sanitizeReceiptFileName = (fileName: string): string => {
-  const base = fileName.split(/[/\\]/).pop() ?? "receipt";
+export const sanitizeEvidenceFileName = (fileName: string, fallback: string): string => {
+  const base = fileName.split(/[/\\]/).pop() ?? fallback;
   const cleaned = base.replace(/[^\w.-]+/g, "-").replace(/-+/g, "-").slice(0, 120);
-  return cleaned.length > 0 ? cleaned : "receipt";
+  return cleaned.length > 0 ? cleaned : fallback;
 };
 
 export const buildReceiptStorageKey = (input: {
@@ -34,7 +47,16 @@ export const buildReceiptStorageKey = (input: {
   vehicleId: string;
   fileName: string;
 }): string => {
-  const safeName = sanitizeReceiptFileName(input.fileName);
+  const safeName = sanitizeEvidenceFileName(input.fileName, "receipt");
+  return `${input.userId}/${input.vehicleId}/${Date.now()}-${safeName}`;
+};
+
+export const buildVoiceStorageKey = (input: {
+  userId: string;
+  vehicleId: string;
+  fileName: string;
+}): string => {
+  const safeName = sanitizeEvidenceFileName(input.fileName, "voice-note.webm");
   return `${input.userId}/${input.vehicleId}/${Date.now()}-${safeName}`;
 };
 
