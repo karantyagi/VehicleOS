@@ -5,6 +5,7 @@ export const EVENT_TYPES = {
   DOCUMENT_EXTRACTION_COMPLETED: "document.extraction.completed",
   SERVICE_RECORDED: "service.recorded",
   CONFLICT_DETECTED: "conflict.detected",
+  QUOTE_ANALYZED: "quote.analyzed",
   MAINTENANCE_RECOMMENDATION_CREATED: "maintenance.recommendation.created",
   TASK_CREATED: "task.created",
   TASK_DECIDED: "task.decided",
@@ -82,6 +83,29 @@ export type ConflictDetectedPayload = {
   lastServiceDate?: string;
 };
 
+export type QuoteLineVerdict = "fair" | "high" | "optional" | "necessary" | "unknown";
+
+export type QuoteAnalyzedLine = {
+  description: string;
+  quotedAmount: number;
+  fairMin: number;
+  fairMax: number;
+  verdict: QuoteLineVerdict;
+  reason: string;
+};
+
+export type QuoteAnalyzedPayload = {
+  vehicleId: string;
+  quoteId: string;
+  shop?: string;
+  rawText: string;
+  lines: QuoteAnalyzedLine[];
+  totalQuoted: number;
+  totalFairHigh: number;
+  summary: string;
+  analyzedAt: string;
+};
+
 export type TaskDecision = "approve" | "dismiss" | "snooze";
 
 export type TaskDecidedPayload = {
@@ -96,6 +120,7 @@ export type DomainEventPayloadMap = {
   [EVENT_TYPES.DOCUMENT_EXTRACTION_COMPLETED]: DocumentExtractionCompletedPayload;
   [EVENT_TYPES.SERVICE_RECORDED]: ServiceRecordedPayload;
   [EVENT_TYPES.CONFLICT_DETECTED]: ConflictDetectedPayload;
+  [EVENT_TYPES.QUOTE_ANALYZED]: QuoteAnalyzedPayload;
   [EVENT_TYPES.MAINTENANCE_RECOMMENDATION_CREATED]: MaintenanceRecommendationCreatedPayload;
   [EVENT_TYPES.TASK_CREATED]: TaskCreatedPayload;
   [EVENT_TYPES.TASK_DECIDED]: TaskDecidedPayload;
@@ -110,6 +135,7 @@ export const EVENT_VERSIONS: Record<DomainEventType, number> = {
   [EVENT_TYPES.DOCUMENT_EXTRACTION_COMPLETED]: 1,
   [EVENT_TYPES.SERVICE_RECORDED]: 1,
   [EVENT_TYPES.CONFLICT_DETECTED]: 1,
+  [EVENT_TYPES.QUOTE_ANALYZED]: 1,
   [EVENT_TYPES.MAINTENANCE_RECOMMENDATION_CREATED]: 1,
   [EVENT_TYPES.TASK_CREATED]: 1,
   [EVENT_TYPES.TASK_DECIDED]: 1,

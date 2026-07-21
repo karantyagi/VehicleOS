@@ -102,6 +102,7 @@ export const getVehicleState = async (
     vehicle: owned.vehicle,
     timeline: snapshot.state.timeline,
     nowQueue: snapshot.state.nowQueue,
+    quoteAnalyses: snapshot.state.quoteAnalyses,
     currentMileage: snapshot.state.currentMileage,
     eventCount: snapshot.events.length,
   });

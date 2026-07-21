@@ -21,11 +21,29 @@ export type NowQueueItem = {
   verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE";
 };
 
+export type QuoteAnalysisEntry = {
+  quoteId: string;
+  shop?: string;
+  summary: string;
+  totalQuoted: number;
+  totalFairHigh: number;
+  analyzedAt: string;
+  lines: {
+    description: string;
+    quotedAmount: number;
+    fairMin: number;
+    fairMax: number;
+    verdict: "fair" | "high" | "optional" | "necessary" | "unknown";
+    reason: string;
+  }[];
+};
+
 export type VehicleProjectionState = {
   vehicleId: string;
   currentMileage: number;
   timeline: ServiceTimelineEntry[];
   nowQueue: NowQueueItem[];
+  quoteAnalyses: QuoteAnalysisEntry[];
 };
 
 export const createEmptyVehicleState = (vehicleId: string): VehicleProjectionState => ({
@@ -33,4 +51,5 @@ export const createEmptyVehicleState = (vehicleId: string): VehicleProjectionSta
   currentMileage: 0,
   timeline: [],
   nowQueue: [],
+  quoteAnalyses: [],
 });

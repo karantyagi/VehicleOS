@@ -20,6 +20,7 @@ export {
 
 export type {
   NowQueueItem,
+  QuoteAnalysisEntry,
   ServiceTimelineEntry,
   VehicleProjectionState,
 } from "./projections/types.js";
@@ -45,3 +46,11 @@ export {
   type ServiceConfirmResult,
 } from "./golden-path/service-loop.js";
 export { detectServiceConflict, type ServiceConflict } from "./conflicts/detect-service-conflict.js";
+export {
+  analyzeDealerQuote,
+  parseQuoteText,
+  type QuoteAnalysisResult,
+  type QuoteLineAnalysis,
+  type QuoteLineVerdict,
+} from "./quotes/analyze-dealer-quote.js";
+export { recordQuoteAnalysis } from "./quotes/record-quote-analysis.js";

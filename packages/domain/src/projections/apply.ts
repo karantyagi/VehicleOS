@@ -71,6 +71,24 @@ export const applyEvent = (
         ),
       };
 
+    case EVENT_TYPES.QUOTE_ANALYZED:
+      return {
+        ...state,
+        vehicleId: event.payload.vehicleId,
+        quoteAnalyses: [
+          ...state.quoteAnalyses,
+          {
+            quoteId: event.payload.quoteId,
+            shop: event.payload.shop,
+            summary: event.payload.summary,
+            totalQuoted: event.payload.totalQuoted,
+            totalFairHigh: event.payload.totalFairHigh,
+            analyzedAt: event.payload.analyzedAt,
+            lines: event.payload.lines,
+          },
+        ].slice(-5),
+      };
+
     default:
       return state;
   }

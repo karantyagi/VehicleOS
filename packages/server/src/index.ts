@@ -10,5 +10,6 @@ export {
   listVehicles,
   submitReceipt,
 } from "./http/golden-path-handlers.js";
+export { analyzeQuote } from "./http/quote-handlers.js";
 export { InMemoryVehicleRepository } from "./repositories/in-memory-vehicle-repository.js";
 export type { VehicleRepositoryLike } from "./types/repositories.js";

@@ -137,4 +137,48 @@ describe("golden path API", () => {
       ),
     ).toBe(true);
   });
+
+  it("analyzes a pasted dealer quote", async () => {
+    const app = await appPromise;
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/api/vehicles",
+      payload: {
+        vin: "TEST-VIN-QUOTE",
+        year: 2021,
+        make: "Honda",
+        model: "Accord",
+        currentMileage: 40_000,
+      },
+    });
+
+    expect(createResponse.statusCode).toBe(201);
+    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+
+    const quoteResponse = await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/quotes/analyze`,
+      payload: {
+        rawText: `Dealer quote
+Oil change (synthetic) $149.00
+Cabin air filter $59.00`,
+      },
+    });
+
+    expect(quoteResponse.statusCode).toBe(201);
+    const body = quoteResponse.json() as {
+      analysis: { summary: string; lines: { verdict: string }[] };
+    };
+    expect(body.analysis.lines.length).toBeGreaterThan(0);
+    expect(body.analysis.summary.length).toBeGreaterThan(0);
+
+    const stateResponse = await app.inject({
+      method: "GET",
+      url: `/api/vehicles/${vehicle.id}/state`,
+    });
+
+    const stateBody = stateResponse.json() as { quoteAnalyses: unknown[] };
+    expect(stateBody.quoteAnalyses.length).toBe(1);
+  });
 });

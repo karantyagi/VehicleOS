@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getApiBase } from "../lib/api-base";
 import { OnboardingWizard, type OnboardingVehicle } from "./onboarding-wizard";
 import { ReceiptCapture, type UploadedReceipt } from "./receipt-capture";
+import { QuoteAnalysisPanel, type QuoteAnalysisView } from "./quote-analysis-panel";
 
 type Vehicle = OnboardingVehicle;
 
@@ -42,6 +43,7 @@ export function OwnerDashboard() {
   const [form, setForm] = useState(receiptForm);
   const [uploadedReceipt, setUploadedReceipt] = useState<UploadedReceipt | null>(null);
   const [captureError, setCaptureError] = useState("");
+  const [quoteAnalyses, setQuoteAnalyses] = useState<QuoteAnalysisView[]>([]);
 
   const vehicleLabel = useMemo(() => {
     if (!vehicle) return null;
@@ -56,11 +58,13 @@ export function OwnerDashboard() {
       const body = (await response.json()) as {
         timeline: TimelineEntry[];
         nowQueue: QueueItem[];
+        quoteAnalyses?: QuoteAnalysisView[];
         currentMileage?: number;
       };
 
       setTimeline(body.timeline);
       setNowQueue(body.nowQueue);
+      setQuoteAnalyses(body.quoteAnalyses ?? []);
       if (body.currentMileage && body.currentMileage > nextVehicle.currentMileage) {
         setVehicle({ ...nextVehicle, currentMileage: body.currentMileage });
       }
@@ -252,6 +256,17 @@ export function OwnerDashboard() {
           <button type="button" disabled={isBusy || !uploadedReceipt} onClick={submitReceipt}>
             Confirm receipt → run loop
           </button>
+        </article>
+
+        <article className="panel">
+          <h2>Quote check</h2>
+          <QuoteAnalysisPanel
+            vehicleId={vehicle.id}
+            apiBase={apiBase}
+            disabled={isBusy}
+            history={quoteAnalyses}
+            onAnalyzed={(analysis) => setQuoteAnalyses((current) => [...current, analysis].slice(-5))}
+          />
         </article>
 
         <article className="panel">

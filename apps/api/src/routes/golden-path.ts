@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import {
+  analyzeQuote,
   createVehicle,
   decideOnTask,
   getVehicle,
@@ -45,6 +46,19 @@ export const registerGoldenPathRoutes = (app: FastifyInstance, services: ApiServ
         services,
         request.params.vehicleId,
         request.body as Parameters<typeof submitReceipt>[2],
+        authFromRequest(request),
+      );
+      return reply.code(result.status).send(result.body);
+    },
+  );
+
+  app.post<{ Params: { vehicleId: string } }>(
+    "/api/vehicles/:vehicleId/quotes/analyze",
+    async (request, reply) => {
+      const result = await analyzeQuote(
+        services,
+        request.params.vehicleId,
+        request.body as Parameters<typeof analyzeQuote>[2],
         authFromRequest(request),
       );
       return reply.code(result.status).send(result.body);
