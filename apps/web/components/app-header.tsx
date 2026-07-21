@@ -19,6 +19,9 @@ export function AppHeader({ user }: AppHeaderProps) {
       </Link>
       {user ? (
         <div className="header-account">
+          <Link className="header-link" href="/settings">
+            Settings
+          </Link>
           <span className="header-user">{user.email ?? "Signed in"}</span>
           <form action="/auth/signout" method="post">
             <button type="submit" className="header-link button-link">
