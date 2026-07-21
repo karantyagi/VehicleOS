@@ -70,16 +70,47 @@ export class VehicleRepository {
     const row = result.rows[0];
     if (!row) return null;
 
-    return {
-      id: row.id,
-      userId: row.user_id,
-      vin: row.vin,
-      year: row.year,
-      make: row.make,
-      model: row.model,
-      trim: row.trim ?? undefined,
-      currentMileage: row.current_mileage,
-      createdAt: row.created_at.toISOString(),
-    };
+    return mapVehicleRow(row);
+  }
+
+  async listByUserId(userId: string): Promise<VehicleRecord[]> {
+    const result = await this.pool.query<{
+      id: string;
+      user_id: string;
+      vin: string;
+      year: number;
+      make: string;
+      model: string;
+      trim: string | null;
+      current_mileage: number;
+      created_at: Date;
+    }>(
+      `select * from vehicles where user_id = $1 order by created_at asc`,
+      [userId],
+    );
+
+    return result.rows.map(mapVehicleRow);
   }
 }
+
+const mapVehicleRow = (row: {
+  id: string;
+  user_id: string;
+  vin: string;
+  year: number;
+  make: string;
+  model: string;
+  trim: string | null;
+  current_mileage: number;
+  created_at: Date;
+}): VehicleRecord => ({
+  id: row.id,
+  userId: row.user_id,
+  vin: row.vin,
+  year: row.year,
+  make: row.make,
+  model: row.model,
+  trim: row.trim ?? undefined,
+  currentMileage: row.current_mileage,
+  createdAt: row.created_at.toISOString(),
+});

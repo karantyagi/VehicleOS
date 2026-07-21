@@ -4,12 +4,18 @@ import {
   decideOnTask,
   getVehicle,
   getVehicleState,
+  listVehicles,
   submitReceipt,
   type ApiServices,
 } from "@vehicleos/server";
 import { authFromRequest } from "../auth-context.js";
 
 export const registerGoldenPathRoutes = (app: FastifyInstance, services: ApiServices): void => {
+  app.get("/api/vehicles", async (request, reply) => {
+    const result = await listVehicles(services, authFromRequest(request));
+    return reply.code(result.status).send(result.body);
+  });
+
   app.post("/api/vehicles", async (request, reply) => {
     const result = await createVehicle(services, request.body ?? {}, authFromRequest(request));
     return reply.code(result.status).send(result.body);

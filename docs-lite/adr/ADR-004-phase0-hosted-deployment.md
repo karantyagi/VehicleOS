@@ -147,7 +147,7 @@ System architecture doc aligns: *“API: TypeScript service or Next.js server la
 - [ ] Create Supabase VehicleOS project on dedicated account; run migrations
 - [ ] Configure Supabase Auth (Google, GitHub) and Vercel env vars
 - [x] Implement P-2 auth on hosted app (OAuth + protected routes + user-scoped API)
-- [ ] Vehicle onboarding wizard polish (multi-step UI beyond “Add your vehicle”)
+- [x] Vehicle onboarding wizard polish (multi-step UI beyond “Add your vehicle”)
 - [ ] Smoke test golden path on `app.vehicleos.app` with real `DATABASE_URL`
 - [ ] Add RLS policies when multi-user tenancy lands
 - [ ] Document worker deploy ADR amendment when `apps/worker` ships to Railway/Fly

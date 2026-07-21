@@ -66,6 +66,16 @@ export const createVehicle = async (
   return jsonResponse(201, { vehicle });
 };
 
+export const listVehicles = async (
+  services: ApiServices,
+  auth?: AuthContext,
+): Promise<JsonResponse> => {
+  if (!auth?.userId) return unauthorized();
+
+  const vehicles = await services.vehicles.listByUserId(auth.userId);
+  return jsonResponse(200, { vehicles });
+};
+
 export const getVehicle = async (
   services: ApiServices,
   vehicleId: string,
@@ -139,12 +149,28 @@ export const submitReceipt = async (
     correlationId,
   });
 
+  if (result.conflict) {
+    return jsonResponse(409, {
+      conflict: true,
+      documentId,
+      conflictId: result.conflictId,
+      verificationTask: {
+        taskId: result.taskId,
+        title: result.state.nowQueue.at(-1)?.title,
+        reason: result.state.nowQueue.at(-1)?.reason,
+        verificationCode: result.state.nowQueue.at(-1)?.verificationCode,
+      },
+      timeline: result.state.timeline,
+      nowQueue: result.state.nowQueue,
+    });
+  }
+
   return jsonResponse(201, {
     documentId,
-    recommendation: result.recommendation,
-    task: result.task,
-    timeline: result.state.timeline,
-    nowQueue: result.state.nowQueue,
+    recommendation: result.result.recommendation,
+    task: result.result.task,
+    timeline: result.result.state.timeline,
+    nowQueue: result.result.state.nowQueue,
   });
 };
 

@@ -18,4 +18,8 @@ export class InMemoryVehicleRepository {
   async findById(vehicleId: string): Promise<VehicleRecord | null> {
     return this.vehicles.get(vehicleId) ?? null;
   }
+
+  async listByUserId(userId: string): Promise<VehicleRecord[]> {
+    return [...this.vehicles.values()].filter((vehicle) => vehicle.userId === userId);
+  }
 }
