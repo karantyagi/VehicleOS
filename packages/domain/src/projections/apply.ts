@@ -106,6 +106,25 @@ export const applyEvent = (
         ].slice(-5),
       };
 
+    case EVENT_TYPES.KNOWLEDGE_SCHEDULE_RECORDED:
+      return {
+        ...state,
+        vehicleId: event.payload.vehicleId,
+        knowledgeSchedule: [
+          ...state.knowledgeSchedule,
+          ...event.payload.entries.map((entry) => ({
+            entryId: entry.entryId,
+            serviceName: entry.serviceName,
+            intervalMiles: entry.intervalMiles,
+            intervalMonths: entry.intervalMonths,
+            sourceDocumentId: entry.sourceDocumentId,
+            sourcePage: entry.sourcePage,
+            manualTitle: event.payload.manualTitle,
+            recordedAt: event.payload.recordedAt,
+          })),
+        ],
+      };
+
     default:
       return state;
   }

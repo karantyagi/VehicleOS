@@ -409,4 +409,73 @@ Cabin air filter $59.00`,
     const duplicateBody = duplicateRefresh.json() as { created: unknown[] };
     expect(duplicateBody.created).toHaveLength(0);
   });
+
+  it("records OEM manual schedule into knowledge base and opens a due task", async () => {
+    const app = await appPromise;
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/api/vehicles",
+      payload: {
+        vin: "TEST-VIN-MANUAL",
+        year: 2019,
+        make: "Honda",
+        model: "Civic",
+        currentMileage: 12_000,
+      },
+    });
+
+    expect(createResponse.statusCode).toBe(201);
+    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+
+    const previewResponse = await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/manuals/preview`,
+      payload: {},
+    });
+
+    expect(previewResponse.statusCode).toBe(200);
+    const previewBody = previewResponse.json() as {
+      draft: { manualTitle: string; entries: { serviceName: string; intervalMiles?: number }[] };
+    };
+    expect(previewBody.draft.entries.length).toBeGreaterThan(0);
+
+    const confirmResponse = await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/manuals/confirm`,
+      payload: {
+        storageKey: `${TEST_USER_ID}/${vehicle.id}/oem-manual.pdf`,
+        manualTitle: previewBody.draft.manualTitle,
+        entries: previewBody.draft.entries,
+      },
+    });
+
+    expect(confirmResponse.statusCode).toBe(201);
+    const confirmBody = confirmResponse.json() as {
+      entriesRecorded: number;
+      knowledgeSchedule: unknown[];
+      nowQueue: { ruleId?: string; status: string }[];
+    };
+
+    expect(confirmBody.entriesRecorded).toBeGreaterThan(0);
+    expect(confirmBody.knowledgeSchedule.length).toBeGreaterThan(0);
+    expect(
+      confirmBody.nowQueue.some(
+        (item) => item.ruleId?.startsWith("knowledge.policy.") && item.status === "pending",
+      ),
+    ).toBe(true);
+
+    const stateResponse = await app.inject({
+      method: "GET",
+      url: `/api/vehicles/${vehicle.id}/state`,
+    });
+
+    const stateBody = stateResponse.json() as {
+      evidenceVault: { channel: string }[];
+      knowledgeSchedule: unknown[];
+    };
+
+    expect(stateBody.knowledgeSchedule.length).toBeGreaterThan(0);
+    expect(stateBody.evidenceVault.some((entry) => entry.channel === "manual")).toBe(true);
+  });
 });

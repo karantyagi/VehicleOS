@@ -46,6 +46,17 @@ export type QuoteAnalysisEntry = {
   }[];
 };
 
+export type KnowledgeScheduleEntry = {
+  entryId: string;
+  serviceName: string;
+  intervalMiles?: number;
+  intervalMonths?: number;
+  sourceDocumentId: string;
+  sourcePage?: string;
+  manualTitle: string;
+  recordedAt: string;
+};
+
 export type VehicleProjectionState = {
   vehicleId: string;
   currentMileage: number;
@@ -53,6 +64,7 @@ export type VehicleProjectionState = {
   nowQueue: NowQueueItem[];
   quoteAnalyses: QuoteAnalysisEntry[];
   evidenceVault: EvidenceVaultEntry[];
+  knowledgeSchedule: KnowledgeScheduleEntry[];
 };
 
 export const createEmptyVehicleState = (vehicleId: string): VehicleProjectionState => ({
@@ -62,4 +74,5 @@ export const createEmptyVehicleState = (vehicleId: string): VehicleProjectionSta
   nowQueue: [],
   quoteAnalyses: [],
   evidenceVault: [],
+  knowledgeSchedule: [],
 });

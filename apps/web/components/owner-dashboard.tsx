@@ -9,6 +9,7 @@ import { EvidenceVaultPanel, type EvidenceVaultItem } from "./evidence-vault-pan
 import { ResaleReportExport } from "./resale-report-export";
 import { VoiceMemoryPanel } from "./voice-memory-panel";
 import { SeasonalPromptsPanel } from "./seasonal-prompts-panel";
+import { ManualKnowledgePanel } from "./manual-knowledge-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 
 type Vehicle = OnboardingVehicle;
@@ -53,6 +54,9 @@ export function OwnerDashboard() {
   const [captureError, setCaptureError] = useState("");
   const [quoteAnalyses, setQuoteAnalyses] = useState<QuoteAnalysisView[]>([]);
   const [evidenceVault, setEvidenceVault] = useState<EvidenceVaultItem[]>([]);
+  const [knowledgeSchedule, setKnowledgeSchedule] = useState<
+    { serviceName: string; intervalMiles?: number; manualTitle: string }[]
+  >([]);
 
   const vehicleLabel = useMemo(() => {
     if (!vehicle) return null;
@@ -69,6 +73,7 @@ export function OwnerDashboard() {
         nowQueue: QueueItem[];
         quoteAnalyses?: QuoteAnalysisView[];
         evidenceVault?: EvidenceVaultItem[];
+        knowledgeSchedule?: { serviceName: string; intervalMiles?: number; manualTitle: string }[];
         currentMileage?: number;
       };
 
@@ -76,6 +81,7 @@ export function OwnerDashboard() {
       setNowQueue(body.nowQueue);
       setQuoteAnalyses(body.quoteAnalyses ?? []);
       setEvidenceVault(body.evidenceVault ?? []);
+      setKnowledgeSchedule(body.knowledgeSchedule ?? []);
       if (body.currentMileage && body.currentMileage > nextVehicle.currentMileage) {
         setVehicle({ ...nextVehicle, currentMileage: body.currentMileage });
       }
@@ -252,6 +258,40 @@ export function OwnerDashboard() {
               }
             }}
           />
+        </article>
+
+        <article className="panel">
+          <h2>OEM manual</h2>
+          <ManualKnowledgePanel
+            vehicleId={vehicle.id}
+            apiBase={apiBase}
+            vehicle={{ year: vehicle.year, make: vehicle.make, model: vehicle.model }}
+            disabled={isBusy}
+            onError={(message) => setStatus(message)}
+            onConfirmed={(body) => {
+              setNowQueue(body.nowQueue as QueueItem[]);
+              setKnowledgeSchedule(
+                body.knowledgeSchedule as {
+                  serviceName: string;
+                  intervalMiles?: number;
+                  manualTitle: string;
+                }[],
+              );
+              setStatus("OEM schedule saved — knowledge base now feeds your Now queue.");
+              void loadVehicleState(vehicle);
+            }}
+          />
+          {knowledgeSchedule.length > 0 ? (
+            <ul className="knowledge-list">
+              {knowledgeSchedule.slice(-4).map((entry) => (
+                <li key={`${entry.manualTitle}-${entry.serviceName}`}>
+                  <strong>{entry.serviceName}</strong>
+                  {entry.intervalMiles ? ` · every ${entry.intervalMiles.toLocaleString()} mi` : ""}
+                  <span>{entry.manualTitle}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </article>
 
         <article className="panel">

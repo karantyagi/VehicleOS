@@ -601,6 +601,39 @@ article h2,
   color: #1d4ed8;
 }
 
+.manual-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.manual-schedule-table {
+  display: grid;
+  gap: 10px;
+}
+
+.manual-schedule-row {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--border-subtle, #e5e7eb);
+  border-radius: 8px;
+}
+
+.knowledge-list {
+  margin: 12px 0 0;
+  padding-left: 18px;
+}
+
+.knowledge-list li {
+  margin-bottom: 8px;
+}
+
+.knowledge-list span {
+  display: block;
+  color: var(--text-muted, #6b7280);
+  font-size: 0.875rem;
+}
+
 .quote-result {
   display: grid;
   gap: 10px;

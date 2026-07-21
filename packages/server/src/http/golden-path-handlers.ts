@@ -104,6 +104,7 @@ export const getVehicleState = async (
     nowQueue: snapshot.state.nowQueue,
     quoteAnalyses: snapshot.state.quoteAnalyses,
     evidenceVault: snapshot.state.evidenceVault,
+    knowledgeSchedule: snapshot.state.knowledgeSchedule,
     currentMileage: snapshot.state.currentMileage,
     eventCount: snapshot.events.length,
   });
