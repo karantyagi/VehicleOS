@@ -53,7 +53,7 @@ Site URL in Supabase should be `https://app.vehicleos.app` (or `http://localhost
 | `NEXT_PUBLIC_MARKETING_URL` | Yes | `https://vehicleos.app` |
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes (auth) | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes (auth) | Supabase anon key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server only | Supabase service role (never expose to client) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes (account delete) | Supabase service role — `auth.admin.deleteUser()` only |
 | `AUTH_DISABLED` | No | `true` for local dev without OAuth (uses dev user id) |
 | `NEXT_PUBLIC_API_URL` | No | Leave unset on Vercel — same-origin `/api/*` |
 | `USE_IN_MEMORY_EVENT_STORE` | No | `true` only for demos without Postgres |
@@ -66,6 +66,8 @@ curl https://app.vehicleos.app/api/health
 ```
 
 Then open `https://app.vehicleos.app/` → **Sign in** → **Add your vehicle** → **Confirm receipt**.
+
+Account deletion smoke test: **Settings** → type `DELETE` → confirm → redirected to login with success message.
 
 ## Local development
 

@@ -1089,6 +1089,76 @@ a {
   font-size: 1rem;
 }
 
+/* ── Trust pages ── */
+
+.trust-page {
+  padding: 48px 24px 80px;
+  max-width: 720px;
+}
+
+.trust-eyebrow {
+  margin: 0 0 12px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+}
+
+.trust-page h1 {
+  margin: 0 0 8px;
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  letter-spacing: -0.03em;
+}
+
+.trust-updated {
+  margin: 0 0 40px;
+  font-size: 0.875rem;
+  color: var(--ink-tertiary);
+}
+
+.trust-section {
+  margin-bottom: 36px;
+}
+
+.trust-section h2 {
+  margin: 0 0 12px;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.trust-section p {
+  margin: 0 0 12px;
+  color: var(--ink-secondary);
+  line-height: 1.65;
+}
+
+.trust-section ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--ink-secondary);
+}
+
+.trust-section li {
+  margin-bottom: 8px;
+  line-height: 1.55;
+}
+
+.trust-related {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--ink-tertiary);
+}
+
+.trust-related a {
+  color: var(--ink-secondary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* ── Footer ── */
 
 .site-footer {

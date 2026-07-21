@@ -4,4 +4,5 @@ export const siteConfig = {
   metaDescription: "Operational memory for vehicle ownership. Free early access.",
   marketingUrl: process.env.NEXT_PUBLIC_MARKETING_URL ?? "https://vehicleos.app",
   appUrl: process.env.NEXT_PUBLIC_APP_URL ?? "https://app.vehicleos.app",
+  contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "contact@vehicleos.app",
 } as const;

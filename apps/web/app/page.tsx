@@ -1,4 +1,5 @@
 import { AppHeader } from "../components/app-header";
+import { AppFooter } from "../components/app-footer";
 import { OwnerDashboard } from "../components/owner-dashboard";
 import { getSessionUser } from "../lib/auth/session";
 
@@ -9,6 +10,7 @@ export default async function HomePage() {
     <main className="shell golden-path">
       <AppHeader user={user} />
       <OwnerDashboard />
+      <AppFooter />
     </main>
   );
 }

@@ -370,6 +370,13 @@ export default function HomePage() {
             </ul>
           </div>
           <div className="footer-col">
+            <h3>Trust</h3>
+            <ul>
+              <li><a href="/privacy">Privacy</a></li>
+              <li><a href="/security">Security</a></li>
+            </ul>
+          </div>
+          <div className="footer-col">
             <h3>Learn</h3>
             <ul>
               <li>

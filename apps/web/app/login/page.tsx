@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
+import { AppFooter } from "../../components/app-footer";
 import { SignInButtons } from "../../components/sign-in-buttons";
 import { LogoMark } from "../../lib/logo-mark";
 import { siteConfig } from "../../lib/site-config";
 import { isAuthEnabled } from "../../lib/supabase/env";
 
 type LoginPageProps = {
-  searchParams?: { error?: string };
+  searchParams?: { error?: string; deleted?: string };
 };
 
 export default function LoginPage({ searchParams }: LoginPageProps) {
@@ -14,6 +15,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
   }
 
   const hasError = searchParams?.error === "auth";
+  const wasDeleted = searchParams?.deleted === "1";
 
   return (
     <main className="shell login-shell">
@@ -28,11 +30,15 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
           Use Google or GitHub — free during early access. Your vehicles and service history stay
           private to your account.
         </p>
+        {wasDeleted ? (
+          <p className="login-notice">Your account and vehicle data were deleted.</p>
+        ) : null}
         {hasError ? (
           <p className="login-error">Sign-in failed. Try again or use a different provider.</p>
         ) : null}
         <SignInButtons />
       </section>
+      <AppFooter />
     </main>
   );
 }
