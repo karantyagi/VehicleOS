@@ -7,6 +7,7 @@ import { ReceiptCapture, type UploadedReceipt } from "./receipt-capture";
 import { QuoteAnalysisPanel, type QuoteAnalysisView } from "./quote-analysis-panel";
 import { EvidenceVaultPanel, type EvidenceVaultItem } from "./evidence-vault-panel";
 import { ResaleReportExport } from "./resale-report-export";
+import { VoiceMemoryPanel } from "./voice-memory-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 
 type Vehicle = OnboardingVehicle;
@@ -214,6 +215,27 @@ export function OwnerDashboard() {
       </section>
 
       <section className="golden-grid">
+        <article className="panel">
+          <h2>Voice memory</h2>
+          <VoiceMemoryPanel
+            vehicleId={vehicle.id}
+            apiBase={apiBase}
+            defaultMileage={vehicle.currentMileage}
+            disabled={isBusy}
+            onError={(message) => setStatus(message)}
+            onSubmitted={(body) => {
+              setTimeline(body.timeline as TimelineEntry[]);
+              setNowQueue(body.nowQueue as QueueItem[]);
+              setStatus(
+                body.conflict
+                  ? "Conflict detected — review the verification task in your Now queue."
+                  : "Voice note saved — review the Now queue.",
+              );
+              void loadVehicleState(vehicle);
+            }}
+          />
+        </article>
+
         <article className="panel">
           <h2>1 · Receipt</h2>
           <ReceiptCapture

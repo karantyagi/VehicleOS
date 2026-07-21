@@ -572,6 +572,17 @@ article h2,
   resize: vertical;
 }
 
+.voice-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.voice-panel textarea {
+  width: 100%;
+  min-height: 96px;
+  resize: vertical;
+}
+
 .quote-result {
   display: grid;
   gap: 10px;

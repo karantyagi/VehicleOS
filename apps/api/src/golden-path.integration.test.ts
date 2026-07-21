@@ -309,4 +309,57 @@ Cabin air filter $59.00`,
     expect(markdownExport.body).toContain("# Vehicle OS resale evidence report");
     expect(markdownExport.body).toContain("Subaru dealer");
   });
+
+  it("records a parsed voice note on the timeline and vault", async () => {
+    const app = await appPromise;
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/api/vehicles",
+      payload: {
+        vin: "TEST-VIN-VOICE",
+        year: 2020,
+        make: "Toyota",
+        model: "RAV4",
+        currentMileage: 38_000,
+      },
+    });
+
+    expect(createResponse.statusCode).toBe(201);
+    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+
+    const voiceResponse = await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/voice`,
+      payload: {
+        transcript: "Changed oil at dealer, 38,500 miles, $89",
+        storageKey: `${TEST_USER_ID}/${vehicle.id}/voice-note.txt`,
+      },
+    });
+
+    expect(voiceResponse.statusCode).toBe(201);
+    const voiceBody = voiceResponse.json() as {
+      parsed: { shop: string; mileage: number };
+      timeline: { shop: string; mileage: number }[];
+      nowQueue: unknown[];
+    };
+
+    expect(voiceBody.parsed.shop).toBe("dealer");
+    expect(voiceBody.parsed.mileage).toBe(38_500);
+    expect(voiceBody.timeline).toHaveLength(1);
+    expect(voiceBody.timeline[0]?.shop).toBe("dealer");
+
+    const stateResponse = await app.inject({
+      method: "GET",
+      url: `/api/vehicles/${vehicle.id}/state`,
+    });
+
+    const stateBody = stateResponse.json() as {
+      evidenceVault: { channel: string }[];
+      timeline: unknown[];
+    };
+
+    expect(stateBody.timeline).toHaveLength(1);
+    expect(stateBody.evidenceVault.some((entry) => entry.channel === "voice")).toBe(true);
+  });
 });
