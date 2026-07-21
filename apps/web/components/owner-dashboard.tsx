@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getApiBase } from "../lib/api-base";
 import { OnboardingWizard, type OnboardingVehicle } from "./onboarding-wizard";
+import { ReceiptCapture, type UploadedReceipt } from "./receipt-capture";
 
 type Vehicle = OnboardingVehicle;
 
@@ -39,6 +40,8 @@ export function OwnerDashboard() {
   const [isBusy, setIsBusy] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [form, setForm] = useState(receiptForm);
+  const [uploadedReceipt, setUploadedReceipt] = useState<UploadedReceipt | null>(null);
+  const [captureError, setCaptureError] = useState("");
 
   const vehicleLabel = useMemo(() => {
     if (!vehicle) return null;
@@ -111,6 +114,10 @@ export function OwnerDashboard() {
 
   const submitReceipt = async () => {
     if (!vehicle) return;
+    if (!uploadedReceipt) {
+      setStatus("Upload a receipt photo or PDF first.");
+      return;
+    }
     setIsBusy(true);
     setStatus("Recording service and generating recommendation…");
     try {
@@ -123,6 +130,8 @@ export function OwnerDashboard() {
           mileage: Number(form.mileage),
           lineItems: form.lineItems.split("\n").map((line) => line.trim()).filter(Boolean),
           total: form.total,
+          storageKey: uploadedReceipt.storageKey,
+          channel: uploadedReceipt.channel,
         }),
       });
       const body = (await response.json()) as {
@@ -139,6 +148,8 @@ export function OwnerDashboard() {
           ? "Conflict detected — review the verification task in your Now queue."
           : "Golden path complete — review the Now queue.",
       );
+      setUploadedReceipt(null);
+      setCaptureError("");
     } catch {
       setStatus("Receipt submission failed.");
     } finally {
@@ -182,7 +193,7 @@ export function OwnerDashboard() {
       <section className="hero">
         <p className="eyebrow">Owners · Early access</p>
         <h1>Receipt → recommendation → approve</h1>
-        <p>{status || "Confirm a receipt, then approve the recommended task."}</p>
+        <p>{status || "Upload a receipt, confirm fields, then approve the recommended task."}</p>
       </section>
 
       <section className="vehicle-summary panel">
@@ -193,6 +204,14 @@ export function OwnerDashboard() {
       <section className="golden-grid">
         <article className="panel">
           <h2>1 · Receipt</h2>
+          <ReceiptCapture
+            vehicleId={vehicle.id}
+            apiBase={apiBase}
+            disabled={isBusy}
+            onUploaded={setUploadedReceipt}
+            onError={setCaptureError}
+          />
+          {captureError ? <p className="settings-error">{captureError}</p> : null}
           <label>
             Shop
             <input
@@ -230,7 +249,7 @@ export function OwnerDashboard() {
               onChange={(event) => setForm({ ...form, total: event.target.value })}
             />
           </label>
-          <button type="button" disabled={isBusy} onClick={submitReceipt}>
+          <button type="button" disabled={isBusy || !uploadedReceipt} onClick={submitReceipt}>
             Confirm receipt → run loop
           </button>
         </article>
