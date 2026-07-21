@@ -1,5 +1,6 @@
 import { EVENT_TYPES, EVENT_VERSIONS } from "../events/catalog.js";
 import type { CatalogDomainEvent } from "../events/catalog.js";
+import { detectServiceConflict } from "../conflicts/detect-service-conflict.js";
 import { foldEvents } from "../projections/apply.js";
 import type { PolicyEngine } from "../policy/policy-engine.js";
 import type { EventStore } from "../ports/event-store.js";
@@ -109,6 +110,7 @@ export const recordServiceAndRecommend = async (deps: {
         title: recommendation.title,
         reason: recommendation.reason,
         status: "pending",
+        taskKind: "recommendation",
       },
       causationId: recommendationEvent.id,
       correlationId,
@@ -153,4 +155,88 @@ export const decideTask = async (deps: {
   });
 
   return decided as CatalogDomainEvent;
+};
+
+export type ServiceConfirmResult =
+  | { conflict: false; result: GoldenPathResult }
+  | {
+      conflict: true;
+      conflictId: string;
+      taskId: string;
+      state: ReturnType<typeof foldEvents>;
+      events: CatalogDomainEvent[];
+    };
+
+export const confirmServiceWithConflictCheck = async (deps: {
+  eventStore: EventStore;
+  policyEngine: PolicyEngine;
+  input: RecordServiceInput;
+}): Promise<ServiceConfirmResult> => {
+  const { eventStore, policyEngine, input } = deps;
+  const vehicleEvents = eventsForVehicle(await eventStore.loadAll(), input.vehicleId);
+  const state = foldEvents(input.vehicleId, vehicleEvents);
+  const conflict = detectServiceConflict(state, {
+    mileage: input.mileage,
+    serviceDate: input.serviceDate,
+  });
+
+  if (!conflict) {
+    return {
+      conflict: false,
+      result: await recordServiceAndRecommend({ eventStore, policyEngine, input }),
+    };
+  }
+
+  const conflictId = crypto.randomUUID();
+  const taskId = crypto.randomUUID();
+  const correlationId = input.correlationId ?? crypto.randomUUID();
+
+  await eventStore.append({
+    aggregateType: "vehicle",
+    aggregateId: input.vehicleId,
+    eventType: EVENT_TYPES.CONFLICT_DETECTED,
+    eventVersion: EVENT_VERSIONS[EVENT_TYPES.CONFLICT_DETECTED],
+    payload: {
+      vehicleId: input.vehicleId,
+      conflictId,
+      kind: conflict.kind,
+      message: conflict.message,
+      incomingMileage: conflict.incomingMileage,
+      incomingServiceDate: conflict.incomingServiceDate,
+      currentMileage: conflict.currentMileage,
+      lastServiceDate: conflict.lastServiceDate,
+    },
+    correlationId,
+  });
+
+  await eventStore.append({
+    aggregateType: "task",
+    aggregateId: taskId,
+    eventType: EVENT_TYPES.TASK_CREATED,
+    eventVersion: EVENT_VERSIONS[EVENT_TYPES.TASK_CREATED],
+    payload: {
+      vehicleId: input.vehicleId,
+      taskId,
+      recommendationId: conflictId,
+      title:
+        conflict.verificationCode === "VERIFY_ODOMETER"
+          ? "Verify odometer reading"
+          : "Verify service date",
+      reason: conflict.message,
+      status: "pending",
+      taskKind: "verification",
+      verificationCode: conflict.verificationCode,
+    },
+    correlationId,
+  });
+
+  const events = eventsForVehicle(await eventStore.loadAll(), input.vehicleId);
+
+  return {
+    conflict: true,
+    conflictId,
+    taskId,
+    state: foldEvents(input.vehicleId, events),
+    events,
+  };
 };

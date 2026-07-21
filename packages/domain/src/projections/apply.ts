@@ -50,6 +50,8 @@ export const applyEvent = (
         title: event.payload.title,
         reason: event.payload.reason,
         status: event.payload.status,
+        taskKind: event.payload.taskKind,
+        verificationCode: event.payload.verificationCode,
       };
 
       return {

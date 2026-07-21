@@ -17,6 +17,8 @@ export type NowQueueItem = {
   reason: string;
   status: TaskStatus;
   ruleId?: string;
+  taskKind?: "recommendation" | "verification";
+  verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE";
 };
 
 export type VehicleProjectionState = {

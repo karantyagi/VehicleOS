@@ -4,6 +4,7 @@ export const EVENT_TYPES = {
   DOCUMENT_INGESTED: "document.ingested",
   DOCUMENT_EXTRACTION_COMPLETED: "document.extraction.completed",
   SERVICE_RECORDED: "service.recorded",
+  CONFLICT_DETECTED: "conflict.detected",
   MAINTENANCE_RECOMMENDATION_CREATED: "maintenance.recommendation.created",
   TASK_CREATED: "task.created",
   TASK_DECIDED: "task.decided",
@@ -66,6 +67,19 @@ export type TaskCreatedPayload = {
   title: string;
   reason: string;
   status: TaskStatus;
+  taskKind?: "recommendation" | "verification";
+  verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE";
+};
+
+export type ConflictDetectedPayload = {
+  vehicleId: string;
+  conflictId: string;
+  kind: "mileage_regression" | "date_regression";
+  message: string;
+  incomingMileage: number;
+  incomingServiceDate: string;
+  currentMileage: number;
+  lastServiceDate?: string;
 };
 
 export type TaskDecision = "approve" | "dismiss" | "snooze";
@@ -81,6 +95,7 @@ export type DomainEventPayloadMap = {
   [EVENT_TYPES.DOCUMENT_INGESTED]: DocumentIngestedPayload;
   [EVENT_TYPES.DOCUMENT_EXTRACTION_COMPLETED]: DocumentExtractionCompletedPayload;
   [EVENT_TYPES.SERVICE_RECORDED]: ServiceRecordedPayload;
+  [EVENT_TYPES.CONFLICT_DETECTED]: ConflictDetectedPayload;
   [EVENT_TYPES.MAINTENANCE_RECOMMENDATION_CREATED]: MaintenanceRecommendationCreatedPayload;
   [EVENT_TYPES.TASK_CREATED]: TaskCreatedPayload;
   [EVENT_TYPES.TASK_DECIDED]: TaskDecidedPayload;
@@ -94,6 +109,7 @@ export const EVENT_VERSIONS: Record<DomainEventType, number> = {
   [EVENT_TYPES.DOCUMENT_INGESTED]: 1,
   [EVENT_TYPES.DOCUMENT_EXTRACTION_COMPLETED]: 1,
   [EVENT_TYPES.SERVICE_RECORDED]: 1,
+  [EVENT_TYPES.CONFLICT_DETECTED]: 1,
   [EVENT_TYPES.MAINTENANCE_RECOMMENDATION_CREATED]: 1,
   [EVENT_TYPES.TASK_CREATED]: 1,
   [EVENT_TYPES.TASK_DECIDED]: 1,

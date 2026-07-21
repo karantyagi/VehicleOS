@@ -38,7 +38,10 @@ export { ReceiptUploadAdapter } from "./adapters/receipt-upload-adapter.js";
 
 export {
   decideTask,
+  confirmServiceWithConflictCheck,
   recordServiceAndRecommend,
   type GoldenPathResult,
   type RecordServiceInput,
+  type ServiceConfirmResult,
 } from "./golden-path/service-loop.js";
+export { detectServiceConflict, type ServiceConflict } from "./conflicts/detect-service-conflict.js";
