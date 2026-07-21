@@ -1,97 +1,43 @@
-# Open Core Boundary
+# Public repository — architecture showcase
 
-**Audience:** Builders, contributors, and engineers verifying Vehicle OS on GitHub.
+**Audience:** Engineers reviewing Vehicle OS before an interview, or contributors reading ADRs.
 
-Vehicle OS follows an **open showcase + hosted product** model — similar to PostHog, Cal.com, and Supabase. This page states what the public repository intentionally includes and excludes.
-
----
-
-## What this repository is
-
-A **technical whitepaper with representative code**:
-
-- Architecture, ADRs, and system design
-- Domain **interfaces** and event types
-- Prompt **schemas** (contracts — not tuned production prompts)
-- A sample vertical slice and happy-path integration tests
-- **Vehicle OS Connect** — open-source importer (credentials stay on your device)
-- Self-host skeleton (`docker compose`)
-
-Use it to **verify how the system is designed** — not to obtain the full tuned commercial intelligence layer.
+Vehicle OS is a **hosted product for car owners** (free early access at [app.vehicleos.app](https://app.vehicleos.app)). This repository is **not** a supported self-host or “run it yourself” distribution.
 
 ---
 
-## What is public (MIT)
+## What this repo is for
 
-| Included | Location (typical) |
-|----------|-------------------|
-| Architecture & ADRs | `docs-lite/adr/`, `docs/01-architecture/` |
-| Event types & domain interfaces | `packages/domain/` |
-| Policy engine **design** (rules-first; LLMs at edges) | ADRs, README |
-| Prompt JSON schemas | `packages/prompts/*.schema.json` |
-| Eval **methodology** (how we measure) | `evals/README.md` (when added) |
-| Vehicle OS Connect (CLI + desktop) | `connectors/carfax-connect/` |
-| Import file format | `connectors/carfax-connect/schema/` |
-| Integration test (golden path, happy path) | `tests/integration/` |
+| In repo | Purpose |
+|---------|---------|
+| ADRs | Architecture decisions and tradeoffs |
+| `packages/domain` | Event model, policy interfaces, golden-path contracts |
+| `evals/` | Public eval methodology (fixtures in private engine) |
+| Sample vertical slice | Integration tests, representative API handlers |
+| Connect CLI (v0) | Development/import tooling — not a marketed owner feature |
 
----
-
-## What is not in this repository
-
-| Excluded | Why |
-|----------|-----|
-| Tuned production prompt text | Commercial intelligence layer |
-| Recommendation scoring weights & heuristics | Tuned over months of domain work |
-| Eval golden datasets (inputs + expected outputs) | Prevents shortcutting quality bar |
-| Knowledge-graph derivation / inference rules | Implementation detail of hosted product |
-| Hosted ingest optimizations & sync edge cases | Managed service advantage |
-| Billing, production secrets, OAuth credentials | Operations |
-| User vehicle data | Privacy |
-
-The tuned engine is bundled with the **hosted product** at deploy time — not published here.
+**Start here for the product:** [app.vehicleos.app](https://app.vehicleos.app) · [vehicleos.app](https://vehicleos.app)
 
 ---
 
-## User data privacy (Owners)
+## What is intentionally not in this repo
 
-**Vehicle OS Connect** runs on the user's machine. CARFAX credentials are used only during import and are **not sent to Vehicle OS servers**.
+| Layer | Where it lives |
+|-------|----------------|
+| Tuned recommendation / quote scoring | Private `vehicleos-engine` at deploy time |
+| Production prompt packs | Private engine |
+| Full eval golden fixtures | Private engine |
 
-Owners can audit Connect source because it is open source. Trust details: `/privacy` and `/security` on [vehicleos.app](https://vehicleos.app) (when published).
-
----
-
-## Self-host vs hosted
-
-| | Self-host (Builders) | Hosted (Owners) |
-|---|---------------------|-----------------|
-| **Get** | Loop skeleton + contracts + Connect | Full product experience |
-| **Run** | Your infrastructure | `app.vehicleos.app` |
-| **Tuned intelligence** | Basic / limited | Full recommendation & quote engine |
-| **License** | MIT (this repo) | Service terms (when live) |
-
----
-
-## Builders path
-
-1. Clone this repository
-2. `pnpm install && docker compose up` (when self-host path is documented)
-3. Read ADRs before diving into code
-4. Extend via public interfaces — contribute PRs against contracts
-
-For audit or architecture review questions about trade-offs, start with `docs-lite/adr/`.
+The hosted app bundles tuned intelligence; the public repo proves **design and boundaries**, not the full commercial brain.
 
 ---
 
 ## License
 
-Core showcase code: **MIT** — see [`LICENSE`](../LICENSE).
-
-Private engine packages are proprietary and not licensed through this repository.
+MIT — see [`LICENSE`](../LICENSE). Open source for transparency and learning; **product GTM is hosted early access only** (see [ADR-005](../docs-lite/adr/ADR-005-owners-only-positioning.md)).
 
 ---
 
-## Questions
+## For interview reviewers
 
-- **Product / Owners:** [vehicleos.app](https://vehicleos.app)
-- **Issues / contributions:** GitHub Issues on this repo
-- **Security:** security contact on trust pages (when published)
+Read: ADR-001 (Postgres), ADR-002 (event sourcing), ADR-004 (hosted stack), ADR-005 (positioning). Run CI-backed tests locally if desired — no docker self-host path is required to evaluate the architecture.

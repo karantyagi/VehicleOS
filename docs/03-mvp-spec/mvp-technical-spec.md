@@ -2,8 +2,8 @@
 
 ## Audiences
 
-**Daily drivers** (primary) use the web app and Vehicle OS Connect desktop — no terminal required.  
-**Power users** get CLI, self-host, and optional MCP/skills. See [`user-surfaces.md`](./user-surfaces.md).
+**Daily drivers** (primary) use the hosted web app at `app.vehicleos.app` — no terminal required.  
+See [`user-surfaces.md`](./user-surfaces.md).
 
 ---
 

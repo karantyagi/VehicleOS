@@ -694,7 +694,12 @@ a {
   color: var(--accent);
 }
 
-/* ── Owners & Builders path chooser ── */
+/* ── Early access panel ── */
+
+.path-card-single {
+  max-width: 560px;
+  margin: 8px auto 0;
+}
 
 .path-grid {
   display: grid;

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {
+  earlyAccessContent,
   heroContent,
-  productPathsContent,
   siteConfig,
 } from "../../lib/site-config";
 import { LogoMark } from "../../lib/logo-marks";
@@ -32,8 +32,6 @@ function ShippedDemo() {
 }
 
 export default function DesignPreviewPage() {
-  const ownersPath = productPathsContent.paths.find((p) => p.id === "owners");
-
   return (
     <div className="page preview-page">
       <header className="site-header">
@@ -91,17 +89,15 @@ export default function DesignPreviewPage() {
               <span className="swatch" style={{ background: "#16a34a" }} />
               <span>Primary · strong</span>
             </div>
-            <p className="shipped-note">Owners path top border uses the same green family.</p>
-            {ownersPath ? (
-              <article className="path-card path-card-owners preview-path-single">
-                <div className="path-card-header">
-                  <span className="path-badge path-badge-owners">{ownersPath.badge}</span>
-                  <span className="path-price">{ownersPath.priceNote}</span>
-                </div>
-                <h3>{ownersPath.title}</h3>
-                <p className="path-tagline">{ownersPath.tagline}</p>
-              </article>
-            ) : null}
+            <p className="shipped-note">Early access panel uses the same green family.</p>
+            <article className="path-card path-card-owners preview-path-single">
+              <div className="path-card-header">
+                <span className="path-badge path-badge-owners">Owners</span>
+                <span className="path-price">{earlyAccessContent.priceNote}</span>
+              </div>
+              <h3>{earlyAccessContent.sectionTitle}</h3>
+              <p className="path-tagline">{earlyAccessContent.wedge}</p>
+            </article>
           </div>
         </section>
 
@@ -114,7 +110,7 @@ export default function DesignPreviewPage() {
                 <span className="pill-dot" />
                 In active development
               </span>
-              <span className="pill">MIT open core</span>
+              <span className="pill">Free early access</span>
               <span className="pill">Event-sourced</span>
               <span className="pill">Rules-first AI</span>
             </div>
@@ -127,10 +123,10 @@ export default function DesignPreviewPage() {
             </p>
             <p className="hero-outcome">{heroContent.outcomeLine}</p>
             <div className="cta-row preview-cta-row">
-              <span className="btn btn-primary">Choose your path</span>
-              <span className="btn btn-secondary">See architecture</span>
+              <span className="btn btn-primary">Get early access</span>
+              <span className="btn btn-secondary">Watch demo</span>
             </div>
-            <p className="shipped-note">Nav CTA: Watch demo → #demo</p>
+            <p className="shipped-note">Nav CTA: Open the app → app.vehicleos.app</p>
           </div>
         </section>
 
