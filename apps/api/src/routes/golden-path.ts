@@ -3,12 +3,14 @@ import {
   analyzeQuote,
   createVehicle,
   decideOnTask,
+  exportResaleReport,
   getEvidenceAccessUrl,
   getVehicle,
   getVehicleState,
   listVehicles,
   submitReceipt,
   type ApiServices,
+  type ExportHandlerResponse,
 } from "@vehicleos/server";
 import { authFromRequest } from "../auth-context.js";
 
@@ -75,6 +77,29 @@ export const registerGoldenPathRoutes = (app: FastifyInstance, services: ApiServ
         request.params.documentId,
         authFromRequest(request),
       );
+      return reply.code(result.status).send(result.body);
+    },
+  );
+
+  app.get<{ Params: { vehicleId: string }; Querystring: { format?: string } }>(
+    "/api/vehicles/:vehicleId/export",
+    async (request, reply) => {
+      const format = request.query.format === "markdown" ? "markdown" : "json";
+      const result = await exportResaleReport(
+        services,
+        request.params.vehicleId,
+        format,
+        authFromRequest(request),
+      );
+
+      if ("headers" in result) {
+        const exportResult = result as ExportHandlerResponse;
+        return reply
+          .code(exportResult.status)
+          .headers(exportResult.headers)
+          .send(exportResult.body);
+      }
+
       return reply.code(result.status).send(result.body);
     },
   );

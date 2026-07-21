@@ -242,4 +242,71 @@ Cabin air filter $59.00`,
     expect(accessBody.immutable).toBe(true);
     expect(accessBody.available).toBe(false);
   });
+
+  it("exports a structured resale report with timeline and vault", async () => {
+    const app = await appPromise;
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/api/vehicles",
+      payload: {
+        vin: "TEST-VIN-EXPORT",
+        year: 2017,
+        make: "Subaru",
+        model: "Outback",
+        currentMileage: 72_000,
+      },
+    });
+
+    expect(createResponse.statusCode).toBe(201);
+    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+
+    const receiptResponse = await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/receipts`,
+      payload: {
+        shop: "Subaru dealer",
+        serviceDate: "2026-03-01",
+        mileage: 72_500,
+        lineItems: ["Oil change", "Tire rotation"],
+        total: "$129.00",
+        storageKey: `${TEST_USER_ID}/${vehicle.id}/service.pdf`,
+        channel: "receipt_upload",
+      },
+    });
+
+    expect(receiptResponse.statusCode).toBe(201);
+
+    const jsonExport = await app.inject({
+      method: "GET",
+      url: `/api/vehicles/${vehicle.id}/export?format=json`,
+    });
+
+    expect(jsonExport.statusCode).toBe(200);
+    expect(jsonExport.headers["content-type"]).toContain("application/json");
+    expect(jsonExport.headers["content-disposition"]).toMatch(/attachment/);
+
+    const report = JSON.parse(jsonExport.body) as {
+      kind: string;
+      timeline: unknown[];
+      evidenceVault: unknown[];
+      summary: { serviceCount: number; evidenceCount: number };
+    };
+
+    expect(report.kind).toBe("VehicleOSResaleReport.v1");
+    expect(report.timeline).toHaveLength(1);
+    expect(report.evidenceVault).toHaveLength(1);
+    expect(report.summary.serviceCount).toBe(1);
+    expect(report.summary.evidenceCount).toBe(1);
+
+    const markdownExport = await app.inject({
+      method: "GET",
+      url: `/api/vehicles/${vehicle.id}/export?format=markdown`,
+    });
+
+    expect(markdownExport.statusCode).toBe(200);
+    expect(markdownExport.headers["content-type"]).toContain("text/markdown");
+    expect(markdownExport.body).toContain("# Vehicle OS resale evidence report");
+    expect(markdownExport.body).toContain("Subaru dealer");
+  });
 });

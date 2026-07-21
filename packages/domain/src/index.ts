@@ -55,3 +55,10 @@ export {
   type QuoteLineVerdict,
 } from "./quotes/analyze-dealer-quote.js";
 export { recordQuoteAnalysis } from "./quotes/record-quote-analysis.js";
+export {
+  buildResaleReport,
+  type BuildResaleReportInput,
+  type ResaleReportVehicle,
+  type VehicleOSResaleReportV1,
+} from "./export/build-resale-report.js";
+export { formatResaleReportMarkdown } from "./export/format-resale-report-markdown.js";

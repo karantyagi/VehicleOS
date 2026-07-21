@@ -6,6 +6,7 @@ import { OnboardingWizard, type OnboardingVehicle } from "./onboarding-wizard";
 import { ReceiptCapture, type UploadedReceipt } from "./receipt-capture";
 import { QuoteAnalysisPanel, type QuoteAnalysisView } from "./quote-analysis-panel";
 import { EvidenceVaultPanel, type EvidenceVaultItem } from "./evidence-vault-panel";
+import { ResaleReportExport } from "./resale-report-export";
 import { openEvidenceDocument } from "../lib/evidence-access";
 
 type Vehicle = OnboardingVehicle;
@@ -284,6 +285,18 @@ export function OwnerDashboard() {
             apiBase={apiBase}
             items={evidenceVault}
             linkedDocumentIds={timeline.flatMap((entry) => entry.evidenceIds)}
+          />
+        </article>
+
+        <article className="panel">
+          <h2>Resale export</h2>
+          <ResaleReportExport
+            vehicleId={vehicle.id}
+            apiBase={apiBase}
+            disabled={isBusy}
+            serviceCount={timeline.length}
+            evidenceCount={evidenceVault.length}
+            onError={(message) => setStatus(message)}
           />
         </article>
 

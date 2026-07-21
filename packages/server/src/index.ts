@@ -12,5 +12,6 @@ export {
 } from "./http/golden-path-handlers.js";
 export { analyzeQuote } from "./http/quote-handlers.js";
 export { getEvidenceAccessUrl } from "./http/evidence-handlers.js";
+export { exportResaleReport, type ExportFormat, type ExportHandlerResponse } from "./http/export-handlers.js";
 export { InMemoryVehicleRepository } from "./repositories/in-memory-vehicle-repository.js";
 export type { VehicleRepositoryLike } from "./types/repositories.js";
