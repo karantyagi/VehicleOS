@@ -10,6 +10,7 @@ import {
   listVehicles,
   submitReceipt,
   submitVoiceMemory,
+  refreshSeasonalPrompts,
   type ApiServices,
   type ExportHandlerResponse,
 } from "@vehicleos/server";
@@ -76,6 +77,19 @@ export const registerGoldenPathRoutes = (app: FastifyInstance, services: ApiServ
         services,
         request.params.vehicleId,
         request.body as Parameters<typeof submitVoiceMemory>[2],
+        authFromRequest(request),
+      );
+      return reply.code(result.status).send(result.body);
+    },
+  );
+
+  app.post<{ Params: { vehicleId: string } }>(
+    "/api/vehicles/:vehicleId/seasonal/refresh",
+    async (request, reply) => {
+      const result = await refreshSeasonalPrompts(
+        services,
+        request.params.vehicleId,
+        request.body as Parameters<typeof refreshSeasonalPrompts>[2],
         authFromRequest(request),
       );
       return reply.code(result.status).send(result.body);

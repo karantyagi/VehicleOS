@@ -70,6 +70,7 @@ export type TaskCreatedPayload = {
   status: TaskStatus;
   taskKind?: "recommendation" | "verification";
   verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE";
+  ruleId?: string;
 };
 
 export type ConflictDetectedPayload = {

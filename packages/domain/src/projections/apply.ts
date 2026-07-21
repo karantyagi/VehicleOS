@@ -68,6 +68,7 @@ export const applyEvent = (
         status: event.payload.status,
         taskKind: event.payload.taskKind,
         verificationCode: event.payload.verificationCode,
+        ruleId: event.payload.ruleId,
       };
 
       return {

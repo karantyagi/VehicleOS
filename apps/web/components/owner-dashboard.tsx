@@ -8,6 +8,7 @@ import { QuoteAnalysisPanel, type QuoteAnalysisView } from "./quote-analysis-pan
 import { EvidenceVaultPanel, type EvidenceVaultItem } from "./evidence-vault-panel";
 import { ResaleReportExport } from "./resale-report-export";
 import { VoiceMemoryPanel } from "./voice-memory-panel";
+import { SeasonalPromptsPanel } from "./seasonal-prompts-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 
 type Vehicle = OnboardingVehicle;
@@ -28,6 +29,7 @@ type QueueItem = {
   reason: string;
   status: string;
   taskKind?: "recommendation" | "verification";
+  ruleId?: string;
 };
 
 const receiptForm = {
@@ -237,6 +239,22 @@ export function OwnerDashboard() {
         </article>
 
         <article className="panel">
+          <h2>Seasonal prompts</h2>
+          <SeasonalPromptsPanel
+            vehicleId={vehicle.id}
+            apiBase={apiBase}
+            disabled={isBusy}
+            onError={(message) => setStatus(message)}
+            onRefreshed={(body) => {
+              setNowQueue(body.nowQueue as QueueItem[]);
+              if (body.created.length > 0) {
+                setStatus(`${body.created.length} seasonal prompt(s) added to your Now queue.`);
+              }
+            }}
+          />
+        </article>
+
+        <article className="panel">
           <h2>1 · Receipt</h2>
           <ReceiptCapture
             vehicleId={vehicle.id}
@@ -366,12 +384,29 @@ export function OwnerDashboard() {
           ) : (
             <ul className="queue-list">
               {nowQueue.map((item) => (
-                <li key={item.taskId} className={item.taskKind === "verification" ? "queue-verification" : undefined}>
+                <li
+                  key={item.taskId}
+                  className={
+                    item.taskKind === "verification"
+                      ? "queue-verification"
+                      : item.ruleId?.startsWith("seasonal.policy.")
+                        ? "queue-seasonal"
+                        : undefined
+                  }
+                >
                   <div>
                     <strong>{item.title}</strong>
                     <p>{item.reason}</p>
-                    <span className={`badge ${item.taskKind === "verification" ? "badge-warning" : ""}`}>
-                      {item.status}
+                    <span
+                      className={`badge ${
+                        item.taskKind === "verification"
+                          ? "badge-warning"
+                          : item.ruleId?.startsWith("seasonal.policy.")
+                            ? "badge-seasonal"
+                            : ""
+                      }`}
+                    >
+                      {item.ruleId?.startsWith("seasonal.policy.") ? "seasonal" : item.status}
                     </span>
                   </div>
                   {item.status === "pending" ? (

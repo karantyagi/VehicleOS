@@ -67,3 +67,14 @@ export {
   type ParsedVoiceServiceNote,
   type ParseVoiceServiceNoteInput,
 } from "./voice/parse-voice-service-note.js";
+export {
+  evaluateSeasonalPrompts,
+  isSeasonalRuleId,
+  seasonKeyForDate,
+  type ClimateZone,
+} from "./seasonal/evaluate-seasonal-prompts.js";
+export {
+  recordSeasonalPrompts,
+  type RecordSeasonalPromptsInput,
+  type RecordSeasonalPromptsResult,
+} from "./seasonal/record-seasonal-prompts.js";
