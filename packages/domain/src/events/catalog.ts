@@ -6,6 +6,7 @@ export const EVENT_TYPES = {
   SERVICE_RECORDED: "service.recorded",
   CONFLICT_DETECTED: "conflict.detected",
   QUOTE_ANALYZED: "quote.analyzed",
+  KNOWLEDGE_SCHEDULE_RECORDED: "knowledge.schedule.recorded",
   MAINTENANCE_RECOMMENDATION_CREATED: "maintenance.recommendation.created",
   TASK_CREATED: "task.created",
   TASK_DECIDED: "task.decided",
@@ -116,12 +117,30 @@ export type TaskDecidedPayload = {
   decidedAt: string;
 };
 
+export type KnowledgeScheduleRow = {
+  entryId: string;
+  serviceName: string;
+  intervalMiles?: number;
+  intervalMonths?: number;
+  sourceDocumentId: string;
+  sourcePage?: string;
+};
+
+export type KnowledgeScheduleRecordedPayload = {
+  vehicleId: string;
+  documentId: string;
+  manualTitle: string;
+  entries: KnowledgeScheduleRow[];
+  recordedAt: string;
+};
+
 export type DomainEventPayloadMap = {
   [EVENT_TYPES.DOCUMENT_INGESTED]: DocumentIngestedPayload;
   [EVENT_TYPES.DOCUMENT_EXTRACTION_COMPLETED]: DocumentExtractionCompletedPayload;
   [EVENT_TYPES.SERVICE_RECORDED]: ServiceRecordedPayload;
   [EVENT_TYPES.CONFLICT_DETECTED]: ConflictDetectedPayload;
   [EVENT_TYPES.QUOTE_ANALYZED]: QuoteAnalyzedPayload;
+  [EVENT_TYPES.KNOWLEDGE_SCHEDULE_RECORDED]: KnowledgeScheduleRecordedPayload;
   [EVENT_TYPES.MAINTENANCE_RECOMMENDATION_CREATED]: MaintenanceRecommendationCreatedPayload;
   [EVENT_TYPES.TASK_CREATED]: TaskCreatedPayload;
   [EVENT_TYPES.TASK_DECIDED]: TaskDecidedPayload;
@@ -137,6 +156,7 @@ export const EVENT_VERSIONS: Record<DomainEventType, number> = {
   [EVENT_TYPES.SERVICE_RECORDED]: 1,
   [EVENT_TYPES.CONFLICT_DETECTED]: 1,
   [EVENT_TYPES.QUOTE_ANALYZED]: 1,
+  [EVENT_TYPES.KNOWLEDGE_SCHEDULE_RECORDED]: 1,
   [EVENT_TYPES.MAINTENANCE_RECOMMENDATION_CREATED]: 1,
   [EVENT_TYPES.TASK_CREATED]: 1,
   [EVENT_TYPES.TASK_DECIDED]: 1,

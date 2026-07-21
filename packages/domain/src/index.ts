@@ -78,3 +78,17 @@ export {
   type RecordSeasonalPromptsInput,
   type RecordSeasonalPromptsResult,
 } from "./seasonal/record-seasonal-prompts.js";
+export {
+  stubExtractManualSchedule,
+  type ManualScheduleDraftRow,
+  type StubExtractManualScheduleInput,
+  type StubExtractManualScheduleResult,
+} from "./knowledge/stub-extract-manual-schedule.js";
+export { evaluateKnowledgeDue } from "./knowledge/evaluate-knowledge-due.js";
+export {
+  recordKnowledgeSchedule,
+  type RecordKnowledgeScheduleInput,
+  type RecordKnowledgeScheduleResult,
+} from "./knowledge/record-knowledge-schedule.js";
+export type { KnowledgeScheduleEntry } from "./projections/types.js";
+export type { KnowledgeScheduleRow } from "./events/catalog.js";

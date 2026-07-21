@@ -60,6 +60,17 @@ export const buildVoiceStorageKey = (input: {
   return `${input.userId}/${input.vehicleId}/${Date.now()}-${safeName}`;
 };
 
+export const isAllowedManualType = (contentType: string): boolean => contentType === "application/pdf";
+
+export const buildManualStorageKey = (input: {
+  userId: string;
+  vehicleId: string;
+  fileName: string;
+}): string => {
+  const safeName = sanitizeEvidenceFileName(input.fileName, "oem-manual.pdf");
+  return `${input.userId}/${input.vehicleId}/${Date.now()}-${safeName}`;
+};
+
 export const createReceiptSignedUrl = async (
   storageKey: string,
 ): Promise<{ signedUrl: string; expiresInSeconds: number } | null> => {
