@@ -3,6 +3,7 @@ import {
   analyzeQuote,
   createVehicle,
   decideOnTask,
+  getEvidenceAccessUrl,
   getVehicle,
   getVehicleState,
   listVehicles,
@@ -59,6 +60,19 @@ export const registerGoldenPathRoutes = (app: FastifyInstance, services: ApiServ
         services,
         request.params.vehicleId,
         request.body as Parameters<typeof analyzeQuote>[2],
+        authFromRequest(request),
+      );
+      return reply.code(result.status).send(result.body);
+    },
+  );
+
+  app.get<{ Params: { vehicleId: string; documentId: string } }>(
+    "/api/vehicles/:vehicleId/evidence/:documentId/url",
+    async (request, reply) => {
+      const result = await getEvidenceAccessUrl(
+        services,
+        request.params.vehicleId,
+        request.params.documentId,
         authFromRequest(request),
       );
       return reply.code(result.status).send(result.body);

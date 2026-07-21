@@ -2,6 +2,7 @@ import { afterAll, describe, expect, it } from "vitest";
 import { InMemoryEventStore } from "@vehicleos/domain";
 import { InMemoryVehicleRepository } from "@vehicleos/server";
 import { buildApp } from "./app.js";
+import { TEST_USER_ID } from "./auth-context.js";
 
 describe("golden path API", () => {
   const appPromise = buildApp({
@@ -180,5 +181,65 @@ Cabin air filter $59.00`,
 
     const stateBody = stateResponse.json() as { quoteAnalyses: unknown[] };
     expect(stateBody.quoteAnalyses.length).toBe(1);
+  });
+
+  it("records evidence vault entries and serves access metadata", async () => {
+    const app = await appPromise;
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/api/vehicles",
+      payload: {
+        vin: "TEST-VIN-VAULT",
+        year: 2018,
+        make: "Mazda",
+        model: "3",
+        currentMileage: 55_000,
+      },
+    });
+
+    expect(createResponse.statusCode).toBe(201);
+    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+
+    const receiptResponse = await app.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/receipts`,
+      payload: {
+        shop: "Mavis",
+        serviceDate: "2026-02-01",
+        mileage: 55_500,
+        lineItems: ["Oil change"],
+        total: "$49.00",
+        storageKey: `${TEST_USER_ID}/${vehicle.id}/receipt.pdf`,
+        channel: "receipt_upload",
+      },
+    });
+
+    expect(receiptResponse.statusCode).toBe(201);
+    const receiptBody = receiptResponse.json() as { documentId: string };
+
+    const stateResponse = await app.inject({
+      method: "GET",
+      url: `/api/vehicles/${vehicle.id}/state`,
+    });
+
+    const stateBody = stateResponse.json() as {
+      evidenceVault: { documentId: string; immutable: boolean }[];
+      timeline: { evidenceIds: string[] }[];
+    };
+
+    expect(stateBody.evidenceVault).toHaveLength(1);
+    expect(stateBody.evidenceVault[0]?.immutable).toBe(true);
+    expect(stateBody.timeline[0]?.evidenceIds).toContain(receiptBody.documentId);
+
+    const accessResponse = await app.inject({
+      method: "GET",
+      url: `/api/vehicles/${vehicle.id}/evidence/${receiptBody.documentId}/url`,
+    });
+
+    expect(accessResponse.statusCode).toBe(200);
+    const accessBody = accessResponse.json() as { available: boolean; immutable: boolean };
+    expect(accessBody.immutable).toBe(true);
+    expect(accessBody.available).toBe(false);
   });
 });

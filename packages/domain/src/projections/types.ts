@@ -1,4 +1,4 @@
-import type { TaskStatus } from "../events/catalog.js";
+import type { IngestChannel, TaskStatus } from "../events/catalog.js";
 
 export type ServiceTimelineEntry = {
   serviceId: string;
@@ -19,6 +19,14 @@ export type NowQueueItem = {
   ruleId?: string;
   taskKind?: "recommendation" | "verification";
   verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE";
+};
+
+export type EvidenceVaultEntry = {
+  documentId: string;
+  storageKey: string;
+  channel: IngestChannel;
+  ingestedAt: string;
+  immutable: true;
 };
 
 export type QuoteAnalysisEntry = {
@@ -44,6 +52,7 @@ export type VehicleProjectionState = {
   timeline: ServiceTimelineEntry[];
   nowQueue: NowQueueItem[];
   quoteAnalyses: QuoteAnalysisEntry[];
+  evidenceVault: EvidenceVaultEntry[];
 };
 
 export const createEmptyVehicleState = (vehicleId: string): VehicleProjectionState => ({
@@ -52,4 +61,5 @@ export const createEmptyVehicleState = (vehicleId: string): VehicleProjectionSta
   timeline: [],
   nowQueue: [],
   quoteAnalyses: [],
+  evidenceVault: [],
 });

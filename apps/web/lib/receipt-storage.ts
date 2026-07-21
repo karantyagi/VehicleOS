@@ -1,3 +1,5 @@
+import { createAdminClient } from "./supabase/admin";
+
 export const RECEIPT_BUCKET = "receipts";
 export const MAX_RECEIPT_BYTES = 10 * 1024 * 1024;
 
@@ -34,4 +36,21 @@ export const buildReceiptStorageKey = (input: {
 }): string => {
   const safeName = sanitizeReceiptFileName(input.fileName);
   return `${input.userId}/${input.vehicleId}/${Date.now()}-${safeName}`;
+};
+
+export const createReceiptSignedUrl = async (
+  storageKey: string,
+): Promise<{ signedUrl: string; expiresInSeconds: number } | null> => {
+  if (!isReceiptStorageConfigured()) return null;
+
+  const admin = createAdminClient();
+  const ttlSeconds = 120;
+  const { data, error } = await admin.storage.from(RECEIPT_BUCKET).createSignedUrl(storageKey, ttlSeconds);
+
+  if (error || !data?.signedUrl) return null;
+
+  return {
+    signedUrl: data.signedUrl,
+    expiresInSeconds: ttlSeconds,
+  };
 };
