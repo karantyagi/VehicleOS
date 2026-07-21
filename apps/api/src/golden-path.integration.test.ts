@@ -41,6 +41,8 @@ describe("golden path API", () => {
         mileage: 30_500,
         lineItems: ["Oil change"],
         total: "$45.00",
+        storageKey: `test/${vehicle.id}/oil-change.pdf`,
+        channel: "receipt_upload",
       },
     });
 
@@ -99,6 +101,8 @@ describe("golden path API", () => {
         mileage: 50_500,
         lineItems: ["Oil change"],
         total: "$55.00",
+        storageKey: `test/${vehicle.id}/first.pdf`,
+        channel: "receipt_upload",
       },
     });
 
@@ -113,6 +117,8 @@ describe("golden path API", () => {
         mileage: 49_900,
         lineItems: ["Oil change"],
         total: "$49.00",
+        storageKey: `test/${vehicle.id}/conflict.pdf`,
+        channel: "receipt_upload",
       },
     });
 

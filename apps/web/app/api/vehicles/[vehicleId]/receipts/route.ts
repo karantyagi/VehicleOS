@@ -17,6 +17,7 @@ export async function POST(request: Request, context: RouteContext) {
     lineItems: string[];
     total: string;
     storageKey?: string;
+    channel?: "receipt_upload" | "photo";
   };
   const result = await submitReceipt(
     getServices(),

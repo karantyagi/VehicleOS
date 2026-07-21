@@ -496,6 +496,71 @@ article h2,
   color: #92400e;
 }
 
+.receipt-capture {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.receipt-dropzone {
+  display: grid;
+  gap: 4px;
+  padding: 20px 16px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  text-align: center;
+}
+
+.receipt-dropzone input[type="file"] {
+  display: none;
+}
+
+.receipt-dropzone-label {
+  font-weight: 600;
+}
+
+.receipt-dropzone-hint {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.receipt-file-meta {
+  display: grid;
+  gap: 8px;
+}
+
+.receipt-preview {
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+.receipt-file-name {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+.link-button {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.link-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .queue-verification {
   border-left: 3px solid #f59e0b;
   padding-left: 12px;

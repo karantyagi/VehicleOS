@@ -8,6 +8,7 @@ type ReceiptBody = {
   lineItems: string[];
   total: string;
   storageKey?: string;
+  channel?: "receipt_upload" | "photo";
 };
 
 type VehicleBody = {
@@ -116,11 +117,16 @@ export const submitReceipt = async (
   const owned = await assertVehicleOwner(services, vehicleId, auth.userId);
   if (!owned.ok) return owned.response;
 
-  const storageKey = body.storageKey ?? `receipts/${vehicleId}/${Date.now()}.pdf`;
+  if (!body.storageKey) {
+    return jsonResponse(400, { error: "storageKey is required — upload a receipt photo or PDF first" });
+  }
+
+  const channel = body.channel ?? "receipt_upload";
 
   const { documentId, correlationId } = await services.goldenPath.ingestReceipt({
     vehicleId,
-    storageKey,
+    storageKey: body.storageKey,
+    channel,
   });
 
   await services.goldenPath.completeExtraction({
