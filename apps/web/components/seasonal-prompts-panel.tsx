@@ -1,6 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { FormActions, FormField } from "@/components/form-field";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 
 export type ClimateZone = "cold" | "moderate" | "hot";
 
@@ -62,14 +65,14 @@ export function SeasonalPromptsPanel({
   }, [vehicleId, climateZone]);
 
   return (
-    <div className="seasonal-panel">
-      <p className="muted">
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
         Rules-driven seasonal nudges for your driving context — not a weather app.
       </p>
 
-      <label>
-        Driving context
-        <select
+      <FormField label="Driving context" htmlFor="climate-zone">
+        <Select
+          id="climate-zone"
           value={climateZone}
           disabled={disabled || isRefreshing}
           onChange={(event) => setClimateZone(event.target.value as ClimateZone)}
@@ -79,20 +82,20 @@ export function SeasonalPromptsPanel({
               {option.label}
             </option>
           ))}
-        </select>
-      </label>
+        </Select>
+      </FormField>
 
-      <div className="actions">
-        <button type="button" disabled={disabled || isRefreshing} onClick={() => void refreshPrompts()}>
+      <FormActions>
+        <Button type="button" disabled={disabled || isRefreshing} onClick={() => void refreshPrompts()}>
           {isRefreshing ? "Checking seasonal prompts…" : "Refresh seasonal prompts"}
-        </button>
-      </div>
+        </Button>
+      </FormActions>
 
-      {lastCreatedCount > 0 ? (
-        <p className="muted">{lastCreatedCount} seasonal prompt(s) added to your Now queue.</p>
-      ) : (
-        <p className="muted">No new seasonal prompts right now — check back next season or after a refresh.</p>
-      )}
+      <p className="text-xs text-muted-foreground">
+        {lastCreatedCount > 0
+          ? `${lastCreatedCount} seasonal prompt(s) added to your Now queue.`
+          : "No new seasonal prompts right now — check back next season or after a refresh."}
+      </p>
     </div>
   );
 }

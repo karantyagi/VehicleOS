@@ -1,5 +1,9 @@
 "use client";
 
+import { Download } from "lucide-react";
+import { FormActions } from "@/components/form-field";
+import { Button } from "@/components/ui/button";
+
 type ResaleReportExportProps = {
   vehicleId: string;
   apiBase: string;
@@ -54,28 +58,22 @@ export function ResaleReportExport({
   const hasData = serviceCount > 0 || evidenceCount > 0;
 
   return (
-    <div className="export-actions">
-      <p className="muted">
-        Download your maintenance timeline and evidence vault as a structured package for resale or
-        records.
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Download your maintenance timeline and evidence vault as a structured package for resale or records.
       </p>
-      <div className="actions">
-        <button
-          type="button"
-          disabled={disabled || !hasData}
-          onClick={() => void downloadExport("json")}
-        >
-          Download JSON package
-        </button>
-        <button
-          type="button"
-          disabled={disabled || !hasData}
-          onClick={() => void downloadExport("markdown")}
-        >
-          Download markdown report
-        </button>
-      </div>
-      {!hasData ? <p className="muted">Record a service or upload evidence to export.</p> : null}
+      <FormActions>
+        <Button type="button" variant="default" disabled={disabled || !hasData} onClick={() => void downloadExport("json")}>
+          <Download className="h-4 w-4" aria-hidden />
+          JSON package
+        </Button>
+        <Button type="button" variant="outline" disabled={disabled || !hasData} onClick={() => void downloadExport("markdown")}>
+          Markdown report
+        </Button>
+      </FormActions>
+      {!hasData ? (
+        <p className="text-xs text-muted-foreground">Record a service or upload evidence to enable export.</p>
+      ) : null}
     </div>
   );
 }

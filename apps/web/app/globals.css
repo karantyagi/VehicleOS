@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "../../../packages/ui/tokens.css";
+
+@layer base {
+  :root {
+    --background: 40 25% 98%;
+    --foreground: 160 25% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 160 25% 11%;
+    --primary: 158 64% 28%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 12% 94%;
+    --secondary-foreground: 160 20% 20%;
+    --muted: 160 10% 95%;
+    --muted-foreground: 160 8% 42%;
+    --accent: 152 55% 38%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 160 14% 90%;
+    --input: 160 14% 88%;
+    --ring: 158 64% 28%;
+    --radius: 0.75rem;
+    --sidebar-background: 220 16% 97%;
+    --sidebar-foreground: 220 15% 18%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-accent: 158 35% 93%;
+    --sidebar-accent-foreground: 158 64% 22%;
+    --surface-inset: 160 15% 96%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 160 25% 11%;
+  }
+
+  .dark {
+    --background: 220 18% 8%;
+    --foreground: 210 20% 96%;
+    --card: 220 16% 11%;
+    --card-foreground: 210 20% 96%;
+    --primary: 158 55% 42%;
+    --primary-foreground: 160 30% 8%;
+    --secondary: 220 14% 16%;
+    --secondary-foreground: 210 15% 90%;
+    --muted: 220 14% 14%;
+    --muted-foreground: 215 12% 62%;
+    --accent: 152 45% 38%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 12% 20%;
+    --input: 220 12% 22%;
+    --ring: 158 55% 42%;
+    --sidebar-background: 220 18% 7%;
+    --sidebar-foreground: 210 18% 92%;
+    --sidebar-border: 220 12% 18%;
+    --sidebar-accent: 220 14% 14%;
+    --sidebar-accent-foreground: 158 55% 48%;
+    --surface-inset: 220 14% 12%;
+    --popover: 220 16% 11%;
+    --popover-foreground: 210 20% 96%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background-image:
+      radial-gradient(ellipse 80% 55% at 100% -10%, hsl(158 64% 28% / 0.06), transparent 55%),
+      radial-gradient(ellipse 60% 40% at 0% 0%, hsl(220 20% 50% / 0.04), transparent 50%);
+  }
+
+  html.dark body {
+    background-image:
+      radial-gradient(ellipse 70% 45% at 100% -5%, hsl(158 55% 42% / 0.08), transparent 50%),
+      radial-gradient(ellipse 50% 35% at 0% 0%, hsl(220 30% 40% / 0.06), transparent 45%);
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer utilities {
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .surface-inset {
+    @apply rounded-lg border border-border/80 bg-[hsl(var(--surface-inset))];
+  }
+
+  .surface-panel {
+    @apply rounded-xl border border-border/80 bg-card shadow-[0_1px_2px_hsl(160_25%_11%/0.04),0_8px_24px_-12px_hsl(160_25%_11%/0.08)];
+  }
+
+  .dark .surface-panel {
+    @apply shadow-[0_1px_2px_hsl(0_0%_0%/0.2),0_8px_24px_-12px_hsl(0_0%_0%/0.35)];
+  }
+}

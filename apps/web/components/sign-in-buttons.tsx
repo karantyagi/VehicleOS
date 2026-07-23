@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { createClient } from "../lib/supabase/client";
 
 type Provider = "google" | "github";
@@ -15,13 +16,13 @@ export function SignInButtons() {
   };
 
   return (
-    <div className="sign-in-actions">
-      <button type="button" className="sign-in-button" onClick={() => signIn("google")}>
+    <div className="flex flex-col gap-3">
+      <Button type="button" className="w-full" onClick={() => void signIn("google")}>
         Continue with Google
-      </button>
-      <button type="button" className="sign-in-button secondary" onClick={() => signIn("github")}>
+      </Button>
+      <Button type="button" variant="outline" className="w-full" onClick={() => void signIn("github")}>
         Continue with GitHub
-      </button>
+      </Button>
     </div>
   );
 }

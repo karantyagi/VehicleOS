@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AppFooter } from "../../components/app-footer";
-import { AppHeader } from "../../components/app-header";
 import { DeleteAccountPanel } from "../../components/delete-account-panel";
+import { PageHeader } from "../../components/page-header";
+import { PanelCard } from "../../components/panel-card";
+import { AppHeader } from "../../components/app-header";
+import { AppShell } from "../../components/app-shell";
 import { getSessionUser } from "../../lib/auth/session";
 import { isAuthEnabled } from "../../lib/supabase/env";
 
@@ -17,24 +19,25 @@ export default async function SettingsPage() {
   }
 
   return (
-    <main className="shell settings-shell">
-      <AppHeader user={user} />
-      <section className="hero">
-        <p className="eyebrow">Account</p>
-        <h1>Settings</h1>
-        <p>Manage your early-access account and data rights.</p>
-      </section>
+    <AppShell
+      user={user}
+      sidebarHeader={<AppHeader user={user} placement="sidebar" />}
+      mobileBar={<AppHeader user={user} placement="mobile" />}
+    >
+      <PageHeader
+        eyebrow="Account"
+        title="Settings"
+        description="Manage your early-access account and data rights."
+      />
 
-      <section className="panel settings-panel">
-        <h2>Signed in as</h2>
-        <p>{user.email ?? user.id}</p>
-        <Link className="header-link" href="/">
+      <PanelCard title="Signed in as" description="Your early-access identity for VehicleOS.">
+        <p className="text-sm font-medium">{user.email ?? user.id}</p>
+        <Link className="text-sm text-primary hover:underline" href="/">
           Back to dashboard
         </Link>
-      </section>
+      </PanelCard>
 
       <DeleteAccountPanel />
-      <AppFooter />
-    </main>
+    </AppShell>
   );
 }

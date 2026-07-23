@@ -1,5 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+
 type QueueItem = {
   taskId: string;
   title: string;
@@ -27,69 +30,87 @@ const categoryLabel = (category: ReturnType<typeof classifyItem>): string => {
   return "Action";
 };
 
-const categoryClass = (category: ReturnType<typeof classifyItem>): string => {
-  if (category === "verification") return "queue-verification badge-warning";
-  if (category === "seasonal") return "queue-seasonal badge-seasonal";
-  if (category === "oem") return "queue-oem badge-oem";
-  if (category === "schedule") return "queue-schedule";
-  return "";
+const badgeVariant = (
+  category: ReturnType<typeof classifyItem>,
+): "warning" | "seasonal" | "oem" | "default" => {
+  if (category === "verification") return "warning";
+  if (category === "seasonal") return "seasonal";
+  if (category === "oem") return "oem";
+  return "default";
+};
+
+const severityRail = (category: ReturnType<typeof classifyItem>): string => {
+  if (category === "verification") return "border-l-amber-500";
+  if (category === "seasonal") return "border-l-sky-500";
+  if (category === "oem") return "border-l-violet-500";
+  if (category === "schedule") return "border-l-primary";
+  return "border-l-border";
 };
 
 type NowQueuePanelProps = {
   items: QueueItem[];
   disabled?: boolean;
-  isRefreshing?: boolean;
   onDecide: (taskId: string, decision: "approve" | "dismiss" | "snooze") => void;
-  onRefresh?: () => void;
 };
 
-export function NowQueuePanel({
-  items,
-  disabled = false,
-  isRefreshing = false,
-  onDecide,
-  onRefresh,
-}: NowQueuePanelProps) {
+export function NowQueuePanel({ items, disabled = false, onDecide }: NowQueuePanelProps) {
   const pending = items.filter((item) => item.status === "pending");
   const recent = items.filter((item) => item.status !== "pending");
 
   return (
-    <div className="now-queue-panel">
-      <div className="now-queue-toolbar">
-        <p className="muted">Due items with plain-English reasons — approve, dismiss, or snooze.</p>
-        {onRefresh ? (
-          <button type="button" disabled={disabled || isRefreshing} onClick={onRefresh}>
-            {isRefreshing ? "Refreshing…" : "Refresh recommendations"}
-          </button>
-        ) : null}
-      </div>
+    <div className="space-y-4">
+      <p className="text-[13px] leading-relaxed text-muted-foreground">
+        Plain-English recommendations — you approve, dismiss, or snooze before anything changes.
+      </p>
 
       {pending.length === 0 ? (
-        <p className="muted">Nothing needs a decision right now.</p>
+        <p className="surface-inset px-4 py-6 text-center text-sm text-muted-foreground">
+          Nothing needs a decision right now. Check back after your next service or refresh recommendations.
+        </p>
       ) : (
-        <ul className="queue-list">
+        <ul className="space-y-3">
           {pending.map((item) => {
             const category = classifyItem(item);
             return (
-              <li key={item.taskId} className={categoryClass(category)}>
-                <div>
-                  <strong>{item.title}</strong>
-                  <p>{item.reason}</p>
-                  <span className={`badge ${category === "verification" ? "badge-warning" : category === "seasonal" ? "badge-seasonal" : category === "oem" ? "badge-oem" : ""}`}>
-                    {categoryLabel(category)}
-                  </span>
+              <li
+                key={item.taskId}
+                className={`surface-panel border-l-4 ${severityRail(category)} p-4 pl-3.5`}
+              >
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <strong className="text-sm font-semibold tracking-tight">{item.title}</strong>
+                    <Badge variant={badgeVariant(category)}>{categoryLabel(category)}</Badge>
+                  </div>
+                  <p className="text-[13px] leading-relaxed text-muted-foreground">{item.reason}</p>
                 </div>
-                <div className="actions">
-                  <button type="button" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={disabled}
+                    onClick={() => onDecide(item.taskId, "approve")}
+                  >
                     {item.taskKind === "verification" ? "Mark resolved" : "Approve"}
-                  </button>
-                  <button type="button" disabled={disabled} onClick={() => onDecide(item.taskId, "dismiss")}>
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    disabled={disabled}
+                    onClick={() => onDecide(item.taskId, "dismiss")}
+                  >
                     Dismiss
-                  </button>
+                  </Button>
                   {item.taskKind !== "verification" ? (
-                    <button type="button" disabled={disabled} onClick={() => onDecide(item.taskId, "snooze")}>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      disabled={disabled}
+                      onClick={() => onDecide(item.taskId, "snooze")}
+                    >
                       Snooze
-                    </button>
+                    </Button>
                   ) : null}
                 </div>
               </li>
@@ -99,13 +120,13 @@ export function NowQueuePanel({
       )}
 
       {recent.length > 0 ? (
-        <details className="now-queue-recent">
-          <summary>Recent decisions ({recent.length})</summary>
-          <ul className="queue-list queue-list-compact">
+        <details className="surface-inset px-4 py-3 text-sm">
+          <summary className="cursor-pointer font-medium text-foreground">Recent decisions ({recent.length})</summary>
+          <ul className="mt-3 space-y-2">
             {recent.map((item) => (
-              <li key={item.taskId}>
+              <li key={item.taskId} className="flex flex-wrap items-center justify-between gap-2 text-[13px]">
                 <strong>{item.title}</strong>
-                <span className="badge">{item.status}</span>
+                <Badge variant="secondary">{item.status}</Badge>
               </li>
             ))}
           </ul>

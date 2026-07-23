@@ -1,6 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FileDropzone } from "@/components/file-dropzone";
+import { FormActions, FormField } from "@/components/form-field";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type ScheduleRow = {
   serviceName: string;
@@ -134,56 +139,54 @@ export function ManualKnowledgePanel({
   };
 
   return (
-    <div className="manual-panel">
-      <p className="muted">
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
         Upload your OEM manual PDF, review stub-extracted intervals, and feed the Vehicle Knowledge Base.
       </p>
 
-      <label className="receipt-dropzone">
-        <span className="receipt-dropzone-label">
-          {isUploading ? "Uploading…" : "OEM manual PDF"}
-        </span>
-        <span className="receipt-dropzone-hint">Maintenance schedule or owner manual · PDF · max 10 MB</span>
-        <input
-          type="file"
-          accept="application/pdf"
-          disabled={disabled || isUploading || isConfirming}
-          onChange={(event) => {
-            const file = event.target.files?.[0];
-            if (file) void uploadManual(file);
-          }}
-        />
-      </label>
+      <FileDropzone
+        label="OEM manual PDF"
+        hint="Maintenance schedule or owner manual · PDF · max 10 MB"
+        accept="application/pdf"
+        disabled={disabled || isConfirming}
+        busy={isUploading}
+        onFile={(file) => void uploadManual(file)}
+      />
 
-      {fileName ? <p className="receipt-file-name">Stored · {fileName}</p> : null}
-      {extractionNote ? <p className="muted">{extractionNote}</p> : null}
+      {fileName ? <p className="text-sm font-medium">Stored · {fileName}</p> : null}
+      {extractionNote ? <p className="text-xs text-muted-foreground">{extractionNote}</p> : null}
 
-      <label>
-        Manual title
-        <input
+      <FormField label="Manual title" htmlFor="manual-title">
+        <Input
+          id="manual-title"
           value={manualTitle}
           disabled={disabled || isConfirming}
           onChange={(event) => setManualTitle(event.target.value)}
         />
-      </label>
+      </FormField>
 
-      {isPreviewing ? <p className="muted">Loading suggested schedule rows…</p> : null}
+      {isPreviewing ? (
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-40" />
+          <Skeleton className="h-16 w-full" />
+        </div>
+      ) : null}
 
       {rows.length > 0 ? (
-        <div className="manual-schedule-table">
+        <div className="space-y-3">
           {rows.map((row, index) => (
-            <div key={`${row.serviceName}-${index}`} className="manual-schedule-row">
-              <label>
-                Service
-                <input
+            <div key={`${row.serviceName}-${index}`} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-3">
+              <FormField label="Service" htmlFor={`service-${index}`}>
+                <Input
+                  id={`service-${index}`}
                   value={row.serviceName}
                   disabled={disabled || isConfirming}
                   onChange={(event) => updateRow(index, { serviceName: event.target.value })}
                 />
-              </label>
-              <label>
-                Miles
-                <input
+              </FormField>
+              <FormField label="Miles" htmlFor={`miles-${index}`}>
+                <Input
+                  id={`miles-${index}`}
                   type="number"
                   value={row.intervalMiles ?? ""}
                   disabled={disabled || isConfirming}
@@ -193,10 +196,10 @@ export function ManualKnowledgePanel({
                     })
                   }
                 />
-              </label>
-              <label>
-                Months
-                <input
+              </FormField>
+              <FormField label="Months" htmlFor={`months-${index}`}>
+                <Input
+                  id={`months-${index}`}
                   type="number"
                   value={row.intervalMonths ?? ""}
                   disabled={disabled || isConfirming}
@@ -206,19 +209,19 @@ export function ManualKnowledgePanel({
                     })
                   }
                 />
-              </label>
+              </FormField>
             </div>
           ))}
         </div>
       ) : null}
 
-      <button
+      <Button
         type="button"
         disabled={disabled || isConfirming || isUploading || !storageKey}
         onClick={() => void confirmSchedule()}
       >
         {isConfirming ? "Saving knowledge base…" : "Confirm schedule → feed rules engine"}
-      </button>
+      </Button>
     </div>
   );
 }

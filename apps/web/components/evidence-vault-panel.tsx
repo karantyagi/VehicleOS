@@ -1,5 +1,9 @@
 "use client";
 
+import { Archive } from "lucide-react";
+import { EmptyState } from "@/components/empty-state";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { openEvidenceDocument } from "../lib/evidence-access";
 
 export type EvidenceVaultItem = {
@@ -29,23 +33,38 @@ export function EvidenceVaultPanel({
   const linkedSet = new Set(linkedDocumentIds);
 
   if (items.length === 0) {
-    return <p className="muted">Upload a receipt to populate your evidence vault.</p>;
+    return (
+      <EmptyState
+        icon={Archive}
+        title="No evidence yet"
+        description="Upload a receipt from the Receipts section to populate your immutable vault."
+      />
+    );
   }
 
   return (
-    <ul className="evidence-vault-list">
+    <ul className="space-y-3">
       {items.map((item) => (
-        <li key={item.documentId} className="evidence-vault-item">
-          <div>
-            <strong>{channelLabel(item.channel)} evidence</strong>
-            <p className="muted">
-              {new Date(item.ingestedAt).toLocaleString()} · immutable ·{" "}
-              {linkedSet.has(item.documentId) ? "linked to service" : "stored"}
+        <li
+          key={item.documentId}
+          className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <strong className="text-sm">{channelLabel(item.channel)} evidence</strong>
+              <Badge variant={linkedSet.has(item.documentId) ? "default" : "secondary"}>
+                {linkedSet.has(item.documentId) ? "Linked" : "Stored"}
+              </Badge>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {new Date(item.ingestedAt).toLocaleString()} · immutable
             </p>
           </div>
-          <button
+          <Button
             type="button"
-            className="link-button"
+            variant="outline"
+            size="sm"
+            className="shrink-0"
             onClick={() =>
               void openEvidenceDocument({
                 apiBase,
@@ -57,7 +76,7 @@ export function EvidenceVaultPanel({
             }
           >
             View original
-          </button>
+          </Button>
         </li>
       ))}
     </ul>

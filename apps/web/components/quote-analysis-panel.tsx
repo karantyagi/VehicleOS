@@ -1,6 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { FormActions, FormField } from "@/components/form-field";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 type QuoteLine = {
   description: string;
@@ -40,6 +45,12 @@ const verdictLabel: Record<QuoteLine["verdict"], string> = {
   optional: "Optional",
   necessary: "Necessary",
   unknown: "Review",
+};
+
+const verdictBadge = (verdict: QuoteLine["verdict"]) => {
+  if (verdict === "high") return "warning" as const;
+  if (verdict === "optional") return "secondary" as const;
+  return "default" as const;
 };
 
 export function QuoteAnalysisPanel({
@@ -82,45 +93,45 @@ export function QuoteAnalysisPanel({
   const display = latest ?? history.at(-1) ?? null;
 
   return (
-    <section className="quote-panel">
-      <label>
-        Paste dealer quote
-        <textarea
+    <div className="space-y-4">
+      <FormField label="Paste dealer quote" htmlFor="quote-text">
+        <Textarea
+          id="quote-text"
           value={rawText}
           onChange={(event) => setRawText(event.target.value)}
           rows={6}
           disabled={disabled || isBusy}
         />
-      </label>
-      <button type="button" disabled={disabled || isBusy || rawText.trim().length === 0} onClick={() => void analyze()}>
-        Analyze quote
-      </button>
-      {error ? <p className="settings-error">{error}</p> : null}
+      </FormField>
+      <Button type="button" disabled={disabled || isBusy || rawText.trim().length === 0} onClick={() => void analyze()}>
+        {isBusy ? "Analyzing…" : "Analyze quote"}
+      </Button>
+      {error ? <Alert variant="destructive">{error}</Alert> : null}
 
       {display ? (
-        <div className="quote-result">
-          <p className="quote-summary">{display.summary}</p>
-          <p className="muted">
+        <div className="space-y-3 rounded-lg border border-border bg-muted/20 p-4">
+          <p className="text-sm font-medium">{display.summary}</p>
+          <p className="text-xs text-muted-foreground">
             Quoted ${display.totalQuoted.toFixed(2)} · typical upper bound ~${display.totalFairHigh.toFixed(2)}
           </p>
-          <ul className="quote-lines">
+          <ul className="space-y-3">
             {display.lines.map((line) => (
-              <li key={`${line.description}-${line.quotedAmount}`} className={`quote-line quote-${line.verdict}`}>
-                <div>
+              <li key={`${line.description}-${line.quotedAmount}`} className="rounded-md border border-border bg-card p-3 text-sm">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <strong>{line.description}</strong>
-                  <span>${line.quotedAmount.toFixed(2)}</span>
+                  <span className="font-mono text-sm">${line.quotedAmount.toFixed(2)}</span>
                 </div>
-                <p>
-                  <span className={`badge ${line.verdict === "high" ? "badge-warning" : ""}`}>
+                <p className="mt-2 text-muted-foreground">
+                  <Badge variant={verdictBadge(line.verdict)} className="mr-2">
                     {verdictLabel[line.verdict]}
-                  </span>{" "}
-                  Fair range ${line.fairMin.toFixed(0)}–${line.fairMax.toFixed(0)} · {line.reason}
+                  </Badge>
+                  Fair ${line.fairMin.toFixed(0)}–${line.fairMax.toFixed(0)} · {line.reason}
                 </p>
               </li>
             ))}
           </ul>
         </div>
       ) : null}
-    </section>
+    </div>
   );
 }
