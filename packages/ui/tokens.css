@@ -1,89 +1,9 @@
-/**
- * VehicleOS shared design tokens — default: polished green (production main site)
- * Indigo + sand variants live on /design-preview only until approved.
- */
 :root {
-  /* Surfaces */
-  --vos-bg: #09090b;
-  --vos-bg-subtle: #0f0f12;
-  --vos-surface: #131316;
-  --vos-surface-elevated: #1a1a1f;
-  --vos-surface-hover: #222228;
-
-  /* Ink */
-  --vos-ink: #fafafa;
-  --vos-ink-secondary: #a1a1aa;
-  --vos-ink-tertiary: #71717a;
-
-  /* Borders */
-  --vos-border: rgba(255, 255, 255, 0.08);
-  --vos-border-strong: rgba(255, 255, 255, 0.14);
-
-  /* Brand accent — polished green */
-  --vos-accent: #22c55e;
-  --vos-accent-strong: #16a34a;
-  --vos-accent-soft: rgba(34, 197, 94, 0.1);
-  --vos-accent-glow: rgba(34, 197, 94, 0.18);
-
-  /* Path accents */
-  --vos-owners-accent: #22c55e;
-  --vos-owners-soft: rgba(34, 197, 94, 0.12);
-  --vos-builders-accent: #3b82f6;
-  --vos-builders-soft: rgba(59, 130, 246, 0.1);
-
-  /* Status */
-  --vos-status-shipped: #22c55e;
-  --vos-status-shipped-soft: rgba(34, 197, 94, 0.12);
-  --vos-status-progress: #f59e0b;
-  --vos-status-progress-soft: rgba(245, 158, 11, 0.12);
-  --vos-status-planned: #71717a;
-  --vos-status-planned-soft: rgba(113, 113, 122, 0.12);
-
-  /* Layout */
-  --vos-radius: 12px;
-  --vos-radius-lg: 16px;
-  --vos-radius-sm: 8px;
-  --vos-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 32px rgba(0, 0, 0, 0.35);
-  --vos-shell: 1120px;
-  --vos-shell-wide: 1200px;
-
-  /* Marketing aliases */
-  --bg: var(--vos-bg);
-  --bg-subtle: var(--vos-bg-subtle);
-  --surface: var(--vos-surface);
-  --surface-hover: var(--vos-surface-hover);
-  --border: var(--vos-border);
-  --border-strong: var(--vos-border-strong);
-  --ink: var(--vos-ink);
-  --ink-secondary: var(--vos-ink-secondary);
-  --ink-tertiary: var(--vos-ink-tertiary);
-  --accent: var(--vos-accent);
-  --accent-soft: var(--vos-accent-soft);
-  --accent-glow: var(--vos-accent-glow);
-  --blue: var(--vos-builders-accent);
-  --blue-soft: var(--vos-builders-soft);
-  --amber: var(--vos-status-progress);
-  --amber-soft: var(--vos-status-progress-soft);
-  --radius: var(--vos-radius);
-  --radius-lg: var(--vos-radius-lg);
-  --shadow: var(--vos-shadow);
-}
-
-/* Preview-only: indigo experiment (scoped via .theme-indigo on /design-preview) */
-.theme-indigo {
-  --vos-accent: #8b9cf8;
-  --vos-accent-strong: #6366f1;
-  --vos-accent-soft: rgba(99, 102, 241, 0.12);
-  --vos-accent-glow: rgba(99, 102, 241, 0.22);
-  --vos-owners-accent: #c9a87c;
-  --vos-owners-soft: rgba(201, 168, 124, 0.12);
-  --vos-builders-accent: #7c9cff;
-  --vos-builders-soft: rgba(124, 156, 255, 0.12);
-  --vos-status-shipped: #5eead4;
-  --vos-status-shipped-soft: rgba(94, 234, 212, 0.12);
-  --accent: var(--vos-accent);
-  --accent-soft: var(--vos-accent-soft);
-  --accent-glow: var(--vos-accent-glow);
-  --blue: var(--vos-builders-accent);
-  --blue-soft: var(--vos-builders-soft);
+  --vehicleos-green: #0b6f45;
+  --vehicleos-green-bright: #22c55e;
+  --vehicleos-ink: #112015;
+  --vehicleos-muted: #49624c;
+  --vehicleos-bg: #f4f2ec;
+  --vehicleos-card: #fffdf7;
+  --vehicleos-border: #d5e3d6;
 }

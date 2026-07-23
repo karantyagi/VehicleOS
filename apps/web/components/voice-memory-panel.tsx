@@ -1,6 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { FormActions, FormField } from "@/components/form-field";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useSpeechRecognition } from "../lib/use-speech-recognition";
 
 type VoiceMemoryPanelProps = {
@@ -137,35 +142,29 @@ export function VoiceMemoryPanel({
   };
 
   return (
-    <div className="voice-panel">
-      <p className="muted">
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
         Speak a service note — Vehicle OS transcribes it, stores the artifact, and records the service.
       </p>
 
       {!speech.isSupported ? (
-        <p className="settings-error">
-          Browser speech recognition is unavailable. Type your note below instead.
-        </p>
+        <Alert variant="destructive">Browser speech recognition is unavailable. Type your note below instead.</Alert>
       ) : null}
 
-      <div className="actions">
-        <button
+      <FormActions>
+        <Button
           type="button"
           disabled={disabled || isSubmitting || speech.isListening}
           onClick={speech.startListening}
         >
           {speech.isListening ? "Listening…" : "Start voice note"}
-        </button>
-        <button
-          type="button"
-          disabled={disabled || isSubmitting || !speech.isListening}
-          onClick={speech.stopListening}
-        >
+        </Button>
+        <Button type="button" variant="secondary" disabled={disabled || isSubmitting || !speech.isListening} onClick={speech.stopListening}>
           Stop
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
-          className="link-button"
+          variant="ghost"
           disabled={disabled || isSubmitting}
           onClick={() => {
             speech.resetTranscript();
@@ -173,72 +172,71 @@ export function VoiceMemoryPanel({
           }}
         >
           Clear
-        </button>
-      </div>
+        </Button>
+      </FormActions>
 
-      {speech.error ? <p className="settings-error">{speech.error}</p> : null}
+      {speech.error ? <Alert variant="destructive">{speech.error}</Alert> : null}
 
-      <label>
-        Transcript
-        <textarea
+      <FormField label="Transcript" htmlFor="voice-transcript">
+        <Textarea
+          id="voice-transcript"
           rows={4}
           value={displayTranscript || speech.transcript}
           disabled={disabled || isSubmitting}
           onChange={(event) => speech.setTranscript(event.target.value)}
           placeholder='Example: "Changed oil at dealer, 62,200 miles, $110"'
         />
-      </label>
+      </FormField>
 
-      <label>
-        Shop
-        <input
-          value={form.shop}
-          disabled={disabled || isSubmitting}
-          onChange={(event) => setForm({ ...form, shop: event.target.value })}
-        />
-      </label>
-      <label>
-        Service date
-        <input
-          value={form.serviceDate}
-          disabled={disabled || isSubmitting}
-          onChange={(event) => setForm({ ...form, serviceDate: event.target.value })}
-        />
-      </label>
-      <label>
-        Mileage
-        <input
-          type="number"
-          value={form.mileage}
-          disabled={disabled || isSubmitting}
-          onChange={(event) => setForm({ ...form, mileage: Number(event.target.value) })}
-        />
-      </label>
-      <label>
-        Line items
-        <textarea
+      <div className="grid gap-4 sm:grid-cols-2">
+        <FormField label="Shop" htmlFor="voice-shop">
+          <Input
+            id="voice-shop"
+            value={form.shop}
+            disabled={disabled || isSubmitting}
+            onChange={(event) => setForm({ ...form, shop: event.target.value })}
+          />
+        </FormField>
+        <FormField label="Service date" htmlFor="voice-date">
+          <Input
+            id="voice-date"
+            value={form.serviceDate}
+            disabled={disabled || isSubmitting}
+            onChange={(event) => setForm({ ...form, serviceDate: event.target.value })}
+          />
+        </FormField>
+        <FormField label="Mileage" htmlFor="voice-mileage">
+          <Input
+            id="voice-mileage"
+            type="number"
+            value={form.mileage}
+            disabled={disabled || isSubmitting}
+            onChange={(event) => setForm({ ...form, mileage: Number(event.target.value) })}
+          />
+        </FormField>
+        <FormField label="Total" htmlFor="voice-total">
+          <Input
+            id="voice-total"
+            value={form.total}
+            disabled={disabled || isSubmitting}
+            onChange={(event) => setForm({ ...form, total: event.target.value })}
+          />
+        </FormField>
+      </div>
+
+      <FormField label="Line items" htmlFor="voice-lines">
+        <Textarea
+          id="voice-lines"
           rows={2}
           value={form.lineItems}
           disabled={disabled || isSubmitting}
           onChange={(event) => setForm({ ...form, lineItems: event.target.value })}
         />
-      </label>
-      <label>
-        Total
-        <input
-          value={form.total}
-          disabled={disabled || isSubmitting}
-          onChange={(event) => setForm({ ...form, total: event.target.value })}
-        />
-      </label>
+      </FormField>
 
-      <button
-        type="button"
-        disabled={disabled || isSubmitting || isUploading}
-        onClick={() => void submitVoiceMemory()}
-      >
+      <Button type="button" disabled={disabled || isSubmitting || isUploading} onClick={() => void submitVoiceMemory()}>
         {isSubmitting ? "Saving voice memory…" : "Confirm voice note → run loop"}
-      </button>
+      </Button>
     </div>
   );
 }

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { FileDropzone } from "@/components/file-dropzone";
+import { Button } from "@/components/ui/button";
 import type { ReceiptUploadChannel } from "../lib/receipt-storage";
 
 type UploadedReceipt = {
@@ -70,16 +72,6 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, onUploaded, onErr
     }
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    setSelectedFile(file ?? null);
-    setUploaded(null);
-    onUploaded(null);
-
-    if (!file) return;
-    await uploadFile(file);
-  };
-
   const clearFile = () => {
     setSelectedFile(null);
     setUploaded(null);
@@ -88,39 +80,43 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, onUploaded, onErr
   };
 
   return (
-    <div className="receipt-capture">
-      <label className="receipt-dropzone">
-        <span className="receipt-dropzone-label">
-          {isUploading ? "Uploading…" : "Photo or PDF receipt"}
-        </span>
-        <span className="receipt-dropzone-hint">JPEG, PNG, WebP, HEIC, or PDF · max 10 MB</span>
-        <input
-          ref={inputRef}
-          type="file"
-          accept={ACCEPT}
-          disabled={disabled || isUploading}
-          onChange={(event) => void handleFileChange(event)}
-        />
-      </label>
+    <div className="space-y-4">
+      <FileDropzone
+        label="Photo or PDF receipt"
+        hint="JPEG, PNG, WebP, HEIC, or PDF · max 10 MB"
+        accept={ACCEPT}
+        disabled={disabled}
+        busy={isUploading}
+        onFile={(file) => {
+          setSelectedFile(file);
+          setUploaded(null);
+          onUploaded(null);
+          void uploadFile(file);
+        }}
+      />
 
       {selectedFile ? (
-        <div className="receipt-file-meta">
-      {uploaded?.previewUrl ? (
+        <div className="rounded-lg border border-border bg-muted/20 p-4">
+          {uploaded?.previewUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={uploaded.previewUrl} alt="Receipt preview" className="receipt-preview" />
-          ) : selectedFile ? (
-            <p className="receipt-file-name">{selectedFile.name}</p>
-          ) : null}
-          <p className="muted">
+            <img
+              src={uploaded.previewUrl}
+              alt="Receipt preview"
+              className="mb-3 max-h-48 w-auto rounded-md border border-border object-contain"
+            />
+          ) : (
+            <p className="text-sm font-medium">{selectedFile.name}</p>
+          )}
+          <p className="mt-2 text-xs text-muted-foreground">
             {uploaded
               ? `Stored · ${uploaded.channel === "photo" ? "photo" : "document"} ingest`
               : isUploading
                 ? "Uploading to evidence storage…"
                 : "Waiting to upload…"}
           </p>
-          <button type="button" className="link-button" disabled={disabled || isUploading} onClick={clearFile}>
+          <Button type="button" variant="ghost" size="sm" className="mt-2" disabled={disabled || isUploading} onClick={clearFile}>
             Remove file
-          </button>
+          </Button>
         </div>
       ) : null}
     </div>
