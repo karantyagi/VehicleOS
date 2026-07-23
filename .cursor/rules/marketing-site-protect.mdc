@@ -1,0 +1,21 @@
+---
+description: Do not change vehicleos.app marketing unless the user explicitly asks
+alwaysApply: true
+---
+
+# Marketing site — change only on explicit request
+
+**Marketing** = `apps/marketing/` (deploys to **vehicleos.app**).
+
+**Owner app** = `apps/web/` (deploys to **app.vehicleos.app**).
+
+## Agent must
+
+- **Never** edit `apps/marketing/**` unless the user **explicitly** asks for marketing site changes (copy, layout, pages, marketing CSS, etc.).
+- **Never** replace or slim down `packages/ui/tokens.css` for owner-app work — that file is the **marketing** token source; owner app uses `apps/web/app/globals.css` (Tailwind).
+- When doing owner-app UX/UI, scope changes to `apps/web/**` and app-specific packages only.
+- If a shared package would affect marketing, **split** exports (marketing vs app) instead of overwriting marketing tokens.
+
+## User said no marketing changes
+
+Treat as default until they say otherwise: app UX work must not alter vehicleos.app appearance.

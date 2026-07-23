@@ -6,7 +6,9 @@ Shared design tokens for VehicleOS surfaces.
 
 | Import | Use |
 |--------|-----|
-| `@vehicleos/ui-tokens/tokens.css` | CSS variables (marketing + web) |
+| `@vehicleos/ui-tokens/tokens.css` | **Marketing site only** (`apps/marketing` → vehicleos.app) |
+
+**Do not** import `tokens.css` from `apps/web`. The owner app theme is defined in `apps/web/app/globals.css` (Tailwind / shadcn).
 
 ## Owner console patterns (implemented in `apps/web`)
 

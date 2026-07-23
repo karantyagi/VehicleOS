@@ -1,4 +1,4 @@
-@import "../../../packages/ui/tokens.css";
+/* Legacy golden-path styles — not imported by layout; kept for reference. Owner app uses globals.css. */
 
 :root {
   --bg: #f4f2ec;
