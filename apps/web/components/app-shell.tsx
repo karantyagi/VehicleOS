@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ConsoleKeyboardShortcuts } from "@/components/console-keyboard-shortcuts";
 import { CommandMenu, CommandMenuTrigger, SidebarUtilityRow } from "@/components/command-menu";
-import { SidebarAccount } from "@/components/sidebar-account";
+import { AccountMenu } from "@/components/account-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { VehicleContextBar } from "@/components/vehicle-context-bar";
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,7 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
       <div className="border-b border-sidebar-border px-4 py-4">{sidebarHeader}</div>
       <SidebarUtilityRow />
       <AppSidebar className="flex-1 overflow-y-auto py-2" />
-      {user ? <SidebarAccount user={user} /> : null}
+      {user ? <AccountMenu user={user} /> : null}
     </>
   );
 

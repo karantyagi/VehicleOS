@@ -204,46 +204,10 @@ export function CommandMenuTrigger({ className, compact = false }: CommandMenuTr
   );
 }
 
-function ThemeToggleDock() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-
-  if (!mounted) {
-    return (
-      <div className="h-9 w-9 shrink-0 rounded-lg border border-sidebar-border bg-background/50" aria-hidden />
-    );
-  }
-
-  const cycle = () => {
-    if (theme === "light") setTheme("dark");
-    else if (theme === "dark") setTheme("system");
-    else setTheme("light");
-  };
-
-  const Icon = theme === "dark" ? Moon : theme === "light" ? Sun : Monitor;
-  const label =
-    theme === "system" ? `Appearance: system (${resolvedTheme})` : theme === "dark" ? "Dark mode" : "Light mode";
-
-  return (
-    <button
-      type="button"
-      onClick={cycle}
-      aria-label={label}
-      title={label}
-      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-sidebar-border bg-background/50 text-muted-foreground transition-colors hover:bg-sidebar-accent/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      <Icon className="h-4 w-4" aria-hidden />
-    </button>
-  );
-}
-
 export function SidebarUtilityRow({ className }: { className?: string }) {
   return (
-    <div className={cn("flex items-center gap-1.5 px-3 pb-1 pt-2", className)}>
+    <div className={cn("px-3 pb-1 pt-2", className)}>
       <CommandMenuTrigger />
-      <ThemeToggleDock />
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FileDropzone } from "@/components/file-dropzone";
+import { MobileCaptureActions } from "@/components/mobile-capture-actions";
 import { Button } from "@/components/ui/button";
 import type { ReceiptUploadChannel } from "../lib/receipt-storage";
 
@@ -79,21 +80,34 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, onUploaded, onErr
     if (inputRef.current) inputRef.current.value = "";
   };
 
+  const handlePick = (file: File) => {
+    setSelectedFile(file);
+    setUploaded(null);
+    onUploaded(null);
+    void uploadFile(file);
+  };
+
   return (
     <div className="space-y-4">
-      <FileDropzone
-        label="Photo or PDF receipt"
-        hint="JPEG, PNG, WebP, HEIC, or PDF · max 10 MB"
-        accept={ACCEPT}
-        disabled={disabled}
-        busy={isUploading}
-        onFile={(file) => {
-          setSelectedFile(file);
-          setUploaded(null);
-          onUploaded(null);
-          void uploadFile(file);
-        }}
-      />
+      <div className="md:hidden">
+        <MobileCaptureActions
+          accept={ACCEPT}
+          disabled={disabled}
+          busy={isUploading}
+          onFile={handlePick}
+        />
+        <p className="mt-2 text-center text-xs text-muted-foreground">JPEG, PNG, WebP, HEIC, or PDF · max 10 MB</p>
+      </div>
+      <div className="hidden md:block">
+        <FileDropzone
+          label="Photo or PDF receipt"
+          hint="JPEG, PNG, WebP, HEIC, or PDF · max 10 MB"
+          accept={ACCEPT}
+          disabled={disabled}
+          busy={isUploading}
+          onFile={handlePick}
+        />
+      </div>
 
       {selectedFile ? (
         <div className="rounded-lg border border-border bg-muted/20 p-4">
