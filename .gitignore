@@ -9,6 +9,7 @@ dist/
 build/
 coverage/
 .turbo/
+*.tsbuildinfo
 
 # Environment
 .env
@@ -37,3 +38,4 @@ __pycache__/
 *.tfstate
 *.tfstate.*
 .terraform/
+*.tsbuildinfo

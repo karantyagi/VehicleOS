@@ -3,10 +3,15 @@ import { getSessionUser } from "../../../../../../lib/auth/session";
 import { getServices } from "../../../../../../lib/api-services";
 import {
   MAX_MANUAL_BYTES,
+  manualFileTooLargeMessage,
+} from "../../../../../../lib/manual-upload-limits";
+import {
+  buildManualStorageKey,
   createManualSignedUpload,
   isAllowedManualType,
   isReceiptStorageConfigured,
 } from "../../../../../../lib/receipt-storage";
+import { isAuthEnabled } from "../../../../../../lib/supabase/env";
 
 export const runtime = "nodejs";
 
@@ -33,10 +38,6 @@ export async function POST(request: Request, context: RouteContext) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  if (!isReceiptStorageConfigured()) {
-    return NextResponse.json({ error: "Storage is not configured for manual uploads" }, { status: 503 });
-  }
-
   let body: UploadUrlBody;
   try {
     body = (await request.json()) as UploadUrlBody;
@@ -52,31 +53,55 @@ export async function POST(request: Request, context: RouteContext) {
     return NextResponse.json({ error: "fileSize is required" }, { status: 400 });
   }
   if (fileSize > MAX_MANUAL_BYTES) {
-    return NextResponse.json(
-      { error: `Manual PDF exceeds ${Math.round(MAX_MANUAL_BYTES / (1024 * 1024))} MB limit` },
-      { status: 413 },
-    );
+    return NextResponse.json({ error: manualFileTooLargeMessage(fileSize) }, { status: 413 });
   }
   if (!isAllowedManualType(contentType)) {
     return NextResponse.json({ error: "Upload a PDF manual only" }, { status: 415 });
   }
 
-  const signed = await createManualSignedUpload({
+  const storageKey = buildManualStorageKey({
     userId: user.id,
     vehicleId,
     fileName,
   });
 
-  if (!signed) {
-    return NextResponse.json({ error: "Could not prepare upload" }, { status: 500 });
+  if (isReceiptStorageConfigured()) {
+    const signed = await createManualSignedUpload({
+      userId: user.id,
+      vehicleId,
+      fileName,
+    });
+
+    if (!signed) {
+      return NextResponse.json({ error: "Could not prepare upload" }, { status: 500 });
+    }
+
+    return NextResponse.json({
+      mode: "signed" as const,
+      signedUrl: signed.signedUrl,
+      token: signed.token,
+      storageKey: signed.storageKey,
+      path: signed.path,
+      maxBytes: MAX_MANUAL_BYTES,
+      contentType,
+    });
+  }
+
+  if (isAuthEnabled()) {
+    return NextResponse.json({
+      mode: "session" as const,
+      storageKey,
+      bucket: "receipts",
+      maxBytes: MAX_MANUAL_BYTES,
+      contentType,
+    });
   }
 
   return NextResponse.json({
-    signedUrl: signed.signedUrl,
-    token: signed.token,
-    storageKey: signed.storageKey,
-    path: signed.path,
+    mode: "dev" as const,
+    storageKey,
     maxBytes: MAX_MANUAL_BYTES,
     contentType,
+    stored: false,
   });
 }

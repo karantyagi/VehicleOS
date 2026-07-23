@@ -2,10 +2,44 @@
 
 import { useEffect, useState } from "react";
 import { FileDropzone } from "@/components/file-dropzone";
-import { FormActions, FormField } from "@/components/form-field";
+import { FormField } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  MANUAL_UPLOAD_DROPZONE_HINT,
+  MANUAL_UPLOAD_GUIDANCE,
+  MAX_MANUAL_BYTES,
+  manualFileTooLargeMessage,
+  manualStorageRejectedMessage,
+} from "@/lib/manual-upload-limits";
+import { createClient } from "@/lib/supabase/client";
+
+const RECEIPT_BUCKET = "receipts";
+
+type ManualUploadUrlResponse =
+  | {
+      mode: "signed";
+      signedUrl: string;
+      token: string;
+      storageKey: string;
+      error?: string;
+    }
+  | {
+      mode: "session";
+      storageKey: string;
+      bucket: string;
+      error?: string;
+    }
+  | {
+      mode: "dev";
+      storageKey: string;
+      stored?: boolean;
+      error?: string;
+    }
+  | {
+      error?: string;
+    };
 
 type ScheduleRow = {
   serviceName: string;
@@ -81,6 +115,10 @@ export function ManualKnowledgePanel({
     setIsUploading(true);
     onError("");
     try {
+      if (file.size > MAX_MANUAL_BYTES) {
+        throw new Error(manualFileTooLargeMessage(file.size));
+      }
+
       const contentType = file.type || "application/pdf";
       const urlResponse = await fetch(`${apiBase}/api/vehicles/${vehicleId}/manuals/upload-url`, {
         method: "POST",
@@ -91,28 +129,39 @@ export function ManualKnowledgePanel({
           fileSize: file.size,
         }),
       });
-      const urlBody = (await urlResponse.json()) as {
-        signedUrl?: string;
-        token?: string;
-        storageKey?: string;
-        error?: string;
-      };
+      const urlBody = (await urlResponse.json()) as ManualUploadUrlResponse;
 
-      if (!urlResponse.ok || !urlBody.signedUrl || !urlBody.storageKey || !urlBody.token) {
+      if (!urlResponse.ok || !("mode" in urlBody) || !urlBody.storageKey) {
         throw new Error(urlBody.error ?? "Upload preparation failed");
       }
 
-      const putResponse = await fetch(urlBody.signedUrl, {
-        method: "PUT",
-        headers: {
-          "Content-Type": contentType,
-          Authorization: `Bearer ${urlBody.token}`,
-        },
-        body: file,
-      });
+      if (urlBody.mode === "signed") {
+        const putResponse = await fetch(urlBody.signedUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": contentType,
+            Authorization: `Bearer ${urlBody.token}`,
+          },
+          body: file,
+        });
 
-      if (!putResponse.ok) {
-        throw new Error("Upload to storage failed — check file size (max 50 MB) and connection.");
+        if (!putResponse.ok) {
+          throw new Error(manualStorageRejectedMessage());
+        }
+      } else if (urlBody.mode === "session") {
+        const supabase = createClient();
+        const { error } = await supabase.storage.from(urlBody.bucket || RECEIPT_BUCKET).upload(urlBody.storageKey, file, {
+          contentType,
+          upsert: false,
+        });
+
+        if (error) {
+          throw new Error(
+            error.message.includes("maximum")
+              ? "Manual PDF exceeds storage limit — ask admin to run migration 004_manual_storage_limit.sql (50 MB)."
+              : error.message || "Upload to storage failed.",
+          );
+        }
       }
 
       setStorageKey(urlBody.storageKey);
@@ -171,9 +220,13 @@ export function ManualKnowledgePanel({
         context for recommendations.
       </p>
 
+      <p className="rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-xs leading-relaxed text-muted-foreground">
+        {MANUAL_UPLOAD_GUIDANCE}
+      </p>
+
       <FileDropzone
         label="Owner manual PDF"
-        hint="PDF only · up to 50 MB · uploads direct to secure storage"
+        hint={MANUAL_UPLOAD_DROPZONE_HINT}
         accept="application/pdf"
         disabled={disabled || isConfirming}
         busy={isUploading}
