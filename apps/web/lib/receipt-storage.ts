@@ -4,7 +4,7 @@ export const RECEIPT_BUCKET = "receipts";
 export const MAX_RECEIPT_BYTES = 10 * 1024 * 1024;
 export const MAX_VOICE_BYTES = 5 * 1024 * 1024;
 /** OEM PDFs — uploaded direct-to-storage (see ADR-007). */
-export const MAX_MANUAL_BYTES = 50 * 1024 * 1024;
+export { MAX_MANUAL_BYTES } from "./manual-upload-limits";
 
 export type ReceiptUploadChannel = "photo" | "receipt_upload";
 export type VoiceUploadChannel = "voice";
