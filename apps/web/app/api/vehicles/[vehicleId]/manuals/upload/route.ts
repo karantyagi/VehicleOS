@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSessionUser } from "../../../../../../lib/auth/session";
 import { getServices } from "../../../../../../lib/api-services";
 import { createAdminClient } from "../../../../../../lib/supabase/admin";
+import { manualFileTooLargeMessage } from "../../../../../../lib/manual-upload-limits";
 import {
   MAX_MANUAL_BYTES,
   RECEIPT_BUCKET,
@@ -39,10 +40,7 @@ export async function POST(request: Request, context: RouteContext) {
     return NextResponse.json({ error: "file is empty" }, { status: 400 });
   }
   if (file.size > MAX_MANUAL_BYTES) {
-    return NextResponse.json(
-      { error: `file exceeds ${Math.round(MAX_MANUAL_BYTES / (1024 * 1024))} MB limit — use direct upload` },
-      { status: 413 },
-    );
+    return NextResponse.json({ error: manualFileTooLargeMessage(file.size) }, { status: 413 });
   }
 
   const contentType = file.type || "application/octet-stream";
