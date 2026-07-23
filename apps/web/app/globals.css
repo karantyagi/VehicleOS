@@ -144,4 +144,10 @@
   .dark .surface-panel {
     @apply shadow-[0_1px_2px_hsl(0_0%_0%/0.2),0_8px_24px_-12px_hsl(0_0%_0%/0.35)];
   }
+
+  @media (display-mode: standalone) {
+    body {
+      overscroll-behavior-y: contain;
+    }
+  }
 }

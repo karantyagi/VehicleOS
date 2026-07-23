@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vehicle OS">
+  <rect width="512" height="512" fill="#1a6b4a"/>
+  <circle cx="256" cy="256" r="92" fill="none" stroke="#fafafa" stroke-width="22" opacity="0.92"/>
+  <circle cx="318" cy="200" r="30" fill="#fafafa"/>
+</svg>

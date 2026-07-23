@@ -21,12 +21,12 @@ import type { EvidenceVaultItem } from "./evidence-vault-panel";
 import { VoiceMemoryPanel } from "./voice-memory-panel";
 import { SeasonalPromptsPanel } from "./seasonal-prompts-panel";
 import { ManualKnowledgePanel } from "./manual-knowledge-panel";
-import { MaintenanceTimelineConsole } from "./maintenance-timeline-console";
+import { MaintenanceTimelineSection } from "./maintenance-timeline-section";
 import { NowQueueConsole } from "./now-queue-console";
 import { OwnerServiceNotePanel } from "./owner-service-note-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 import { useVehicleConsole } from "@/lib/vehicle-console-context";
-import type { PipelinePhase, QueueItem, TimelineEntry } from "@/lib/console-types";
+import type { MaintenanceScheduleView, PipelinePhase, QueueItem, TimelineEntry } from "@/lib/console-types";
 
 type Vehicle = OnboardingVehicle;
 
@@ -57,6 +57,11 @@ export function OwnerDashboard() {
   const [knowledgeSchedule, setKnowledgeSchedule] = useState<
     { serviceName: string; intervalMiles?: number; manualTitle: string }[]
   >([]);
+  const [maintenanceSchedule, setMaintenanceSchedule] = useState<MaintenanceScheduleView>({
+    near: [],
+    extended: [],
+    effectiveMilesPerYear: 10_000,
+  });
   const [pipelinePhase, setPipelinePhase] = useState<PipelinePhase>("idle");
 
   const feedback = useCallback((message: string) => {
@@ -112,6 +117,7 @@ export function OwnerDashboard() {
         quoteAnalyses?: QuoteAnalysisView[];
         evidenceVault?: EvidenceVaultItem[];
         knowledgeSchedule?: { serviceName: string; intervalMiles?: number; manualTitle: string }[];
+        maintenanceSchedule?: MaintenanceScheduleView;
         currentMileage?: number;
       };
 
@@ -120,6 +126,13 @@ export function OwnerDashboard() {
       setQuoteAnalyses(body.quoteAnalyses ?? []);
       setEvidenceVault(body.evidenceVault ?? []);
       setKnowledgeSchedule(body.knowledgeSchedule ?? []);
+      setMaintenanceSchedule(
+        body.maintenanceSchedule ?? {
+          near: [],
+          extended: [],
+          effectiveMilesPerYear: 10_000,
+        },
+      );
       if (body.currentMileage && body.currentMileage > nextVehicle.currentMileage) {
         setVehicle({ ...nextVehicle, currentMileage: body.currentMileage });
       }
@@ -349,9 +362,15 @@ export function OwnerDashboard() {
       ) : null}
 
       {activeSection === "timeline" ? (
-        <PanelCard title="Maintenance timeline" description="Operator table with detail inspection — select a row.">
-          <MaintenanceTimelineConsole
-            entries={timeline}
+        <PanelCard
+          title="Timeline"
+          description="History of committed service events and a forward OEM schedule projection."
+        >
+          <MaintenanceTimelineSection
+            timeline={timeline}
+            scheduleNear={maintenanceSchedule.near}
+            scheduleExtended={maintenanceSchedule.extended}
+            effectiveMilesPerYear={maintenanceSchedule.effectiveMilesPerYear}
             disabled={isBusy}
             onOpenEvidence={openEvidence}
           />
