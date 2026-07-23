@@ -81,16 +81,42 @@ export function ManualKnowledgePanel({
     setIsUploading(true);
     onError("");
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/manuals/upload`, {
+      const contentType = file.type || "application/pdf";
+      const urlResponse = await fetch(`${apiBase}/api/vehicles/${vehicleId}/manuals/upload-url`, {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fileName: file.name,
+          contentType,
+          fileSize: file.size,
+        }),
       });
-      const body = (await response.json()) as { storageKey?: string; fileName?: string; error?: string };
-      if (!response.ok || !body.storageKey) throw new Error(body.error ?? "Upload failed");
-      setStorageKey(body.storageKey);
-      setFileName(body.fileName ?? file.name);
+      const urlBody = (await urlResponse.json()) as {
+        signedUrl?: string;
+        token?: string;
+        storageKey?: string;
+        error?: string;
+      };
+
+      if (!urlResponse.ok || !urlBody.signedUrl || !urlBody.storageKey || !urlBody.token) {
+        throw new Error(urlBody.error ?? "Upload preparation failed");
+      }
+
+      const putResponse = await fetch(urlBody.signedUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": contentType,
+          Authorization: `Bearer ${urlBody.token}`,
+        },
+        body: file,
+      });
+
+      if (!putResponse.ok) {
+        throw new Error("Upload to storage failed — check file size (max 50 MB) and connection.");
+      }
+
+      setStorageKey(urlBody.storageKey);
+      setFileName(file.name);
     } catch (error) {
       onError(error instanceof Error ? error.message : "Upload failed.");
     } finally {
@@ -141,12 +167,13 @@ export function ManualKnowledgePanel({
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Upload your OEM manual PDF, review stub-extracted intervals, and feed the Vehicle Knowledge Base.
+        Upload your owner manual or maintenance schedule PDF. Review the intervals, then save — this becomes baseline
+        context for recommendations.
       </p>
 
       <FileDropzone
-        label="OEM manual PDF"
-        hint="Maintenance schedule or owner manual · PDF · max 10 MB"
+        label="Owner manual PDF"
+        hint="PDF only · up to 50 MB · uploads direct to secure storage"
         accept="application/pdf"
         disabled={disabled || isConfirming}
         busy={isUploading}

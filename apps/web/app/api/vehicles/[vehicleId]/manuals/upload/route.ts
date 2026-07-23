@@ -3,8 +3,8 @@ import { getSessionUser } from "../../../../../../lib/auth/session";
 import { getServices } from "../../../../../../lib/api-services";
 import { createAdminClient } from "../../../../../../lib/supabase/admin";
 import {
+  MAX_MANUAL_BYTES,
   RECEIPT_BUCKET,
-  MAX_RECEIPT_BYTES,
   buildManualStorageKey,
   isAllowedManualType,
   isReceiptStorageConfigured,
@@ -38,8 +38,11 @@ export async function POST(request: Request, context: RouteContext) {
   if (file.size === 0) {
     return NextResponse.json({ error: "file is empty" }, { status: 400 });
   }
-  if (file.size > MAX_RECEIPT_BYTES) {
-    return NextResponse.json({ error: "file exceeds 10 MB limit" }, { status: 413 });
+  if (file.size > MAX_MANUAL_BYTES) {
+    return NextResponse.json(
+      { error: `file exceeds ${Math.round(MAX_MANUAL_BYTES / (1024 * 1024))} MB limit — use direct upload` },
+      { status: 413 },
+    );
   }
 
   const contentType = file.type || "application/octet-stream";

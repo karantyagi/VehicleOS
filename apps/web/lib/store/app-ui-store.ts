@@ -1,14 +1,16 @@
 import { create } from "zustand";
 import type { ConsoleDensity } from "@/lib/console-types";
 
-export type AppSection = "now" | "timeline" | "receipts" | "evidence" | "more";
+export type AppSection = "now" | "timeline" | "receipts" | "evidence" | "context" | "notes" | "quotes";
 
 export const APP_SECTIONS: { id: AppSection; label: string; description: string }[] = [
-  { id: "now", label: "Now", description: "Decisions and recommendations" },
+  { id: "now", label: "Now", description: "Decisions waiting on you" },
   { id: "timeline", label: "Timeline", description: "Service history" },
-  { id: "receipts", label: "Receipts", description: "Capture and confirm" },
-  { id: "evidence", label: "Evidence", description: "Vault and export" },
-  { id: "more", label: "More", description: "Voice, OEM, seasonal" },
+  { id: "receipts", label: "Receipts", description: "Photo or PDF capture" },
+  { id: "evidence", label: "Evidence", description: "Stored artifacts" },
+  { id: "context", label: "Add context", description: "Manual and maintenance schedule" },
+  { id: "notes", label: "Notes", description: "Voice and owner entries" },
+  { id: "quotes", label: "Quotes", description: "Dealer quotes and seasonal" },
 ];
 
 export const CONSOLE_SECTIONS: AppSection[] = ["now", "timeline", "evidence"];
@@ -18,7 +20,9 @@ export const SECTION_SHORTCUTS: Record<AppSection, string> = {
   timeline: "2",
   receipts: "3",
   evidence: "4",
-  more: "5",
+  context: "5",
+  notes: "6",
+  quotes: "7",
 };
 
 type AppUiState = {

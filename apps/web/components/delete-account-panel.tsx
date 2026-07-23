@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormActions, FormField } from "@/components/form-field";
 import { Alert } from "@/components/ui/alert";
@@ -10,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { siteConfig } from "../lib/site-config";
 
 export function DeleteAccountPanel() {
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [isBusy, setIsBusy] = useState(false);
@@ -36,8 +34,7 @@ export function DeleteAccountPanel() {
         throw new Error(body?.error ?? "Deletion failed");
       }
 
-      router.push("/login?deleted=1");
-      router.refresh();
+      window.location.href = "/login?deleted=1";
     } catch (deleteError) {
       setError(deleteError instanceof Error ? deleteError.message : "Deletion failed");
     } finally {

@@ -89,6 +89,39 @@ export const getVehicle = async (
   return jsonResponse(200, { vehicle: owned.vehicle });
 };
 
+export const updateVehicle = async (
+  services: ApiServices,
+  vehicleId: string,
+  body: VehicleBody = {},
+  auth?: AuthContext,
+): Promise<JsonResponse> => {
+  if (!auth?.userId) return unauthorized();
+
+  const updated = await services.vehicles.update(vehicleId, auth.userId, {
+    vin: body.vin,
+    year: body.year,
+    make: body.make,
+    model: body.model,
+    trim: body.trim,
+    currentMileage: body.currentMileage,
+  });
+
+  if (!updated) return jsonResponse(404, { error: "Vehicle not found" });
+  return jsonResponse(200, { vehicle: updated });
+};
+
+export const deleteVehicle = async (
+  services: ApiServices,
+  vehicleId: string,
+  auth?: AuthContext,
+): Promise<JsonResponse> => {
+  if (!auth?.userId) return unauthorized();
+
+  const deleted = await services.vehicles.delete(vehicleId, auth.userId);
+  if (!deleted) return jsonResponse(404, { error: "Vehicle not found" });
+  return jsonResponse(200, { deleted: true });
+};
+
 export const getVehicleState = async (
   services: ApiServices,
   vehicleId: string,

@@ -16,12 +16,17 @@ export function SignInButtons() {
   };
 
   return (
-    <div className="flex flex-col gap-2 pt-1">
-      <Button type="button" className="w-full" onClick={() => void signIn("google")}>
-        Google
+    <div className="flex flex-col gap-2">
+      <Button type="button" className="h-11 w-full text-sm font-medium" onClick={() => void signIn("google")}>
+        Continue with Google
       </Button>
-      <Button type="button" variant="outline" className="w-full" onClick={() => void signIn("github")}>
-        GitHub
+      <Button
+        type="button"
+        variant="outline"
+        className="h-11 w-full text-sm font-medium"
+        onClick={() => void signIn("github")}
+      >
+        Continue with GitHub
       </Button>
     </div>
   );

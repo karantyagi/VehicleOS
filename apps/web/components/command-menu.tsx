@@ -3,9 +3,11 @@
 import { Command } from "cmdk";
 import {
   Archive,
+  BookOpen,
   Clock3,
-  LayoutGrid,
   ListChecks,
+  MessageSquareQuote,
+  Mic,
   Monitor,
   Moon,
   Receipt,
@@ -28,7 +30,9 @@ const SECTION_ICONS = {
   timeline: Clock3,
   receipts: Receipt,
   evidence: Archive,
-  more: LayoutGrid,
+  context: BookOpen,
+  notes: Mic,
+  quotes: MessageSquareQuote,
 } as const;
 
 export function CommandMenu() {
