@@ -23,31 +23,13 @@ import { VoiceMemoryPanel } from "./voice-memory-panel";
 import { SeasonalPromptsPanel } from "./seasonal-prompts-panel";
 import { ManualKnowledgePanel } from "./manual-knowledge-panel";
 import { MaintenanceTimelineConsole } from "./maintenance-timeline-console";
-import { NowQueuePanel } from "./now-queue-panel";
+import { NowQueueConsole } from "./now-queue-console";
 import { OwnerServiceNotePanel } from "./owner-service-note-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
+import { useVehicleConsole } from "@/lib/vehicle-console-context";
+import type { PipelinePhase, QueueItem, TimelineEntry } from "@/lib/console-types";
 
 type Vehicle = OnboardingVehicle;
-
-type TimelineEntry = {
-  serviceId: string;
-  shop: string;
-  serviceDate: string;
-  mileage: number;
-  lineItems: string[];
-  total: string;
-  evidenceIds: string[];
-  source?: "receipt" | "voice" | "owner_note" | "dealer";
-};
-
-type QueueItem = {
-  taskId: string;
-  title: string;
-  reason: string;
-  status: string;
-  taskKind?: "recommendation" | "verification";
-  ruleId?: string;
-};
 
 const receiptForm = {
   shop: "Jiffy Lube",
@@ -59,6 +41,7 @@ const receiptForm = {
 
 export function OwnerDashboard() {
   const apiBase = getApiBase();
+  const { setSnapshot } = useVehicleConsole();
   const activeSection = useAppUiStore((state) => state.activeSection);
   const sectionMeta = APP_SECTIONS.find((section) => section.id === activeSection) ?? APP_SECTIONS[0];
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
@@ -75,6 +58,7 @@ export function OwnerDashboard() {
   const [knowledgeSchedule, setKnowledgeSchedule] = useState<
     { serviceName: string; intervalMiles?: number; manualTitle: string }[]
   >([]);
+  const [pipelinePhase, setPipelinePhase] = useState<PipelinePhase>("idle");
 
   const feedback = useCallback((message: string) => {
     notifyAuto(message);
@@ -84,6 +68,39 @@ export function OwnerDashboard() {
     if (!vehicle) return null;
     return `${vehicle.year} ${vehicle.make} ${vehicle.model} · ${vehicle.currentMileage.toLocaleString()} mi`;
   }, [vehicle]);
+
+  useEffect(() => {
+    if (!vehicle) {
+      setSnapshot(null);
+      return;
+    }
+
+    const last =
+      timeline.length > 0
+        ? [...timeline].sort((a, b) => b.serviceDate.localeCompare(a.serviceDate))[0]
+        : undefined;
+    const pendingNowCount = nowQueue.filter((item) => item.status === "pending").length;
+    const pipelineLabel =
+      pipelinePhase === "extracting"
+        ? "Extracting manual…"
+        : pipelinePhase === "syncing" || isBusy
+          ? "Syncing vehicle state…"
+          : "Pipeline idle";
+
+    setSnapshot({
+      label: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
+      mileage: vehicle.currentMileage,
+      pendingNowCount,
+      lastServiceDate: last?.serviceDate ?? null,
+      lastServiceShop: last?.shop ?? null,
+      pipelinePhase: isBusy || pipelinePhase !== "idle" ? (pipelinePhase === "idle" ? "syncing" : pipelinePhase) : "idle",
+      pipelineLabel,
+    });
+  }, [vehicle, timeline, nowQueue, isBusy, pipelinePhase, setSnapshot]);
+
+  useEffect(() => {
+    return () => setSnapshot(null);
+  }, [setSnapshot]);
 
   const loadVehicleState = useCallback(
     async (nextVehicle: Vehicle) => {
@@ -163,6 +180,7 @@ export function OwnerDashboard() {
     }
     setIsBusy(true);
     const loadingToast = toast.loading("Recording service and generating recommendation…");
+    setPipelinePhase("syncing");
     try {
       const response = await fetch(`${apiBase}/api/vehicles/${vehicle.id}/receipts`, {
         method: "POST",
@@ -198,6 +216,7 @@ export function OwnerDashboard() {
     } finally {
       toast.dismiss(loadingToast);
       setIsBusy(false);
+      setPipelinePhase("idle");
     }
   };
 
@@ -325,8 +344,8 @@ export function OwnerDashboard() {
       </p>
 
       {activeSection === "now" ? (
-        <PanelCard title="Inbox" description="Decisions that need you — nothing changes until you confirm.">
-          <NowQueuePanel items={nowQueue} disabled={isBusy} onDecide={decide} />
+        <PanelCard title="Inbox" description="Filter, inspect lineage, decide — nothing changes until you confirm.">
+          <NowQueueConsole items={nowQueue} disabled={isBusy} onDecide={decide} />
         </PanelCard>
       ) : null}
 

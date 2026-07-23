@@ -1,24 +1,18 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { Clock3 } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { ConsoleDetailPanel, ConsoleDetailPlaceholder, ConsoleSplit } from "@/components/console-split";
+import { DataGridToolbar } from "@/components/data-grid-toolbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import type { TimelineEntry } from "@/lib/console-types";
+import { downloadCsv, filterByQuery, sortRows } from "@/lib/data-grid-utils";
+import { useConsoleListKeyboard } from "@/lib/use-console-list-keyboard";
 import { useAppUiStore } from "@/lib/store/app-ui-store";
 import { cn } from "@/lib/utils";
-
-type TimelineEntry = {
-  serviceId: string;
-  shop: string;
-  serviceDate: string;
-  mileage: number;
-  lineItems: string[];
-  total: string;
-  evidenceIds: string[];
-  source?: "receipt" | "voice" | "owner_note" | "dealer";
-};
 
 const sourceLabel = (source: TimelineEntry["source"]): string => {
   if (source === "receipt") return "Receipt";
@@ -46,6 +40,24 @@ export function MaintenanceTimelineConsole({
 }: MaintenanceTimelineConsoleProps) {
   const selectedId = useAppUiStore((s) => s.selectedTimelineId);
   const setSelectedId = useAppUiStore((s) => s.setSelectedTimelineId);
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState("date-desc");
+
+  const visible = useMemo(() => {
+    const filtered = filterByQuery(entries, query, (row) =>
+      [row.serviceDate, row.shop, row.mileage, sourceLabel(row.source), row.lineItems.join(" ")].join(" "),
+    );
+    if (sort === "mileage-desc") {
+      return sortRows(filtered, (a, b) => a.mileage - b.mileage, "desc");
+    }
+    if (sort === "mileage-asc") {
+      return sortRows(filtered, (a, b) => a.mileage - b.mileage, "asc");
+    }
+    return sortRows(filtered, (a, b) => a.serviceDate.localeCompare(b.serviceDate), "desc");
+  }, [entries, query, sort]);
+
+  const rowIds = useMemo(() => visible.map((entry) => entry.serviceId), [visible]);
+  useConsoleListKeyboard({ rowIds, selectedId, onSelect: setSelectedId, enabled: visible.length > 0 });
 
   if (entries.length === 0) {
     return (
@@ -57,45 +69,74 @@ export function MaintenanceTimelineConsole({
     );
   }
 
-  const selected = entries.find((e) => e.serviceId === selectedId) ?? null;
+  const selected = visible.find((e) => e.serviceId === selectedId) ?? entries.find((e) => e.serviceId === selectedId) ?? null;
 
   const list = (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Date</TableHead>
-          <TableHead>Shop</TableHead>
-          <TableHead className="text-right">Mileage</TableHead>
-          <TableHead>Source</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {entries.map((entry) => (
-          <TableRow
-            key={entry.serviceId}
-            data-state={selectedId === entry.serviceId ? "selected" : undefined}
-            className={cn("cursor-pointer", selectedId === entry.serviceId && "bg-primary/10")}
-            onClick={() => setSelectedId(entry.serviceId)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                setSelectedId(entry.serviceId);
-              }
-            }}
-            tabIndex={0}
-            role="button"
-            aria-pressed={selectedId === entry.serviceId}
-          >
-            <TableCell className="font-medium tabular-nums">{entry.serviceDate}</TableCell>
-            <TableCell className="max-w-[8rem] truncate">{entry.shop}</TableCell>
-            <TableCell className="text-right tabular-nums">{entry.mileage.toLocaleString()}</TableCell>
-            <TableCell>
-              <Badge variant={badgeVariant(entry.source)}>{sourceLabel(entry.source)}</Badge>
-            </TableCell>
+    <>
+      <DataGridToolbar
+        query={query}
+        onQueryChange={setQuery}
+        sort={sort}
+        onSortChange={setSort}
+        sortOptions={[
+          { id: "date-desc", label: "Date (newest)" },
+          { id: "mileage-desc", label: "Mileage (high)" },
+          { id: "mileage-asc", label: "Mileage (low)" },
+        ]}
+        resultCount={visible.length}
+        totalCount={entries.length}
+        onExport={() =>
+          downloadCsv(
+            "vehicleos-timeline.csv",
+            ["serviceId", "date", "shop", "mileage", "source", "total", "lineItems"],
+            visible.map((row) => [
+              row.serviceId,
+              row.serviceDate,
+              row.shop,
+              String(row.mileage),
+              sourceLabel(row.source),
+              row.total,
+              row.lineItems.join("; "),
+            ]),
+          )
+        }
+      />
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Date</TableHead>
+            <TableHead>Shop</TableHead>
+            <TableHead className="text-right">Mileage</TableHead>
+            <TableHead>Source</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {visible.map((entry) => (
+            <TableRow
+              key={entry.serviceId}
+              className={cn("cursor-pointer", selectedId === entry.serviceId && "bg-primary/10")}
+              onClick={() => setSelectedId(entry.serviceId)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setSelectedId(entry.serviceId);
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-pressed={selectedId === entry.serviceId}
+            >
+              <TableCell className="font-medium tabular-nums">{entry.serviceDate}</TableCell>
+              <TableCell className="max-w-[8rem] truncate">{entry.shop}</TableCell>
+              <TableCell className="text-right tabular-nums">{entry.mileage.toLocaleString()}</TableCell>
+              <TableCell>
+                <Badge variant={badgeVariant(entry.source)}>{sourceLabel(entry.source)}</Badge>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </>
   );
 
   const detail = selected ? (

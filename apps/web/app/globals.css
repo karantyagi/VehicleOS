@@ -80,6 +80,18 @@
       radial-gradient(ellipse 50% 35% at 0% 0%, hsl(220 30% 40% / 0.06), transparent 45%);
   }
 
+  html[data-density="compact"] {
+    --radius: 0.5rem;
+  }
+
+  html[data-density="compact"] [data-console-table="true"] th {
+    @apply h-8 px-2 text-[10px];
+  }
+
+  html[data-density="compact"] [data-console-table="true"] td {
+    @apply px-2 py-1.5 text-[12px];
+  }
+
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
@@ -96,6 +108,29 @@
 
   .text-pretty {
     text-wrap: pretty;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .console-motion-fade {
+      animation: console-fade-in 180ms ease-out;
+    }
+  }
+
+  @keyframes console-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .console-motion-fade {
+      animation: none;
+    }
   }
 
   .surface-inset {
