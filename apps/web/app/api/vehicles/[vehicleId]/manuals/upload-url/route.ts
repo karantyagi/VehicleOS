@@ -3,6 +3,9 @@ import { getSessionUser } from "../../../../../../lib/auth/session";
 import { getServices } from "../../../../../../lib/api-services";
 import {
   MAX_MANUAL_BYTES,
+  manualFileTooLargeMessage,
+} from "../../../../../../lib/manual-upload-limits";
+import {
   createManualSignedUpload,
   isAllowedManualType,
   isReceiptStorageConfigured,
@@ -52,10 +55,7 @@ export async function POST(request: Request, context: RouteContext) {
     return NextResponse.json({ error: "fileSize is required" }, { status: 400 });
   }
   if (fileSize > MAX_MANUAL_BYTES) {
-    return NextResponse.json(
-      { error: `Manual PDF exceeds ${Math.round(MAX_MANUAL_BYTES / (1024 * 1024))} MB limit` },
-      { status: 413 },
-    );
+    return NextResponse.json({ error: manualFileTooLargeMessage(fileSize) }, { status: 413 });
   }
   if (!isAllowedManualType(contentType)) {
     return NextResponse.json({ error: "Upload a PDF manual only" }, { status: 415 });

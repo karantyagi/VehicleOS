@@ -2,10 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { FileDropzone } from "@/components/file-dropzone";
-import { FormActions, FormField } from "@/components/form-field";
+import { FormField } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  MANUAL_UPLOAD_DROPZONE_HINT,
+  MANUAL_UPLOAD_GUIDANCE,
+  MAX_MANUAL_BYTES,
+  manualFileTooLargeMessage,
+  manualStorageRejectedMessage,
+} from "@/lib/manual-upload-limits";
 
 type ScheduleRow = {
   serviceName: string;
@@ -81,6 +88,10 @@ export function ManualKnowledgePanel({
     setIsUploading(true);
     onError("");
     try {
+      if (file.size > MAX_MANUAL_BYTES) {
+        throw new Error(manualFileTooLargeMessage(file.size));
+      }
+
       const contentType = file.type || "application/pdf";
       const urlResponse = await fetch(`${apiBase}/api/vehicles/${vehicleId}/manuals/upload-url`, {
         method: "POST",
@@ -112,7 +123,7 @@ export function ManualKnowledgePanel({
       });
 
       if (!putResponse.ok) {
-        throw new Error("Upload to storage failed — check file size (max 50 MB) and connection.");
+        throw new Error(manualStorageRejectedMessage());
       }
 
       setStorageKey(urlBody.storageKey);
@@ -171,9 +182,13 @@ export function ManualKnowledgePanel({
         context for recommendations.
       </p>
 
+      <p className="rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-xs leading-relaxed text-muted-foreground">
+        {MANUAL_UPLOAD_GUIDANCE}
+      </p>
+
       <FileDropzone
         label="Owner manual PDF"
-        hint="PDF only · up to 50 MB · uploads direct to secure storage"
+        hint={MANUAL_UPLOAD_DROPZONE_HINT}
         accept="application/pdf"
         disabled={disabled || isConfirming}
         busy={isUploading}
