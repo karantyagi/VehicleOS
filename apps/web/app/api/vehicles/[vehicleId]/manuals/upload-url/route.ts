@@ -6,10 +6,12 @@ import {
   manualFileTooLargeMessage,
 } from "../../../../../../lib/manual-upload-limits";
 import {
+  buildManualStorageKey,
   createManualSignedUpload,
   isAllowedManualType,
   isReceiptStorageConfigured,
 } from "../../../../../../lib/receipt-storage";
+import { isAuthEnabled } from "../../../../../../lib/supabase/env";
 
 export const runtime = "nodejs";
 
@@ -36,10 +38,6 @@ export async function POST(request: Request, context: RouteContext) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  if (!isReceiptStorageConfigured()) {
-    return NextResponse.json({ error: "Storage is not configured for manual uploads" }, { status: 503 });
-  }
-
   let body: UploadUrlBody;
   try {
     body = (await request.json()) as UploadUrlBody;
@@ -61,22 +59,49 @@ export async function POST(request: Request, context: RouteContext) {
     return NextResponse.json({ error: "Upload a PDF manual only" }, { status: 415 });
   }
 
-  const signed = await createManualSignedUpload({
+  const storageKey = buildManualStorageKey({
     userId: user.id,
     vehicleId,
     fileName,
   });
 
-  if (!signed) {
-    return NextResponse.json({ error: "Could not prepare upload" }, { status: 500 });
+  if (isReceiptStorageConfigured()) {
+    const signed = await createManualSignedUpload({
+      userId: user.id,
+      vehicleId,
+      fileName,
+    });
+
+    if (!signed) {
+      return NextResponse.json({ error: "Could not prepare upload" }, { status: 500 });
+    }
+
+    return NextResponse.json({
+      mode: "signed" as const,
+      signedUrl: signed.signedUrl,
+      token: signed.token,
+      storageKey: signed.storageKey,
+      path: signed.path,
+      maxBytes: MAX_MANUAL_BYTES,
+      contentType,
+    });
+  }
+
+  if (isAuthEnabled()) {
+    return NextResponse.json({
+      mode: "session" as const,
+      storageKey,
+      bucket: "receipts",
+      maxBytes: MAX_MANUAL_BYTES,
+      contentType,
+    });
   }
 
   return NextResponse.json({
-    signedUrl: signed.signedUrl,
-    token: signed.token,
-    storageKey: signed.storageKey,
-    path: signed.path,
+    mode: "dev" as const,
+    storageKey,
     maxBytes: MAX_MANUAL_BYTES,
     contentType,
+    stored: false,
   });
 }
