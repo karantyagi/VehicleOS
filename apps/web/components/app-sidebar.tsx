@@ -7,6 +7,7 @@ import {
   ListChecks,
   Receipt,
 } from "lucide-react";
+import { AssistantDiaryMark } from "@/components/assistant-diary-mark";
 import { APP_SECTIONS, type AppSection, useAppUiStore } from "@/lib/store/app-ui-store";
 import { cn } from "@/lib/utils";
 
@@ -28,10 +29,10 @@ export function AppSidebar({ onNavigate, className }: AppSidebarProps) {
   const setActiveSection = useAppUiStore((state) => state.setActiveSection);
 
   return (
-    <nav className={cn("flex flex-col gap-0.5 px-2", className)} aria-label="Main">
-      <p className="px-3 pb-1.5 pt-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-        Workspace
-      </p>
+    <nav className={cn("flex flex-col gap-0.5 px-2", className)} aria-label="Assistant Diary">
+      <div className="px-2 pb-2 pt-0.5">
+        <AssistantDiaryMark />
+      </div>
       {APP_SECTIONS.map((section) => {
         const Icon = SECTION_ICONS[section.id];
         const isActive = activeSection === section.id;

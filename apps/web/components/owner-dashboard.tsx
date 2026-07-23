@@ -321,7 +321,7 @@ export function OwnerDashboard() {
   return (
     <>
       <PageHeader
-        eyebrow="Owners · Early access"
+        eyebrow="Assistant Diary · Early access"
         title={sectionMeta.label}
         description={sectionMeta.description}
         badge={
