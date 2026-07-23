@@ -75,6 +75,12 @@ Account deletion smoke test: **Settings** → type `DELETE` → confirm → redi
 2. Ensure `SUPABASE_SERVICE_ROLE_KEY` is set on Vercel (same key as account deletion)
 3. Upload smoke test on `app.vehicleos.app`: pick a receipt photo/PDF → confirm fields → golden path completes
 
+**OEM manual uploads (ADR-007):**
+
+1. Run [`db/migrations/004_manual_storage_limit.sql`](../../db/migrations/004_manual_storage_limit.sql) in Supabase SQL editor (raises `receipts` bucket limit to **50 MB**)
+2. Manual uploads use your signed-in session + storage RLS when `SUPABASE_SERVICE_ROLE_KEY` is unset; signed URLs are used when the service role key **is** set (preferred on Vercel)
+3. Smoke: **Add context** → upload owner manual PDF (≤50 MB) → confirm schedule
+
 Local dev without Storage: `AUTH_DISABLED=true` accepts uploads and records `storageKey` in events without persisting the blob.
 
 ## Local development
