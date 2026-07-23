@@ -2,11 +2,12 @@
 
 import { Menu, X } from "lucide-react";
 import type { ReactNode } from "react";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ConsoleKeyboardShortcuts } from "@/components/console-keyboard-shortcuts";
 import { CommandMenu, CommandMenuTrigger, SidebarUtilityRow } from "@/components/command-menu";
 import { AccountMenu } from "@/components/account-menu";
+import { PwaSectionLauncher } from "@/components/pwa-section-launcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { VehicleContextBar } from "@/components/vehicle-context-bar";
 import { Button } from "@/components/ui/button";
@@ -50,15 +51,18 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
   );
 
   return (
-    <div className="min-h-screen bg-background lg:flex">
+    <div className="min-h-[100dvh] bg-background lg:flex">
+      <Suspense fallback={null}>
+        <PwaSectionLauncher />
+      </Suspense>
       <CommandMenu />
       <ConsoleKeyboardShortcuts />
       <aside className="hidden w-72 shrink-0 border-r border-sidebar-border bg-sidebar shadow-[1px_0_0_hsl(var(--sidebar-border))] lg:block">
         <div className="sticky top-0 flex h-screen flex-col">{sidebarBody}</div>
       </aside>
 
-      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-border bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:hidden">
+      <div className="flex min-h-[100dvh] min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-border bg-background/95 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:hidden">
           <Button
             type="button"
             variant="outline"

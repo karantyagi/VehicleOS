@@ -108,5 +108,15 @@ export {
   type RefreshMaintenanceRecommendationInput,
   type RefreshMaintenanceRecommendationResult,
 } from "./now/refresh-maintenance-recommendation.js";
+export {
+  projectMaintenanceSchedule,
+  DEFAULT_EFFECTIVE_MILES_PER_YEAR,
+  DEFAULT_SCHEDULE_HORIZON_MONTHS,
+  EXTENDED_SCHEDULE_HORIZON_MONTHS,
+  type ProjectMaintenanceScheduleInput,
+  type ProjectMaintenanceScheduleResult,
+  type ScheduleProjectionRow,
+  type ScheduleProjectionStatus,
+} from "./schedule/project-maintenance-schedule.js";
 export type { KnowledgeScheduleEntry } from "./projections/types.js";
 export type { KnowledgeScheduleRow } from "./events/catalog.js";

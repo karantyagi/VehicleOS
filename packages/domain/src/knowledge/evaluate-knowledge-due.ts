@@ -1,22 +1,6 @@
 import type { MaintenanceRecommendation } from "../policy/types.js";
-import type { ServiceTimelineEntry, VehicleProjectionState } from "../projections/types.js";
-
-const servicePattern = (serviceName: string): RegExp => {
-  const normalized = serviceName.toLowerCase();
-  if (normalized.includes("oil")) return /oil change|oil & filter|engine oil|synthetic oil/i;
-  if (normalized.includes("tire")) return /tire rotation|rotate tires/i;
-  if (normalized.includes("cabin")) return /cabin filter|cabin air filter/i;
-  if (normalized.includes("brake")) return /brake fluid|brake service|brakes/i;
-  return new RegExp(normalized.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
-};
-
-const findLastMatchingService = (
-  timeline: ServiceTimelineEntry[],
-  serviceName: string,
-): ServiceTimelineEntry | undefined =>
-  [...timeline].reverse().find((entry) =>
-    entry.lineItems.some((line) => servicePattern(serviceName).test(line)),
-  );
+import type { VehicleProjectionState } from "../projections/types.js";
+import { findLastMatchingService } from "./match-service-name.js";
 
 export const evaluateKnowledgeDue = (
   state: VehicleProjectionState,
