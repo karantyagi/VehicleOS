@@ -9,6 +9,7 @@ import {
   Monitor,
   Moon,
   Receipt,
+  Rows3,
   Search,
   Settings,
   Sun,
@@ -19,7 +20,7 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { APP_SECTIONS, useAppUiStore } from "@/lib/store/app-ui-store";
+import { APP_SECTIONS, SECTION_SHORTCUTS, useAppUiStore } from "@/lib/store/app-ui-store";
 import { cn } from "@/lib/utils";
 
 const SECTION_ICONS = {
@@ -36,6 +37,7 @@ export function CommandMenu() {
   const commandOpen = useAppUiStore((s) => s.commandOpen);
   const setCommandOpen = useAppUiStore((s) => s.setCommandOpen);
   const setActiveSection = useAppUiStore((s) => s.setActiveSection);
+  const toggleDensity = useAppUiStore((s) => s.toggleDensity);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -139,8 +141,33 @@ export function CommandMenu() {
                 <Monitor className="text-muted-foreground" aria-hidden />
                 <span className="font-medium">System</span>
               </Command.Item>
+              <Command.Item
+                value="Toggle density compact comfortable"
+                onSelect={() => {
+                  toggleDensity();
+                  setCommandOpen(false);
+                }}
+                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
+              >
+                <Rows3 className="text-muted-foreground" aria-hidden />
+                <span className="font-medium">Toggle density</span>
+              </Command.Item>
             </Command.Group>
           </Command.List>
+          <div className="border-t border-border px-3 py-2 text-[10px] leading-relaxed text-muted-foreground">
+            <span className="mr-2">
+              <kbd className="rounded border border-border px-1 font-mono">⌘K</kbd>
+            </span>
+            <span className="mr-2">
+              <kbd className="rounded border border-border px-1 font-mono">/</kbd> search
+            </span>
+            {APP_SECTIONS.map((section) => (
+              <span key={section.id} className="mr-2">
+                <kbd className="rounded border border-border px-1 font-mono">⌘{SECTION_SHORTCUTS[section.id]}</kbd>{" "}
+                {section.label}
+              </span>
+            ))}
+          </div>
         </Command>
       </DialogContent>
     </Dialog>

@@ -4,9 +4,11 @@ import { Menu, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
+import { ConsoleKeyboardShortcuts } from "@/components/console-keyboard-shortcuts";
 import { CommandMenu, CommandMenuTrigger, SidebarUtilityRow } from "@/components/command-menu";
 import { SidebarAccount } from "@/components/sidebar-account";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { VehicleContextBar } from "@/components/vehicle-context-bar";
 import { Button } from "@/components/ui/button";
 import type { SessionUser } from "@/lib/auth/types";
 import { CONSOLE_SECTIONS, useAppUiStore } from "@/lib/store/app-ui-store";
@@ -50,6 +52,7 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
   return (
     <div className="min-h-screen bg-background lg:flex">
       <CommandMenu />
+      <ConsoleKeyboardShortcuts />
       <aside className="hidden w-72 shrink-0 border-r border-sidebar-border bg-sidebar shadow-[1px_0_0_hsl(var(--sidebar-border))] lg:block">
         <div className="sticky top-0 flex h-screen flex-col">{sidebarBody}</div>
       </aside>
@@ -96,6 +99,7 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
               isConsoleLayout ? "max-w-6xl" : "max-w-3xl",
             )}
           >
+            <VehicleContextBar />
             {children}
           </div>
         </main>

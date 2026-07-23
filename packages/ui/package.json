@@ -1,5 +1,9 @@
 {
   "name": "@vehicleos/ui-tokens",
   "private": true,
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "exports": {
+    "./tokens.css": "./tokens.css",
+    "./package.json": "./package.json"
+  }
 }

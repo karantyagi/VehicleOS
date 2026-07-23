@@ -13,7 +13,7 @@ export function ConsoleSplit({ list, detail, emptyDetail, hasSelection, classNam
   return (
     <div className={cn("grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-6", className)}>
       <div className="min-w-0">{list}</div>
-      <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
+      <div className="min-w-0 lg:sticky lg:top-32 lg:self-start">
         {hasSelection ? detail : (emptyDetail ?? <ConsoleDetailPlaceholder />)}
       </div>
     </div>
@@ -35,13 +35,15 @@ export function ConsoleDetailPanel({
   title,
   children,
   actions,
+  className,
 }: {
   title: string;
   children: ReactNode;
   actions?: ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="surface-panel flex flex-col overflow-hidden">
+    <div className={cn("surface-panel console-motion-fade flex flex-col overflow-hidden", className)}>
       <div className="flex items-start justify-between gap-3 border-b border-border/80 px-4 py-3">
         <h3 className="text-sm font-semibold tracking-tight">{title}</h3>
         {actions ? <div className="flex shrink-0 gap-2">{actions}</div> : null}
