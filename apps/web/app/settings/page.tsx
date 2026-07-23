@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { DeleteAccountPanel } from "../../components/delete-account-panel";
+import { VehicleSettingsPanel } from "../../components/vehicle-settings-panel";
 import { PageHeader } from "../../components/page-header";
 import { PanelCard } from "../../components/panel-card";
 import { AppHeader } from "../../components/app-header";
@@ -36,6 +37,8 @@ export default async function SettingsPage() {
           Back to dashboard
         </Link>
       </PanelCard>
+
+      <VehicleSettingsPanel />
 
       <DeleteAccountPanel />
     </AppShell>

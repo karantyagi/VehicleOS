@@ -10,6 +10,15 @@ export type CreateVehicleInput = {
   currentMileage: number;
 };
 
+export type UpdateVehicleInput = {
+  vin?: string;
+  year?: number;
+  make?: string;
+  model?: string;
+  trim?: string | null;
+  currentMileage?: number;
+};
+
 export type VehicleRecord = CreateVehicleInput & {
   id: string;
   userId: string;
@@ -41,17 +50,7 @@ export class VehicleRepository {
     );
 
     const row = result.rows[0];
-    return {
-      id: row.id,
-      userId: row.user_id,
-      vin: row.vin,
-      year: row.year,
-      make: row.make,
-      model: row.model,
-      trim: row.trim ?? undefined,
-      currentMileage: row.current_mileage,
-      createdAt: row.created_at.toISOString(),
-    };
+    return mapVehicleRow(row);
   }
 
   async findById(vehicleId: string): Promise<VehicleRecord | null> {
@@ -90,6 +89,73 @@ export class VehicleRepository {
     );
 
     return result.rows.map(mapVehicleRow);
+  }
+
+  async update(vehicleId: string, userId: string, patch: UpdateVehicleInput): Promise<VehicleRecord | null> {
+    const existing = await this.findById(vehicleId);
+    if (!existing || existing.userId !== userId) return null;
+
+    const result = await this.pool.query<{
+      id: string;
+      user_id: string;
+      vin: string;
+      year: number;
+      make: string;
+      model: string;
+      trim: string | null;
+      current_mileage: number;
+      created_at: Date;
+    }>(
+      `update vehicles
+       set vin = $3,
+           year = $4,
+           make = $5,
+           model = $6,
+           trim = $7,
+           current_mileage = $8
+       where id = $1 and user_id = $2
+       returning *`,
+      [
+        vehicleId,
+        userId,
+        patch.vin ?? existing.vin,
+        patch.year ?? existing.year,
+        patch.make ?? existing.make,
+        patch.model ?? existing.model,
+        patch.trim === undefined ? existing.trim ?? null : patch.trim,
+        patch.currentMileage ?? existing.currentMileage,
+      ],
+    );
+
+    const row = result.rows[0];
+    return row ? mapVehicleRow(row) : null;
+  }
+
+  async delete(vehicleId: string, userId: string): Promise<boolean> {
+    const client = await this.pool.connect();
+    try {
+      await client.query("BEGIN");
+      const owned = await client.query(`select id from vehicles where id = $1 and user_id = $2`, [vehicleId, userId]);
+      if (owned.rowCount === 0) {
+        await client.query("ROLLBACK");
+        return false;
+      }
+
+      await client.query(
+        `delete from domain_events
+         where aggregate_id = $1
+            or payload_json->>'vehicleId' = $1`,
+        [vehicleId],
+      );
+      await client.query(`delete from vehicles where id = $1 and user_id = $2`, [vehicleId, userId]);
+      await client.query("COMMIT");
+      return true;
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 }
 

@@ -2,12 +2,13 @@
 
 import {
   Archive,
+  BookOpen,
   Clock3,
-  LayoutGrid,
   ListChecks,
+  MessageSquareQuote,
+  Mic,
   Receipt,
 } from "lucide-react";
-import { AssistantDiaryMark } from "@/components/assistant-diary-mark";
 import { APP_SECTIONS, type AppSection, useAppUiStore } from "@/lib/store/app-ui-store";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +17,9 @@ const SECTION_ICONS: Record<AppSection, typeof ListChecks> = {
   timeline: Clock3,
   receipts: Receipt,
   evidence: Archive,
-  more: LayoutGrid,
+  context: BookOpen,
+  notes: Mic,
+  quotes: MessageSquareQuote,
 };
 
 type AppSidebarProps = {
@@ -29,10 +32,10 @@ export function AppSidebar({ onNavigate, className }: AppSidebarProps) {
   const setActiveSection = useAppUiStore((state) => state.setActiveSection);
 
   return (
-    <nav className={cn("flex flex-col gap-0.5 px-2", className)} aria-label="Assistant Diary">
-      <div className="px-2 pb-2 pt-0.5">
-        <AssistantDiaryMark />
-      </div>
+    <nav className={cn("flex flex-col gap-0.5 px-2", className)} aria-label="Main">
+      <p className="px-3 pb-2 pt-0.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        Workspace
+      </p>
       {APP_SECTIONS.map((section) => {
         const Icon = SECTION_ICONS[section.id];
         const isActive = activeSection === section.id;

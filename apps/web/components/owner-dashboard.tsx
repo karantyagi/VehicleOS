@@ -18,7 +18,6 @@ import { ReceiptCapture, type UploadedReceipt } from "./receipt-capture";
 import { QuoteAnalysisPanel, type QuoteAnalysisView } from "./quote-analysis-panel";
 import { EvidenceVaultConsole } from "./evidence-vault-console";
 import type { EvidenceVaultItem } from "./evidence-vault-panel";
-import { ResaleReportExport } from "./resale-report-export";
 import { VoiceMemoryPanel } from "./voice-memory-panel";
 import { SeasonalPromptsPanel } from "./seasonal-prompts-panel";
 import { ManualKnowledgePanel } from "./manual-knowledge-panel";
@@ -431,31 +430,59 @@ export function OwnerDashboard() {
       ) : null}
 
       {activeSection === "evidence" ? (
-        <>
-          <PanelCard title="Evidence vault" description="Immutable artifacts — table and inspection panel.">
-            <EvidenceVaultConsole
-              vehicleId={vehicle.id}
-              apiBase={apiBase}
-              items={evidenceVault}
-              linkedDocumentIds={timeline.flatMap((entry) => entry.evidenceIds)}
-            />
-          </PanelCard>
-          <PanelCard title="Resale export" description="Download a markdown report for buyers.">
-            <ResaleReportExport
-              vehicleId={vehicle.id}
-              apiBase={apiBase}
-              disabled={isBusy}
-              serviceCount={timeline.length}
-              evidenceCount={evidenceVault.length}
-              onError={(message) => notify(message, "error")}
-            />
-          </PanelCard>
-        </>
+        <PanelCard title="Evidence vault" description="Immutable artifacts — table and inspection panel.">
+          <EvidenceVaultConsole
+            vehicleId={vehicle.id}
+            apiBase={apiBase}
+            items={evidenceVault}
+            linkedDocumentIds={timeline.flatMap((entry) => entry.evidenceIds)}
+          />
+        </PanelCard>
       ) : null}
 
-      {activeSection === "more" ? (
+      {activeSection === "context" ? (
         <div className="space-y-6">
-          <PanelCard title="Voice memory" description="Capture service notes by voice.">
+          <PanelCard
+            title="Add context"
+            description="Like onboarding a new assistant — upload the basics so recommendations start from your car, not a blank slate."
+          >
+            <ManualKnowledgePanel
+              vehicleId={vehicle.id}
+              apiBase={apiBase}
+              vehicle={{ year: vehicle.year, make: vehicle.make, model: vehicle.model }}
+              disabled={isBusy}
+              onError={(message) => notify(message, "error")}
+              onConfirmed={(body) => {
+                setNowQueue(body.nowQueue as QueueItem[]);
+                setKnowledgeSchedule(
+                  body.knowledgeSchedule as {
+                    serviceName: string;
+                    intervalMiles?: number;
+                    manualTitle: string;
+                  }[],
+                );
+                feedback("Schedule saved — your assistant now uses this maintenance context.");
+                void loadVehicleState(vehicle);
+              }}
+            />
+            {knowledgeSchedule.length > 0 ? (
+              <ul className="mt-4 space-y-2 text-sm">
+                {knowledgeSchedule.slice(-4).map((entry) => (
+                  <li key={`${entry.manualTitle}-${entry.serviceName}`} className="rounded-md border border-border p-3">
+                    <strong>{entry.serviceName}</strong>
+                    {entry.intervalMiles ? ` · every ${entry.intervalMiles.toLocaleString()} mi` : ""}
+                    <span className="mt-1 block text-muted-foreground">{entry.manualTitle}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </PanelCard>
+        </div>
+      ) : null}
+
+      {activeSection === "notes" ? (
+        <div className="space-y-6">
+          <PanelCard title="Voice note" description="Capture what happened at the shop in your own words.">
             <VoiceMemoryPanel
               vehicleId={vehicle.id}
               apiBase={apiBase}
@@ -475,55 +502,7 @@ export function OwnerDashboard() {
             />
           </PanelCard>
 
-          <PanelCard title="Seasonal prompts" description="Weather and season-aware maintenance nudges.">
-            <SeasonalPromptsPanel
-              vehicleId={vehicle.id}
-              apiBase={apiBase}
-              disabled={isBusy}
-              onError={(message) => notify(message, "error")}
-              onRefreshed={(body) => {
-                setNowQueue(body.nowQueue as QueueItem[]);
-                if (body.created.length > 0) {
-                  feedback(`${body.created.length} seasonal prompt(s) added to your Now queue.`);
-                }
-              }}
-            />
-          </PanelCard>
-
-          <PanelCard title="OEM manual" description="Extract maintenance intervals from your manual.">
-            <ManualKnowledgePanel
-              vehicleId={vehicle.id}
-              apiBase={apiBase}
-              vehicle={{ year: vehicle.year, make: vehicle.make, model: vehicle.model }}
-              disabled={isBusy}
-              onError={(message) => notify(message, "error")}
-              onConfirmed={(body) => {
-                setNowQueue(body.nowQueue as QueueItem[]);
-                setKnowledgeSchedule(
-                  body.knowledgeSchedule as {
-                    serviceName: string;
-                    intervalMiles?: number;
-                    manualTitle: string;
-                  }[],
-                );
-                feedback("OEM schedule saved — knowledge base now feeds your Now queue.");
-                void loadVehicleState(vehicle);
-              }}
-            />
-            {knowledgeSchedule.length > 0 ? (
-              <ul className="knowledge-list mt-4 space-y-2 text-sm">
-                {knowledgeSchedule.slice(-4).map((entry) => (
-                  <li key={`${entry.manualTitle}-${entry.serviceName}`} className="rounded-md border border-border p-3">
-                    <strong>{entry.serviceName}</strong>
-                    {entry.intervalMiles ? ` · every ${entry.intervalMiles.toLocaleString()} mi` : ""}
-                    <span className="mt-1 block text-muted-foreground">{entry.manualTitle}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </PanelCard>
-
-          <PanelCard title="Owner note" description="Add a structured service note to your timeline.">
+          <PanelCard title="Owner note" description="Structured entry when you did the work yourself or want a precise record.">
             <OwnerServiceNotePanel
               vehicleId={vehicle.id}
               apiBase={apiBase}
@@ -542,14 +521,33 @@ export function OwnerDashboard() {
               }}
             />
           </PanelCard>
+        </div>
+      ) : null}
 
-          <PanelCard title="Quote check" description="Compare dealer quotes against your history.">
+      {activeSection === "quotes" ? (
+        <div className="space-y-6">
+          <PanelCard title="Quote check" description="Paste a dealer quote — compare against your history and fair range.">
             <QuoteAnalysisPanel
               vehicleId={vehicle.id}
               apiBase={apiBase}
               disabled={isBusy}
               history={quoteAnalyses}
               onAnalyzed={(analysis) => setQuoteAnalyses((current) => [...current, analysis].slice(-5))}
+            />
+          </PanelCard>
+
+          <PanelCard title="Seasonal prompts" description="Calendar and driving-context nudges — not a weather app.">
+            <SeasonalPromptsPanel
+              vehicleId={vehicle.id}
+              apiBase={apiBase}
+              disabled={isBusy}
+              onError={(message) => notify(message, "error")}
+              onRefreshed={(body) => {
+                setNowQueue(body.nowQueue as QueueItem[]);
+                if (body.created.length > 0) {
+                  feedback(`${body.created.length} seasonal prompt(s) added to your Now queue.`);
+                }
+              }}
             />
           </PanelCard>
         </div>

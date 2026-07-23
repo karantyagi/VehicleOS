@@ -35,15 +35,18 @@ export async function POST(request: Request) {
   try {
     await deleteUserData(getPool(), user.id);
 
+    const supabase = createClient();
+    await supabase.auth.signOut();
+
     const admin = createAdminClient();
     const { error: authError } = await admin.auth.admin.deleteUser(user.id);
     if (authError) {
       console.error("Supabase auth delete failed", authError);
-      return NextResponse.json({ error: "Deletion failed" }, { status: 500 });
+      return NextResponse.json(
+        { error: authError.message.includes("service_role") ? "Server misconfigured for deletion" : "Deletion failed" },
+        { status: 500 },
+      );
     }
-
-    const supabase = createClient();
-    await supabase.auth.signOut();
 
     return NextResponse.json({ deleted: true });
   } catch (error) {

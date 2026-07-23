@@ -5,10 +5,12 @@ export { getPool, closePool } from "./db/pool.js";
 export {
   createVehicle,
   decideOnTask,
+  deleteVehicle,
   getVehicle,
   getVehicleState,
   listVehicles,
   submitReceipt,
+  updateVehicle,
 } from "./http/golden-path-handlers.js";
 export { analyzeQuote } from "./http/quote-handlers.js";
 export { getEvidenceAccessUrl } from "./http/evidence-handlers.js";

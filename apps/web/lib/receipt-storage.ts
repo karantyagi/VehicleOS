@@ -3,6 +3,8 @@ import { createAdminClient } from "./supabase/admin";
 export const RECEIPT_BUCKET = "receipts";
 export const MAX_RECEIPT_BYTES = 10 * 1024 * 1024;
 export const MAX_VOICE_BYTES = 5 * 1024 * 1024;
+/** OEM PDFs — uploaded direct-to-storage (see ADR-007). */
+export const MAX_MANUAL_BYTES = 50 * 1024 * 1024;
 
 export type ReceiptUploadChannel = "photo" | "receipt_upload";
 export type VoiceUploadChannel = "voice";
@@ -85,5 +87,33 @@ export const createReceiptSignedUrl = async (
   return {
     signedUrl: data.signedUrl,
     expiresInSeconds: ttlSeconds,
+  };
+};
+
+export type ManualSignedUpload = {
+  signedUrl: string;
+  token: string;
+  storageKey: string;
+  path: string;
+};
+
+export const createManualSignedUpload = async (input: {
+  userId: string;
+  vehicleId: string;
+  fileName: string;
+}): Promise<ManualSignedUpload | null> => {
+  if (!isReceiptStorageConfigured()) return null;
+
+  const storageKey = buildManualStorageKey(input);
+  const admin = createAdminClient();
+  const { data, error } = await admin.storage.from(RECEIPT_BUCKET).createSignedUploadUrl(storageKey);
+
+  if (error || !data?.signedUrl || !data.token) return null;
+
+  return {
+    signedUrl: data.signedUrl,
+    token: data.token,
+    storageKey,
+    path: data.path,
   };
 };
