@@ -1,0 +1,83 @@
+---
+description: VehicleOS commit, branch, and PR naming — ID in branch only, plain English titles
+alwaysApply: true
+---
+
+# Git naming — VehicleOS
+
+**ID lives in the branch.** Commit subject and PR title are plain English — no `[V1-6]`, no `feat:`, no `P-2:` prefix.
+
+## Canonical format
+
+| Layer | Format | Example |
+|-------|--------|---------|
+| **Branch** | `feature/<id-lowercase>-<kebab-slug>` | `feature/v1-6-conflict-detection` |
+| **Commit subject** | `<imperative summary>` | `conflict detection with verification tasks` |
+| **PR title** | Same as commit subject | `conflict detection with verification tasks` |
+
+Rules:
+- Imperative mood, ≤ ~65 chars, no trailing period
+- Capitalize first word only (sentence case) unless proper noun
+- Branch slug must start with queue ID so history is grep-able: `git branch -a | grep v1-6`
+
+## Where the task ID goes
+
+Put the queue row in the **commit body** and **PR Summary** — not the title:
+
+```text
+Task: V1-6 (task-queue.md)
+```
+
+```bash
+git commit -m "$(cat <<'EOF'
+conflict detection with verification tasks
+
+Task: V1-6
+Detect mileage/date regressions on receipt confirm, emit conflict.detected,
+return HTTP 409, surface verification tasks in Now queue.
+EOF
+)"
+```
+
+```bash
+gh pr create --base master \
+  --title "conflict detection with verification tasks" \
+  --body "$(cat <<'EOF'
+## Summary
+Task: **V1-6** — conflict detection with verification tasks.
+
+## Test plan
+- [ ] CI green
+- [ ] Prod: lower mileage receipt → 409 + verification card
+EOF
+)"
+```
+
+Optional: GitHub label `V1-6` or `P-5` on the PR for filtering (does not appear in merge commit title if squash message is edited).
+
+## Agent checklist
+
+1. Look up row in `workspace/strategy/task-queue.md`.
+2. Name branch `feature/<id>-<slug>`.
+3. Write commit/PR title in plain English — **no ID in title**.
+4. First line of commit body / PR Summary: `Task: <ID>`.
+5. Do not rename merged PRs.
+
+## Examples
+
+| Queue row | Branch | Title |
+|-----------|--------|-------|
+| V1-6 | `feature/v1-6-conflict-detection` | `conflict detection with verification tasks` |
+| P-5 | `feature/p5-trust-and-deletion` | `trust pages and self-serve account deletion` |
+| P-2 | `feature/p2-onboarding-wizard` | `multi-step vehicle onboarding wizard` |
+| V1-2 | `feature/v1-2-receipt-capture` | `receipt and photo capture upload` |
+
+## Drive-by (no queue row)
+
+Plain title + optional category in body:
+
+```text
+run server tests in golden-path CI job
+```
+
+Branch: `chore/ci-server-tests` or `fix/handler-409-response` — no fake ID.
