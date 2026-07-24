@@ -17,11 +17,15 @@ export {
   type TaskDecidedPayload,
   type TaskDecision,
   type TaskStatus,
+  type VehicleRecordEventType,
+  type VehicleRecordRecordedPayload,
+  type VehicleRecordSource,
 } from "./events/catalog.js";
 
 export type {
   EvidenceVaultEntry,
   NowQueueItem,
+  OwnershipRecordEntry,
   QuoteAnalysisEntry,
   ServiceTimelineEntry,
   VehicleProjectionState,
@@ -135,6 +139,14 @@ export {
   type RecordVehicleOsImportResult,
   type VehicleOsImportService,
 } from "./import/record-vehicleos-import.js";
+export {
+  recordVehicleOsRmvImport,
+  type RecordVehicleOsRmvImportInput,
+  type RecordVehicleOsRmvImportResult,
+  type VehicleOsRmvRecord,
+} from "./import/record-vehicleos-rmv-import.js";
+export { parseCarfaxPdfText, type ParseCarfaxPdfTextResult } from "./import/parse-carfax-pdf-text.js";
+export { parseRmvPdfText, type ParseRmvPdfTextResult } from "./import/parse-rmv-pdf-text.js";
 export {
   AGGRESSIVE_DUE_SOON_DAYS,
   computeEffectiveMilesPerYear,

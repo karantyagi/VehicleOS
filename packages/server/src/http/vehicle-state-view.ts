@@ -78,5 +78,6 @@ export const buildVehicleStateView = (
         full: scheduleFull.horizonEnd,
       },
     },
+    ownershipRecords: state.ownershipRecords,
   };
 };

@@ -126,6 +126,29 @@ export const applyEvent = (
         ],
       };
 
+    case EVENT_TYPES.VEHICLE_RECORD_RECORDED:
+      return {
+        ...state,
+        vehicleId: event.payload.vehicleId,
+        currentMileage:
+          typeof event.payload.mileage === "number"
+            ? Math.max(state.currentMileage, event.payload.mileage)
+            : state.currentMileage,
+        ownershipRecords: [
+          ...state.ownershipRecords,
+          {
+            recordId: event.payload.recordId,
+            agency: event.payload.agency,
+            recordDate: event.payload.recordDate,
+            mileage: event.payload.mileage,
+            eventType: event.payload.eventType,
+            description: event.payload.description,
+            details: event.payload.details,
+            source: event.payload.source,
+          },
+        ],
+      };
+
     default:
       return state;
   }

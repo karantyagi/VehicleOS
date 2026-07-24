@@ -6,6 +6,7 @@ import {
   decideTask,
   foldEvents,
   recordVehicleOsImport,
+  recordVehicleOsRmvImport,
   refreshMaintenanceRecommendation,
   type EventStore,
   type ExtractedServiceFields,
@@ -14,6 +15,7 @@ import {
   type RecordServiceInput,
   type TaskDecision,
   type VehicleOsImportService,
+  type VehicleOsRmvRecord,
 } from "@vehicleos/domain";
 
 export type GoldenPathDeps = {
@@ -118,6 +120,14 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
       services: VehicleOsImportService[];
     }) {
       return recordVehicleOsImport({ eventStore, input });
+    },
+
+    async importVehicleOsRmvHistory(input: {
+      vehicleId: string;
+      importSource: string;
+      records: VehicleOsRmvRecord[];
+    }) {
+      return recordVehicleOsRmvImport({ eventStore, input });
     },
   };
 };
