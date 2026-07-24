@@ -76,3 +76,16 @@ export type VerificationMaturityView = {
   trendMessage: string;
   celebrateTrend: boolean;
 };
+
+export type OwnershipRecordEntry = {
+  recordId: string;
+  agency: string;
+  recordDate: string;
+  mileage: number | null;
+  eventType: "registration" | "title" | "inspection" | "lien" | "other";
+  description: string;
+  details: string[];
+  source: "rmv_import" | "carfax_import";
+};
+
+export type ServiceHistoryTab = "history" | "schedule" | "ownership";

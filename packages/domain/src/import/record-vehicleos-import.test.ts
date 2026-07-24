@@ -58,4 +58,50 @@ describe("recordVehicleOsImport", () => {
     expect(schedule.rows[0]?.serviceBaseline.baselineSource).toBe("carfax");
     expect(schedule.rows[0]?.serviceBaseline.performedDate).toBe("2026-01-12");
   });
+
+  it("skips duplicate services on re-import", async () => {
+    const eventStore = new InMemoryEventStore();
+    const vehicleId = "veh-dedupe";
+
+    const first = await recordVehicleOsImport({
+      eventStore,
+      input: {
+        vehicleId,
+        importSource: "carfax-connect-cli",
+        services: [
+          {
+            shop: "Dealer",
+            serviceDate: "2026-01-12",
+            mileage: 41_800,
+            lineItems: ["Oil change"],
+            total: "$67.42",
+          },
+        ],
+      },
+    });
+
+    expect(first.importedCount).toBe(1);
+    expect(first.skippedCount).toBe(0);
+
+    const second = await recordVehicleOsImport({
+      eventStore,
+      input: {
+        vehicleId,
+        importSource: "carfax-connect-cli",
+        services: [
+          {
+            shop: "Dealer",
+            serviceDate: "2026-01-12",
+            mileage: 41_800,
+            lineItems: ["Oil change (synthetic)"],
+            total: "$67.42",
+          },
+        ],
+      },
+    });
+
+    expect(second.importedCount).toBe(0);
+    expect(second.skippedCount).toBe(1);
+    expect(second.state.timeline).toHaveLength(1);
+  });
 });

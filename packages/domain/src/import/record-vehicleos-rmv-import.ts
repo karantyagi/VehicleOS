@@ -2,6 +2,7 @@ import { EVENT_TYPES, EVENT_VERSIONS, type VehicleRecordEventType } from "../eve
 import { foldEvents } from "../projections/apply.js";
 import type { VehicleProjectionState } from "../projections/types.js";
 import type { EventStore } from "../ports/event-store.js";
+import { filterNewOwnershipRecords } from "./dedupe-import-rows.js";
 
 export type VehicleOsRmvRecord = {
   agency: string;
@@ -20,6 +21,7 @@ export type RecordVehicleOsRmvImportInput = {
 
 export type RecordVehicleOsRmvImportResult = {
   importedCount: number;
+  skippedCount: number;
   state: VehicleProjectionState;
 };
 
@@ -32,7 +34,18 @@ export const recordVehicleOsRmvImport = async (deps: {
 }): Promise<RecordVehicleOsRmvImportResult> => {
   const { eventStore, input } = deps;
   const correlationId = crypto.randomUUID();
-  const sortedRecords = sortRecordsChronologically(input.records);
+
+  const events = await eventStore.loadAll();
+  const vehicleEvents = events.filter(
+    (event) => "vehicleId" in event.payload && event.payload.vehicleId === input.vehicleId,
+  );
+  const existingState = foldEvents(input.vehicleId, vehicleEvents);
+
+  const { newRows, skippedCount } = filterNewOwnershipRecords(
+    existingState.ownershipRecords,
+    input.records,
+  );
+  const sortedRecords = sortRecordsChronologically(newRows);
 
   for (const record of sortedRecords) {
     const recordId = crypto.randomUUID();
@@ -56,13 +69,14 @@ export const recordVehicleOsRmvImport = async (deps: {
     });
   }
 
-  const events = await eventStore.loadAll();
-  const vehicleEvents = events.filter(
+  const nextEvents = await eventStore.loadAll();
+  const nextVehicleEvents = nextEvents.filter(
     (event) => "vehicleId" in event.payload && event.payload.vehicleId === input.vehicleId,
   );
 
   return {
     importedCount: sortedRecords.length,
-    state: foldEvents(input.vehicleId, vehicleEvents),
+    skippedCount,
+    state: foldEvents(input.vehicleId, nextVehicleEvents),
   };
 };

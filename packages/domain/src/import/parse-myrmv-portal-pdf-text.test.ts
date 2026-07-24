@@ -22,7 +22,7 @@ describe("parseMyRmvPortalPdfText", () => {
     const registration = result?.records.find((record) => record.eventType === "registration");
     expect(registration?.recordDate).toBe("2024-10-01");
     expect(registration?.description).toContain("3KXT69");
-    expect(registration?.details.some((line) => line.includes("Sep-30-2026"))).toBe(true);
+    expect(registration?.details.some((line) => line.includes("2026-09-30"))).toBe(true);
   });
 
   it("parseRmvPdfText prefers myRMV portal layout over CARFAX-style blocks", () => {

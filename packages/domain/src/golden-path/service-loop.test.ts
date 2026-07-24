@@ -85,6 +85,30 @@ describe("recordServiceAndRecommend", () => {
     expect(result.recommendation?.title).toBe("Oil change due");
     expect(result.recommendation?.ruleId).toBe("schedule.policy.oil_change.v1");
   });
+
+  it("skips duplicate service rows on repeat confirm", async () => {
+    const eventStore = new InMemoryEventStore();
+    const policyEngine = new StubPolicyEngine();
+    const vehicleId = crypto.randomUUID();
+    const input = {
+      vehicleId,
+      shop: "Jiffy Lube",
+      serviceDate: "2025-06-01",
+      mileage: 30_000,
+      lineItems: ["Oil change (synthetic)"],
+      total: "$60.00",
+      evidenceIds: ["evidence-1"],
+      source: "receipt" as const,
+    };
+
+    const first = await recordServiceAndRecommend({ eventStore, policyEngine, input });
+    expect(first.skippedDuplicate).toBeFalsy();
+    expect(first.state.timeline).toHaveLength(1);
+
+    const second = await recordServiceAndRecommend({ eventStore, policyEngine, input });
+    expect(second.skippedDuplicate).toBe(true);
+    expect(second.state.timeline).toHaveLength(1);
+  });
 });
 
 describe("decideTask", () => {

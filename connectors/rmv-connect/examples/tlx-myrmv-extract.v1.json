@@ -1,0 +1,36 @@
+{
+  "version": "1",
+  "portal": "myrmv-ma",
+  "source": "myrmv-pdf-manual",
+  "extractedAt": "2026-07-24T18:48:00.000Z",
+  "owner": {
+    "dateOfBirth": "1991-09-21",
+    "licenseClass": "D",
+    "licenseIssued": "2024-04-16",
+    "licenseExpires": "2026-10-10",
+    "passengerStatus": "Active",
+    "commercialStatus": "None",
+    "restrictions": ["Corrective Lenses"]
+  },
+  "vehicle": {
+    "yearMakeModel": "2021 ACUR TLX",
+    "year": 2021,
+    "make": "Acura",
+    "model": "TLX",
+    "vin": "19UUB6F47MA008400"
+  },
+  "registration": {
+    "typeNumber": "Passenger Normal Red Plate/3KXT69",
+    "plate": "3KXT69",
+    "effectiveDate": "2024-10-01",
+    "expirationDate": "2026-09-30",
+    "status": "Active",
+    "alreadyRenewed": true
+  },
+  "title": {
+    "titleNumber": "CM185996",
+    "titleDate": "2026-01-21",
+    "titleStatus": "Active"
+  },
+  "warnings": []
+}

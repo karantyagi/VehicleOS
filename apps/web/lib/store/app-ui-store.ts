@@ -78,6 +78,7 @@ type AppUiState = {
   selectedTimelineId: string | null;
   selectedEvidenceId: string | null;
   selectedNowTaskId: string | null;
+  selectedOwnershipRecordId: string | null;
   setActiveSection: (section: AppSection) => void;
   setMobileNavOpen: (open: boolean) => void;
   setCommandOpen: (open: boolean) => void;
@@ -86,12 +87,14 @@ type AppUiState = {
   setSelectedTimelineId: (id: string | null) => void;
   setSelectedEvidenceId: (id: string | null) => void;
   setSelectedNowTaskId: (id: string | null) => void;
+  setSelectedOwnershipRecordId: (id: string | null) => void;
 };
 
 const clearSelections = {
   selectedTimelineId: null as string | null,
   selectedEvidenceId: null as string | null,
   selectedNowTaskId: null as string | null,
+  selectedOwnershipRecordId: null as string | null,
 };
 
 export const useAppUiStore = create<AppUiState>((set, get) => ({
@@ -102,6 +105,7 @@ export const useAppUiStore = create<AppUiState>((set, get) => ({
   selectedTimelineId: null,
   selectedEvidenceId: null,
   selectedNowTaskId: null,
+  selectedOwnershipRecordId: null,
   setActiveSection: (activeSection) =>
     set({
       activeSection,
@@ -121,9 +125,31 @@ export const useAppUiStore = create<AppUiState>((set, get) => ({
     get().setDensity(next);
   },
   setSelectedTimelineId: (selectedTimelineId) =>
-    set({ selectedTimelineId, selectedEvidenceId: null, selectedNowTaskId: null }),
+    set({
+      selectedTimelineId,
+      selectedEvidenceId: null,
+      selectedNowTaskId: null,
+      selectedOwnershipRecordId: null,
+    }),
   setSelectedEvidenceId: (selectedEvidenceId) =>
-    set({ selectedEvidenceId, selectedTimelineId: null, selectedNowTaskId: null }),
+    set({
+      selectedEvidenceId,
+      selectedTimelineId: null,
+      selectedNowTaskId: null,
+      selectedOwnershipRecordId: null,
+    }),
   setSelectedNowTaskId: (selectedNowTaskId) =>
-    set({ selectedNowTaskId, selectedTimelineId: null, selectedEvidenceId: null }),
+    set({
+      selectedNowTaskId,
+      selectedTimelineId: null,
+      selectedEvidenceId: null,
+      selectedOwnershipRecordId: null,
+    }),
+  setSelectedOwnershipRecordId: (selectedOwnershipRecordId) =>
+    set({
+      selectedOwnershipRecordId,
+      selectedTimelineId: null,
+      selectedEvidenceId: null,
+      selectedNowTaskId: null,
+    }),
 }));

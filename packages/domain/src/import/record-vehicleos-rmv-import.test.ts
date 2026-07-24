@@ -30,4 +30,33 @@ describe("recordVehicleOsRmvImport", () => {
     expect(result.state.timeline).toHaveLength(0);
     expect(result.state.ownershipRecords[0]?.source).toBe("rmv_import");
   });
+
+  it("skips duplicate ownership records on re-import", async () => {
+    const eventStore = new InMemoryEventStore();
+    const vehicleId = "veh-rmv-dedupe";
+    const record = {
+      agency: "Massachusetts RMV",
+      recordDate: "2026-01-21",
+      mileage: null,
+      eventType: "title" as const,
+      description: "Title active — CM185996",
+      details: ["Title Number: CM185996"],
+    };
+
+    const first = await recordVehicleOsRmvImport({
+      eventStore,
+      input: { vehicleId, importSource: "rmv-pdf-manual", records: [record] },
+    });
+
+    expect(first.importedCount).toBe(1);
+
+    const second = await recordVehicleOsRmvImport({
+      eventStore,
+      input: { vehicleId, importSource: "rmv-pdf-manual", records: [record] },
+    });
+
+    expect(second.importedCount).toBe(0);
+    expect(second.skippedCount).toBe(1);
+    expect(second.state.ownershipRecords).toHaveLength(1);
+  });
 });

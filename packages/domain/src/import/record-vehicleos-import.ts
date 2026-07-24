@@ -2,6 +2,7 @@ import { EVENT_TYPES, EVENT_VERSIONS } from "../events/catalog.js";
 import { foldEvents } from "../projections/apply.js";
 import type { VehicleProjectionState } from "../projections/types.js";
 import type { EventStore } from "../ports/event-store.js";
+import { filterNewImportServices } from "./dedupe-import-rows.js";
 
 export type VehicleOsImportService = {
   shop: string;
@@ -20,6 +21,7 @@ export type RecordVehicleOsImportInput = {
 
 export type RecordVehicleOsImportResult = {
   importedCount: number;
+  skippedCount: number;
   state: VehicleProjectionState;
 };
 
@@ -38,7 +40,15 @@ export const recordVehicleOsImport = async (deps: {
 }): Promise<RecordVehicleOsImportResult> => {
   const { eventStore, input } = deps;
   const correlationId = crypto.randomUUID();
-  const sortedServices = sortServicesChronologically(input.services);
+
+  const events = await eventStore.loadAll();
+  const vehicleEvents = events.filter(
+    (event) => "vehicleId" in event.payload && event.payload.vehicleId === input.vehicleId,
+  );
+  const existingState = foldEvents(input.vehicleId, vehicleEvents);
+
+  const { newRows, skippedCount } = filterNewImportServices(existingState.timeline, input.services);
+  const sortedServices = sortServicesChronologically(newRows);
 
   for (const service of sortedServices) {
     const serviceId = crypto.randomUUID();
@@ -62,13 +72,14 @@ export const recordVehicleOsImport = async (deps: {
     });
   }
 
-  const events = await eventStore.loadAll();
-  const vehicleEvents = events.filter(
+  const nextEvents = await eventStore.loadAll();
+  const nextVehicleEvents = nextEvents.filter(
     (event) => "vehicleId" in event.payload && event.payload.vehicleId === input.vehicleId,
   );
 
   return {
     importedCount: sortedServices.length,
-    state: foldEvents(input.vehicleId, vehicleEvents),
+    skippedCount,
+    state: foldEvents(input.vehicleId, nextVehicleEvents),
   };
 };

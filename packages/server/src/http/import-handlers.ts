@@ -1,5 +1,11 @@
 import type { VehicleOsImportService, VehicleOsRmvRecord } from "@vehicleos/domain";
-import { parseCarfaxPdfText, parseRmvPdfText } from "@vehicleos/domain";
+import {
+  extractCarfaxServiceHistoryFromPdfText,
+  extractMyRmvMaVehiclePageFromPdfText,
+  mapCarfaxExtractToImport,
+  mapMyRmvExtractToImport,
+  parseRmvPdfText,
+} from "@vehicleos/domain";
 import type { ApiServices } from "../services/index.js";
 import { extractPdfText } from "../import/pdf-text.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
@@ -71,6 +77,7 @@ export const submitVehicleOsImport = async (
 
   return jsonResponse(201, {
     importedCount: importResult.importedCount,
+    skippedCount: importResult.skippedCount,
     importSource: body.source?.trim() || "vehicleos-import",
     timeline: view.timeline,
     maintenanceSchedule: view.maintenanceSchedule,
@@ -132,25 +139,62 @@ export const extractRecordImportPdf = async (
   };
 
   if (input.category === "carfax") {
-    const parsed = parseCarfaxPdfText(text);
-    if (parsed.services.length === 0) {
+    const extract = extractCarfaxServiceHistoryFromPdfText({
+      rawText: text,
+      source: "carfax-pdf-extract",
+      extractedAt: exportedAt,
+    });
+
+    if (extract.serviceRows.length === 0) {
       return jsonResponse(422, {
         error: "No CARFAX service rows found. Open Service History in Car Care, then print the full page to PDF.",
       });
     }
 
-    const currentMileage = Math.max(vehicle.currentMileage, parsed.maxMileage);
+    const draft = mapCarfaxExtractToImport({
+      extract,
+      vehicleDefaults: vehicleBlock,
+      exportedAt,
+      importSource: "carfax-pdf-extract",
+    });
+
     return jsonResponse(200, {
       category: "carfax",
       extractor: "rules-v1",
-      warnings: parsed.warnings,
-      draft: {
-        version: "1" as const,
-        source: "carfax-pdf-extract",
-        exportedAt,
-        vehicle: { ...vehicleBlock, currentMileage },
-        services: parsed.services,
-      },
+      extractLayer: "carfax-service-history.extract.v1",
+      warnings: extract.warnings,
+      extract,
+      draft,
+    });
+  }
+
+  const myRmvExtract = extractMyRmvMaVehiclePageFromPdfText({
+    rawText: text,
+    source: "myrmv-pdf-extract",
+    extractedAt: exportedAt,
+  });
+
+  if (myRmvExtract) {
+    const draft = mapMyRmvExtractToImport({
+      extract: myRmvExtract,
+      vehicleDefaults: vehicleBlock,
+      exportedAt,
+      importSource: "myrmv-pdf-extract",
+    });
+
+    if (draft.records.length === 0) {
+      return jsonResponse(422, {
+        error: "No RMV ownership rows mapped from myRMV PDF. Check the vehicle page export.",
+      });
+    }
+
+    return jsonResponse(200, {
+      category: "rmv",
+      extractor: "rules-v1",
+      extractLayer: "myrmv-ma-vehicle-page.extract.v1",
+      warnings: myRmvExtract.warnings,
+      extract: myRmvExtract,
+      draft,
     });
   }
 
@@ -164,6 +208,7 @@ export const extractRecordImportPdf = async (
   return jsonResponse(200, {
     category: "rmv",
     extractor: "rules-v1",
+    extractLayer: "carfax-embedded-dmv-fallback",
     warnings: parsed.warnings,
     draft: {
       version: "1" as const,
@@ -223,6 +268,7 @@ export const submitVehicleOsRmvImport = async (
 
   return jsonResponse(201, {
     importedCount: importResult.importedCount,
+    skippedCount: importResult.skippedCount,
     importSource: body.source?.trim() || "vehicleos-rmv-import",
     ownershipRecords: view.ownershipRecords,
   });

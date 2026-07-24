@@ -1,0 +1,26 @@
+{
+  "portal": "carfax-car-care",
+  "version": "1",
+  "description": "PDF label → extract key mapping for CARFAX Car Care service history print layout.",
+  "blocks": [
+    {
+      "block": "serviceRow",
+      "repeat": true,
+      "pdfLabels": ["Date", "Odometer", "Services Performed"],
+      "keys": {
+        "shop": "Line(s) before Date — dealer or shop name",
+        "serviceDate": "Date → MM/DD/YYYY → ISO date",
+        "mileage": "Odometer → integer miles",
+        "lineItems": "Services Performed → string array",
+        "total": "Not on print PDF — default $0.00"
+      }
+    }
+  ],
+  "vehicleHint": {
+    "maxMileage": "Max mileage across all serviceRows"
+  },
+  "excludedFromExtract": [
+    "Dashboard nav chrome",
+    "Massachusetts Motor Vehicle Dept. ownership-only rows (→ RMV import path)"
+  ]
+}

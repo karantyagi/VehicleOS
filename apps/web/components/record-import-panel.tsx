@@ -4,6 +4,7 @@ import { FileJson, FileUp, Loader2, Upload } from "lucide-react";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -13,7 +14,9 @@ import {
   RMV_EVENT_LABELS,
   type RecordImportCategoryId,
   type VehicleOsImportV1,
+  type VehicleOsImportService,
   type VehicleOsRmvImportV1,
+  type VehicleOsRmvRecord,
 } from "@/lib/record-import-types";
 import { cn } from "@/lib/utils";
 
@@ -24,18 +27,49 @@ type RecordImportPanelProps = {
   onError: (message: string) => void;
   onCarfaxImported: (body: {
     importedCount: number;
+    skippedCount?: number;
     timeline: unknown[];
     maintenanceSchedule?: unknown;
   }) => void;
-  onRmvImported: (body: { importedCount: number; ownershipRecords: unknown[] }) => void;
+  onRmvImported: (body: {
+    importedCount: number;
+    skippedCount?: number;
+    ownershipRecords: unknown[];
+  }) => void;
 };
+
+type CarfaxReviewRow = VehicleOsImportService & { id: string; included: boolean };
+type RmvReviewRow = VehicleOsRmvRecord & { id: string; included: boolean };
 
 const FLOW_STEPS = [
   "Log in to the portal and open the relevant vehicle page.",
   "Print the page → Save as PDF (Ctrl+P / Cmd+P).",
   "Upload PDF — assistant extracts rows for review.",
-  "Confirm import — rows commit to your vehicle record.",
+  "Edit or exclude rows, then confirm import.",
 ] as const;
+
+const createRowId = (): string =>
+  typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `row-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+const initCarfaxReviewRows = (services: VehicleOsImportService[]): CarfaxReviewRow[] =>
+  services.map((service) => ({ ...service, id: createRowId(), included: true }));
+
+const initRmvReviewRows = (records: VehicleOsRmvRecord[]): RmvReviewRow[] =>
+  records.map((record) => ({ ...record, id: createRowId(), included: true }));
+
+const parseLineItemsField = (raw: string): string[] =>
+  raw
+    .split(/[·;,]/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+const parseDetailsField = (raw: string): string[] =>
+  raw
+    .split(/[·;]/)
+    .map((line) => line.trim())
+    .filter(Boolean);
 
 export function RecordImportPanel({
   vehicleId,
@@ -49,6 +83,8 @@ export function RecordImportPanel({
   const [jsonDraft, setJsonDraft] = useState("");
   const [carfaxPreview, setCarfaxPreview] = useState<VehicleOsImportV1 | null>(null);
   const [rmvPreview, setRmvPreview] = useState<VehicleOsRmvImportV1 | null>(null);
+  const [carfaxReviewRows, setCarfaxReviewRows] = useState<CarfaxReviewRow[]>([]);
+  const [rmvReviewRows, setRmvReviewRows] = useState<RmvReviewRow[]>([]);
   const [parseError, setParseError] = useState("");
   const [extractWarnings, setExtractWarnings] = useState<string[]>([]);
   const [isImporting, setIsImporting] = useState(false);
@@ -63,6 +99,8 @@ export function RecordImportPanel({
   const resetPreview = useCallback(() => {
     setCarfaxPreview(null);
     setRmvPreview(null);
+    setCarfaxReviewRows([]);
+    setRmvReviewRows([]);
     setParseError("");
     setExtractWarnings([]);
     setPdfFileName(null);
@@ -77,6 +115,8 @@ export function RecordImportPanel({
   const applyCarfaxDraft = (draft: VehicleOsImportV1, warnings: string[] = []) => {
     setCarfaxPreview(draft);
     setRmvPreview(null);
+    setRmvReviewRows([]);
+    setCarfaxReviewRows(initCarfaxReviewRows(draft.services));
     setJsonDraft(JSON.stringify(draft, null, 2));
     setParseError("");
     setExtractWarnings(warnings);
@@ -85,6 +125,8 @@ export function RecordImportPanel({
   const applyRmvDraft = (draft: VehicleOsRmvImportV1, warnings: string[] = []) => {
     setRmvPreview(draft);
     setCarfaxPreview(null);
+    setCarfaxReviewRows([]);
+    setRmvReviewRows(initRmvReviewRows(draft.records));
     setJsonDraft(JSON.stringify(draft, null, 2));
     setParseError("");
     setExtractWarnings(warnings);
@@ -185,18 +227,50 @@ export function RecordImportPanel({
     }
   };
 
+  const selectedCarfaxRows = useMemo(
+    () => carfaxReviewRows.filter((row) => row.included),
+    [carfaxReviewRows],
+  );
+  const selectedRmvRows = useMemo(() => rmvReviewRows.filter((row) => row.included), [rmvReviewRows]);
+
   const commitImport = async () => {
     setIsImporting(true);
     try {
       if (activeCategory === "carfax" && carfaxPreview) {
+        if (selectedCarfaxRows.length === 0) {
+          onError("Select at least one service row to import.");
+          return;
+        }
+
+        for (const row of selectedCarfaxRows) {
+          if (!row.serviceDate.trim()) {
+            onError("Every included row needs a service date.");
+            return;
+          }
+          if (!Number.isFinite(row.mileage)) {
+            onError("Every included row needs a valid mileage.");
+            return;
+          }
+          if (row.lineItems.length === 0) {
+            onError("Every included row needs at least one line item.");
+            return;
+          }
+        }
+
+        const payload: VehicleOsImportV1 = {
+          ...carfaxPreview,
+          services: selectedCarfaxRows.map(({ id: _id, included: _included, ...service }) => service),
+        };
+
         const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/import`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(carfaxPreview),
+          body: JSON.stringify(payload),
         });
         const body = (await response.json()) as {
           error?: string;
           importedCount?: number;
+          skippedCount?: number;
           timeline?: unknown[];
           maintenanceSchedule?: unknown;
         };
@@ -205,19 +279,46 @@ export function RecordImportPanel({
           return;
         }
         onCarfaxImported({
-          importedCount: body.importedCount ?? carfaxPreview.services.length,
+          importedCount: body.importedCount ?? 0,
+          skippedCount: body.skippedCount ?? 0,
           timeline: body.timeline ?? [],
           maintenanceSchedule: body.maintenanceSchedule,
         });
       } else if (activeCategory === "rmv" && rmvPreview) {
+        if (selectedRmvRows.length === 0) {
+          onError("Select at least one ownership record to import.");
+          return;
+        }
+
+        for (const row of selectedRmvRows) {
+          if (!row.recordDate.trim()) {
+            onError("Every included row needs a record date.");
+            return;
+          }
+          if (!row.description.trim()) {
+            onError("Every included row needs a description.");
+            return;
+          }
+          if (row.details.length === 0) {
+            onError("Every included row needs at least one detail line.");
+            return;
+          }
+        }
+
+        const payload: VehicleOsRmvImportV1 = {
+          ...rmvPreview,
+          records: selectedRmvRows.map(({ id: _id, included: _included, ...record }) => record),
+        };
+
         const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/import/rmv`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(rmvPreview),
+          body: JSON.stringify(payload),
         });
         const body = (await response.json()) as {
           error?: string;
           importedCount?: number;
+          skippedCount?: number;
           ownershipRecords?: unknown[];
         };
         if (!response.ok) {
@@ -225,7 +326,8 @@ export function RecordImportPanel({
           return;
         }
         onRmvImported({
-          importedCount: body.importedCount ?? rmvPreview.records.length,
+          importedCount: body.importedCount ?? 0,
+          skippedCount: body.skippedCount ?? 0,
           ownershipRecords: body.ownershipRecords ?? [],
         });
       } else {
@@ -242,7 +344,23 @@ export function RecordImportPanel({
   };
 
   const rowCount =
-    activeCategory === "carfax" ? (carfaxPreview?.services.length ?? 0) : (rmvPreview?.records.length ?? 0);
+    activeCategory === "carfax" ? carfaxReviewRows.length : rmvReviewRows.length;
+
+  const updateCarfaxRow = (id: string, patch: Partial<CarfaxReviewRow>) => {
+    setCarfaxReviewRows((rows) => rows.map((row) => (row.id === id ? { ...row, ...patch } : row)));
+  };
+
+  const updateRmvRow = (id: string, patch: Partial<RmvReviewRow>) => {
+    setRmvReviewRows((rows) => rows.map((row) => (row.id === id ? { ...row, ...patch } : row)));
+  };
+
+  const setAllCarfaxIncluded = (included: boolean) => {
+    setCarfaxReviewRows((rows) => rows.map((row) => ({ ...row, included })));
+  };
+
+  const setAllRmvIncluded = (included: boolean) => {
+    setRmvReviewRows((rows) => rows.map((row) => ({ ...row, included })));
+  };
 
   return (
     <div className="space-y-6">
@@ -332,7 +450,7 @@ export function RecordImportPanel({
             </label>
           </Button>
           {pdfFileName ? (
-            <span className="text-xs text-muted-foreground truncate max-w-xs">{pdfFileName}</span>
+            <span className="max-w-xs truncate text-xs text-muted-foreground">{pdfFileName}</span>
           ) : null}
         </div>
         <p className="text-xs text-muted-foreground">
@@ -391,34 +509,93 @@ export function RecordImportPanel({
         ) : null}
       </div>
 
-      {activeCategory === "carfax" && carfaxPreview ? (
+      {activeCategory === "carfax" && carfaxPreview && carfaxReviewRows.length > 0 ? (
         <ImportReviewTable
-          title={`Review before import · ${carfaxPreview.services.length} service row${carfaxPreview.services.length === 1 ? "" : "s"}`}
-          subtitle={`${carfaxPreview.vehicle.year} ${carfaxPreview.vehicle.make} ${carfaxPreview.vehicle.model} · ${carfaxPreview.vehicle.currentMileage.toLocaleString()} mi`}
+          title={`Review before import · ${carfaxReviewRows.length} service row${carfaxReviewRows.length === 1 ? "" : "s"}`}
+          subtitle={`${carfaxPreview.vehicle.year} ${carfaxPreview.vehicle.make} ${carfaxPreview.vehicle.model} · ${carfaxPreview.vehicle.currentMileage.toLocaleString()} mi · edit fields or uncheck rows to exclude`}
+          selectedCount={selectedCarfaxRows.length}
+          totalCount={carfaxReviewRows.length}
           disabled={disabled || isImporting}
-          confirmLabel={isImporting ? "Importing…" : `Confirm import (${carfaxPreview.services.length} rows)`}
+          confirmLabel={
+            isImporting
+              ? "Importing…"
+              : `Confirm import (${selectedCarfaxRows.length} of ${carfaxReviewRows.length} rows)`
+          }
           onConfirm={() => void commitImport()}
+          onIncludeAll={() => setAllCarfaxIncluded(true)}
+          onExcludeAll={() => setAllCarfaxIncluded(false)}
         >
           <table className="w-full text-left text-xs">
             <thead className="sticky top-0 bg-muted/80 backdrop-blur">
               <tr>
-                <th className="px-3 py-2 font-medium">Date</th>
-                <th className="px-3 py-2 font-medium">Mileage</th>
-                <th className="px-3 py-2 font-medium">Shop</th>
-                <th className="px-3 py-2 font-medium">Line items</th>
+                <th className="w-10 px-2 py-2 font-medium">
+                  <span className="sr-only">Include</span>
+                </th>
+                <th className="px-2 py-2 font-medium">Date</th>
+                <th className="px-2 py-2 font-medium">Mileage</th>
+                <th className="px-2 py-2 font-medium">Shop</th>
+                <th className="px-2 py-2 font-medium">Line items</th>
               </tr>
             </thead>
             <tbody>
-              {[...carfaxPreview.services]
+              {[...carfaxReviewRows]
                 .sort((a, b) => b.serviceDate.localeCompare(a.serviceDate))
-                .map((service, index) => (
-                  <tr key={`${service.serviceDate}-${service.shop}-${index}`} className="border-t border-border/60">
-                    <td className="px-3 py-2 tabular-nums whitespace-nowrap">{service.serviceDate}</td>
-                    <td className="px-3 py-2 tabular-nums whitespace-nowrap">
-                      {service.mileage.toLocaleString()} mi
+                .map((row) => (
+                  <tr
+                    key={row.id}
+                    className={cn(
+                      "border-t border-border/60",
+                      !row.included && "bg-muted/40 opacity-60",
+                    )}
+                  >
+                    <td className="px-2 py-2 align-top">
+                      <input
+                        type="checkbox"
+                        checked={row.included}
+                        disabled={disabled || isImporting}
+                        aria-label={`Include service on ${row.serviceDate}`}
+                        className="h-4 w-4 rounded border-border"
+                        onChange={(event) => updateCarfaxRow(row.id, { included: event.target.checked })}
+                      />
                     </td>
-                    <td className="px-3 py-2">{service.shop}</td>
-                    <td className="px-3 py-2 text-muted-foreground">{service.lineItems.join(" · ")}</td>
+                    <td className="px-2 py-2 align-top">
+                      <Input
+                        value={row.serviceDate}
+                        disabled={disabled || isImporting || !row.included}
+                        className="h-8 min-w-[7rem] text-xs"
+                        onChange={(event) => updateCarfaxRow(row.id, { serviceDate: event.target.value })}
+                      />
+                    </td>
+                    <td className="px-2 py-2 align-top">
+                      <Input
+                        type="number"
+                        value={row.mileage}
+                        disabled={disabled || isImporting || !row.included}
+                        className="h-8 w-24 text-xs tabular-nums"
+                        onChange={(event) =>
+                          updateCarfaxRow(row.id, { mileage: Number(event.target.value) || 0 })
+                        }
+                      />
+                    </td>
+                    <td className="px-2 py-2 align-top">
+                      <Input
+                        value={row.shop}
+                        disabled={disabled || isImporting || !row.included}
+                        className="h-8 min-w-[8rem] text-xs"
+                        onChange={(event) => updateCarfaxRow(row.id, { shop: event.target.value })}
+                      />
+                    </td>
+                    <td className="px-2 py-2 align-top">
+                      <Input
+                        value={row.lineItems.join(" · ")}
+                        disabled={disabled || isImporting || !row.included}
+                        className="h-8 min-w-[12rem] text-xs"
+                        placeholder="Oil change · Filter"
+                        onChange={(event) =>
+                          updateCarfaxRow(row.id, { lineItems: parseLineItemsField(event.target.value) })
+                        }
+                      />
+                    </td>
                   </tr>
                 ))}
             </tbody>
@@ -426,32 +603,93 @@ export function RecordImportPanel({
         </ImportReviewTable>
       ) : null}
 
-      {activeCategory === "rmv" && rmvPreview ? (
+      {activeCategory === "rmv" && rmvPreview && rmvReviewRows.length > 0 ? (
         <ImportReviewTable
-          title={`Review ownership records · ${rmvPreview.records.length} row${rmvPreview.records.length === 1 ? "" : "s"}`}
-          subtitle="These do not appear on the maintenance timeline — the assistant uses them for ownership context."
+          title={`Review ownership records · ${rmvReviewRows.length} row${rmvReviewRows.length === 1 ? "" : "s"}`}
+          subtitle="Uncheck rows to exclude. Edits apply before commit. Ownership records do not appear on the maintenance timeline."
+          selectedCount={selectedRmvRows.length}
+          totalCount={rmvReviewRows.length}
           disabled={disabled || isImporting}
-          confirmLabel={isImporting ? "Importing…" : `Confirm import (${rmvPreview.records.length} records)`}
+          confirmLabel={
+            isImporting
+              ? "Importing…"
+              : `Confirm import (${selectedRmvRows.length} of ${rmvReviewRows.length} records)`
+          }
           onConfirm={() => void commitImport()}
+          onIncludeAll={() => setAllRmvIncluded(true)}
+          onExcludeAll={() => setAllRmvIncluded(false)}
         >
           <table className="w-full text-left text-xs">
             <thead className="sticky top-0 bg-muted/80 backdrop-blur">
               <tr>
-                <th className="px-3 py-2 font-medium">Date</th>
-                <th className="px-3 py-2 font-medium">Type</th>
-                <th className="px-3 py-2 font-medium">Agency</th>
-                <th className="px-3 py-2 font-medium">Details</th>
+                <th className="w-10 px-2 py-2 font-medium">
+                  <span className="sr-only">Include</span>
+                </th>
+                <th className="px-2 py-2 font-medium">Date</th>
+                <th className="px-2 py-2 font-medium">Type</th>
+                <th className="px-2 py-2 font-medium">Agency</th>
+                <th className="px-2 py-2 font-medium">Description</th>
+                <th className="px-2 py-2 font-medium">Details</th>
               </tr>
             </thead>
             <tbody>
-              {[...rmvPreview.records]
+              {[...rmvReviewRows]
                 .sort((a, b) => b.recordDate.localeCompare(a.recordDate))
-                .map((record, index) => (
-                  <tr key={`${record.recordDate}-${record.description}-${index}`} className="border-t border-border/60">
-                    <td className="px-3 py-2 tabular-nums whitespace-nowrap">{record.recordDate}</td>
-                    <td className="px-3 py-2">{RMV_EVENT_LABELS[record.eventType]}</td>
-                    <td className="px-3 py-2">{record.agency}</td>
-                    <td className="px-3 py-2 text-muted-foreground">{record.details.join(" · ")}</td>
+                .map((row) => (
+                  <tr
+                    key={row.id}
+                    className={cn(
+                      "border-t border-border/60",
+                      !row.included && "bg-muted/40 opacity-60",
+                    )}
+                  >
+                    <td className="px-2 py-2 align-top">
+                      <input
+                        type="checkbox"
+                        checked={row.included}
+                        disabled={disabled || isImporting}
+                        aria-label={`Include ${RMV_EVENT_LABELS[row.eventType]} on ${row.recordDate}`}
+                        className="h-4 w-4 rounded border-border"
+                        onChange={(event) => updateRmvRow(row.id, { included: event.target.checked })}
+                      />
+                    </td>
+                    <td className="px-2 py-2 align-top">
+                      <Input
+                        value={row.recordDate}
+                        disabled={disabled || isImporting || !row.included}
+                        className="h-8 min-w-[7rem] text-xs"
+                        onChange={(event) => updateRmvRow(row.id, { recordDate: event.target.value })}
+                      />
+                    </td>
+                    <td className="px-2 py-2 align-top text-muted-foreground">
+                      {RMV_EVENT_LABELS[row.eventType]}
+                    </td>
+                    <td className="px-2 py-2 align-top">
+                      <Input
+                        value={row.agency}
+                        disabled={disabled || isImporting || !row.included}
+                        className="h-8 min-w-[8rem] text-xs"
+                        onChange={(event) => updateRmvRow(row.id, { agency: event.target.value })}
+                      />
+                    </td>
+                    <td className="px-2 py-2 align-top">
+                      <Input
+                        value={row.description}
+                        disabled={disabled || isImporting || !row.included}
+                        className="h-8 min-w-[10rem] text-xs"
+                        onChange={(event) => updateRmvRow(row.id, { description: event.target.value })}
+                      />
+                    </td>
+                    <td className="px-2 py-2 align-top">
+                      <Input
+                        value={row.details.join(" · ")}
+                        disabled={disabled || isImporting || !row.included}
+                        className="h-8 min-w-[12rem] text-xs"
+                        onChange={(event) =>
+                          updateRmvRow(row.id, { details: parseDetailsField(event.target.value) })
+                        }
+                      />
+                    </td>
                   </tr>
                 ))}
             </tbody>
@@ -469,29 +707,53 @@ export function RecordImportPanel({
 function ImportReviewTable({
   title,
   subtitle,
+  selectedCount,
+  totalCount,
   disabled,
   confirmLabel,
   onConfirm,
+  onIncludeAll,
+  onExcludeAll,
   children,
 }: {
   title: string;
   subtitle: string;
+  selectedCount: number;
+  totalCount: number;
   disabled: boolean;
   confirmLabel: string;
   onConfirm: () => void;
+  onIncludeAll: () => void;
+  onExcludeAll: () => void;
   children: ReactNode;
 }) {
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm font-medium">{title}</p>
+      <div className="space-y-1">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm font-medium">{title}</p>
+          <div className="flex items-center gap-2">
+            <Badge variant={selectedCount === 0 ? "warning" : "secondary"}>
+              {selectedCount} selected
+            </Badge>
+            <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" disabled={disabled} onClick={onIncludeAll}>
+              Include all
+            </Button>
+            <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" disabled={disabled} onClick={onExcludeAll}>
+              Exclude all
+            </Button>
+          </div>
+        </div>
         <p className="text-xs text-muted-foreground">{subtitle}</p>
       </div>
-      <div className="max-h-80 overflow-auto rounded-md border border-border">{children}</div>
-      <Button type="button" disabled={disabled} onClick={onConfirm}>
+      <div className="max-h-96 overflow-auto rounded-md border border-border">{children}</div>
+      <Button type="button" disabled={disabled || selectedCount === 0} onClick={onConfirm}>
         <FileJson className="mr-2 h-4 w-4" aria-hidden />
         {confirmLabel}
       </Button>
+      {selectedCount === 0 && totalCount > 0 ? (
+        <p className="text-xs text-destructive">Select at least one row to import.</p>
+      ) : null}
     </div>
   );
 }
