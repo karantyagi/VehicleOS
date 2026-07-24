@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
-import { LoginValueCarousel } from "@/components/login-value-carousel";
+import { LoginValueSpotlight } from "@/components/login-value-spotlight";
 import { ThemeSegmentedToggle } from "@/components/theme-segmented-toggle";
 import { SignInButtons } from "../../components/sign-in-buttons";
 import { LogoMark } from "../../lib/logo-mark";
@@ -100,12 +100,12 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
         </div>
 
         <div className="flex flex-1 items-center justify-center px-10 xl:px-16">
-          <LoginValueCarousel />
+          <LoginValueSpotlight />
         </div>
       </section>
 
       <section className="border-t border-primary/10 bg-primary/[0.03] px-6 py-12 lg:hidden">
-        <LoginValueCarousel />
+        <LoginValueSpotlight />
       </section>
     </main>
   );
