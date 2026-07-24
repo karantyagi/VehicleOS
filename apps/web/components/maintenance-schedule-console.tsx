@@ -9,9 +9,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import type { ScheduleProjectionRow } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
+type ScheduleHorizonView = "near" | "extended" | "full";
+
 type MaintenanceScheduleConsoleProps = {
   nearRows: ScheduleProjectionRow[];
   extendedRows: ScheduleProjectionRow[];
+  fullRows: ScheduleProjectionRow[];
   effectiveMilesPerYear: number;
 };
 
@@ -20,6 +23,13 @@ const statusLabel: Record<ScheduleProjectionRow["status"], string> = {
   due_soon: "Due soon",
   upcoming: "Upcoming",
   needs_baseline: "Needs baseline",
+};
+
+const baselineLabel: Record<ScheduleProjectionRow["serviceBaseline"]["baselineSource"], string> = {
+  receipt: "Receipt baseline",
+  carfax: "CARFAX baseline",
+  owned_since: "Owned-since baseline",
+  unknown: "Needs baseline",
 };
 
 const statusVariant = (status: ScheduleProjectionRow["status"]) => {
@@ -34,13 +44,28 @@ const formatDueDate = (dueDate: string | null): string => {
   return dueDate;
 };
 
+const horizonOptions: { id: ScheduleHorizonView; label: string; emptyHint: string }[] = [
+  { id: "near", label: "3 months", emptyHint: "3" },
+  { id: "extended", label: "12 months", emptyHint: "12" },
+  { id: "full", label: "Full ownership", emptyHint: "ownership" },
+];
+
 export function MaintenanceScheduleConsole({
   nearRows,
   extendedRows,
+  fullRows,
   effectiveMilesPerYear,
 }: MaintenanceScheduleConsoleProps) {
-  const [showFullYear, setShowFullYear] = useState(false);
-  const rows = showFullYear ? extendedRows : nearRows;
+  const [horizon, setHorizon] = useState<ScheduleHorizonView>("near");
+
+  const rowsByHorizon: Record<ScheduleHorizonView, ScheduleProjectionRow[]> = {
+    near: nearRows,
+    extended: extendedRows,
+    full: fullRows,
+  };
+
+  const rows = rowsByHorizon[horizon];
+  const activeHorizon = horizonOptions.find((option) => option.id === horizon) ?? horizonOptions[0];
 
   const grouped = useMemo(() => {
     const map = new Map<string, ScheduleProjectionRow[]>();
@@ -52,7 +77,7 @@ export function MaintenanceScheduleConsole({
     return [...map.entries()];
   }, [rows]);
 
-  if (nearRows.length === 0 && extendedRows.length === 0) {
+  if (nearRows.length === 0 && extendedRows.length === 0 && fullRows.length === 0) {
     return (
       <EmptyState
         icon={CalendarClock}
@@ -70,14 +95,33 @@ export function MaintenanceScheduleConsole({
           <span className="font-medium text-foreground">{effectiveMilesPerYear.toLocaleString()} mi/year</span> for
           mileage-only rows
         </p>
-        <Button type="button" variant="outline" size="sm" onClick={() => setShowFullYear((current) => !current)}>
-          {showFullYear ? "Show 3 months" : "Show full year"}
-        </Button>
+        <div
+          className="inline-flex rounded-lg border border-border bg-muted/40 p-0.5"
+          role="group"
+          aria-label="Schedule horizon"
+        >
+          {horizonOptions.map((option) => (
+            <Button
+              key={option.id}
+              type="button"
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "h-8 rounded-md px-2.5 text-xs sm:px-3 sm:text-sm",
+                horizon === option.id && "bg-background text-foreground shadow-sm",
+              )}
+              onClick={() => setHorizon(option.id)}
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {rows.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
-          Nothing due in the next {showFullYear ? "12" : "3"} months. Expand horizon or add OEM manual intervals.
+          Nothing due in the next {activeHorizon.emptyHint}
+          {horizon === "full" ? " window" : " months"}. Expand horizon or add OEM manual intervals.
         </p>
       ) : (
         grouped.map(([group, groupRows]) => (
@@ -107,6 +151,11 @@ export function MaintenanceScheduleConsole({
                           {row.dueDateConfidence === "mileage_converted" ? (
                             <Badge variant="outline" className="text-[10px]">
                               Mileage estimate
+                            </Badge>
+                          ) : null}
+                          {row.serviceBaseline.baselineSource === "carfax" ? (
+                            <Badge variant="outline" className="text-[10px]">
+                              {baselineLabel.carfax}
                             </Badge>
                           ) : null}
                         </div>

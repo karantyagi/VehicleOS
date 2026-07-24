@@ -5,6 +5,7 @@ import {
   confirmServiceWithConflictCheck,
   decideTask,
   foldEvents,
+  recordVehicleOsImport,
   refreshMaintenanceRecommendation,
   type EventStore,
   type ExtractedServiceFields,
@@ -12,6 +13,7 @@ import {
   type PolicyEngine,
   type RecordServiceInput,
   type TaskDecision,
+  type VehicleOsImportService,
 } from "@vehicleos/domain";
 
 export type GoldenPathDeps = {
@@ -108,6 +110,14 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
         ...result,
         state: snapshot.state,
       };
+    },
+
+    async importVehicleOsHistory(input: {
+      vehicleId: string;
+      importSource: string;
+      services: VehicleOsImportService[];
+    }) {
+      return recordVehicleOsImport({ eventStore, input });
     },
   };
 };

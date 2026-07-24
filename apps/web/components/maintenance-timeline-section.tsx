@@ -13,6 +13,7 @@ type MaintenanceTimelineSectionProps = {
   timeline: TimelineEntry[];
   scheduleNear: ScheduleProjectionRow[];
   scheduleExtended: ScheduleProjectionRow[];
+  scheduleFull: ScheduleProjectionRow[];
   effectiveMilesPerYear: number;
   disabled?: boolean;
   onOpenEvidence?: (documentId: string) => void;
@@ -22,6 +23,7 @@ export function MaintenanceTimelineSection({
   timeline,
   scheduleNear,
   scheduleExtended,
+  scheduleFull,
   effectiveMilesPerYear,
   disabled = false,
   onOpenEvidence,
@@ -65,6 +67,7 @@ export function MaintenanceTimelineSection({
         <MaintenanceScheduleConsole
           nearRows={scheduleNear}
           extendedRows={scheduleExtended}
+          fullRows={scheduleFull}
           effectiveMilesPerYear={effectiveMilesPerYear}
         />
       )}

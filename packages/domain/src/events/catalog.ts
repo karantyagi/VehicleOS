@@ -16,7 +16,12 @@ export type DomainEventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];
 
 export type IngestChannel = "receipt_upload" | "voice" | "photo" | "manual";
 
-export type ServiceRecordSource = "receipt" | "voice" | "owner_note" | "dealer";
+export type ServiceRecordSource =
+  | "receipt"
+  | "voice"
+  | "owner_note"
+  | "dealer"
+  | "carfax_import";
 
 export type ExtractedServiceFields = {
   shop: string;

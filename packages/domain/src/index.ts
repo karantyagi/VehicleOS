@@ -114,11 +114,20 @@ export {
   DEFAULT_SCHEDULE_HORIZON_MONTHS,
   DEFAULT_DUE_SOON_DAYS,
   EXTENDED_SCHEDULE_HORIZON_MONTHS,
+  FULL_OEM_LIFE_CAP_YEARS,
+  resolveScheduleHorizonEnd,
   type ProjectMaintenanceScheduleInput,
   type ProjectMaintenanceScheduleResult,
+  type ScheduleHorizonMode,
   type ScheduleProjectionRow,
   type ScheduleProjectionStatus,
 } from "./schedule/project-maintenance-schedule.js";
+export {
+  recordVehicleOsImport,
+  type RecordVehicleOsImportInput,
+  type RecordVehicleOsImportResult,
+  type VehicleOsImportService,
+} from "./import/record-vehicleos-import.js";
 export {
   AGGRESSIVE_DUE_SOON_DAYS,
   computeEffectiveMilesPerYear,

@@ -38,5 +38,6 @@ export const serviceSourceLabel = (source: ServiceRecordSource): string => {
   if (source === "receipt") return "Receipt";
   if (source === "voice") return "Voice note";
   if (source === "dealer") return "Dealer";
+  if (source === "carfax_import") return "CARFAX import";
   return "Owner note";
 };

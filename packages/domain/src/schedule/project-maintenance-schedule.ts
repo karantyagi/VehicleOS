@@ -13,13 +13,15 @@ export type ScheduleProjectionRow = {
   serviceBaseline: {
     performedDate: string | null;
     performedMileage: number | null;
-    baselineSource: "receipt" | "owned_since" | "unknown";
+    baselineSource: "receipt" | "carfax" | "owned_since" | "unknown";
   };
   oemInterval: { months: number | null; miles: number | null };
   oemSource: { manualTitle: string; page: string | null; ruleId: string };
   dueDateConfidence: "oem_calendar" | "mileage_converted" | "needs_baseline";
   isStubSchedule: boolean;
 };
+
+export type ScheduleHorizonMode = "near" | "extended" | "full";
 
 export type ProjectMaintenanceScheduleInput = {
   knowledgeSchedule: KnowledgeScheduleEntry[];
@@ -28,7 +30,10 @@ export type ProjectMaintenanceScheduleInput = {
   effectiveMilesPerYear?: number;
   ownedSince?: string | null;
   today?: string;
+  /** Explicit month window from today — ignored when `horizonMode` is set. */
   horizonMonths?: number;
+  /** Preferred horizon selector — near (3 mo), extended (12 mo), or full OEM life cap. */
+  horizonMode?: ScheduleHorizonMode;
   dueSoonDays?: number;
 };
 
@@ -36,11 +41,14 @@ export type ProjectMaintenanceScheduleResult = {
   rows: ScheduleProjectionRow[];
   effectiveMilesPerYear: number;
   horizonMonths: number;
+  horizonMode: ScheduleHorizonMode;
+  horizonEnd: string;
 };
 
 export const DEFAULT_EFFECTIVE_MILES_PER_YEAR = 10_000;
 export const DEFAULT_SCHEDULE_HORIZON_MONTHS = 3;
 export const EXTENDED_SCHEDULE_HORIZON_MONTHS = 12;
+export const FULL_OEM_LIFE_CAP_YEARS = 5;
 export const DEFAULT_DUE_SOON_DAYS = 30;
 
 const parseIsoDate = (value: string): Date => new Date(`${value}T12:00:00.000Z`);
@@ -57,6 +65,52 @@ const addDays = (date: string, days: number): string => {
   const next = parseIsoDate(date);
   next.setUTCDate(next.getUTCDate() + days);
   return formatIsoDate(next);
+};
+
+const addYears = (date: string, years: number): string => {
+  const next = parseIsoDate(date);
+  next.setUTCFullYear(next.getUTCFullYear() + years);
+  return formatIsoDate(next);
+};
+
+export const resolveScheduleHorizonEnd = (input: {
+  today: string;
+  ownedSince?: string | null;
+  horizonMode?: ScheduleHorizonMode;
+  horizonMonths?: number;
+}): { horizonMode: ScheduleHorizonMode; horizonMonths: number; horizonEnd: string } => {
+  const horizonMode = input.horizonMode ?? "near";
+  if (horizonMode === "full") {
+    const anchor = input.ownedSince ?? input.today;
+    return {
+      horizonMode,
+      horizonMonths: FULL_OEM_LIFE_CAP_YEARS * 12,
+      horizonEnd: addYears(anchor, FULL_OEM_LIFE_CAP_YEARS),
+    };
+  }
+
+  const horizonMonths =
+    horizonMode === "extended"
+      ? EXTENDED_SCHEDULE_HORIZON_MONTHS
+      : (input.horizonMonths ?? DEFAULT_SCHEDULE_HORIZON_MONTHS);
+
+  return {
+    horizonMode,
+    horizonMonths,
+    horizonEnd: addMonths(input.today, horizonMonths),
+  };
+};
+
+const resolveBaselineSource = (input: {
+  lastMatch: ServiceTimelineEntry | undefined;
+  ownedSince: string | null;
+}): ScheduleProjectionRow["serviceBaseline"]["baselineSource"] => {
+  if (input.lastMatch) {
+    if (input.lastMatch.source === "carfax_import") return "carfax";
+    return "receipt";
+  }
+  if (input.ownedSince) return "owned_since";
+  return "unknown";
 };
 
 const daysBetween = (from: string, to: string): number => {
@@ -110,11 +164,10 @@ const buildRow = (input: {
   const lastMatch = findLastMatchingService(input.timeline, input.entry.serviceName);
   const performedDate = lastMatch?.serviceDate ?? null;
   const performedMileage = lastMatch?.mileage ?? null;
-  const baselineSource: ScheduleProjectionRow["serviceBaseline"]["baselineSource"] = lastMatch
-    ? "receipt"
-    : input.ownedSince
-      ? "owned_since"
-      : "unknown";
+  const baselineSource = resolveBaselineSource({
+    lastMatch,
+    ownedSince: input.ownedSince,
+  });
 
   const baselineDate = performedDate ?? input.ownedSince ?? null;
   const baselineMileage = performedMileage ?? 0;
@@ -206,10 +259,14 @@ export const projectMaintenanceSchedule = (
 ): ProjectMaintenanceScheduleResult => {
   const effectiveMilesPerYear = input.effectiveMilesPerYear ?? DEFAULT_EFFECTIVE_MILES_PER_YEAR;
   const today = input.today ?? formatIsoDate(new Date());
-  const horizonMonths = input.horizonMonths ?? DEFAULT_SCHEDULE_HORIZON_MONTHS;
   const dueSoonDays = input.dueSoonDays ?? DEFAULT_DUE_SOON_DAYS;
-  const horizonEnd = addMonths(today, horizonMonths);
   const ownedSince = input.ownedSince ?? null;
+  const { horizonMode, horizonMonths, horizonEnd } = resolveScheduleHorizonEnd({
+    today,
+    ownedSince,
+    horizonMode: input.horizonMode,
+    horizonMonths: input.horizonMonths,
+  });
 
   const rows = input.knowledgeSchedule
     .map((entry) =>
@@ -229,5 +286,7 @@ export const projectMaintenanceSchedule = (
     rows: sortRows(rows),
     effectiveMilesPerYear,
     horizonMonths,
+    horizonMode,
+    horizonEnd,
   };
 };

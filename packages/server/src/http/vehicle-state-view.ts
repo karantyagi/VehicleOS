@@ -29,6 +29,7 @@ export const buildVehicleStateView = (
     effectiveMilesPerYear: scheduleContext.effectiveMilesPerYear,
     ownedSince: scheduleContext.ownedSince,
     dueSoonDays: scheduleContext.dueSoonDays,
+    horizonMode: "near",
   });
 
   const scheduleExtended = projectMaintenanceSchedule({
@@ -38,7 +39,17 @@ export const buildVehicleStateView = (
     effectiveMilesPerYear: scheduleContext.effectiveMilesPerYear,
     ownedSince: scheduleContext.ownedSince,
     dueSoonDays: scheduleContext.dueSoonDays,
-    horizonMonths: 12,
+    horizonMode: "extended",
+  });
+
+  const scheduleFull = projectMaintenanceSchedule({
+    knowledgeSchedule: state.knowledgeSchedule,
+    timeline: state.timeline,
+    currentMileage: state.currentMileage,
+    effectiveMilesPerYear: scheduleContext.effectiveMilesPerYear,
+    ownedSince: scheduleContext.ownedSince,
+    dueSoonDays: scheduleContext.dueSoonDays,
+    horizonMode: "full",
   });
 
   return {
@@ -51,10 +62,16 @@ export const buildVehicleStateView = (
     maintenanceSchedule: {
       near: scheduleNear.rows,
       extended: scheduleExtended.rows,
+      full: scheduleFull.rows,
       effectiveMilesPerYear: scheduleContext.effectiveMilesPerYear,
       observedMilesPerYear: scheduleContext.observedMilesPerYear,
       statedMilesPerYear: scheduleContext.statedMilesPerYear,
       dueSoonDays: scheduleContext.dueSoonDays,
+      horizonEnd: {
+        near: scheduleNear.horizonEnd,
+        extended: scheduleExtended.horizonEnd,
+        full: scheduleFull.horizonEnd,
+      },
     },
   };
 };

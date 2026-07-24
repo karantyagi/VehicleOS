@@ -62,6 +62,7 @@ export function OwnerDashboard() {
   const [maintenanceSchedule, setMaintenanceSchedule] = useState<MaintenanceScheduleView>({
     near: [],
     extended: [],
+    full: [],
     effectiveMilesPerYear: 10_000,
   });
   const [pipelinePhase, setPipelinePhase] = useState<PipelinePhase>("idle");
@@ -133,6 +134,7 @@ export function OwnerDashboard() {
         body.maintenanceSchedule ?? {
           near: [],
           extended: [],
+          full: [],
           effectiveMilesPerYear: 10_000,
         },
       );
@@ -388,6 +390,7 @@ export function OwnerDashboard() {
             timeline={timeline}
             scheduleNear={maintenanceSchedule.near}
             scheduleExtended={maintenanceSchedule.extended}
+            scheduleFull={maintenanceSchedule.full}
             effectiveMilesPerYear={maintenanceSchedule.effectiveMilesPerYear}
             disabled={isBusy}
             onOpenEvidence={openEvidence}
