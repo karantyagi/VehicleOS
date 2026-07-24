@@ -12,6 +12,7 @@ Open-source **import file format** and local validator for Owners who export mai
 | Import file schema | `schema/vehicleos-import.v1.schema.json` |
 | CLI validate + preview | `cli/` — `vehicleos-connect validate` |
 | Example TLX history | `examples/tlx-carfax-history.v1.json` (from owner PDF) |
+| Dogfood seed loader | `seeds/dogfood/karan-tlx/` — `pnpm dogfood:load-karan-tlx` |
 | PDF extraction in app | **Under development** (ENG-2) — use JSON interim |
 
 ## Quick start
