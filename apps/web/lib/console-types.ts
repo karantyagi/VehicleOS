@@ -54,4 +54,7 @@ export type MaintenanceScheduleView = {
   near: ScheduleProjectionRow[];
   extended: ScheduleProjectionRow[];
   effectiveMilesPerYear: number;
+  observedMilesPerYear?: number | null;
+  statedMilesPerYear?: number | null;
+  dueSoonDays?: number;
 };

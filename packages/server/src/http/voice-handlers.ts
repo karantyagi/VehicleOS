@@ -98,12 +98,12 @@ export const submitVoiceMemory = async (
         reason: result.state.nowQueue.at(-1)?.reason,
         verificationCode: result.state.nowQueue.at(-1)?.verificationCode,
       },
-      timeline: buildVehicleStateView(result.state).timeline,
-      nowQueue: buildVehicleStateView(result.state).nowQueue,
+      timeline: buildVehicleStateView(result.state, vehicle).timeline,
+      nowQueue: buildVehicleStateView(result.state, vehicle).nowQueue,
     });
   }
 
-  const view = buildVehicleStateView(result.result.state);
+  const view = buildVehicleStateView(result.result.state, vehicle);
 
   return jsonResponse(201, {
     documentId,

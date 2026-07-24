@@ -76,13 +76,13 @@ export const submitOwnerServiceNote = async (
         reason: result.state.nowQueue.at(-1)?.reason,
         verificationCode: result.state.nowQueue.at(-1)?.verificationCode,
       },
-      ...buildVehicleStateView(result.state),
+      ...buildVehicleStateView(result.state, vehicle),
     });
   }
 
   return jsonResponse(201, {
     recommendation: result.result.recommendation,
     task: result.result.task,
-    ...buildVehicleStateView(result.result.state),
+    ...buildVehicleStateView(result.result.state, vehicle),
   });
 };

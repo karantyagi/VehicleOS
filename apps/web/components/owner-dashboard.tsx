@@ -161,7 +161,7 @@ export function OwnerDashboard() {
 
         if (isMounted) {
           setVehicle(existing);
-          setGarageSetupComplete(isGarageSetupComplete(existing.id));
+          setGarageSetupComplete(isGarageSetupComplete(existing));
           setForm((current) => ({ ...current, mileage: existing.currentMileage }));
           await loadVehicleState(existing);
         }

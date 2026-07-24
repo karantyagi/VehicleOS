@@ -1,7 +1,5 @@
-import { hasDriverHabits } from "./driver-habits";
+import type { VehicleOwnerProfile } from "./driver-habits";
 
-/** True when vehicle exists and driver habits are saved on this device (SCH-2 adds server sync). */
-export const isGarageSetupComplete = (vehicleId: string | null): boolean => {
-  if (!vehicleId) return false;
-  return hasDriverHabits(vehicleId);
-};
+/** True when vehicle exists and driving profile is saved on the server. */
+export const isGarageSetupComplete = (vehicle: Pick<VehicleOwnerProfile, "drivingStyle"> | null): boolean =>
+  Boolean(vehicle?.drivingStyle);

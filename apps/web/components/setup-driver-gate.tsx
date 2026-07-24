@@ -6,9 +6,8 @@ import { FormActions } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  loadDriverHabits,
   parseStatedMilesPerYear,
-  saveDriverHabits,
+  patchVehicleProfile,
   type DriverHabitsDraft,
 } from "@/lib/driver-habits";
 import { notify } from "@/lib/notify";
@@ -20,24 +19,32 @@ type SetupDriverGateProps = {
 };
 
 export function SetupDriverGate({ vehicleId, vehicleLabel, onComplete }: SetupDriverGateProps) {
-  const [draft, setDraft] = useState<DriverHabitsDraft>(() => loadDriverHabits(vehicleId));
-  const [milesInput, setMilesInput] = useState(() => {
-    const loaded = loadDriverHabits(vehicleId);
-    return loaded.statedMilesPerYear ? String(loaded.statedMilesPerYear) : "";
+  const [draft, setDraft] = useState<DriverHabitsDraft>({
+    drivingStyle: "casual",
+    statedMilesPerYear: null,
   });
+  const [milesInput, setMilesInput] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
-  const saveAndContinue = () => {
+  const saveAndContinue = async () => {
     const parsedMiles = parseStatedMilesPerYear(milesInput);
     if (parsedMiles === "invalid") {
       notify("Enter annual mileage between 1,000 and 80,000.", "error");
       return;
     }
-    const next: DriverHabitsDraft = {
-      drivingStyle: draft.drivingStyle,
-      statedMilesPerYear: parsedMiles,
-    };
-    saveDriverHabits(vehicleId, next);
-    onComplete();
+
+    setIsSaving(true);
+    try {
+      await patchVehicleProfile(vehicleId, {
+        drivingStyle: draft.drivingStyle,
+        statedMilesPerYear: parsedMiles,
+      });
+      onComplete();
+    } catch (saveError) {
+      notify(saveError instanceof Error ? saveError.message : "Save failed", "error");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -61,8 +68,8 @@ export function SetupDriverGate({ vehicleId, vehicleLabel, onComplete }: SetupDr
           onMilesInputChange={setMilesInput}
         />
         <FormActions>
-          <Button type="button" onClick={saveAndContinue}>
-            Finish setup
+          <Button type="button" disabled={isSaving} onClick={() => void saveAndContinue()}>
+            {isSaving ? "Saving…" : "Finish setup"}
           </Button>
         </FormActions>
       </CardContent>

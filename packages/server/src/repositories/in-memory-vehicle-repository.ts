@@ -26,10 +26,23 @@ export class InMemoryVehicleRepository {
   async update(vehicleId: string, userId: string, patch: UpdateVehicleInput): Promise<VehicleRecord | null> {
     const existing = this.vehicles.get(vehicleId);
     if (!existing || existing.userId !== userId) return null;
+
+    const nextStatedMilesPerYear =
+      patch.statedMilesPerYear === undefined ? existing.statedMilesPerYear ?? null : patch.statedMilesPerYear;
+    const statedMilesPerYearUpdatedAt =
+      patch.statedMilesPerYear !== undefined &&
+      patch.statedMilesPerYear !== existing.statedMilesPerYear
+        ? new Date().toISOString()
+        : existing.statedMilesPerYearUpdatedAt ?? null;
+
     const next: VehicleRecord = {
       ...existing,
       ...patch,
       trim: patch.trim === null ? undefined : patch.trim ?? existing.trim,
+      ownedSince: patch.ownedSince === undefined ? existing.ownedSince ?? null : patch.ownedSince,
+      drivingStyle: patch.drivingStyle === undefined ? existing.drivingStyle ?? null : patch.drivingStyle,
+      statedMilesPerYear: nextStatedMilesPerYear,
+      statedMilesPerYearUpdatedAt,
     };
     this.vehicles.set(vehicleId, next);
     return next;

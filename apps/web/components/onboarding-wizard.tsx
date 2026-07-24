@@ -10,7 +10,6 @@ import { LogoMark } from "../lib/logo-mark";
 import { getApiBase } from "../lib/api-base";
 import {
   parseStatedMilesPerYear,
-  saveDriverHabits,
   type DriverHabitsDraft,
 } from "@/lib/driver-habits";
 import { cn } from "@/lib/utils";
@@ -23,6 +22,9 @@ export type OnboardingVehicle = {
   currentMileage: number;
   trim?: string;
   vin?: string;
+  ownedSince?: string | null;
+  drivingStyle?: "economical" | "casual" | "aggressive" | null;
+  statedMilesPerYear?: number | null;
 };
 
 type VehicleForm = {
@@ -32,6 +34,7 @@ type VehicleForm = {
   trim: string;
   vin: string;
   currentMileage: number;
+  ownedSince: string;
 };
 
 type OnboardingWizardProps = {
@@ -45,6 +48,7 @@ const defaultForm: VehicleForm = {
   trim: "",
   vin: "",
   currentMileage: 41_800,
+  ownedSince: "",
 };
 
 const steps = ["welcome", "car", "driver", "review"] as const;
@@ -90,6 +94,13 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     setIsBusy(true);
     setError("");
 
+    const parsedMiles = parseStatedMilesPerYear(milesInput);
+    if (parsedMiles === "invalid") {
+      setError("Enter annual mileage between 1,000 and 80,000.");
+      setIsBusy(false);
+      return;
+    }
+
     try {
       const response = await fetch(`${apiBase}/api/vehicles`, {
         method: "POST",
@@ -101,21 +112,15 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           model: form.model.trim(),
           trim: form.trim.trim() || undefined,
           currentMileage: Number(form.currentMileage),
+          ownedSince: form.ownedSince.trim() || null,
+          drivingStyle: driverDraft.drivingStyle,
+          statedMilesPerYear: parsedMiles,
         }),
       });
 
       if (!response.ok) throw new Error("Could not create vehicle");
 
       const body = (await response.json()) as { vehicle: OnboardingVehicle };
-      const parsedMiles = parseStatedMilesPerYear(milesInput);
-      if (parsedMiles === "invalid") {
-        setError("Enter annual mileage between 1,000 and 80,000.");
-        return;
-      }
-      saveDriverHabits(body.vehicle.id, {
-        drivingStyle: driverDraft.drivingStyle,
-        statedMilesPerYear: parsedMiles,
-      });
       onComplete(body.vehicle);
     } catch {
       setError("Could not save your vehicle. Check your connection and try again.");
@@ -243,6 +248,19 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 onChange={(event) => setForm({ ...form, vin: event.target.value })}
               />
             </FormField>
+            <FormField
+              label="Owned since"
+              htmlFor="ob-owned-since"
+              optional
+              hint="Anchors calendar reminders when receipts are missing"
+            >
+              <Input
+                id="ob-owned-since"
+                type="date"
+                value={form.ownedSince}
+                onChange={(event) => setForm({ ...form, ownedSince: event.target.value })}
+              />
+            </FormField>
           </div>
         ) : null}
 
@@ -265,6 +283,12 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               <div>
                 <dt className="text-muted-foreground">VIN</dt>
                 <dd className="font-medium">{form.vin.trim()}</dd>
+              </div>
+            ) : null}
+            {form.ownedSince ? (
+              <div>
+                <dt className="text-muted-foreground">Owned since</dt>
+                <dd className="font-medium">{form.ownedSince}</dd>
               </div>
             ) : null}
             <div>

@@ -5,10 +5,11 @@ import { DrivingStyleFields } from "@/components/driving-style-fields";
 import { Button } from "@/components/ui/button";
 import { PanelCard } from "@/components/panel-card";
 import {
-  loadDriverHabits,
   parseStatedMilesPerYear,
-  saveDriverHabits,
+  patchVehicleProfile,
+  vehicleProfileFromRecord,
   type DriverHabitsDraft,
+  type VehicleOwnerProfile,
 } from "@/lib/driver-habits";
 import { notify } from "@/lib/notify";
 
@@ -24,30 +25,61 @@ export function DriverHabitsPanel({ vehicleId }: DriverHabitsPanelProps) {
     statedMilesPerYear: null,
   });
   const [milesInput, setMilesInput] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    const loaded = loadDriverHabits(vehicleId);
-    setDraft(loaded);
-    setMilesInput(loaded.statedMilesPerYear ? String(loaded.statedMilesPerYear) : "");
+    if (!vehicleId) {
+      setIsLoading(false);
+      return;
+    }
+
+    void (async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch("/api/vehicles");
+        const body = (await response.json()) as { vehicles?: VehicleOwnerProfile[]; error?: string };
+        if (!response.ok) throw new Error(body.error ?? "Could not load vehicle");
+        const vehicle = body.vehicles?.find((entry) => entry.id === vehicleId) ?? null;
+        const loaded = vehicleProfileFromRecord(vehicle);
+        setDraft(loaded);
+        setMilesInput(loaded.statedMilesPerYear ? String(loaded.statedMilesPerYear) : "");
+      } catch (loadError) {
+        notify(loadError instanceof Error ? loadError.message : "Could not load driver profile", "error");
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   }, [vehicleId]);
 
-  const saveDraft = () => {
+  const saveDraft = async () => {
     if (!vehicleId) {
       notify("Add a vehicle first.", "error");
       return;
     }
+
     const parsedMiles = parseStatedMilesPerYear(milesInput);
     if (parsedMiles === "invalid") {
       notify("Enter annual mileage between 1,000 and 80,000.", "error");
       return;
     }
-    const next: DriverHabitsDraft = {
-      drivingStyle: draft.drivingStyle,
-      statedMilesPerYear: parsedMiles,
-    };
-    saveDriverHabits(vehicleId, next);
-    setDraft(next);
-    notify("Driver habits saved on this device.", "success");
+
+    setIsSaving(true);
+    try {
+      await patchVehicleProfile(vehicleId, {
+        drivingStyle: draft.drivingStyle,
+        statedMilesPerYear: parsedMiles,
+      });
+      setDraft({
+        drivingStyle: draft.drivingStyle,
+        statedMilesPerYear: parsedMiles,
+      });
+      notify("Driving profile saved.", "success");
+    } catch (saveError) {
+      notify(saveError instanceof Error ? saveError.message : "Save failed", "error");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -56,19 +88,25 @@ export function DriverHabitsPanel({ vehicleId }: DriverHabitsPanelProps) {
       description="How you drive shapes preemptive recommendations — not OEM due dates."
     >
       <p className="text-xs leading-relaxed text-muted-foreground">
-        Account sync across devices ships in SCH-2.
+        Schedule dates assume 10,000 mi/year unless you set annual mileage or we learn from receipts.
       </p>
 
-      <DrivingStyleFields
-        draft={draft}
-        milesInput={milesInput}
-        onDraftChange={setDraft}
-        onMilesInputChange={setMilesInput}
-      />
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Loading driving profile…</p>
+      ) : (
+        <>
+          <DrivingStyleFields
+            draft={draft}
+            milesInput={milesInput}
+            onDraftChange={setDraft}
+            onMilesInputChange={setMilesInput}
+          />
 
-      <Button type="button" onClick={saveDraft} disabled={!vehicleId}>
-        Save driver habits
-      </Button>
+          <Button type="button" onClick={() => void saveDraft()} disabled={!vehicleId || isSaving}>
+            {isSaving ? "Saving…" : "Save driver habits"}
+          </Button>
+        </>
+      )}
     </PanelCard>
   );
 }

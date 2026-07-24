@@ -27,6 +27,6 @@ export const refreshNowQueue = async (
     created: result.created,
     skippedReason: result.skippedReason,
     recommendation: result.recommendation,
-    ...buildVehicleStateView(result.state),
+    ...buildVehicleStateView(result.state, vehicle),
   });
 };

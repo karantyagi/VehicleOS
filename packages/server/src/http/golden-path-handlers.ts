@@ -19,6 +19,9 @@ type VehicleBody = {
   model?: string;
   trim?: string;
   currentMileage?: number;
+  ownedSince?: string | null;
+  drivingStyle?: "economical" | "casual" | "aggressive" | null;
+  statedMilesPerYear?: number | null;
 };
 
 type TaskDecisionBody = {
@@ -63,6 +66,9 @@ export const createVehicle = async (
     model: body.model ?? "Civic",
     trim: body.trim,
     currentMileage: body.currentMileage ?? 41_800,
+    ownedSince: body.ownedSince ?? null,
+    drivingStyle: body.drivingStyle ?? null,
+    statedMilesPerYear: body.statedMilesPerYear ?? null,
   });
 
   return jsonResponse(201, { vehicle });
@@ -104,6 +110,9 @@ export const updateVehicle = async (
     model: body.model,
     trim: body.trim,
     currentMileage: body.currentMileage,
+    ownedSince: body.ownedSince,
+    drivingStyle: body.drivingStyle,
+    statedMilesPerYear: body.statedMilesPerYear,
   });
 
   if (!updated) return jsonResponse(404, { error: "Vehicle not found" });
@@ -134,7 +143,7 @@ export const getVehicleState = async (
   const snapshot = await services.goldenPath.getVehicleState(vehicleId);
   return jsonResponse(200, {
     vehicle: owned.vehicle,
-    ...buildVehicleStateView(snapshot.state),
+    ...buildVehicleStateView(snapshot.state, owned.vehicle),
     eventCount: snapshot.events.length,
   });
 };
@@ -199,12 +208,12 @@ export const submitReceipt = async (
         reason: result.state.nowQueue.at(-1)?.reason,
         verificationCode: result.state.nowQueue.at(-1)?.verificationCode,
       },
-      timeline: buildVehicleStateView(result.state).timeline,
-      nowQueue: buildVehicleStateView(result.state).nowQueue,
+      timeline: buildVehicleStateView(result.state, owned.vehicle).timeline,
+      nowQueue: buildVehicleStateView(result.state, owned.vehicle).nowQueue,
     });
   }
 
-  const view = buildVehicleStateView(result.result.state);
+  const view = buildVehicleStateView(result.result.state, owned.vehicle);
 
   return jsonResponse(201, {
     documentId,
@@ -240,6 +249,6 @@ export const decideOnTask = async (
   return jsonResponse(200, {
     taskId,
     decision,
-    nowQueue: buildVehicleStateView(snapshot.state).nowQueue,
+    nowQueue: buildVehicleStateView(snapshot.state, owned.vehicle).nowQueue,
   });
 };

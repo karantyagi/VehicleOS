@@ -5,6 +5,13 @@ export type DriverHabitsDraft = {
   statedMilesPerYear: number | null;
 };
 
+export type VehicleOwnerProfile = {
+  id: string;
+  ownedSince?: string | null;
+  drivingStyle?: DrivingStyle | null;
+  statedMilesPerYear?: number | null;
+};
+
 export const DEFAULT_MILES_PER_YEAR = 10_000;
 
 export const DRIVING_STYLE_OPTIONS: {
@@ -29,45 +36,31 @@ export const DRIVING_STYLE_OPTIONS: {
   },
 ];
 
-const storageKey = (vehicleId: string) => `vehicleos:driver-habits:${vehicleId}`;
-
-export const loadDriverHabits = (vehicleId: string | null): DriverHabitsDraft => {
-  if (!vehicleId || typeof window === "undefined") {
-    return { drivingStyle: "casual", statedMilesPerYear: null };
-  }
-  try {
-    const raw = localStorage.getItem(storageKey(vehicleId));
-    if (!raw) return { drivingStyle: "casual", statedMilesPerYear: null };
-    const parsed = JSON.parse(raw) as DriverHabitsDraft;
-    if (
-      parsed.drivingStyle === "economical" ||
-      parsed.drivingStyle === "casual" ||
-      parsed.drivingStyle === "aggressive"
-    ) {
-      return {
-        drivingStyle: parsed.drivingStyle,
-        statedMilesPerYear:
-          typeof parsed.statedMilesPerYear === "number" ? parsed.statedMilesPerYear : null,
-      };
-    }
-  } catch {
-    // ignore corrupt local draft
-  }
-  return { drivingStyle: "casual", statedMilesPerYear: null };
-};
-
-export const saveDriverHabits = (vehicleId: string, draft: DriverHabitsDraft): void => {
-  localStorage.setItem(storageKey(vehicleId), JSON.stringify(draft));
-};
-
-export const hasDriverHabits = (vehicleId: string | null): boolean => {
-  if (!vehicleId || typeof window === "undefined") return false;
-  return localStorage.getItem(storageKey(vehicleId)) !== null;
-};
-
 export const parseStatedMilesPerYear = (milesInput: string): number | null | "invalid" => {
   if (!milesInput.trim()) return null;
   const parsed = Number(milesInput);
   if (parsed < 1_000 || parsed > 80_000) return "invalid";
   return parsed;
 };
+
+export const patchVehicleProfile = async (
+  vehicleId: string,
+  patch: Partial<Pick<VehicleOwnerProfile, "ownedSince" | "drivingStyle" | "statedMilesPerYear">>,
+): Promise<VehicleOwnerProfile> => {
+  const response = await fetch(`/api/vehicles/${vehicleId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(patch),
+  });
+  const body = (await response.json()) as { vehicle?: VehicleOwnerProfile; error?: string };
+  if (!response.ok || !body.vehicle) throw new Error(body.error ?? "Update failed");
+  return body.vehicle;
+};
+
+export const vehicleProfileFromRecord = (
+  vehicle: VehicleOwnerProfile | null | undefined,
+): DriverHabitsDraft => ({
+  drivingStyle: vehicle?.drivingStyle ?? "casual",
+  statedMilesPerYear:
+    typeof vehicle?.statedMilesPerYear === "number" ? vehicle.statedMilesPerYear : null,
+});

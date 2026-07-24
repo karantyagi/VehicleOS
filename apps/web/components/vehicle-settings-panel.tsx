@@ -7,22 +7,21 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import type { VehicleOwnerProfile } from "@/lib/driver-habits";
 import { notify } from "@/lib/notify";
-
-type VehicleRecord = {
-  id: string;
-  year: number;
-  make: string;
-  model: string;
-  trim?: string;
-  currentMileage: number;
-  vin: string;
-};
 
 export function VehicleSettingsPanel() {
   const router = useRouter();
-  const [vehicle, setVehicle] = useState<VehicleRecord | null>(null);
-  const [form, setForm] = useState({ year: "", make: "", model: "", trim: "", mileage: "", vin: "" });
+  const [vehicle, setVehicle] = useState<VehicleOwnerProfile | null>(null);
+  const [form, setForm] = useState({
+    year: "",
+    make: "",
+    model: "",
+    trim: "",
+    mileage: "",
+    vin: "",
+    ownedSince: "",
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -34,7 +33,17 @@ export function VehicleSettingsPanel() {
     void (async () => {
       try {
         const response = await fetch("/api/vehicles");
-        const body = (await response.json()) as { vehicles?: VehicleRecord[]; error?: string };
+        const body = (await response.json()) as {
+          vehicles?: (VehicleOwnerProfile & {
+            year: number;
+            make: string;
+            model: string;
+            trim?: string;
+            currentMileage: number;
+            vin: string;
+          })[];
+          error?: string;
+        };
         if (!response.ok) throw new Error(body.error ?? "Could not load vehicle");
         const first = body.vehicles?.[0] ?? null;
         setVehicle(first);
@@ -46,6 +55,7 @@ export function VehicleSettingsPanel() {
             trim: first.trim ?? "",
             mileage: String(first.currentMileage),
             vin: first.vin,
+            ownedSince: first.ownedSince ?? "",
           });
         }
       } catch (loadError) {
@@ -70,10 +80,21 @@ export function VehicleSettingsPanel() {
           model: form.model.trim(),
           trim: form.trim.trim() || undefined,
           currentMileage: Number(form.mileage),
-          vin: form.vin.trim() || vehicle.vin,
+          vin: form.vin.trim() || undefined,
+          ownedSince: form.ownedSince.trim() || null,
         }),
       });
-      const body = (await response.json()) as { vehicle?: VehicleRecord; error?: string };
+      const body = (await response.json()) as {
+        vehicle?: VehicleOwnerProfile & {
+          year: number;
+          make: string;
+          model: string;
+          trim?: string;
+          currentMileage: number;
+          vin: string;
+        };
+        error?: string;
+      };
       if (!response.ok || !body.vehicle) throw new Error(body.error ?? "Update failed");
       setVehicle(body.vehicle);
       notify("Vehicle updated.", "success");
@@ -147,6 +168,19 @@ export function VehicleSettingsPanel() {
               className="tabular-nums"
               value={form.mileage}
               onChange={(event) => setForm({ ...form, mileage: event.target.value })}
+            />
+          </FormField>
+          <FormField
+            label="Owned since"
+            htmlFor="vehicle-owned-since"
+            optional
+            hint="Calendar anchor when receipts are missing"
+          >
+            <Input
+              id="vehicle-owned-since"
+              type="date"
+              value={form.ownedSince}
+              onChange={(event) => setForm({ ...form, ownedSince: event.target.value })}
             />
           </FormField>
           <FormField label="Make" htmlFor="vehicle-make">
