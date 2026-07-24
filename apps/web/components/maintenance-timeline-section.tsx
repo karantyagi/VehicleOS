@@ -31,7 +31,7 @@ export function MaintenanceTimelineSection({
   return (
     <div className="space-y-4">
       <div
-        className="inline-flex rounded-lg border border-border bg-muted/40 p-0.5"
+        className="grid w-full grid-cols-2 rounded-lg border border-border bg-muted/40 p-0.5 sm:inline-flex sm:w-auto"
         role="tablist"
         aria-label="Timeline views"
       >
@@ -49,7 +49,7 @@ export function MaintenanceTimelineSection({
             variant="ghost"
             size="sm"
             className={cn(
-              "h-8 rounded-md px-3 text-sm",
+              "h-9 rounded-md px-3 text-sm sm:h-8",
               tab === item.id && "bg-background text-foreground shadow-sm",
             )}
             onClick={() => setTab(item.id)}
