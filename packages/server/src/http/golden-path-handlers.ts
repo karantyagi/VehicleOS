@@ -30,6 +30,7 @@ type VehicleBody = {
 type TaskDecisionBody = {
   vehicleId: string;
   decision: "approve" | "dismiss" | "snooze";
+  snoozeDays?: number;
 };
 
 type AuthContext = {
@@ -148,7 +149,9 @@ export const getVehicleState = async (
   const owned = await assertVehicleOwner(services, vehicleId, auth.userId);
   if (!owned.ok) return owned.response;
 
-  const snapshot = await services.goldenPath.getVehicleState(vehicleId);
+  const snapshot = await services.goldenPath.getVehicleState(vehicleId, {
+    vehicleCreatedAt: owned.vehicle.createdAt,
+  });
   return jsonResponse(200, {
     vehicle: owned.vehicle,
     ...buildVehicleStateView(snapshot.state, owned.vehicle, snapshot.events),
@@ -242,7 +245,7 @@ export const decideOnTask = async (
 ): Promise<JsonResponse> => {
   if (!auth?.userId) return unauthorized();
 
-  const { vehicleId, decision } = body;
+  const { vehicleId, decision, snoozeDays } = body;
   if (!vehicleId || !decision) {
     return jsonResponse(400, { error: "vehicleId and decision are required" });
   }
@@ -254,11 +257,18 @@ export const decideOnTask = async (
     vehicleId,
     taskId,
     decision,
+    snoozeDays,
   });
+
+  const view = buildVehicleStateView(snapshot.state, owned.vehicle, snapshot.events);
 
   return jsonResponse(200, {
     taskId,
     decision,
-    nowQueue: buildVehicleStateView(snapshot.state, owned.vehicle).nowQueue,
+    nowQueue: view.nowQueue,
+    reminders: view.reminders,
+    verifications: view.verifications,
+    pendingReminderCount: view.pendingReminderCount,
+    pendingVerificationCount: view.pendingVerificationCount,
   });
 };

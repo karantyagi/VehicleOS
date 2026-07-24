@@ -13,6 +13,7 @@ export async function POST(request: Request, context: RouteContext) {
   const body = (await request.json()) as {
     vehicleId: string;
     decision: "approve" | "dismiss" | "snooze";
+    snoozeDays?: number;
   };
   const result = await decideOnTask(
     getServices(),

@@ -25,6 +25,8 @@ import { SeasonalPromptsPanel } from "./seasonal-prompts-panel";
 import { ManualKnowledgePanel } from "./manual-knowledge-panel";
 import { MaintenanceTimelineSection } from "./maintenance-timeline-section";
 import { NowQueueConsole } from "./now-queue-console";
+import { RemindersConsole } from "./reminders-console";
+import { useReminderNotifications } from "@/lib/use-reminder-notifications";
 import { OwnerServiceNotePanel } from "./owner-service-note-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 import { useVehicleConsole } from "@/lib/vehicle-console-context";
@@ -34,6 +36,7 @@ import type {
   MaintenanceScheduleView,
   OwnershipRecordEntry,
   PipelinePhase,
+  OwnerReminderItem,
   QueueItem,
   ServiceHistoryTab,
   TimelineEntry,
@@ -61,6 +64,8 @@ export function OwnerDashboard() {
   const [ownershipRecords, setOwnershipRecords] = useState<OwnershipRecordEntry[]>([]);
   const [serviceHistoryTab, setServiceHistoryTab] = useState<ServiceHistoryTab>("history");
   const [nowQueue, setNowQueue] = useState<QueueItem[]>([]);
+  const [reminders, setReminders] = useState<OwnerReminderItem[]>([]);
+  const [verifications, setVerifications] = useState<QueueItem[]>([]);
   const [isBusy, setIsBusy] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [form, setForm] = useState(receiptForm);
@@ -101,7 +106,8 @@ export function OwnerDashboard() {
       timeline.length > 0
         ? [...timeline].sort((a, b) => b.serviceDate.localeCompare(a.serviceDate))[0]
         : undefined;
-    const pendingNowCount = nowQueue.filter((item) => item.status === "pending").length;
+    const pendingReminderCount = reminders.filter((item) => item.effectiveStatus === "pending").length;
+    const pendingVerificationCount = verifications.filter((item) => item.status === "pending").length;
     const pipelineLabel =
       pipelinePhase === "extracting"
         ? "Extracting manual…"
@@ -112,17 +118,32 @@ export function OwnerDashboard() {
     setSnapshot({
       label: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
       mileage: vehicle.currentMileage,
-      pendingNowCount,
+      pendingReminderCount,
+      pendingVerificationCount,
       lastServiceDate: last?.serviceDate ?? null,
       lastServiceShop: last?.shop ?? null,
       pipelinePhase: isBusy || pipelinePhase !== "idle" ? (pipelinePhase === "idle" ? "syncing" : pipelinePhase) : "idle",
       pipelineLabel,
     });
-  }, [vehicle, timeline, nowQueue, isBusy, pipelinePhase, setSnapshot]);
+  }, [vehicle, timeline, reminders, verifications, isBusy, pipelinePhase, setSnapshot]);
+
+  useReminderNotifications(reminders);
 
   useEffect(() => {
     return () => setSnapshot(null);
   }, [setSnapshot]);
+
+  const applyQueueState = useCallback((body: {
+    nowQueue: QueueItem[];
+    reminders?: OwnerReminderItem[];
+    verifications?: QueueItem[];
+  }) => {
+    setNowQueue(body.nowQueue);
+    setReminders(body.reminders ?? []);
+    setVerifications(
+      body.verifications ?? body.nowQueue.filter((item) => item.taskKind === "verification"),
+    );
+  }, []);
 
   const loadVehicleState = useCallback(
     async (nextVehicle: Vehicle) => {
@@ -132,6 +153,8 @@ export function OwnerDashboard() {
       const body = (await response.json()) as {
         timeline: TimelineEntry[];
         nowQueue: QueueItem[];
+        reminders?: OwnerReminderItem[];
+        verifications?: QueueItem[];
         ownershipRecords?: OwnershipRecordEntry[];
         quoteAnalyses?: QuoteAnalysisView[];
         evidenceVault?: EvidenceVaultItem[];
@@ -143,7 +166,7 @@ export function OwnerDashboard() {
 
       setTimeline(body.timeline);
       setOwnershipRecords(body.ownershipRecords ?? []);
-      setNowQueue(body.nowQueue);
+      applyQueueState(body);
       setQuoteAnalyses(body.quoteAnalyses ?? []);
       setEvidenceVault(body.evidenceVault ?? []);
       setKnowledgeSchedule(body.knowledgeSchedule ?? []);
@@ -161,7 +184,7 @@ export function OwnerDashboard() {
       }
       setForm((current) => ({ ...current, mileage: body.currentMileage ?? nextVehicle.currentMileage }));
     },
-    [apiBase],
+    [apiBase, applyQueueState],
   );
 
   useEffect(() => {
@@ -240,11 +263,11 @@ export function OwnerDashboard() {
       };
       if (!response.ok && response.status !== 409) throw new Error(body.error ?? "receipt failed");
       setTimeline(body.timeline);
-      setNowQueue(body.nowQueue);
+      applyQueueState(body);
       feedback(
         body.conflict
           ? "Conflict detected — check Owner verification in the sidebar."
-          : "Golden path complete — check Owner verification for next steps.",
+          : "Service recorded — check Reminders for your next action.",
       );
       setUploadedReceipt(null);
       setCaptureError("");
@@ -257,19 +280,33 @@ export function OwnerDashboard() {
     }
   };
 
-  const decide = async (taskId: string, decision: "approve" | "dismiss" | "snooze") => {
+  const decide = async (
+    taskId: string,
+    decision: "approve" | "dismiss" | "snooze",
+    snoozeDays?: number,
+  ) => {
     if (!vehicle) return;
     setIsBusy(true);
     try {
       const response = await fetch(`${apiBase}/api/tasks/${taskId}/decide`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vehicleId: vehicle.id, decision }),
+        body: JSON.stringify({ vehicleId: vehicle.id, decision, snoozeDays }),
       });
       if (!response.ok) throw new Error("decide failed");
-      const body = (await response.json()) as { nowQueue: QueueItem[] };
-      setNowQueue(body.nowQueue);
-      feedback(`Task ${decision}d.`);
+      const body = (await response.json()) as {
+        nowQueue: QueueItem[];
+        reminders?: OwnerReminderItem[];
+        verifications?: QueueItem[];
+      };
+      applyQueueState(body);
+      if (decision === "snooze") {
+        feedback(`Snoozed${snoozeDays ? ` for ${snoozeDays} days` : ""}.`);
+      } else if (decision === "approve") {
+        feedback("Marked done.");
+      } else {
+        feedback("Dismissed.");
+      }
     } finally {
       setIsBusy(false);
     }
@@ -293,11 +330,12 @@ export function OwnerDashboard() {
         feedback(body.error ?? "Could not refresh recommendations.");
         return;
       }
-      setNowQueue(body.nowQueue);
+      applyQueueState(body);
       if (body.created && body.recommendation) {
-        feedback(`Added to Owner verification: ${body.recommendation.title}`);
+        feedback(`New reminder: ${body.recommendation.title}`);
+        setActiveSection("reminders");
       } else if (body.skippedReason === "already_pending") {
-        feedback("A matching item is already in Owner verification.");
+        feedback("That reminder is already on your list.");
       } else {
         feedback("No new maintenance actions due right now.");
       }
@@ -313,10 +351,11 @@ export function OwnerDashboard() {
     });
   };
 
-  const pendingCount = nowQueue.filter((item) => item.status === "pending").length;
+  const pendingReminderCount = reminders.filter((item) => item.effectiveStatus === "pending").length;
+  const pendingVerificationCount = verifications.filter((item) => item.status === "pending").length;
 
   const headerAction =
-    activeSection === "now" ? (
+    activeSection === "reminders" || activeSection === "now" ? (
       <Button
         type="button"
         variant="outline"
@@ -324,7 +363,7 @@ export function OwnerDashboard() {
         disabled={isBusy || isRefreshingNow}
         onClick={() => void refreshNowQueue()}
       >
-        {isRefreshingNow ? "Refreshing…" : "Refresh recommendations"}
+        {isRefreshingNow ? "Refreshing…" : "Refresh from schedule"}
       </Button>
     ) : activeSection === "receipts" ? (
       <Button type="button" size="sm" disabled={isBusy || !uploadedReceipt} onClick={() => void submitReceipt()}>
@@ -378,8 +417,11 @@ export function OwnerDashboard() {
                 {vehicleLabel}
               </Badge>
             ) : null}
-            {activeSection === "now" && pendingCount > 0 ? (
-              <Badge className="tabular-nums">{pendingCount} awaiting verification</Badge>
+            {activeSection === "reminders" && pendingReminderCount > 0 ? (
+              <Badge className="tabular-nums">{pendingReminderCount} due</Badge>
+            ) : null}
+            {activeSection === "now" && pendingVerificationCount > 0 ? (
+              <Badge className="tabular-nums">{pendingVerificationCount} to verify</Badge>
             ) : null}
           </>
         }
@@ -390,14 +432,34 @@ export function OwnerDashboard() {
         Viewing {sectionMeta.label} section
       </p>
 
+      {activeSection === "reminders" ? (
+        <PanelCard
+          title="Reminders"
+          description="Calendar-first nudges — act this week, snooze, or mark scheduled. The assistant handles mileage math."
+        >
+          <RemindersConsole items={reminders} disabled={isBusy} onDecide={decide} />
+        </PanelCard>
+      ) : null}
+
       {activeSection === "now" ? (
         <PanelCard
           title="Owner verification"
-          description="Tap an item to confirm or dismiss — nothing changes until you do."
+          description="Rare conflicts — resolve when the assistant can't settle records alone."
         >
           <div className="space-y-4">
             {verificationMaturity ? <VerificationMaturityPanel maturity={verificationMaturity} /> : null}
-            <NowQueueConsole items={nowQueue} disabled={isBusy} onDecide={decide} />
+            <NowQueueConsole
+              items={verifications.length > 0 ? verifications : nowQueue}
+              disabled={isBusy}
+              vehicleId={vehicle.id}
+              apiBase={apiBase}
+              currentMileage={vehicle.currentMileage}
+              onDecide={decide}
+              onOdometerSaved={() => {
+                if (vehicle) void loadVehicleState(vehicle);
+              }}
+              onError={(message) => feedback(message)}
+            />
           </div>
         </PanelCard>
       ) : null}

@@ -3,7 +3,7 @@
   "source": "carfax-pdf-manual",
   "exportedAt": "2026-07-24T16:00:00.000Z",
   "vehicle": {
-    "vin": "19UUA7565LA155160",
+    "vin": "19UUB6F47MA008400",
     "year": 2021,
     "make": "Acura",
     "model": "TLX",
@@ -16,6 +16,17 @@
       "serviceDate": "2026-07-15",
       "mileage": 58819,
       "lineItems": ["Tires rotated"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "MetroWest Acura",
+      "serviceDate": "2026-05-13",
+      "mileage": 57160,
+      "lineItems": [
+        "Vehicle serviced",
+        "Maintenance inspection completed",
+        "Oil and filter changed"
+      ],
       "total": "$0.00"
     },
     {
@@ -68,6 +79,15 @@
         "Maintenance inspection completed",
         "Vehicle washed/detailed",
         "Battery replaced"
+      ],
+      "parts": [
+        {
+          "category": "battery",
+          "purchasedAt": "Walmart",
+          "brand": "EverStart",
+          "installedBy": "Ira Acura Westwood",
+          "warrantyYears": 4
+        }
       ],
       "total": "$0.00"
     },
@@ -146,6 +166,17 @@
       "serviceDate": "2025-01-06",
       "mileage": 39390,
       "lineItems": ["Four tires replaced"],
+      "products": [
+        {
+          "brand": "Michelin",
+          "model": "Pilot Sport All Season 4",
+          "size": "255/40ZR19",
+          "loadIndex": 100,
+          "speedRating": "Y",
+          "season": "all-season",
+          "warrantyMiles": 45000
+        }
+      ],
       "total": "$0.00"
     },
     {

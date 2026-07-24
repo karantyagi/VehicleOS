@@ -27,12 +27,14 @@ export const refreshNowQueue = async (
     ...recommendationContextFromVehicle(vehicle),
   });
 
-  const snapshot = await services.goldenPath.getVehicleState(vehicleId);
+  const snapshot = await services.goldenPath.getVehicleState(vehicleId, {
+    vehicleCreatedAt: vehicle.createdAt,
+  });
 
   return jsonResponse(200, {
     created: result.created,
     skippedReason: result.skippedReason,
     recommendation: result.recommendation,
-    ...buildVehicleStateView(result.state, vehicle, snapshot.events),
+    ...buildVehicleStateView(snapshot.state, vehicle, snapshot.events),
   });
 };

@@ -26,6 +26,9 @@ export type NowQueueItem = {
   ruleId?: string;
   taskKind?: "recommendation" | "verification";
   verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE";
+  dueBy?: string | null;
+  snoozeUntil?: string | null;
+  snoozeCount?: number;
 };
 
 export type EvidenceVaultEntry = {

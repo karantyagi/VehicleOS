@@ -70,6 +70,8 @@ export const applyEvent = (
         taskKind: event.payload.taskKind,
         verificationCode: event.payload.verificationCode,
         ruleId: event.payload.ruleId,
+        dueBy: event.payload.dueBy ?? null,
+        snoozeCount: 0,
       };
 
       return {
@@ -82,11 +84,23 @@ export const applyEvent = (
     case EVENT_TYPES.TASK_DECIDED:
       return {
         ...state,
-        nowQueue: state.nowQueue.map((item) =>
-          item.taskId === event.payload.taskId
-            ? { ...item, status: taskStatusFromDecision(event.payload.decision) }
-            : item,
-        ),
+        nowQueue: state.nowQueue.map((item) => {
+          if (item.taskId !== event.payload.taskId) return item;
+
+          if (event.payload.decision === "snooze") {
+            return {
+              ...item,
+              status: taskStatusFromDecision(event.payload.decision),
+              snoozeUntil: event.payload.snoozeUntil ?? null,
+              snoozeCount: (item.snoozeCount ?? 0) + 1,
+            };
+          }
+
+          return {
+            ...item,
+            status: taskStatusFromDecision(event.payload.decision),
+          };
+        }),
       };
 
     case EVENT_TYPES.QUOTE_ANALYZED:

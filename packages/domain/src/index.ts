@@ -108,6 +108,36 @@ export {
   type NowQueueCategory,
 } from "./now/queue-view.js";
 export {
+  buildOwnerReminderView,
+  buildOwnerReminderViews,
+  isActiveReminder,
+  splitOwnerQueues,
+  type OwnerReminderView,
+} from "./now/build-owner-reminders.js";
+export {
+  formatOwnerDeadline,
+  formatSnoozeEscalation,
+  resolveReminderUrgency,
+  addDays,
+  type ReminderUrgency,
+} from "./now/format-owner-deadline.js";
+export {
+  buildTimeFirstTaskCopy,
+  matchScheduleRowForRule,
+  projectScheduleRowsForRecommendations,
+  type TimeFirstTaskCopy,
+} from "./now/prepare-recommendation-task.js";
+export {
+  DEFAULT_SNOOZE_DAYS,
+  STALE_ODOMETER_DAYS,
+  STALE_ODOMETER_RULE_ID,
+  computeSnoozeUntil,
+  ensureStaleOdometerPrompt,
+  isOdometerStale,
+  resolveLastMileageTouchDate,
+  todayIsoDate,
+} from "./now/ensure-stale-odometer-prompt.js";
+export {
   refreshMaintenanceRecommendation,
   type RefreshMaintenanceRecommendationInput,
   type RefreshMaintenanceRecommendationResult,

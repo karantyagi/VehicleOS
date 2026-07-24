@@ -2,6 +2,7 @@
 
 import {
   Archive,
+  BellRing,
   BookOpen,
   Clock3,
   FileInput,
@@ -15,6 +16,7 @@ import { useAppSectionNavigation } from "@/lib/use-app-section-navigation";
 import { cn } from "@/lib/utils";
 
 const SECTION_ICONS: Record<AppSection, typeof ListChecks> = {
+  reminders: BellRing,
   now: ListChecks,
   timeline: Clock3,
   imports: FileInput,

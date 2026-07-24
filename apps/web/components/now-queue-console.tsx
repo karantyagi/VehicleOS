@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ListChecks } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
+import { OdometerInlineForm } from "@/components/odometer-inline-form";
 import { ConsoleDetailPanel, ConsoleDetailPlaceholder, ConsoleSplit } from "@/components/console-split";
 import { DataGridToolbar } from "@/components/data-grid-toolbar";
 import { Badge } from "@/components/ui/badge";
@@ -10,26 +11,40 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { QueueItem } from "@/lib/console-types";
 import { downloadCsv, filterByQuery, sortRows } from "@/lib/data-grid-utils";
-import { formatRuleLineage } from "@/lib/rule-lineage";
 import { useConsoleListKeyboard } from "@/lib/use-console-list-keyboard";
 import { useAppUiStore } from "@/lib/store/app-ui-store";
 import { cn } from "@/lib/utils";
 
-const classifyKind = (item: QueueItem) => item.taskKind ?? "recommendation";
-
 type NowQueueConsoleProps = {
   items: QueueItem[];
   disabled?: boolean;
+  vehicleId?: string;
+  apiBase?: string;
+  currentMileage?: number;
   onDecide: (taskId: string, decision: "approve" | "dismiss" | "snooze") => void;
+  onOdometerSaved?: () => void;
+  onError?: (message: string) => void;
 };
 
-export function NowQueueConsole({ items, disabled = false, onDecide }: NowQueueConsoleProps) {
+export function NowQueueConsole({
+  items,
+  disabled = false,
+  vehicleId,
+  apiBase,
+  currentMileage,
+  onDecide,
+  onOdometerSaved,
+  onError,
+}: NowQueueConsoleProps) {
   const selectedId = useAppUiStore((s) => s.selectedNowTaskId);
   const setSelectedId = useAppUiStore((s) => s.setSelectedNowTaskId);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("status-asc");
 
-  const pending = useMemo(() => items.filter((item) => item.status === "pending"), [items]);
+  const pending = useMemo(
+    () => items.filter((item) => item.taskKind === "verification" && item.status === "pending"),
+    [items],
+  );
 
   const visible = useMemo(() => {
     const filtered = filterByQuery(pending, query, (row) =>
@@ -47,14 +62,16 @@ export function NowQueueConsole({ items, disabled = false, onDecide }: NowQueueC
     return (
       <EmptyState
         icon={ListChecks}
-        title="Nothing awaiting verification"
-        description="Refresh recommendations after service or open Service history."
+        title="No conflicts to verify"
+        description="When records disagree, the assistant will ask you here — usually rare."
       />
     );
   }
 
-  const selected = visible.find((item) => item.taskId === selectedId) ?? pending.find((item) => item.taskId === selectedId) ?? null;
-  const lineage = selected ? formatRuleLineage(selected.ruleId) : null;
+  const selected =
+    visible.find((item) => item.taskId === selectedId) ??
+    pending.find((item) => item.taskId === selectedId) ??
+    null;
 
   const list = (
     <>
@@ -72,14 +89,13 @@ export function NowQueueConsole({ items, disabled = false, onDecide }: NowQueueC
         totalCount={pending.length}
         onExport={() =>
           downloadCsv(
-            "vehicleos-now-queue.csv",
-            ["taskId", "title", "status", "kind", "ruleId", "reason"],
+            "vehicleos-verification-queue.csv",
+            ["taskId", "title", "status", "verificationCode", "reason"],
             visible.map((row) => [
               row.taskId,
               row.title,
               row.status,
-              classifyKind(row),
-              row.ruleId ?? "",
+              row.verificationCode ?? "",
               row.reason,
             ]),
           )
@@ -88,9 +104,8 @@ export function NowQueueConsole({ items, disabled = false, onDecide }: NowQueueC
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Title</TableHead>
-            <TableHead>Kind</TableHead>
-            <TableHead>Rule</TableHead>
+            <TableHead>Question</TableHead>
+            <TableHead>Type</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -109,47 +124,43 @@ export function NowQueueConsole({ items, disabled = false, onDecide }: NowQueueC
                 }
               }}
             >
-              <TableCell className="max-w-[12rem] truncate font-medium">{item.title}</TableCell>
+              <TableCell className="max-w-[14rem] truncate font-medium">{item.title}</TableCell>
               <TableCell>
-                <Badge variant={item.taskKind === "verification" ? "warning" : "default"}>
-                  {classifyKind(item)}
-                </Badge>
-              </TableCell>
-              <TableCell className="max-w-[8rem] truncate font-mono text-xs text-muted-foreground">
-                {item.ruleId ?? "—"}
+                <Badge variant="warning">{item.verificationCode ?? "verify"}</Badge>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      <p className="mt-2 text-[11px] text-muted-foreground">
-        <kbd className="rounded border border-border px-1 font-mono text-[10px]">j</kbd>{" "}
-        <kbd className="rounded border border-border px-1 font-mono text-[10px]">k</kbd> move ·{" "}
-        <kbd className="rounded border border-border px-1 font-mono text-[10px]">/</kbd> command
-      </p>
     </>
   );
 
-  const detail = selected && lineage ? (
+  const showOdometerForm =
+    selected?.verificationCode === "VERIFY_ODOMETER" && vehicleId && apiBase && currentMileage !== undefined;
+
+  const detail = selected ? (
     <ConsoleDetailPanel title={selected.title}>
       <p className="text-muted-foreground">{selected.reason}</p>
-      <div className="space-y-1">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Lineage</p>
-        <Badge variant="secondary">{lineage.label}</Badge>
-        <p className="font-mono text-xs text-muted-foreground break-all">{lineage.detail}</p>
-      </div>
+      {showOdometerForm ? (
+        <OdometerInlineForm
+          vehicleId={vehicleId}
+          apiBase={apiBase}
+          defaultMileage={currentMileage}
+          disabled={disabled}
+          onSaved={() => {
+            onOdometerSaved?.();
+            onDecide(selected.taskId, "approve");
+          }}
+          onError={(message) => onError?.(message)}
+        />
+      ) : null}
       <div className="flex flex-wrap gap-2 pt-1">
         <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(selected.taskId, "approve")}>
-          {selected.taskKind === "verification" ? "Mark resolved" : "Approve"}
+          Mark resolved
         </Button>
         <Button type="button" size="sm" variant="secondary" disabled={disabled} onClick={() => onDecide(selected.taskId, "dismiss")}>
           Dismiss
         </Button>
-        {selected.taskKind !== "verification" ? (
-          <Button type="button" size="sm" variant="ghost" disabled={disabled} onClick={() => onDecide(selected.taskId, "snooze")}>
-            Snooze
-          </Button>
-        ) : null}
       </div>
     </ConsoleDetailPanel>
   ) : (

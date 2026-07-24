@@ -16,6 +16,25 @@ export type QueueItem = {
   status: string;
   taskKind?: "recommendation" | "verification";
   ruleId?: string;
+  verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE";
+  dueBy?: string | null;
+  snoozeUntil?: string | null;
+  snoozeCount?: number;
+};
+
+export type OwnerReminderItem = {
+  taskId: string;
+  title: string;
+  reason: string;
+  status: string;
+  effectiveStatus: "pending" | "snoozed" | "done";
+  deadlineLabel: string;
+  dueBy: string | null;
+  urgency: "overdue" | "due_now" | "due_soon" | "upcoming" | "snoozed";
+  snoozeCount: number;
+  snoozeUntil: string | null;
+  escalation: string | null;
+  ruleId?: string;
 };
 
 export type ConsoleDensity = "comfortable" | "compact";
@@ -25,7 +44,8 @@ export type PipelinePhase = "idle" | "syncing" | "extracting";
 export type VehicleContextSnapshot = {
   label: string;
   mileage: number;
-  pendingNowCount: number;
+  pendingReminderCount: number;
+  pendingVerificationCount: number;
   lastServiceDate: string | null;
   lastServiceShop: string | null;
   pipelinePhase: PipelinePhase;
