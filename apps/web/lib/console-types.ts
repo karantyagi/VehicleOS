@@ -6,7 +6,7 @@ export type TimelineEntry = {
   lineItems: string[];
   total: string;
   evidenceIds: string[];
-  source?: "receipt" | "voice" | "owner_note" | "dealer";
+  source?: "receipt" | "voice" | "owner_note" | "dealer" | "carfax_import";
 };
 
 export type QueueItem = {
@@ -42,7 +42,7 @@ export type ScheduleProjectionRow = {
   serviceBaseline: {
     performedDate: string | null;
     performedMileage: number | null;
-    baselineSource: "receipt" | "owned_since" | "unknown";
+    baselineSource: "receipt" | "carfax" | "owned_since" | "unknown";
   };
   oemInterval: { months: number | null; miles: number | null };
   oemSource: { manualTitle: string; page: string | null; ruleId: string };
@@ -53,5 +53,26 @@ export type ScheduleProjectionRow = {
 export type MaintenanceScheduleView = {
   near: ScheduleProjectionRow[];
   extended: ScheduleProjectionRow[];
+  full: ScheduleProjectionRow[];
   effectiveMilesPerYear: number;
+  observedMilesPerYear?: number | null;
+  statedMilesPerYear?: number | null;
+  dueSoonDays?: number;
+  horizonEnd?: {
+    near: string;
+    extended: string;
+    full: string;
+  };
+};
+
+export type VerificationMaturityView = {
+  thisWeekCount: number;
+  lastWeekCount: number;
+  weekOverWeekDelta: number;
+  weeklyCounts: { weekStart: string; count: number }[];
+  expectedCurve: { weekStart: string; count: number }[];
+  maturityStage: "onboarding" | "learning" | "steady";
+  hasEnoughRealData: boolean;
+  trendMessage: string;
+  celebrateTrend: boolean;
 };

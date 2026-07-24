@@ -529,7 +529,7 @@ Cabin air filter $59.00`,
     expect(stateBody.timeline[0]?.source).toBe("owner_note");
   });
 
-  it("refreshes maintenance recommendations into the Now queue", async () => {
+  it("refreshes maintenance recommendations into Owner verification", async () => {
     const app = await appPromise;
 
     const createResponse = await app.inject({

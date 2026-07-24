@@ -2,6 +2,7 @@
 
 import { Command } from "cmdk";
 import {
+  CarFront,
   Archive,
   BookOpen,
   Clock3,
@@ -23,6 +24,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { APP_SECTIONS, SECTION_SHORTCUTS, useAppUiStore } from "@/lib/store/app-ui-store";
+import { useAppSectionNavigation } from "@/lib/use-app-section-navigation";
 import { cn } from "@/lib/utils";
 
 const SECTION_ICONS = {
@@ -37,10 +39,10 @@ const SECTION_ICONS = {
 
 export function CommandMenu() {
   const router = useRouter();
+  const { goToSection } = useAppSectionNavigation();
   const { setTheme } = useTheme();
   const commandOpen = useAppUiStore((s) => s.commandOpen);
   const setCommandOpen = useAppUiStore((s) => s.setCommandOpen);
-  const setActiveSection = useAppUiStore((s) => s.setActiveSection);
   const toggleDensity = useAppUiStore((s) => s.toggleDensity);
 
   useEffect(() => {
@@ -89,7 +91,7 @@ export function CommandMenu() {
                     key={section.id}
                     value={`${section.label} ${section.id} ${section.description}`}
                     onSelect={() => {
-                      setActiveSection(section.id);
+                      goToSection(section.id);
                       setCommandOpen(false);
                     }}
                     className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
@@ -102,7 +104,18 @@ export function CommandMenu() {
             </Command.Group>
             <Command.Group heading="Actions">
               <Command.Item
-                value="Settings"
+                value="Owner verification vehicle record driving profile"
+                onSelect={() => {
+                  setCommandOpen(false);
+                  router.push("/garage?tab=car");
+                }}
+                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
+              >
+                <CarFront className="text-muted-foreground" aria-hidden />
+                <span className="font-medium">Owner</span>
+              </Command.Item>
+              <Command.Item
+                value="Account login identity"
                 onSelect={() => {
                   setCommandOpen(false);
                   router.push("/settings");
@@ -110,7 +123,7 @@ export function CommandMenu() {
                 className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
               >
                 <Settings className="text-muted-foreground" aria-hidden />
-                <span className="font-medium">Settings</span>
+                <span className="font-medium">Account</span>
               </Command.Item>
               <Command.Item
                 value="Light"

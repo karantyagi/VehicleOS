@@ -4,9 +4,11 @@ import { Menu, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { Suspense, useEffect } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
+import { CarIdentityNav } from "@/components/car-identity-nav";
 import { ConsoleKeyboardShortcuts } from "@/components/console-keyboard-shortcuts";
 import { CommandMenu, CommandMenuTrigger, SidebarUtilityRow } from "@/components/command-menu";
 import { AccountMenu } from "@/components/account-menu";
+import { PwaInstallBanner } from "@/components/pwa-install-banner";
 import { PwaSectionLauncher } from "@/components/pwa-section-launcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { VehicleContextBar } from "@/components/vehicle-context-bar";
@@ -45,6 +47,8 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
     <>
       <div className="border-b border-sidebar-border px-4 py-4">{sidebarHeader}</div>
       <SidebarUtilityRow />
+      <CarIdentityNav className="pb-1" />
+      <div className="mx-4 border-t border-sidebar-border" aria-hidden />
       <AppSidebar className="flex-1 overflow-y-auto py-2" />
       {user ? <AccountMenu user={user} /> : null}
     </>
@@ -104,6 +108,7 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
             )}
           >
             <VehicleContextBar />
+            {user ? <PwaInstallBanner /> : null}
             {children}
           </div>
         </main>

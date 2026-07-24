@@ -3,6 +3,7 @@ import type { KnowledgeScheduleEntry, ServiceTimelineEntry } from "../projection
 import {
   DEFAULT_EFFECTIVE_MILES_PER_YEAR,
   EXTENDED_SCHEDULE_HORIZON_MONTHS,
+  FULL_OEM_LIFE_CAP_YEARS,
   projectMaintenanceSchedule,
 } from "./project-maintenance-schedule.js";
 
@@ -113,5 +114,103 @@ describe("projectMaintenanceSchedule", () => {
 
     expect(extended.rows).toHaveLength(1);
     expect(extended.rows[0]?.status).toBe("upcoming");
+  });
+
+  it("includes rows within full OEM life horizon from ownedSince", () => {
+    const near = projectMaintenanceSchedule({
+      knowledgeSchedule: [
+        entry({
+          serviceName: "Brake fluid inspection",
+          intervalMiles: 30_000,
+          intervalMonths: 36,
+        }),
+      ],
+      timeline: [timelineRow({ serviceDate: "2024-01-01", mileage: 10_000, lineItems: ["Brake fluid"] })],
+      currentMileage: 15_000,
+      ownedSince: "2024-01-01",
+      today: "2026-07-23",
+      horizonMode: "near",
+    });
+
+    const full = projectMaintenanceSchedule({
+      knowledgeSchedule: [
+        entry({
+          serviceName: "Brake fluid inspection",
+          intervalMiles: 30_000,
+          intervalMonths: 36,
+        }),
+      ],
+      timeline: [timelineRow({ serviceDate: "2024-01-01", mileage: 10_000, lineItems: ["Brake fluid"] })],
+      currentMileage: 15_000,
+      ownedSince: "2024-01-01",
+      today: "2026-07-23",
+      horizonMode: "full",
+    });
+
+    expect(near.rows).toHaveLength(0);
+    expect(full.rows).toHaveLength(1);
+    expect(full.horizonMode).toBe("full");
+    expect(full.horizonEnd).toBe("2029-01-01");
+    expect(full.horizonMonths).toBe(FULL_OEM_LIFE_CAP_YEARS * 12);
+  });
+
+  it("uses CARFAX import rows as schedule baselines", () => {
+    const result = projectMaintenanceSchedule({
+      knowledgeSchedule: [entry({ intervalMonths: 6, intervalMiles: 5_000 })],
+      timeline: [
+        timelineRow({
+          serviceDate: "2026-01-12",
+          mileage: 41_800,
+          lineItems: ["Oil change (synthetic)"],
+          source: "carfax_import",
+        }),
+      ],
+      currentMileage: 42_000,
+      today: "2026-07-23",
+      horizonMode: "extended",
+    });
+
+    expect(result.rows[0]?.serviceBaseline.baselineSource).toBe("carfax");
+    expect(result.rows[0]?.dueDate).toBe("2026-07-12");
+  });
+
+  it("uses ownedSince as calendar baseline when no receipt exists", () => {
+    const result = projectMaintenanceSchedule({
+      knowledgeSchedule: [entry({ intervalMiles: undefined, intervalMonths: 6 })],
+      timeline: [],
+      currentMileage: 12_000,
+      ownedSince: "2026-01-01",
+      today: "2026-07-23",
+      horizonMonths: 12,
+    });
+
+    expect(result.rows[0]?.dueDate).toBe("2026-07-01");
+    expect(result.rows[0]?.serviceBaseline.baselineSource).toBe("owned_since");
+    expect(result.rows[0]?.status).toBe("overdue");
+  });
+
+  it("marks due_soon earlier for aggressive lead-time policy", () => {
+    const baseline = projectMaintenanceSchedule({
+      knowledgeSchedule: [entry({ intervalMonths: 12, intervalMiles: undefined })],
+      timeline: [],
+      currentMileage: 12_000,
+      ownedSince: "2025-08-27",
+      today: "2026-07-23",
+      dueSoonDays: 30,
+      horizonMonths: 12,
+    });
+
+    const aggressive = projectMaintenanceSchedule({
+      knowledgeSchedule: [entry({ intervalMonths: 12, intervalMiles: undefined })],
+      timeline: [],
+      currentMileage: 12_000,
+      ownedSince: "2025-08-27",
+      today: "2026-07-23",
+      dueSoonDays: 45,
+      horizonMonths: 12,
+    });
+
+    expect(baseline.rows[0]?.status).toBe("upcoming");
+    expect(aggressive.rows[0]?.status).toBe("due_soon");
   });
 });

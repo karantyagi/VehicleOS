@@ -13,7 +13,7 @@ This repository contains the product code and lightweight architecture artifacts
 
 - Event-sourced domain model for durable state and explainability
 - Deterministic policy engine for maintenance recommendations
-- AI-assisted extraction and explanation with human approval gates
+- AI-assisted extraction and explanation with Owner verification on conflicts
 - Monorepo architecture with separate marketing, product, API, and worker apps
 - AI-native build: human-led architecture + agent-assisted implementation ([Cursor](https://cursor.com))
 
@@ -71,7 +71,7 @@ connectors/
 
 ## First vertical slice target
 
-Receipt upload → extraction → `service.recorded` event → projection update → recommendation → user approval.
+Receipt upload → extraction → `service.recorded` event → projection update → recommendation → Owner verification (or future Reminders channel).
 
 ## Quick start
 

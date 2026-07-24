@@ -5,6 +5,7 @@ import {
   coreLoopSteps,
   earlyAccessContent,
   heroContent,
+  heroPills,
   siteConfig,
   statusRows,
   trustSignals,
@@ -22,7 +23,7 @@ function DemoSection() {
           <span className="demo-dot" />
           <span className="demo-dot" />
           <span className="demo-dot" />
-          <span className="demo-url">{siteConfig.appUrl}/dashboard</span>
+          <span className="demo-url">{siteConfig.appUrl}/</span>
         </div>
         <div className="demo-embed">
           <iframe
@@ -41,7 +42,7 @@ function DemoSection() {
         <span className="demo-dot" />
         <span className="demo-dot" />
         <span className="demo-dot" />
-        <span className="demo-url">{siteConfig.appUrl}/dashboard</span>
+        <span className="demo-url">{siteConfig.appUrl}/</span>
       </div>
       <div className="demo-body">
         <div className="demo-play" aria-hidden="true">
@@ -95,13 +96,18 @@ export default function HomePage() {
           <div className="hero-grid-bg" aria-hidden="true" />
           <div className="hero-content">
             <div className="pill-row">
-              <span className="pill">
-                <span className="pill-dot" />
-                In active development
-              </span>
-              <span className="pill">Free early access</span>
-              <span className="pill">Event-sourced</span>
-              <span className="pill">Rules-first AI</span>
+              {heroPills.map((pill) => (
+                <span className="pill" key={pill}>
+                  {pill === heroPills[0] ? (
+                    <>
+                      <span className="pill-dot" />
+                      {pill}
+                    </>
+                  ) : (
+                    pill
+                  )}
+                </span>
+              ))}
             </div>
 
             <h1>
@@ -109,9 +115,7 @@ export default function HomePage() {
               <span className="highlight">{heroContent.headlineHighlight}</span>
             </h1>
 
-            <p className="hero-hook">
-              <span className="hero-hook-ai">Explainable AI</span> maintenance for vehicle ownership
-            </p>
+            <p className="hero-hook">{heroContent.hook}</p>
 
             <p className="hero-outcome">{heroContent.outcomeLine}</p>
             <p className="hero-engineering">{heroContent.engineeringLine}</p>
@@ -175,11 +179,11 @@ export default function HomePage() {
 
         <section className="section shell" id="loop">
           <div className="section-header-centered">
-            <span className="section-label">System design</span>
-            <h2>The core loop</h2>
+            <span className="section-label">How it works</span>
+            <h2>Hand off once. Get reminded. Just show up.</h2>
             <p className="section-desc">
-              Evidence becomes durable state. Deterministic policy drives actions.
-              Memory keeps context — so you never re-explain your car from scratch.
+              Your assistant ingests evidence from a one-time handoff, builds memory, projects what&apos;s
+              ahead, and sends calendar-first nudges — or asks for Owner verification when data conflicts.
             </p>
           </div>
 
@@ -212,8 +216,9 @@ export default function HomePage() {
             <span className="section-label">Product</span>
             <h2>See it in action</h2>
             <p className="section-desc">
-              First vertical slice: receipt upload → extraction → service.recorded →
-              recommendation → user approval.
+              Golden path under the hood: receipt upload → extraction → service.recorded →
+              recommendation → Owner verification when needed. Day-to-day: calendar reminders
+              you can snooze.
             </p>
           </div>
 
@@ -305,8 +310,8 @@ export default function HomePage() {
         </section>
 
         <section className="cta-band shell">
-          <h2>Try free early access</h2>
-          <p>Sign in at app.vehicleos.app — or explore the architecture and ADRs below.</p>
+          <h2>Hire your reminding assistant</h2>
+          <p>Free early access — hand off your records once at app.vehicleos.app.</p>
           <div className="cta-row">
             <a className="btn btn-primary" href={siteConfig.appUrl}>
               Open the app
@@ -326,7 +331,7 @@ export default function HomePage() {
               {siteConfig.name}
             </a>
             <p>
-              Operational memory for vehicle ownership. Free early access at{" "}
+              Your car&apos;s reminding assistant. Free early access at{" "}
               {siteConfig.appUrl.replace("https://", "")}.
             </p>
           </div>

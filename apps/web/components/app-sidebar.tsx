@@ -9,7 +9,8 @@ import {
   Mic,
   Receipt,
 } from "lucide-react";
-import { APP_SECTIONS, type AppSection, useAppUiStore } from "@/lib/store/app-ui-store";
+import { APP_SECTIONS, ASSISTANT_WORKSPACE_GROUP_LABEL, type AppSection } from "@/lib/store/app-ui-store";
+import { useAppSectionNavigation } from "@/lib/use-app-section-navigation";
 import { cn } from "@/lib/utils";
 
 const SECTION_ICONS: Record<AppSection, typeof ListChecks> = {
@@ -28,24 +29,23 @@ type AppSidebarProps = {
 };
 
 export function AppSidebar({ onNavigate, className }: AppSidebarProps) {
-  const activeSection = useAppUiStore((state) => state.activeSection);
-  const setActiveSection = useAppUiStore((state) => state.setActiveSection);
+  const { goToSection, isSectionActive } = useAppSectionNavigation();
 
   return (
-    <nav className={cn("flex flex-col gap-0.5 px-2", className)} aria-label="Main">
+    <nav className={cn("flex flex-col gap-0.5 px-2", className)} aria-label={ASSISTANT_WORKSPACE_GROUP_LABEL}>
       <p className="px-3 pb-2 pt-0.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-        Workspace
+        {ASSISTANT_WORKSPACE_GROUP_LABEL}
       </p>
       {APP_SECTIONS.map((section) => {
         const Icon = SECTION_ICONS[section.id];
-        const isActive = activeSection === section.id;
+        const isActive = isSectionActive(section.id);
         return (
           <button
             key={section.id}
             type="button"
             aria-current={isActive ? "page" : undefined}
             onClick={() => {
-              setActiveSection(section.id);
+              goToSection(section.id);
               onNavigate?.();
             }}
             className={cn(

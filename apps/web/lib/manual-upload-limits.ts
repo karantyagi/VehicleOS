@@ -15,3 +15,17 @@ export const manualFileTooLargeMessage = (fileSizeBytes: number): string => {
 
 export const manualStorageRejectedMessage = (): string =>
   `Upload failed — file may exceed ${MAX_MANUAL_MB} MB or your connection dropped. Use the official owner manual PDF (typically 20–40 MB), not a factory service manual.`;
+
+export const manualStorageBucketMissingMessage =
+  'Storage bucket "receipts" is missing in Supabase. In the SQL editor, run db/migrations/004_manual_storage_limit.sql (creates the bucket + policies at 50 MB).';
+
+export const mapManualStorageUploadError = (message: string): string => {
+  const normalized = message.toLowerCase();
+  if (normalized.includes("bucket not found") || normalized.includes("bucket does not exist")) {
+    return manualStorageBucketMissingMessage;
+  }
+  if (normalized.includes("maximum") || normalized.includes("exceed")) {
+    return `Manual PDF exceeds storage limit — re-run db/migrations/004_manual_storage_limit.sql in Supabase (50 MB).`;
+  }
+  return message || manualStorageRejectedMessage();
+};

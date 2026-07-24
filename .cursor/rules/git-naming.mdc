@@ -34,7 +34,7 @@ conflict detection with verification tasks
 
 Task: V1-6
 Detect mileage/date regressions on receipt confirm, emit conflict.detected,
-return HTTP 409, surface verification tasks in Now queue.
+return HTTP 409, surface verification tasks in Owner verification.
 EOF
 )"
 ```

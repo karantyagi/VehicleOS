@@ -1,9 +1,5 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { DeleteAccountPanel } from "../../components/delete-account-panel";
-import { VehicleSettingsPanel } from "../../components/vehicle-settings-panel";
-import { PageHeader } from "../../components/page-header";
-import { PanelCard } from "../../components/panel-card";
+import { SettingsWorkspace } from "../../components/settings-workspace";
 import { AppHeader } from "../../components/app-header";
 import { AppShell } from "../../components/app-shell";
 import { getSessionUser } from "../../lib/auth/session";
@@ -25,22 +21,7 @@ export default async function SettingsPage() {
       sidebarHeader={<AppHeader user={user} placement="sidebar" />}
       mobileBar={<AppHeader user={user} placement="mobile" />}
     >
-      <PageHeader
-        eyebrow="Account"
-        title="Settings"
-        description="Manage your early-access account and data rights."
-      />
-
-      <PanelCard title="Signed in as" description="Your early-access identity for VehicleOS.">
-        <p className="text-sm font-medium">{user.email ?? user.id}</p>
-        <Link className="text-sm text-primary hover:underline" href="/">
-          Back to dashboard
-        </Link>
-      </PanelCard>
-
-      <VehicleSettingsPanel />
-
-      <DeleteAccountPanel />
+      <SettingsWorkspace user={user} />
     </AppShell>
   );
 }

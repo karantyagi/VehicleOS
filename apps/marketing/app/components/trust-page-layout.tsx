@@ -50,7 +50,7 @@ export function TrustPageLayout({ title, updated, children }: TrustPageLayoutPro
               <LogoMark />
               {siteConfig.name}
             </Link>
-            <p>Operational memory for vehicle ownership.</p>
+            <p>Your car&apos;s reminding assistant — free early access.</p>
           </div>
           <div className="footer-col">
             <h3>Trust</h3>

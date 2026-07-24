@@ -1,9 +1,9 @@
 export const siteConfig = {
   name: "VehicleOS",
-  tagline: "Operational memory for long-lived car ownership.",
-  metaTitle: "VehicleOS — Operational memory for vehicle ownership",
+  tagline: "Your car's reminding assistant — not another dashboard.",
+  metaTitle: "VehicleOS — Hire a reminding assistant for your car",
   metaDescription:
-    "Free early access for car owners — what's due next, with plain-English why, from your service history. Event-sourced state, rules-first policy, AI at the edges.",
+    "Free early access for car owners. Hand off service history once — your assistant plans, tracks, and sends calendar-first reminders in the background. Snooze when you need to. Stop planning.",
   githubUrl: process.env.NEXT_PUBLIC_GITHUB_URL ?? "https://github.com/karantyagi/VehicleOS",
   appUrl: process.env.NEXT_PUBLIC_APP_URL ?? "https://app.vehicleos.app",
   linkedInUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL ?? "https://www.linkedin.com/in/karantyagi-21",
@@ -12,31 +12,38 @@ export const siteConfig = {
 } as const;
 
 export const heroContent = {
-  hook: "Explainable AI maintenance for vehicle ownership",
-  headline: "Operational memory for",
-  headlineHighlight: "long-lived ownership",
+  hook: "Your car's reminding assistant",
+  headline: "Stop planning.",
+  headlineHighlight: "Just show up.",
   outcomeLine:
-    "What's due. What's fair. What to do next — without starting over every time.",
+    "Hand off your records once. Your assistant remembers everything, projects what's due, and nudges you only when it matters.",
   engineeringLine:
-    "Event-sourced vehicle state · rules-first schedules · LLMs for extraction and explanation only",
+    "Rules-first schedules · plain-English why · AI for extraction and explanation — not guesswork",
   problem:
-    "First-time owners learn maintenance too late. Dealership quotes are hard to validate. ChatGPT helps — but every conversation starts from zero.",
+    "Maintenance lives in your head, glove box, and camera roll — until something gets missed. You shouldn't be the planner.",
   oneLiner:
-    "The system of record I wished existed when I was trying to figure out if my dealer was being honest.",
+    "What's due next — with plain-English why, from your actual service history.",
 } as const;
+
+export const heroPills = [
+  "Free early access",
+  "Light-touch reminders",
+  "Calendar-first for you",
+] as const;
 
 export const earlyAccessContent = {
   sectionLabel: "Early access",
-  sectionTitle: "What's due next — for your car",
+  sectionTitle: "Hire your reminding assistant",
   sectionDesc:
-    "Free hosted early access. Import your service history, see what's due, and get plain-English explanations — no setup, no terminal.",
+    "Free hosted early access. Sign in, hand off your history, answer a few basics about your car — then let the assistant work in the background.",
   wedge: "Know what's due next, with plain-English why, from your actual service history.",
   priceNote: "Early access · free",
   highlights: [
-    "We run it — sign in and go",
-    "Now queue — what needs your attention today",
-    "Timeline from your confirmed service history",
-    "Plain-English explainability",
+    "One-time handoff — receipts, history PDFs, owner manual (not a daily logbook)",
+    "Calendar-first reminders — act this week or snooze; assistant escalates if you defer",
+    "Light-touch nudges in the background — mileage math stays on the assistant",
+    "Owner verification only when data conflicts — fewer each week as memory grows",
+    "You execute — book, pay, show up. No planning overhead.",
   ],
   cta: {
     label: "Open the app",
@@ -46,18 +53,18 @@ export const earlyAccessContent = {
 } as const;
 
 export const trustSignals = [
-  { label: "Early access", detail: "Free · hosted app" },
-  { label: "Architecture", detail: "Event-sourced domain" },
-  { label: "AI boundary", detail: "Rules own truth" },
-  { label: "0→1 product", detail: "Human-led, AI-native build" },
+  { label: "Free early access", detail: "Hosted app · no terminal" },
+  { label: "Low cognitive load", detail: "Assistant plans · you execute" },
+  { label: "Nothing missed", detail: "Timely reminders + evidence" },
+  { label: "Explainable", detail: "Rules own truth · AI at edges" },
 ] as const;
 
 export const coreLoopSteps = [
-  { label: "Evidence", detail: "Receipts, mileage, service history" },
-  { label: "State", detail: "Event-sourced vehicle projection" },
-  { label: "Policy", detail: "Deterministic schedule engine" },
-  { label: "Action", detail: "Recommendations with human approval" },
-  { label: "Memory", detail: "Preferences and explainability" },
+  { label: "Hand off", detail: "Records, receipts, owner manual" },
+  { label: "Remember", detail: "Event-sourced history + evidence" },
+  { label: "Project", detail: "OEM intervals and what's ahead" },
+  { label: "Remind", detail: "Calendar deadlines — snooze or act; assistant remembers mileage" },
+  { label: "Verify", detail: "Owner confirms only when blocked" },
 ] as const;
 
 /** Positioning copy — gap cards on main `#positioning`; Option A archived on `/design-preview`. */
@@ -65,9 +72,9 @@ export const positioningContent = {
   sectionLabel: "Where this fits",
   sectionTitle: "Three tools people already reach for",
   intro:
-    "CARFAX is useful for history. ChatGPT is useful for a quick second opinion. Neither was built to remember your car month after month — what's due, what you already paid for, and what to do next without starting over.",
+    "History reports are a snapshot. General AI helps once — then forgets. Neither stays on the job month after month, sending calendar reminders before something slips.",
   footnote:
-    "Vehicle OS isn't a replacement for a history report or a one-off AI answer. It's the layer that keeps your car's story — so reminders, quote checks, and explanations build on what you already know.",
+    "VehicleOS is the reminding assistant that keeps your car's story — so maintenance stays on time without you carrying the planner in your head.",
   gapCards: [
     {
       id: "history",
@@ -81,8 +88,8 @@ export const positioningContent = {
     },
     {
       id: "vehicleos",
-      label: "Vehicle OS",
-      line: "Remembers → reminds → explains with evidence",
+      label: "VehicleOS",
+      line: "Hand off once → reminds → nothing missed",
       highlight: true,
     },
   ],
@@ -135,12 +142,12 @@ export const statusRows: StatusRow[] = [
   { item: "Vehicle OS Connect v0 CLI (validate / preview)", status: "shipped" },
   { item: "Receipt → recommendation vertical slice", status: "in-progress" },
   { item: "Demo video (YouTube stand-in; full V1 re-record at freeze)", status: "in-progress" },
-  { item: "Hosted Owners app — API + Postgres + golden path", status: "shipped" },
+  { item: "Hosted early-access app — API + Postgres + golden path", status: "shipped" },
   { item: "Privacy & security trust pages", status: "shipped" },
   { item: "Self-serve account deletion", status: "shipped" },
   { item: "Auth + vehicle onboarding wizard", status: "shipped" },
   { item: "Vehicle OS Connect desktop (Owners)", status: "planned" },
-  { item: "SMS / email proactive reminders", status: "planned" },
+  { item: "SMS / email / push proactive reminders (calendar-first)", status: "planned" },
   { item: "Future subscription tiers (documented, not building)", status: "planned" },
   { item: "v2 lakehouse analytics path", status: "planned" },
 ];

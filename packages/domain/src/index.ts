@@ -109,14 +109,49 @@ export {
   type RefreshMaintenanceRecommendationResult,
 } from "./now/refresh-maintenance-recommendation.js";
 export {
+  computeVerificationMaturity,
+  type AssistantMaturityStage,
+  type ComputeVerificationMaturityInput,
+  type VerificationMaturityView,
+  type VerificationWeeklyBucket,
+} from "./now/compute-verification-maturity.js";
+export {
   projectMaintenanceSchedule,
   DEFAULT_EFFECTIVE_MILES_PER_YEAR,
   DEFAULT_SCHEDULE_HORIZON_MONTHS,
+  DEFAULT_DUE_SOON_DAYS,
   EXTENDED_SCHEDULE_HORIZON_MONTHS,
+  FULL_OEM_LIFE_CAP_YEARS,
+  resolveScheduleHorizonEnd,
   type ProjectMaintenanceScheduleInput,
   type ProjectMaintenanceScheduleResult,
+  type ScheduleHorizonMode,
   type ScheduleProjectionRow,
   type ScheduleProjectionStatus,
 } from "./schedule/project-maintenance-schedule.js";
+export {
+  recordVehicleOsImport,
+  type RecordVehicleOsImportInput,
+  type RecordVehicleOsImportResult,
+  type VehicleOsImportService,
+} from "./import/record-vehicleos-import.js";
+export {
+  AGGRESSIVE_DUE_SOON_DAYS,
+  computeEffectiveMilesPerYear,
+  computeObservedMilesPerYear,
+  resolveDueSoonDays,
+  resolveScheduleProjectionContext,
+  type DrivingStyle,
+  type ScheduleProjectionContext,
+} from "./schedule/resolve-schedule-projection-context.js";
+export type { OwnerContextMemory } from "./owner-context/types.js";
+export {
+  hasOwnerContextMemory,
+  normalizeOwnerContextMemory,
+} from "./owner-context/normalize-owner-context.js";
+export {
+  enrichRecommendationReason,
+  type EnrichRecommendationInput,
+} from "./owner-context/enrich-recommendation-reason.js";
 export type { KnowledgeScheduleEntry } from "./projections/types.js";
 export type { KnowledgeScheduleRow } from "./events/catalog.js";

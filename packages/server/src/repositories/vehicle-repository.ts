@@ -1,4 +1,7 @@
 import type pg from "pg";
+import { normalizeOwnerContextMemory, type OwnerContextMemory } from "@vehicleos/domain";
+
+export type DrivingStyle = "economical" | "casual" | "aggressive";
 
 export type CreateVehicleInput = {
   userId?: string;
@@ -8,6 +11,10 @@ export type CreateVehicleInput = {
   model: string;
   trim?: string;
   currentMileage: number;
+  ownedSince?: string | null;
+  drivingStyle?: DrivingStyle | null;
+  statedMilesPerYear?: number | null;
+  ownerContextMemory?: OwnerContextMemory | null;
 };
 
 export type UpdateVehicleInput = {
@@ -17,12 +24,34 @@ export type UpdateVehicleInput = {
   model?: string;
   trim?: string | null;
   currentMileage?: number;
+  ownedSince?: string | null;
+  drivingStyle?: DrivingStyle | null;
+  statedMilesPerYear?: number | null;
+  ownerContextMemory?: OwnerContextMemory | null;
 };
 
 export type VehicleRecord = CreateVehicleInput & {
   id: string;
   userId: string;
   createdAt: string;
+  statedMilesPerYearUpdatedAt?: string | null;
+};
+
+type VehicleRow = {
+  id: string;
+  user_id: string;
+  vin: string;
+  year: number;
+  make: string;
+  model: string;
+  trim: string | null;
+  current_mileage: number;
+  owned_since: Date | null;
+  driving_style: DrivingStyle | null;
+  stated_miles_per_year: number | null;
+  stated_miles_per_year_updated_at: Date | null;
+  owner_context_memory: OwnerContextMemory | Record<string, unknown> | null;
+  created_at: Date;
 };
 
 export class VehicleRepository {
@@ -32,21 +61,34 @@ export class VehicleRepository {
     const id = crypto.randomUUID();
     const userId = input.userId ?? crypto.randomUUID();
 
-    const result = await this.pool.query<{
-      id: string;
-      user_id: string;
-      vin: string;
-      year: number;
-      make: string;
-      model: string;
-      trim: string | null;
-      current_mileage: number;
-      created_at: Date;
-    }>(
-      `insert into vehicles (id, user_id, vin, year, make, model, trim, current_mileage)
-       values ($1, $2, $3, $4, $5, $6, $7, $8)
+    const statedMilesPerYearUpdatedAt =
+      input.statedMilesPerYear !== undefined && input.statedMilesPerYear !== null
+        ? new Date()
+        : null;
+
+    const result = await this.pool.query<VehicleRow>(
+      `insert into vehicles (
+         id, user_id, vin, year, make, model, trim, current_mileage,
+         owned_since, driving_style, stated_miles_per_year, stated_miles_per_year_updated_at,
+         owner_context_memory
+       )
+       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
        returning *`,
-      [id, userId, input.vin, input.year, input.make, input.model, input.trim ?? null, input.currentMileage],
+      [
+        id,
+        userId,
+        input.vin,
+        input.year,
+        input.make,
+        input.model,
+        input.trim ?? null,
+        input.currentMileage,
+        input.ownedSince ?? null,
+        input.drivingStyle ?? null,
+        input.statedMilesPerYear ?? null,
+        statedMilesPerYearUpdatedAt,
+        JSON.stringify(normalizeOwnerContextMemory(input.ownerContextMemory)),
+      ],
     );
 
     const row = result.rows[0];
@@ -54,17 +96,7 @@ export class VehicleRepository {
   }
 
   async findById(vehicleId: string): Promise<VehicleRecord | null> {
-    const result = await this.pool.query<{
-      id: string;
-      user_id: string;
-      vin: string;
-      year: number;
-      make: string;
-      model: string;
-      trim: string | null;
-      current_mileage: number;
-      created_at: Date;
-    }>(`select * from vehicles where id = $1`, [vehicleId]);
+    const result = await this.pool.query<VehicleRow>(`select * from vehicles where id = $1`, [vehicleId]);
 
     const row = result.rows[0];
     if (!row) return null;
@@ -73,17 +105,7 @@ export class VehicleRepository {
   }
 
   async listByUserId(userId: string): Promise<VehicleRecord[]> {
-    const result = await this.pool.query<{
-      id: string;
-      user_id: string;
-      vin: string;
-      year: number;
-      make: string;
-      model: string;
-      trim: string | null;
-      current_mileage: number;
-      created_at: Date;
-    }>(
+    const result = await this.pool.query<VehicleRow>(
       `select * from vehicles where user_id = $1 order by created_at asc`,
       [userId],
     );
@@ -95,24 +117,32 @@ export class VehicleRepository {
     const existing = await this.findById(vehicleId);
     if (!existing || existing.userId !== userId) return null;
 
-    const result = await this.pool.query<{
-      id: string;
-      user_id: string;
-      vin: string;
-      year: number;
-      make: string;
-      model: string;
-      trim: string | null;
-      current_mileage: number;
-      created_at: Date;
-    }>(
+    const nextStatedMilesPerYear =
+      patch.statedMilesPerYear === undefined ? existing.statedMilesPerYear ?? null : patch.statedMilesPerYear;
+    const statedMilesPerYearUpdatedAt =
+      patch.statedMilesPerYear !== undefined &&
+      patch.statedMilesPerYear !== existing.statedMilesPerYear
+        ? new Date()
+        : existing.statedMilesPerYearUpdatedAt ?? null;
+
+    const nextOwnerContextMemory =
+      patch.ownerContextMemory === undefined
+        ? existing.ownerContextMemory ?? {}
+        : normalizeOwnerContextMemory(patch.ownerContextMemory);
+
+    const result = await this.pool.query<VehicleRow>(
       `update vehicles
        set vin = $3,
            year = $4,
            make = $5,
            model = $6,
            trim = $7,
-           current_mileage = $8
+           current_mileage = $8,
+           owned_since = $9,
+           driving_style = $10,
+           stated_miles_per_year = $11,
+           stated_miles_per_year_updated_at = $12,
+           owner_context_memory = $13
        where id = $1 and user_id = $2
        returning *`,
       [
@@ -124,6 +154,11 @@ export class VehicleRepository {
         patch.model ?? existing.model,
         patch.trim === undefined ? existing.trim ?? null : patch.trim,
         patch.currentMileage ?? existing.currentMileage,
+        patch.ownedSince === undefined ? existing.ownedSince ?? null : patch.ownedSince,
+        patch.drivingStyle === undefined ? existing.drivingStyle ?? null : patch.drivingStyle,
+        nextStatedMilesPerYear,
+        statedMilesPerYearUpdatedAt,
+        JSON.stringify(nextOwnerContextMemory),
       ],
     );
 
@@ -159,17 +194,7 @@ export class VehicleRepository {
   }
 }
 
-const mapVehicleRow = (row: {
-  id: string;
-  user_id: string;
-  vin: string;
-  year: number;
-  make: string;
-  model: string;
-  trim: string | null;
-  current_mileage: number;
-  created_at: Date;
-}): VehicleRecord => ({
+const mapVehicleRow = (row: VehicleRow): VehicleRecord => ({
   id: row.id,
   userId: row.user_id,
   vin: row.vin,
@@ -178,5 +203,10 @@ const mapVehicleRow = (row: {
   model: row.model,
   trim: row.trim ?? undefined,
   currentMileage: row.current_mileage,
+  ownedSince: row.owned_since ? row.owned_since.toISOString().slice(0, 10) : null,
+  drivingStyle: row.driving_style ?? null,
+  statedMilesPerYear: row.stated_miles_per_year ?? null,
+  statedMilesPerYearUpdatedAt: row.stated_miles_per_year_updated_at?.toISOString() ?? null,
+  ownerContextMemory: normalizeOwnerContextMemory(row.owner_context_memory),
   createdAt: row.created_at.toISOString(),
 });

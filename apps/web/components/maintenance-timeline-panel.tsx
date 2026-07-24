@@ -45,7 +45,7 @@ export function MaintenanceTimelinePanel({
       <EmptyState
         icon={Clock3}
         title="No service history yet"
-        description="Add a receipt, voice note, or owner entry from Receipts or More to start your timeline."
+        description="Add a receipt, voice note, or owner entry from Receipt intake or Owner notes intake to start your service history."
       />
     );
   }

@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { OrbitIcon } from "../../../packages/ui/src/logo-mark";
 
 export const runtime = "edge";
-export const alt = "VehicleOS — Operational memory for vehicle ownership";
+export const alt = "VehicleOS — Your car's reminding assistant";
 export const size = { width: 1280, height: 640 };
 export const contentType = "image/png";
 
@@ -48,10 +48,10 @@ export default function OpenGraphImage() {
             maxWidth: 900,
           }}
         >
-          Operational memory for long-lived ownership
+          Stop planning. Just show up.
         </p>
         <p style={{ margin: "20px 0 0", fontSize: 26, color: "#a1a1aa", maxWidth: 820, lineHeight: 1.4 }}>
-          Explainable AI maintenance · Event-sourced · Rules-first
+          Hire a reminding assistant for your car — free early access
         </p>
       </div>
     ),

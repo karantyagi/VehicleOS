@@ -13,6 +13,7 @@ type MaintenanceTimelineSectionProps = {
   timeline: TimelineEntry[];
   scheduleNear: ScheduleProjectionRow[];
   scheduleExtended: ScheduleProjectionRow[];
+  scheduleFull: ScheduleProjectionRow[];
   effectiveMilesPerYear: number;
   disabled?: boolean;
   onOpenEvidence?: (documentId: string) => void;
@@ -22,6 +23,7 @@ export function MaintenanceTimelineSection({
   timeline,
   scheduleNear,
   scheduleExtended,
+  scheduleFull,
   effectiveMilesPerYear,
   disabled = false,
   onOpenEvidence,
@@ -31,9 +33,9 @@ export function MaintenanceTimelineSection({
   return (
     <div className="space-y-4">
       <div
-        className="inline-flex rounded-lg border border-border bg-muted/40 p-0.5"
+        className="grid w-full grid-cols-2 rounded-lg border border-border bg-muted/40 p-0.5 sm:inline-flex sm:w-auto"
         role="tablist"
-        aria-label="Timeline views"
+        aria-label="Service history views"
       >
         {(
           [
@@ -49,7 +51,7 @@ export function MaintenanceTimelineSection({
             variant="ghost"
             size="sm"
             className={cn(
-              "h-8 rounded-md px-3 text-sm",
+              "h-9 rounded-md px-3 text-sm sm:h-8",
               tab === item.id && "bg-background text-foreground shadow-sm",
             )}
             onClick={() => setTab(item.id)}
@@ -65,6 +67,7 @@ export function MaintenanceTimelineSection({
         <MaintenanceScheduleConsole
           nearRows={scheduleNear}
           extendedRows={scheduleExtended}
+          fullRows={scheduleFull}
           effectiveMilesPerYear={effectiveMilesPerYear}
         />
       )}

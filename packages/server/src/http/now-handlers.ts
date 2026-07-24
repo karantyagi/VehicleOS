@@ -1,5 +1,6 @@
 import type { ApiServices } from "../services/index.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
+import { recommendationContextFromVehicle } from "./recommendation-context-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
 
 type AuthContext = {
@@ -21,12 +22,17 @@ export const refreshNowQueue = async (
   if (!vehicle) return jsonResponse(404, { error: "Vehicle not found" });
   if (vehicle.userId !== auth.userId) return forbidden();
 
-  const result = await services.goldenPath.refreshMaintenanceRecommendation({ vehicleId });
+  const result = await services.goldenPath.refreshMaintenanceRecommendation({
+    vehicleId,
+    ...recommendationContextFromVehicle(vehicle),
+  });
+
+  const snapshot = await services.goldenPath.getVehicleState(vehicleId);
 
   return jsonResponse(200, {
     created: result.created,
     skippedReason: result.skippedReason,
     recommendation: result.recommendation,
-    ...buildVehicleStateView(result.state),
+    ...buildVehicleStateView(result.state, vehicle, snapshot.events),
   });
 };

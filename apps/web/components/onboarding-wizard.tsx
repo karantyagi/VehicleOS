@@ -1,12 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { DrivingStyleFields } from "@/components/driving-style-fields";
 import { FormActions, FormField } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { LogoMark } from "../lib/logo-mark";
 import { getApiBase } from "../lib/api-base";
+import {
+  parseStatedMilesPerYear,
+  type DriverHabitsDraft,
+} from "@/lib/driver-habits";
 import { cn } from "@/lib/utils";
 
 export type OnboardingVehicle = {
@@ -17,6 +22,9 @@ export type OnboardingVehicle = {
   currentMileage: number;
   trim?: string;
   vin?: string;
+  ownedSince?: string | null;
+  drivingStyle?: "economical" | "casual" | "aggressive" | null;
+  statedMilesPerYear?: number | null;
 };
 
 type VehicleForm = {
@@ -26,6 +34,7 @@ type VehicleForm = {
   trim: string;
   vin: string;
   currentMileage: number;
+  ownedSince: string;
 };
 
 type OnboardingWizardProps = {
@@ -39,17 +48,30 @@ const defaultForm: VehicleForm = {
   trim: "",
   vin: "",
   currentMileage: 41_800,
+  ownedSince: "",
 };
 
-const steps = ["welcome", "details", "review"] as const;
+const steps = ["welcome", "car", "driver", "review"] as const;
 type WizardStep = (typeof steps)[number];
 
 const stepIndex = (step: WizardStep) => steps.indexOf(step);
+
+const progressForStep = (step: WizardStep): number => {
+  if (step === "welcome") return 0;
+  if (step === "car") return 25;
+  if (step === "driver") return 55;
+  return 100;
+};
 
 export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const apiBase = getApiBase();
   const [step, setStep] = useState<WizardStep>("welcome");
   const [form, setForm] = useState<VehicleForm>(defaultForm);
+  const [driverDraft, setDriverDraft] = useState<DriverHabitsDraft>({
+    drivingStyle: "casual",
+    statedMilesPerYear: null,
+  });
+  const [milesInput, setMilesInput] = useState("");
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -59,9 +81,25 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     [form],
   );
 
+  const drivingStyleLabel = useMemo(() => {
+    const labels: Record<DriverHabitsDraft["drivingStyle"], string> = {
+      economical: "Economical",
+      casual: "Casual",
+      aggressive: "Aggressive",
+    };
+    return labels[driverDraft.drivingStyle];
+  }, [driverDraft.drivingStyle]);
+
   const createVehicle = async () => {
     setIsBusy(true);
     setError("");
+
+    const parsedMiles = parseStatedMilesPerYear(milesInput);
+    if (parsedMiles === "invalid") {
+      setError("Enter annual mileage between 1,000 and 80,000.");
+      setIsBusy(false);
+      return;
+    }
 
     try {
       const response = await fetch(`${apiBase}/api/vehicles`, {
@@ -74,6 +112,9 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           model: form.model.trim(),
           trim: form.trim.trim() || undefined,
           currentMileage: Number(form.currentMileage),
+          ownedSince: form.ownedSince.trim() || null,
+          drivingStyle: driverDraft.drivingStyle,
+          statedMilesPerYear: parsedMiles,
         }),
       });
 
@@ -88,7 +129,13 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     }
   };
 
-  const progress = step === "welcome" ? 0 : step === "details" ? 50 : 100;
+  const goBack = () => {
+    if (step === "review") setStep("driver");
+    else if (step === "driver") setStep("car");
+    else if (step === "car") setStep("welcome");
+  };
+
+  const progress = progressForStep(step);
 
   return (
     <Card className="overflow-hidden border-border/80 shadow-md">
@@ -110,30 +157,34 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         )}
         <CardTitle className={cn(step === "welcome" && "text-2xl")}>
           {step === "welcome"
-            ? "Start your ownership timeline"
-            : step === "details"
-              ? "Tell us about your vehicle"
-              : "Review and save"}
+            ? "Set up your reminding assistant"
+            : step === "car"
+              ? "Vehicle record"
+              : step === "driver"
+                ? "Driving profile"
+                : "Review and finish setup"}
         </CardTitle>
         <CardDescription className={cn(step === "welcome" && "max-w-md")}>
           {step === "welcome"
-            ? "One place for receipts, reminders, and plain-English answers — you confirm before anything changes."
-            : step === "details"
-              ? "We use this to build your timeline and mileage-aware reminders."
-              : "Confirm your vehicle details. You can add receipts from the Receipts section next."}
+            ? "Two quick steps — vehicle record and driving profile — then your assistant workspace unlocks."
+            : step === "car"
+              ? "We use this to project calendar reminders — the assistant handles mileage math."
+              : step === "driver"
+                ? "Driving style shapes preemptive nudges. Annual miles fine-tunes Schedule dates."
+                : "Confirm everything looks right, then open your assistant workspace."}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6">
         {step === "welcome" ? (
           <>
-            <Button type="button" size="lg" className="w-full sm:w-auto" onClick={() => setStep("details")}>
-              Add your first vehicle
+            <Button type="button" size="lg" className="w-full sm:w-auto" onClick={() => setStep("car")}>
+              Set up Owner profile
             </Button>
-            <ol className="grid gap-3 sm:grid-cols-3" aria-label="How it works">
+            <ol className="grid gap-3 sm:grid-cols-3" aria-label="How setup works">
               {[
-                ["01", "Add car"],
-                ["02", "Confirm receipt"],
+                ["01", "Vehicle record"],
+                ["02", "Driving profile"],
                 ["03", "See what's due"],
               ].map(([num, label]) => (
                 <li key={num} className="rounded-lg border border-border bg-muted/30 px-3 py-3 text-sm">
@@ -145,7 +196,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           </>
         ) : null}
 
-        {step === "details" ? (
+        {step === "car" ? (
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField label="Year" htmlFor="ob-year">
               <Input
@@ -197,7 +248,29 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 onChange={(event) => setForm({ ...form, vin: event.target.value })}
               />
             </FormField>
+            <FormField
+              label="Owned since"
+              htmlFor="ob-owned-since"
+              optional
+              hint="Anchors calendar reminders when receipts are missing"
+            >
+              <Input
+                id="ob-owned-since"
+                type="date"
+                value={form.ownedSince}
+                onChange={(event) => setForm({ ...form, ownedSince: event.target.value })}
+              />
+            </FormField>
           </div>
+        ) : null}
+
+        {step === "driver" ? (
+          <DrivingStyleFields
+            draft={driverDraft}
+            milesInput={milesInput}
+            onDraftChange={setDriverDraft}
+            onMilesInputChange={setMilesInput}
+          />
         ) : null}
 
         {step === "review" ? (
@@ -212,6 +285,22 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 <dd className="font-medium">{form.vin.trim()}</dd>
               </div>
             ) : null}
+            {form.ownedSince ? (
+              <div>
+                <dt className="text-muted-foreground">Owned since</dt>
+                <dd className="font-medium">{form.ownedSince}</dd>
+              </div>
+            ) : null}
+            <div>
+              <dt className="text-muted-foreground">Driving style</dt>
+              <dd className="font-medium">{drivingStyleLabel}</dd>
+            </div>
+            {milesInput.trim() ? (
+              <div>
+                <dt className="text-muted-foreground">Annual miles</dt>
+                <dd className="font-medium">{Number(milesInput).toLocaleString()} mi/year</dd>
+              </div>
+            ) : null}
           </dl>
         ) : null}
 
@@ -219,27 +308,28 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
         {step !== "welcome" ? (
           <FormActions>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isBusy}
-              onClick={() => setStep(step === "review" ? "details" : "welcome")}
-            >
+            <Button type="button" variant="outline" disabled={isBusy} onClick={goBack}>
               Back
             </Button>
-            {step === "details" ? (
+            {step === "car" ? (
               <Button
                 type="button"
                 disabled={!form.make.trim() || !form.model.trim() || form.currentMileage <= 0}
-                onClick={() => setStep("review")}
+                onClick={() => setStep("driver")}
               >
                 Continue
               </Button>
-            ) : (
-              <Button type="button" disabled={isBusy} onClick={() => void createVehicle()}>
-                {isBusy ? "Saving…" : "Save vehicle"}
+            ) : null}
+            {step === "driver" ? (
+              <Button type="button" onClick={() => setStep("review")}>
+                Continue
               </Button>
-            )}
+            ) : null}
+            {step === "review" ? (
+              <Button type="button" disabled={isBusy} onClick={() => void createVehicle()}>
+                {isBusy ? "Saving…" : "Finish setup"}
+              </Button>
+            ) : null}
           </FormActions>
         ) : null}
       </CardContent>

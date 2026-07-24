@@ -47,6 +47,14 @@ const severityRail = (category: ReturnType<typeof classifyItem>): string => {
   return "border-l-border";
 };
 
+const queueStatusLabel = (status: string): string => {
+  if (status === "pending") return "awaiting verification";
+  if (status === "approved") return "approved";
+  if (status === "dismissed") return "dismissed";
+  if (status === "snoozed") return "snoozed";
+  return status;
+};
+
 type NowQueuePanelProps = {
   items: QueueItem[];
   disabled?: boolean;
@@ -60,12 +68,12 @@ export function NowQueuePanel({ items, disabled = false, onDecide }: NowQueuePan
   return (
     <div className="space-y-4">
       <p className="text-[13px] leading-relaxed text-muted-foreground">
-        Plain-English recommendations — you approve, dismiss, or snooze before anything changes.
+        Items awaiting Owner verification — resolve conflicts or confirm; dismiss or snooze when done.
       </p>
 
       {pending.length === 0 ? (
         <p className="surface-inset px-4 py-6 text-center text-sm text-muted-foreground">
-          Nothing needs a decision right now. Check back after your next service or refresh recommendations.
+          Nothing awaiting verification. As the assistant learns your car, this stays quiet.
         </p>
       ) : (
         <ul className="space-y-3">
@@ -126,7 +134,7 @@ export function NowQueuePanel({ items, disabled = false, onDecide }: NowQueuePan
             {recent.map((item) => (
               <li key={item.taskId} className="flex flex-wrap items-center justify-between gap-2 text-[13px]">
                 <strong>{item.title}</strong>
-                <Badge variant="secondary">{item.status}</Badge>
+                <Badge variant="secondary">{queueStatusLabel(item.status)}</Badge>
               </li>
             ))}
           </ul>

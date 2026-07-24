@@ -1,6 +1,7 @@
 import type { ServiceRecordSource } from "@vehicleos/domain";
 import type { ApiServices } from "../services/index.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
+import { recommendationContextFromVehicle } from "./recommendation-context-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
 
 type OwnerNoteBody = {
@@ -64,6 +65,7 @@ export const submitOwnerServiceNote = async (
     total: body.total?.trim() || "$0.00",
     evidenceIds: [],
     source,
+    ...recommendationContextFromVehicle(vehicle),
   });
 
   if (result.conflict) {
@@ -76,13 +78,13 @@ export const submitOwnerServiceNote = async (
         reason: result.state.nowQueue.at(-1)?.reason,
         verificationCode: result.state.nowQueue.at(-1)?.verificationCode,
       },
-      ...buildVehicleStateView(result.state),
+      ...buildVehicleStateView(result.state, vehicle),
     });
   }
 
   return jsonResponse(201, {
     recommendation: result.result.recommendation,
     task: result.result.task,
-    ...buildVehicleStateView(result.result.state),
+    ...buildVehicleStateView(result.result.state, vehicle),
   });
 };

@@ -93,7 +93,7 @@ export function SeasonalPromptsPanel({
 
       <p className="text-xs text-muted-foreground">
         {lastCreatedCount > 0
-          ? `${lastCreatedCount} seasonal prompt(s) added to your Now queue.`
+          ? `${lastCreatedCount} seasonal prompt(s) added to Owner verification.`
           : "No new seasonal prompts right now — check back next season or after a refresh."}
       </p>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, LogOut, Moon, Settings } from "lucide-react";
+import { CarFront, ChevronRight, LogOut, Moon, Settings } from "lucide-react";
 import Link from "next/link";
 import { ThemeSegmentedToggle } from "@/components/theme-segmented-toggle";
 import {
@@ -62,12 +62,20 @@ export function AccountMenu({ user, className }: AccountMenuProps) {
                 <ThemeSegmentedToggle />
               </div>
               <Link
+                href="/garage?tab=car"
+                className="group relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/80"
+              >
+                <span className="absolute bottom-1 left-0 top-1 w-0.5 rounded-full bg-primary opacity-0 transition-opacity group-hover:opacity-100" />
+                <CarFront className="h-4 w-4 text-muted-foreground" aria-hidden />
+                Owner
+              </Link>
+              <Link
                 href="/settings"
                 className="group relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/80"
               >
                 <span className="absolute bottom-1 left-0 top-1 w-0.5 rounded-full bg-primary opacity-0 transition-opacity group-hover:opacity-100" />
                 <Settings className="h-4 w-4 text-muted-foreground" aria-hidden />
-                Settings
+                Account
               </Link>
             </div>
             <div className="my-1 h-px bg-border/80" />

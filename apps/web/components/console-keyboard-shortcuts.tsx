@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
+import { useAppSectionNavigation } from "@/lib/use-app-section-navigation";
 import { APP_SECTIONS, SECTION_SHORTCUTS, useAppUiStore } from "@/lib/store/app-ui-store";
 
 export function ConsoleKeyboardShortcuts() {
   const setCommandOpen = useAppUiStore((s) => s.setCommandOpen);
-  const setActiveSection = useAppUiStore((s) => s.setActiveSection);
+  const { goToSection } = useAppSectionNavigation();
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -28,13 +29,13 @@ export function ConsoleKeyboardShortcuts() {
       const section = APP_SECTIONS.find((entry) => SECTION_SHORTCUTS[entry.id] === event.key);
       if (section) {
         event.preventDefault();
-        setActiveSection(section.id);
+        goToSection(section.id);
       }
     };
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [setActiveSection, setCommandOpen]);
+  }, [goToSection, setCommandOpen]);
 
   return null;
 }

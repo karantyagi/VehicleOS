@@ -11,9 +11,11 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: "/",
     id: "/",
     display: "standalone",
+    display_override: ["standalone", "browser"],
     orientation: "portrait-primary",
     background_color: pwaConfig.backgroundColor,
     theme_color: pwaConfig.themeColorLight,
+    prefer_related_applications: false,
     categories: ["productivity", "utilities"],
     icons: [
       {
@@ -36,10 +38,17 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     shortcuts: [
       {
-        name: "Capture receipt",
+        name: "Receipt intake",
         short_name: "Receipts",
         description: "Photo or PDF at the shop",
         url: "/?section=receipts",
+        icons: [{ src: "/icons/icon.svg", sizes: "512x512", type: "image/svg+xml" }],
+      },
+      {
+        name: "Owner verification",
+        short_name: "Verify",
+        description: "Resolve conflicts the assistant can't settle alone",
+        url: "/?section=now",
         icons: [{ src: "/icons/icon.svg", sizes: "512x512", type: "image/svg+xml" }],
       },
     ],

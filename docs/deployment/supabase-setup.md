@@ -77,9 +77,10 @@ Account deletion smoke test: **Settings** → type `DELETE` → confirm → redi
 
 **OEM manual uploads (ADR-007):**
 
-1. Run [`db/migrations/004_manual_storage_limit.sql`](../../db/migrations/004_manual_storage_limit.sql) in Supabase SQL editor (raises `receipts` bucket limit to **50 MB**)
-2. Manual uploads use your signed-in session + storage RLS when `SUPABASE_SERVICE_ROLE_KEY` is unset; signed URLs are used when the service role key **is** set (preferred on Vercel)
-3. Smoke: **Add context** → upload owner manual PDF (≤50 MB) → confirm schedule
+1. Run [`db/migrations/004_manual_storage_limit.sql`](../../db/migrations/004_manual_storage_limit.sql) in Supabase SQL editor — **creates the `receipts` bucket** (if missing), RLS policies, and **50 MB** limit. Safe to re-run. (Migration 003 alone also works; 004 is now self-contained.)
+2. If upload errors with **bucket not found**, you skipped bucket creation — re-run **004** (not just the old `UPDATE` line).
+3. Manual uploads use session + RLS or signed URLs when `SUPABASE_SERVICE_ROLE_KEY` is set on Vercel.
+4. Smoke: **Add context** → upload owner manual PDF (≤50 MB) → confirm schedule
 
 Local dev without Storage: `AUTH_DISABLED=true` accepts uploads and records `storageKey` in events without persisting the blob.
 

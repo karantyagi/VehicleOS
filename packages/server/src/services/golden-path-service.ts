@@ -5,6 +5,7 @@ import {
   confirmServiceWithConflictCheck,
   decideTask,
   foldEvents,
+  recordVehicleOsImport,
   refreshMaintenanceRecommendation,
   type EventStore,
   type ExtractedServiceFields,
@@ -12,6 +13,7 @@ import {
   type PolicyEngine,
   type RecordServiceInput,
   type TaskDecision,
+  type VehicleOsImportService,
 } from "@vehicleos/domain";
 
 export type GoldenPathDeps = {
@@ -91,17 +93,31 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
       return getVehicleState(input.vehicleId);
     },
 
-    async refreshMaintenanceRecommendation(input: { vehicleId: string }) {
+    async refreshMaintenanceRecommendation(input: {
+      vehicleId: string;
+      ownerContextMemory?: import("@vehicleos/domain").OwnerContextMemory | null;
+      drivingStyle?: import("@vehicleos/domain").DrivingStyle | null;
+    }) {
       const result = await refreshMaintenanceRecommendation({
         eventStore,
         policyEngine,
         vehicleId: input.vehicleId,
+        ownerContextMemory: input.ownerContextMemory,
+        drivingStyle: input.drivingStyle,
       });
       const snapshot = await getVehicleState(input.vehicleId);
       return {
         ...result,
         state: snapshot.state,
       };
+    },
+
+    async importVehicleOsHistory(input: {
+      vehicleId: string;
+      importSource: string;
+      services: VehicleOsImportService[];
+    }) {
+      return recordVehicleOsImport({ eventStore, input });
     },
   };
 };

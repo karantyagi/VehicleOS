@@ -1,10 +1,13 @@
 import { EVENT_TYPES, EVENT_VERSIONS } from "../events/catalog.js";
 import type { CatalogDomainEvent } from "../events/catalog.js";
 import { detectServiceConflict } from "../conflicts/detect-service-conflict.js";
+import { enrichRecommendationReason } from "../owner-context/enrich-recommendation-reason.js";
+import type { OwnerContextMemory } from "../owner-context/types.js";
 import { foldEvents } from "../projections/apply.js";
 import type { PolicyEngine } from "../policy/policy-engine.js";
 import type { EventStore } from "../ports/event-store.js";
 import type { ServiceRecordSource, TaskDecision } from "../events/catalog.js";
+import type { DrivingStyle } from "../schedule/resolve-schedule-projection-context.js";
 
 export type RecordServiceInput = {
   vehicleId: string;
@@ -18,6 +21,8 @@ export type RecordServiceInput = {
   documentId?: string;
   correlationId?: string;
   source?: ServiceRecordSource;
+  ownerContextMemory?: OwnerContextMemory | null;
+  drivingStyle?: DrivingStyle | null;
 };
 
 export type GoldenPathResult = {
@@ -76,7 +81,14 @@ export const recordServiceAndRecommend = async (deps: {
 
   const vehicleEvents = eventsForVehicle(await eventStore.loadAll(), input.vehicleId);
   const state = foldEvents(input.vehicleId, vehicleEvents);
-  const recommendation = policyEngine.evaluate({ vehicleId: input.vehicleId, state });
+  const evaluated = policyEngine.evaluate({ vehicleId: input.vehicleId, state });
+  const recommendation = evaluated
+    ? enrichRecommendationReason({
+        recommendation: evaluated,
+        ownerContextMemory: input.ownerContextMemory,
+        drivingStyle: input.drivingStyle,
+      })
+    : null;
 
   let task: GoldenPathResult["task"] = null;
 
