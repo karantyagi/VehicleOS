@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 type PageHeaderProps = {
   eyebrow?: string;
   title: string;
-  description: string;
+  description?: string;
   badge?: ReactNode;
   action?: ReactNode;
   className?: string;
@@ -28,9 +28,11 @@ export function PageHeader({ eyebrow, title, description, badge, action, classNa
           </h1>
           {badge}
         </div>
-        <p className="max-w-xl text-pretty text-[13px] leading-relaxed text-muted-foreground sm:text-sm">
-          {description}
-        </p>
+        {description ? (
+          <p className="max-w-xl text-pretty text-[13px] leading-relaxed text-muted-foreground sm:text-sm">
+            {description}
+          </p>
+        ) : null}
       </div>
       {action ? <div className="flex shrink-0 flex-wrap items-center gap-2">{action}</div> : null}
     </header>

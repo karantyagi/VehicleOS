@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 type EmptyStateProps = {
   icon?: LucideIcon;
   title: string;
-  description: string;
+  description?: string;
   className?: string;
 };
 
@@ -22,7 +22,7 @@ export function EmptyState({ icon: Icon, title, description, className }: EmptyS
         </div>
       ) : null}
       <p className="text-sm font-medium text-foreground">{title}</p>
-      <p className="mt-1 max-w-sm text-sm text-muted-foreground">{description}</p>
+      {description ? <p className="mt-1 max-w-sm text-sm text-muted-foreground">{description}</p> : null}
     </div>
   );
 }

@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import type { ConsoleMode } from "@/lib/console-mode";
+import { persistConsoleMode, sanitizeSectionForMode } from "@/lib/console-mode";
 import type { ConsoleDensity } from "@/lib/console-types";
 
 export type AppSection =
@@ -78,6 +80,7 @@ export const SECTION_SHORTCUTS: Record<AppSection, string> = {
 };
 
 type AppUiState = {
+  consoleMode: ConsoleMode;
   activeSection: AppSection;
   mobileNavOpen: boolean;
   commandOpen: boolean;
@@ -86,6 +89,8 @@ type AppUiState = {
   selectedEvidenceId: string | null;
   selectedNowTaskId: string | null;
   selectedOwnershipRecordId: string | null;
+  setConsoleMode: (mode: ConsoleMode) => void;
+  hydrateConsoleMode: (mode: ConsoleMode) => void;
   setActiveSection: (section: AppSection) => void;
   setMobileNavOpen: (open: boolean) => void;
   setCommandOpen: (open: boolean) => void;
@@ -105,6 +110,7 @@ const clearSelections = {
 };
 
 export const useAppUiStore = create<AppUiState>((set, get) => ({
+  consoleMode: "owner",
   activeSection: "reminders",
   mobileNavOpen: false,
   commandOpen: false,
@@ -113,12 +119,29 @@ export const useAppUiStore = create<AppUiState>((set, get) => ({
   selectedEvidenceId: null,
   selectedNowTaskId: null,
   selectedOwnershipRecordId: null,
-  setActiveSection: (activeSection) =>
+  setConsoleMode: (consoleMode) => {
+    persistConsoleMode(consoleMode);
     set({
-      activeSection,
+      consoleMode,
+      activeSection: sanitizeSectionForMode(get().activeSection, consoleMode),
       mobileNavOpen: false,
       ...clearSelections,
-    }),
+    });
+  },
+  hydrateConsoleMode: (consoleMode) => {
+    set({
+      consoleMode,
+      activeSection: sanitizeSectionForMode(get().activeSection, consoleMode),
+    });
+  },
+  setActiveSection: (activeSection) => {
+    const { consoleMode } = get();
+    set({
+      activeSection: sanitizeSectionForMode(activeSection, consoleMode),
+      mobileNavOpen: false,
+      ...clearSelections,
+    });
+  },
   setMobileNavOpen: (mobileNavOpen) => set({ mobileNavOpen }),
   setCommandOpen: (commandOpen) => set({ commandOpen }),
   setDensity: (density) => {

@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import type { VehicleOwnerProfile } from "@/lib/driver-habits";
 import { notify } from "@/lib/notify";
 
-export function VehicleSettingsPanel() {
+export function VehicleSettingsPanel({ minimal = false }: { minimal?: boolean }) {
   const router = useRouter();
   const [vehicle, setVehicle] = useState<VehicleOwnerProfile | null>(null);
   const [form, setForm] = useState({
@@ -128,8 +128,14 @@ export function VehicleSettingsPanel() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Vehicle record</CardTitle>
-        <CardDescription>Update mileage or details when your situation changes.</CardDescription>
+        {!minimal ? (
+          <>
+            <CardTitle>Vehicle record</CardTitle>
+            <CardDescription>Update mileage or details when your situation changes.</CardDescription>
+          </>
+        ) : (
+          <CardTitle className="sr-only">Vehicle record</CardTitle>
+        )}
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">

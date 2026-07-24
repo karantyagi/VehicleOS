@@ -20,6 +20,8 @@ type MaintenanceTimelineSectionProps = {
   disabled?: boolean;
   onOpenEvidence?: (documentId: string) => void;
   onGoToImport?: () => void;
+  historyOnly?: boolean;
+  ownerSimple?: boolean;
 };
 
 const TAB_ITEMS = [
@@ -40,6 +42,8 @@ export function MaintenanceTimelineSection({
   disabled = false,
   onOpenEvidence,
   onGoToImport,
+  historyOnly = false,
+  ownerSimple = false,
 }: MaintenanceTimelineSectionProps) {
   const [internalTab, setInternalTab] = useState<ServiceHistoryTab>("history");
   const tab = activeTab ?? internalTab;
@@ -54,55 +58,71 @@ export function MaintenanceTimelineSection({
 
   return (
     <div className="space-y-4">
-      <div
-        className="grid w-full grid-cols-3 rounded-lg border border-border bg-muted/40 p-0.5 sm:inline-flex sm:w-auto"
-        role="tablist"
-        aria-label="Service history views"
-      >
-        {TAB_ITEMS.map((item) => (
-          <Button
-            key={item.id}
-            type="button"
-            role="tab"
-            aria-selected={tab === item.id}
-            variant="ghost"
-            size="sm"
-            className={cn(
-              "h-9 rounded-md px-3 text-sm sm:h-8",
-              tab === item.id && "bg-background text-foreground shadow-sm",
-            )}
-            onClick={() => setTab(item.id)}
-          >
-            {item.label}
-            {item.id === "ownership" && ownershipRecords.length > 0 ? (
-              <span className="ml-1.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-primary">
-                {ownershipRecords.length}
-              </span>
-            ) : null}
-          </Button>
-        ))}
-      </div>
-
-      {tab === "history" ? (
-        <MaintenanceTimelineConsole entries={timeline} disabled={disabled} onOpenEvidence={onOpenEvidence} />
-      ) : null}
-
-      {tab === "schedule" ? (
-        <MaintenanceScheduleConsole
-          nearRows={scheduleNear}
-          extendedRows={scheduleExtended}
-          fullRows={scheduleFull}
-          effectiveMilesPerYear={effectiveMilesPerYear}
-        />
-      ) : null}
-
-      {tab === "ownership" ? (
-        <OwnershipRecordsConsole
-          entries={ownershipRecords}
+      {historyOnly ? (
+        <MaintenanceTimelineConsole
+          entries={timeline}
           disabled={disabled}
-          onGoToImport={onGoToImport}
+          onOpenEvidence={onOpenEvidence}
+          ownerSimple={ownerSimple}
         />
-      ) : null}
+      ) : (
+        <>
+          <div
+            className="grid w-full grid-cols-3 rounded-lg border border-border bg-muted/40 p-0.5 sm:inline-flex sm:w-auto"
+            role="tablist"
+            aria-label="Service history views"
+          >
+            {TAB_ITEMS.map((item) => (
+              <Button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={tab === item.id}
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "h-9 rounded-md px-3 text-sm sm:h-8",
+                  tab === item.id && "bg-background text-foreground shadow-sm",
+                )}
+                onClick={() => setTab(item.id)}
+              >
+                {item.label}
+                {item.id === "ownership" && ownershipRecords.length > 0 ? (
+                  <span className="ml-1.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-primary">
+                    {ownershipRecords.length}
+                  </span>
+                ) : null}
+              </Button>
+            ))}
+          </div>
+
+          {tab === "history" ? (
+            <MaintenanceTimelineConsole
+              entries={timeline}
+              disabled={disabled}
+              onOpenEvidence={onOpenEvidence}
+              ownerSimple={ownerSimple}
+            />
+          ) : null}
+
+          {tab === "schedule" ? (
+            <MaintenanceScheduleConsole
+              nearRows={scheduleNear}
+              extendedRows={scheduleExtended}
+              fullRows={scheduleFull}
+              effectiveMilesPerYear={effectiveMilesPerYear}
+            />
+          ) : null}
+
+          {tab === "ownership" ? (
+            <OwnershipRecordsConsole
+              entries={ownershipRecords}
+              disabled={disabled}
+              onGoToImport={onGoToImport}
+            />
+          ) : null}
+        </>
+      )}
     </div>
   );
 }

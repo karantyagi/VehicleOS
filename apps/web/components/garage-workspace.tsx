@@ -6,6 +6,7 @@ import { DriverHabitsPanel } from "@/components/driver-habits-panel";
 import { OwnerContextPanel } from "@/components/owner-context-panel";
 import { PageHeader } from "@/components/page-header";
 import { VehicleSettingsPanel } from "@/components/vehicle-settings-panel";
+import { useAppUiStore } from "@/lib/store/app-ui-store";
 import { cn } from "@/lib/utils";
 
 export type GarageTab = "car" | "driver";
@@ -18,6 +19,8 @@ const GARAGE_TABS: { id: GarageTab; label: string }[] = [
 function GarageWorkspaceContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const consoleMode = useAppUiStore((state) => state.consoleMode);
+  const isDeveloper = consoleMode === "developer";
   const [vehicleId, setVehicleId] = useState<string | null>(null);
 
   const tabParam = searchParams.get("tab");
@@ -49,7 +52,7 @@ function GarageWorkspaceContent() {
       <PageHeader
         eyebrow="Owner"
         title="Owner"
-        description="Vehicle record and driving profile — what the assistant keeps on file about the Owner."
+        description={isDeveloper ? "Vehicle record and driving profile — what the assistant keeps on file about the Owner." : undefined}
       />
 
       <div
@@ -78,14 +81,14 @@ function GarageWorkspaceContent() {
 
       {activeTab === "car" ? (
         <div role="tabpanel">
-          <VehicleSettingsPanel />
+          <VehicleSettingsPanel minimal={!isDeveloper} />
         </div>
       ) : null}
 
       {activeTab === "driver" ? (
         <div role="tabpanel" className="space-y-6">
-          <DriverHabitsPanel vehicleId={vehicleId} />
-          <OwnerContextPanel vehicleId={vehicleId} />
+          <DriverHabitsPanel vehicleId={vehicleId} minimal={!isDeveloper} />
+          {isDeveloper ? <OwnerContextPanel vehicleId={vehicleId} /> : null}
         </div>
       ) : null}
     </>

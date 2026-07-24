@@ -31,17 +31,24 @@ type MaintenanceTimelineConsoleProps = {
   entries: TimelineEntry[];
   disabled?: boolean;
   onOpenEvidence?: (documentId: string) => void;
+  ownerSimple?: boolean;
 };
 
 export function MaintenanceTimelineConsole({
   entries,
   disabled = false,
   onOpenEvidence,
+  ownerSimple = false,
 }: MaintenanceTimelineConsoleProps) {
   const selectedId = useAppUiStore((s) => s.selectedTimelineId);
   const setSelectedId = useAppUiStore((s) => s.setSelectedTimelineId);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("date-desc");
+
+  const sortedEntries = useMemo(
+    () => [...entries].sort((a, b) => b.serviceDate.localeCompare(a.serviceDate)),
+    [entries],
+  );
 
   const visible = useMemo(() => {
     const filtered = filterByQuery(entries, query, (row) =>
@@ -57,15 +64,40 @@ export function MaintenanceTimelineConsole({
   }, [entries, query, sort]);
 
   const rowIds = useMemo(() => visible.map((entry) => entry.serviceId), [visible]);
-  useConsoleListKeyboard({ rowIds, selectedId, onSelect: setSelectedId, enabled: visible.length > 0 });
+  useConsoleListKeyboard({ rowIds, selectedId, onSelect: setSelectedId, enabled: !ownerSimple && visible.length > 0 });
 
   if (entries.length === 0) {
     return (
       <EmptyState
         icon={Clock3}
-        title="No service history yet"
-        description="Add a receipt, voice note, or owner entry from Receipt intake or Owner notes intake to start your service history."
+        title="No service yet"
+        description={ownerSimple ? undefined : "Add a receipt, voice note, or owner entry from Receipt intake or Owner notes intake to start your service history."}
       />
+    );
+  }
+
+  if (ownerSimple) {
+    return (
+      <ul className="space-y-3">
+        {sortedEntries.map((entry) => {
+          const summary =
+            entry.lineItems.length === 0
+              ? "Service recorded"
+              : entry.lineItems.length === 1
+                ? entry.lineItems[0]
+                : `${entry.lineItems[0]} · +${entry.lineItems.length - 1} more`;
+
+          return (
+            <li key={entry.serviceId} className="rounded-xl border border-border bg-card p-4 shadow-sm">
+              <p className="font-semibold leading-tight">{entry.serviceDate}</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {entry.shop} · {entry.mileage.toLocaleString()} mi
+              </p>
+              <p className="mt-1 text-sm text-foreground">{summary}</p>
+            </li>
+          );
+        })}
+      </ul>
     );
   }
 

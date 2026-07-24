@@ -26,15 +26,16 @@ type RemindersConsoleProps = {
   items: OwnerReminderItem[];
   disabled?: boolean;
   onDecide: (taskId: string, decision: "approve" | "dismiss" | "snooze", snoozeDays?: number) => void;
+  minimal?: boolean;
 };
 
-export function RemindersConsole({ items, disabled = false, onDecide }: RemindersConsoleProps) {
+export function RemindersConsole({ items, disabled = false, onDecide, minimal = false }: RemindersConsoleProps) {
   if (items.length === 0) {
     return (
       <EmptyState
         icon={BellRing}
-        title="Nothing due right now"
-        description="Your assistant is watching the schedule. You'll get calendar nudges here when something needs action."
+        title="Nothing due"
+        description={minimal ? undefined : "Your assistant is watching the schedule. You'll get calendar nudges here when something needs action."}
       />
     );
   }
@@ -53,23 +54,23 @@ export function RemindersConsole({ items, disabled = false, onDecide }: Reminder
             <div className="min-w-0 space-y-1">
               <div className="flex flex-wrap items-center gap-2">
                 <h3 className="font-semibold leading-tight">{item.title}</h3>
-                <Badge variant={urgencyVariant(item.urgency)}>{urgencyLabel[item.urgency]}</Badge>
+                {!minimal || item.urgency === "overdue" || item.urgency === "due_now" ? (
+                  <Badge variant={urgencyVariant(item.urgency)}>{urgencyLabel[item.urgency]}</Badge>
+                ) : null}
               </div>
               <p className="text-sm font-medium text-foreground">{item.deadlineLabel}</p>
               <p className="text-sm text-muted-foreground">{item.reason}</p>
-              {item.escalation ? (
+              {!minimal && item.escalation ? (
                 <p className="text-sm text-amber-700 dark:text-amber-300">{item.escalation}</p>
               ) : null}
-              {item.snoozeUntil && item.effectiveStatus === "snoozed" ? (
-                <p className="text-xs text-muted-foreground">
-                  Snoozed until {item.snoozeUntil}
-                </p>
+              {!minimal && item.snoozeUntil && item.effectiveStatus === "snoozed" ? (
+                <p className="text-xs text-muted-foreground">Snoozed until {item.snoozeUntil}</p>
               ) : null}
             </div>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
             <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
-              Mark scheduled
+              {minimal ? "Done" : "Mark scheduled"}
             </Button>
             <Button
               type="button"
@@ -80,24 +81,28 @@ export function RemindersConsole({ items, disabled = false, onDecide }: Reminder
             >
               Snooze 2 weeks
             </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="ghost"
-              disabled={disabled}
-              onClick={() => onDecide(item.taskId, "snooze", 30)}
-            >
-              Snooze 1 month
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="ghost"
-              disabled={disabled}
-              onClick={() => onDecide(item.taskId, "dismiss")}
-            >
-              Dismiss
-            </Button>
+            {!minimal ? (
+              <>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  disabled={disabled}
+                  onClick={() => onDecide(item.taskId, "snooze", 30)}
+                >
+                  Snooze 1 month
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  disabled={disabled}
+                  onClick={() => onDecide(item.taskId, "dismiss")}
+                >
+                  Dismiss
+                </Button>
+              </>
+            ) : null}
           </div>
         </li>
       ))}

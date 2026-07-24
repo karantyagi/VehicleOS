@@ -17,13 +17,14 @@ type ReceiptCaptureProps = {
   vehicleId: string;
   apiBase: string;
   disabled?: boolean;
+  minimal?: boolean;
   onUploaded: (upload: UploadedReceipt | null) => void;
   onError: (message: string) => void;
 };
 
 const ACCEPT = "image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf";
 
-export function ReceiptCapture({ vehicleId, apiBase, disabled, onUploaded, onError }: ReceiptCaptureProps) {
+export function ReceiptCapture({ vehicleId, apiBase, disabled, minimal = false, onUploaded, onError }: ReceiptCaptureProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploaded, setUploaded] = useState<UploadedReceipt | null>(null);
@@ -96,12 +97,14 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, onUploaded, onErr
           busy={isUploading}
           onFile={handlePick}
         />
-        <p className="mt-2 text-center text-xs text-muted-foreground">JPEG, PNG, WebP, HEIC, or PDF · max 10 MB</p>
+        <p className="mt-2 text-center text-xs text-muted-foreground">
+          {minimal ? "Photo or PDF" : "JPEG, PNG, WebP, HEIC, or PDF · max 10 MB"}
+        </p>
       </div>
       <div className="hidden md:block">
         <FileDropzone
-          label="Photo or PDF receipt"
-          hint="JPEG, PNG, WebP, HEIC, or PDF · max 10 MB"
+          label={minimal ? "Drop a receipt" : "Photo or PDF receipt"}
+          hint={minimal ? "Photo or PDF" : "JPEG, PNG, WebP, HEIC, or PDF · max 10 MB"}
           accept={ACCEPT}
           disabled={disabled}
           busy={isUploading}
@@ -123,9 +126,13 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, onUploaded, onErr
           )}
           <p className="mt-2 text-xs text-muted-foreground">
             {uploaded
-              ? `Stored · ${uploaded.channel === "photo" ? "photo" : "document"} ingest`
+              ? minimal
+                ? "Ready to hand off"
+                : `Stored · ${uploaded.channel === "photo" ? "photo" : "document"} ingest`
               : isUploading
-                ? "Uploading to evidence storage…"
+                ? minimal
+                  ? "Uploading…"
+                  : "Uploading to evidence storage…"
                 : "Waiting to upload…"}
           </p>
           <Button type="button" variant="ghost" size="sm" className="mt-2" disabled={disabled || isUploading} onClick={clearFile}>

@@ -11,8 +11,10 @@ import {
   ListChecks,
   MessageSquareQuote,
   Mic,
-  Monitor,
+  Code2,
+  Eye,
   Moon,
+  Monitor,
   Receipt,
   Rows3,
   Search,
@@ -26,6 +28,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { APP_SECTIONS, SECTION_SHORTCUTS, useAppUiStore } from "@/lib/store/app-ui-store";
+import { isSectionVisibleInMode } from "@/lib/console-mode";
 import { useAppSectionNavigation } from "@/lib/use-app-section-navigation";
 import { cn } from "@/lib/utils";
 
@@ -47,7 +50,10 @@ export function CommandMenu() {
   const { setTheme } = useTheme();
   const commandOpen = useAppUiStore((s) => s.commandOpen);
   const setCommandOpen = useAppUiStore((s) => s.setCommandOpen);
+  const consoleMode = useAppUiStore((s) => s.consoleMode);
+  const setConsoleMode = useAppUiStore((s) => s.setConsoleMode);
   const toggleDensity = useAppUiStore((s) => s.toggleDensity);
+  const visibleSections = APP_SECTIONS.filter((section) => isSectionVisibleInMode(section.id, consoleMode));
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -88,7 +94,7 @@ export function CommandMenu() {
           <Command.List className="max-h-[min(60vh,280px)] overflow-y-auto p-1.5">
             <Command.Empty className="py-8 text-center text-sm text-muted-foreground">No results</Command.Empty>
             <Command.Group heading="Go">
-              {APP_SECTIONS.map((section) => {
+              {visibleSections.map((section) => {
                 const Icon = SECTION_ICONS[section.id];
                 return (
                   <Command.Item
@@ -163,16 +169,35 @@ export function CommandMenu() {
                 <span className="font-medium">System</span>
               </Command.Item>
               <Command.Item
-                value="Toggle density compact comfortable"
+                value="Toggle owner developer view mode"
                 onSelect={() => {
-                  toggleDensity();
+                  setConsoleMode(consoleMode === "developer" ? "owner" : "developer");
                   setCommandOpen(false);
                 }}
                 className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
               >
-                <Rows3 className="text-muted-foreground" aria-hidden />
-                <span className="font-medium">Toggle density</span>
+                {consoleMode === "developer" ? (
+                  <Eye className="text-muted-foreground" aria-hidden />
+                ) : (
+                  <Code2 className="text-muted-foreground" aria-hidden />
+                )}
+                <span className="font-medium">
+                  {consoleMode === "developer" ? "Switch to Owner view" : "Switch to Developer view"}
+                </span>
               </Command.Item>
+              {consoleMode === "developer" ? (
+                <Command.Item
+                  value="Toggle density compact comfortable"
+                  onSelect={() => {
+                    toggleDensity();
+                    setCommandOpen(false);
+                  }}
+                  className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
+                >
+                  <Rows3 className="text-muted-foreground" aria-hidden />
+                  <span className="font-medium">Toggle density</span>
+                </Command.Item>
+              ) : null}
             </Command.Group>
           </Command.List>
           <div className="border-t border-border px-3 py-2 text-[10px] leading-relaxed text-muted-foreground">
@@ -182,7 +207,7 @@ export function CommandMenu() {
             <span className="mr-2">
               <kbd className="rounded border border-border px-1 font-mono">/</kbd> search
             </span>
-            {APP_SECTIONS.map((section) => (
+            {visibleSections.map((section) => (
               <span key={section.id} className="mr-2">
                 <kbd className="rounded border border-border px-1 font-mono">⌘{SECTION_SHORTCUTS[section.id]}</kbd>{" "}
                 {section.label}

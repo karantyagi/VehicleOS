@@ -17,9 +17,10 @@ export type { DriverHabitsDraft, DrivingStyle } from "@/lib/driver-habits";
 
 type DriverHabitsPanelProps = {
   vehicleId: string | null;
+  minimal?: boolean;
 };
 
-export function DriverHabitsPanel({ vehicleId }: DriverHabitsPanelProps) {
+export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPanelProps) {
   const [draft, setDraft] = useState<DriverHabitsDraft>({
     drivingStyle: "casual",
     statedMilesPerYear: null,
@@ -84,12 +85,15 @@ export function DriverHabitsPanel({ vehicleId }: DriverHabitsPanelProps) {
 
   return (
     <PanelCard
+      hideHeader={minimal}
       title="Driving profile"
       description="How you drive shapes preemptive recommendations — not OEM due dates."
     >
-      <p className="text-xs leading-relaxed text-muted-foreground">
-        Schedule dates assume 10,000 mi/year unless you set annual mileage or we learn from receipts.
-      </p>
+      {!minimal ? (
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          Schedule dates assume 10,000 mi/year unless you set annual mileage or we learn from receipts.
+        </p>
+      ) : null}
 
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Loading driving profile…</p>
