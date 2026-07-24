@@ -5,11 +5,14 @@ export type DriverHabitsDraft = {
   statedMilesPerYear: number | null;
 };
 
+import type { OwnerContextMemory } from "@/lib/owner-context";
+
 export type VehicleOwnerProfile = {
   id: string;
   ownedSince?: string | null;
   drivingStyle?: DrivingStyle | null;
   statedMilesPerYear?: number | null;
+  ownerContextMemory?: OwnerContextMemory | null;
 };
 
 export const DEFAULT_MILES_PER_YEAR = 10_000;
@@ -45,7 +48,9 @@ export const parseStatedMilesPerYear = (milesInput: string): number | null | "in
 
 export const patchVehicleProfile = async (
   vehicleId: string,
-  patch: Partial<Pick<VehicleOwnerProfile, "ownedSince" | "drivingStyle" | "statedMilesPerYear">>,
+  patch: Partial<
+    Pick<VehicleOwnerProfile, "ownedSince" | "drivingStyle" | "statedMilesPerYear" | "ownerContextMemory">
+  >,
 ): Promise<VehicleOwnerProfile> => {
   const response = await fetch(`/api/vehicles/${vehicleId}`, {
     method: "PATCH",

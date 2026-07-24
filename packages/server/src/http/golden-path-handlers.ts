@@ -1,5 +1,7 @@
 import type { ApiServices } from "../services/index.js";
+import { normalizeOwnerContextMemory, type OwnerContextMemory } from "@vehicleos/domain";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
+import { recommendationContextFromVehicle } from "./recommendation-context-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
 
 type ReceiptBody = {
@@ -22,6 +24,7 @@ type VehicleBody = {
   ownedSince?: string | null;
   drivingStyle?: "economical" | "casual" | "aggressive" | null;
   statedMilesPerYear?: number | null;
+  ownerContextMemory?: OwnerContextMemory | null;
 };
 
 type TaskDecisionBody = {
@@ -69,6 +72,7 @@ export const createVehicle = async (
     ownedSince: body.ownedSince ?? null,
     drivingStyle: body.drivingStyle ?? null,
     statedMilesPerYear: body.statedMilesPerYear ?? null,
+    ownerContextMemory: normalizeOwnerContextMemory(body.ownerContextMemory),
   });
 
   return jsonResponse(201, { vehicle });
@@ -113,6 +117,10 @@ export const updateVehicle = async (
     ownedSince: body.ownedSince,
     drivingStyle: body.drivingStyle,
     statedMilesPerYear: body.statedMilesPerYear,
+    ownerContextMemory:
+      body.ownerContextMemory === undefined
+        ? undefined
+        : normalizeOwnerContextMemory(body.ownerContextMemory),
   });
 
   if (!updated) return jsonResponse(404, { error: "Vehicle not found" });
@@ -195,6 +203,7 @@ export const submitReceipt = async (
     documentId,
     correlationId,
     source: "receipt",
+    ...recommendationContextFromVehicle(owned.vehicle),
   });
 
   if (result.conflict) {

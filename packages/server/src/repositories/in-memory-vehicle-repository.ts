@@ -1,4 +1,5 @@
 import type { CreateVehicleInput, VehicleRecord, UpdateVehicleInput } from "./vehicle-repository.js";
+import { normalizeOwnerContextMemory } from "@vehicleos/domain";
 
 export class InMemoryVehicleRepository {
   private readonly vehicles = new Map<string, VehicleRecord>();
@@ -9,6 +10,7 @@ export class InMemoryVehicleRepository {
       id,
       userId: input.userId ?? crypto.randomUUID(),
       ...input,
+      ownerContextMemory: normalizeOwnerContextMemory(input.ownerContextMemory),
       createdAt: new Date().toISOString(),
     };
     this.vehicles.set(id, record);
@@ -35,6 +37,11 @@ export class InMemoryVehicleRepository {
         ? new Date().toISOString()
         : existing.statedMilesPerYearUpdatedAt ?? null;
 
+    const nextOwnerContextMemory =
+      patch.ownerContextMemory === undefined
+        ? existing.ownerContextMemory ?? {}
+        : normalizeOwnerContextMemory(patch.ownerContextMemory);
+
     const next: VehicleRecord = {
       ...existing,
       ...patch,
@@ -43,6 +50,7 @@ export class InMemoryVehicleRepository {
       drivingStyle: patch.drivingStyle === undefined ? existing.drivingStyle ?? null : patch.drivingStyle,
       statedMilesPerYear: nextStatedMilesPerYear,
       statedMilesPerYearUpdatedAt,
+      ownerContextMemory: nextOwnerContextMemory,
     };
     this.vehicles.set(vehicleId, next);
     return next;

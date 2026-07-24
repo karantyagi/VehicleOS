@@ -1,6 +1,7 @@
 import type { ServiceRecordSource } from "@vehicleos/domain";
 import type { ApiServices } from "../services/index.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
+import { recommendationContextFromVehicle } from "./recommendation-context-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
 
 type OwnerNoteBody = {
@@ -64,6 +65,7 @@ export const submitOwnerServiceNote = async (
     total: body.total?.trim() || "$0.00",
     evidenceIds: [],
     source,
+    ...recommendationContextFromVehicle(vehicle),
   });
 
   if (result.conflict) {

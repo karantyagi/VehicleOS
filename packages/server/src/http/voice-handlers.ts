@@ -1,6 +1,7 @@
 import { parseVoiceServiceNote } from "@vehicleos/domain";
 import type { ApiServices } from "../services/index.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
+import { recommendationContextFromVehicle } from "./recommendation-context-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
 
 type VoiceBody = {
@@ -84,6 +85,7 @@ export const submitVoiceMemory = async (
     documentId,
     correlationId,
     source: "voice",
+    ...recommendationContextFromVehicle(vehicle),
   });
 
   if (result.conflict) {

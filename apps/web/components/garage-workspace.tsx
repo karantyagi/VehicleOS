@@ -3,6 +3,7 @@
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { DriverHabitsPanel } from "@/components/driver-habits-panel";
+import { OwnerContextPanel } from "@/components/owner-context-panel";
 import { PageHeader } from "@/components/page-header";
 import { VehicleSettingsPanel } from "@/components/vehicle-settings-panel";
 import { cn } from "@/lib/utils";
@@ -82,8 +83,9 @@ function GarageWorkspaceContent() {
       ) : null}
 
       {activeTab === "driver" ? (
-        <div role="tabpanel">
+        <div role="tabpanel" className="space-y-6">
           <DriverHabitsPanel vehicleId={vehicleId} />
+          <OwnerContextPanel vehicleId={vehicleId} />
         </div>
       ) : null}
     </>

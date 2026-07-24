@@ -1,4 +1,5 @@
 import type pg from "pg";
+import { normalizeOwnerContextMemory, type OwnerContextMemory } from "@vehicleos/domain";
 
 export type DrivingStyle = "economical" | "casual" | "aggressive";
 
@@ -13,6 +14,7 @@ export type CreateVehicleInput = {
   ownedSince?: string | null;
   drivingStyle?: DrivingStyle | null;
   statedMilesPerYear?: number | null;
+  ownerContextMemory?: OwnerContextMemory | null;
 };
 
 export type UpdateVehicleInput = {
@@ -25,6 +27,7 @@ export type UpdateVehicleInput = {
   ownedSince?: string | null;
   drivingStyle?: DrivingStyle | null;
   statedMilesPerYear?: number | null;
+  ownerContextMemory?: OwnerContextMemory | null;
 };
 
 export type VehicleRecord = CreateVehicleInput & {
@@ -47,6 +50,7 @@ type VehicleRow = {
   driving_style: DrivingStyle | null;
   stated_miles_per_year: number | null;
   stated_miles_per_year_updated_at: Date | null;
+  owner_context_memory: OwnerContextMemory | Record<string, unknown> | null;
   created_at: Date;
 };
 
@@ -65,9 +69,10 @@ export class VehicleRepository {
     const result = await this.pool.query<VehicleRow>(
       `insert into vehicles (
          id, user_id, vin, year, make, model, trim, current_mileage,
-         owned_since, driving_style, stated_miles_per_year, stated_miles_per_year_updated_at
+         owned_since, driving_style, stated_miles_per_year, stated_miles_per_year_updated_at,
+         owner_context_memory
        )
-       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
        returning *`,
       [
         id,
@@ -82,6 +87,7 @@ export class VehicleRepository {
         input.drivingStyle ?? null,
         input.statedMilesPerYear ?? null,
         statedMilesPerYearUpdatedAt,
+        JSON.stringify(normalizeOwnerContextMemory(input.ownerContextMemory)),
       ],
     );
 
@@ -119,6 +125,11 @@ export class VehicleRepository {
         ? new Date()
         : existing.statedMilesPerYearUpdatedAt ?? null;
 
+    const nextOwnerContextMemory =
+      patch.ownerContextMemory === undefined
+        ? existing.ownerContextMemory ?? {}
+        : normalizeOwnerContextMemory(patch.ownerContextMemory);
+
     const result = await this.pool.query<VehicleRow>(
       `update vehicles
        set vin = $3,
@@ -130,7 +141,8 @@ export class VehicleRepository {
            owned_since = $9,
            driving_style = $10,
            stated_miles_per_year = $11,
-           stated_miles_per_year_updated_at = $12
+           stated_miles_per_year_updated_at = $12,
+           owner_context_memory = $13
        where id = $1 and user_id = $2
        returning *`,
       [
@@ -146,6 +158,7 @@ export class VehicleRepository {
         patch.drivingStyle === undefined ? existing.drivingStyle ?? null : patch.drivingStyle,
         nextStatedMilesPerYear,
         statedMilesPerYearUpdatedAt,
+        JSON.stringify(nextOwnerContextMemory),
       ],
     );
 
@@ -194,5 +207,6 @@ const mapVehicleRow = (row: VehicleRow): VehicleRecord => ({
   drivingStyle: row.driving_style ?? null,
   statedMilesPerYear: row.stated_miles_per_year ?? null,
   statedMilesPerYearUpdatedAt: row.stated_miles_per_year_updated_at?.toISOString() ?? null,
+  ownerContextMemory: normalizeOwnerContextMemory(row.owner_context_memory),
   createdAt: row.created_at.toISOString(),
 });

@@ -128,5 +128,14 @@ export {
   type DrivingStyle,
   type ScheduleProjectionContext,
 } from "./schedule/resolve-schedule-projection-context.js";
+export type { OwnerContextMemory } from "./owner-context/types.js";
+export {
+  hasOwnerContextMemory,
+  normalizeOwnerContextMemory,
+} from "./owner-context/normalize-owner-context.js";
+export {
+  enrichRecommendationReason,
+  type EnrichRecommendationInput,
+} from "./owner-context/enrich-recommendation-reason.js";
 export type { KnowledgeScheduleEntry } from "./projections/types.js";
 export type { KnowledgeScheduleRow } from "./events/catalog.js";

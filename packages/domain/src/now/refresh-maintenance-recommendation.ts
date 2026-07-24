@@ -3,11 +3,16 @@ import { foldEvents } from "../projections/apply.js";
 import type { EventStore } from "../ports/event-store.js";
 import type { PolicyEngine } from "../policy/policy-engine.js";
 import type { MaintenanceRecommendation } from "../policy/types.js";
+import { enrichRecommendationReason } from "../owner-context/enrich-recommendation-reason.js";
+import type { OwnerContextMemory } from "../owner-context/types.js";
+import type { DrivingStyle } from "../schedule/resolve-schedule-projection-context.js";
 
 export type RefreshMaintenanceRecommendationInput = {
   eventStore: EventStore;
   policyEngine: PolicyEngine;
   vehicleId: string;
+  ownerContextMemory?: OwnerContextMemory | null;
+  drivingStyle?: DrivingStyle | null;
 };
 
 export type RefreshMaintenanceRecommendationResult = {
@@ -36,10 +41,17 @@ export const refreshMaintenanceRecommendation = async (
 ): Promise<RefreshMaintenanceRecommendationResult> => {
   const events = await loadVehicleEvents(input.eventStore, input.vehicleId);
   const state = foldEvents(input.vehicleId, events);
-  const recommendation = input.policyEngine.evaluate({
+  const evaluated = input.policyEngine.evaluate({
     vehicleId: input.vehicleId,
     state,
   });
+  const recommendation = evaluated
+    ? enrichRecommendationReason({
+        recommendation: evaluated,
+        ownerContextMemory: input.ownerContextMemory,
+        drivingStyle: input.drivingStyle,
+      })
+    : null;
 
   if (!recommendation) {
     return {
