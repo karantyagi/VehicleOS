@@ -87,7 +87,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
         </footer>
       </section>
 
-      <section className="login-page__brand relative hidden min-h-screen flex-col overflow-hidden bg-gradient-to-br from-primary/[0.08] via-background to-background lg:flex dark:from-primary/[0.14]">
+      <section className="login-page__brand relative hidden min-h-screen flex-col overflow-hidden bg-gradient-to-br from-primary/[0.1] via-background to-background lg:flex dark:from-primary/[0.16]">
         <div className="absolute right-6 top-6 z-10 flex items-center gap-2.5 xl:right-8 xl:top-8">
           <Link
             href={siteConfig.marketingUrl}

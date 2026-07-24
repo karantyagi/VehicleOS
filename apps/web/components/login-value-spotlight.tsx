@@ -77,7 +77,7 @@ export function LoginValueSpotlight() {
 
   return (
     <figure
-      className="login-spotlight relative mx-auto w-full max-w-[26rem] px-2 outline-none focus-visible:ring-2 focus-visible:ring-slate-400/30 focus-visible:ring-offset-4 focus-visible:ring-offset-background sm:px-4 lg:max-w-[28rem]"
+      className="login-spotlight relative mx-auto w-full max-w-[30rem] px-2 outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-4 focus-visible:ring-offset-background sm:px-4 lg:max-w-[32rem]"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onMouseEnter={() => setIsPaused(true)}
@@ -86,22 +86,28 @@ export function LoginValueSpotlight() {
       onBlur={handleBlur}
       aria-label="Why we built VehicleOS"
     >
-      <p className="text-center text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
-        Why we built VehicleOS
-      </p>
+      <header className="mb-7 flex items-stretch gap-3 pl-1 sm:pl-2">
+        <span className="login-spotlight__eyebrow-accent w-0.5 shrink-0 rounded-full" aria-hidden />
+        <div className="min-w-0 pt-0.5">
+          <p className="text-[13px] font-medium uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+            Why we built
+          </p>
+          <p className="mt-0.5 text-lg font-semibold tracking-tight text-primary sm:text-xl">VehicleOS</p>
+        </div>
+      </header>
 
-      <div className="relative mt-8" ref={listRef}>
+      <div className="relative" ref={listRef}>
         <div
-          className="login-spotlight__rail pointer-events-none absolute bottom-3 left-[0.6875rem] top-3 w-px bg-slate-200/70 dark:bg-slate-700/50"
+          className="login-spotlight__rail pointer-events-none absolute bottom-3 left-[0.6875rem] top-3 w-px"
           aria-hidden
         />
         <div
-          className="login-spotlight__rail-dot pointer-events-none absolute left-3 z-[1] h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-slate-400 dark:bg-slate-500"
+          className="login-spotlight__rail-dot pointer-events-none absolute left-3 z-[1] h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{ top: railDotTop }}
           aria-hidden
         />
 
-        <div className="relative space-y-1 pl-8" role="list">
+        <div className="relative space-y-1.5 pl-8" role="list">
           {LOGIN_VALUE_CARDS.map((card, index) => {
             const isActive = index === activeIndex;
             return (
@@ -119,13 +125,16 @@ export function LoginValueSpotlight() {
                 className={cn(
                   "login-spotlight__row block w-full rounded-xl text-left transition-all duration-300 ease-out",
                   isActive
-                    ? "login-spotlight__row--active px-4 py-3.5"
-                    : "px-3 py-2.5 opacity-80 hover:opacity-100",
+                    ? "login-spotlight__row--active px-4 py-4 sm:px-5 sm:py-4"
+                    : "px-3 py-3 opacity-80 hover:opacity-100",
                 )}
               >
-                <span className="flex items-baseline gap-2.5">
+                <span className="flex items-baseline gap-3">
                   <span
-                    className="w-5 shrink-0 text-xs tabular-nums text-slate-400 dark:text-slate-500"
+                    className={cn(
+                      "w-5 shrink-0 text-sm tabular-nums transition-colors duration-300",
+                      isActive ? "text-primary/80" : "text-slate-400 dark:text-slate-500",
+                    )}
                     aria-hidden
                   >
                     {String(index + 1).padStart(2, "0")}
@@ -134,8 +143,8 @@ export function LoginValueSpotlight() {
                     className={cn(
                       "font-medium tracking-tight transition-all duration-300 ease-out",
                       isActive
-                        ? "text-xl text-slate-700 dark:text-slate-200"
-                        : "text-base text-slate-400 dark:text-slate-500",
+                        ? "text-2xl text-slate-700 dark:text-slate-100"
+                        : "text-lg text-slate-400 dark:text-slate-500",
                     )}
                   >
                     {card.title}
@@ -143,8 +152,8 @@ export function LoginValueSpotlight() {
                 </span>
                 <p
                   className={cn(
-                    "overflow-hidden pl-[1.875rem] text-[15px] leading-relaxed text-slate-500 transition-all duration-300 ease-out dark:text-slate-400",
-                    isActive ? "mt-2 max-h-16 opacity-100" : "max-h-0 opacity-0",
+                    "overflow-hidden pl-[2rem] text-[17px] leading-relaxed text-slate-500 transition-all duration-300 ease-out dark:text-slate-400",
+                    isActive ? "mt-2.5 max-h-20 opacity-100" : "max-h-0 opacity-0",
                   )}
                   aria-hidden={!isActive}
                 >
