@@ -66,7 +66,7 @@ tests/
 evals/
   README.md
 connectors/
-  carfax-connect/   OSS import CLI + schema (v0)
+  carfax-connect/   Import schema + CLI + TLX example (PDF-first · ADR-009)
 ```
 
 ## First vertical slice target

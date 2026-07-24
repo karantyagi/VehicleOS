@@ -6,6 +6,7 @@ import {
   Archive,
   BookOpen,
   Clock3,
+  FileInput,
   ListChecks,
   MessageSquareQuote,
   Mic,
@@ -30,6 +31,7 @@ import { cn } from "@/lib/utils";
 const SECTION_ICONS = {
   now: ListChecks,
   timeline: Clock3,
+  imports: FileInput,
   receipts: Receipt,
   evidence: Archive,
   context: BookOpen,

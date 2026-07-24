@@ -7,6 +7,7 @@ import { useAppUiStore, type AppSection } from "@/lib/store/app-ui-store";
 const VALID_SECTIONS = new Set<AppSection>([
   "now",
   "timeline",
+  "imports",
   "receipts",
   "evidence",
   "context",

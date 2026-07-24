@@ -1,7 +1,15 @@
 import { create } from "zustand";
 import type { ConsoleDensity } from "@/lib/console-types";
 
-export type AppSection = "now" | "timeline" | "receipts" | "evidence" | "context" | "notes" | "quotes";
+export type AppSection =
+  | "now"
+  | "timeline"
+  | "imports"
+  | "receipts"
+  | "evidence"
+  | "context"
+  | "notes"
+  | "quotes";
 
 /** Assistant-office labels — stable section ids for routing and store. */
 export const APP_SECTIONS: { id: AppSection; label: string; description: string }[] = [
@@ -14,6 +22,11 @@ export const APP_SECTIONS: { id: AppSection; label: string; description: string 
     id: "timeline",
     label: "Service history",
     description: "Past services from records and events",
+  },
+  {
+    id: "imports",
+    label: "Record import",
+    description: "CARFAX, RMV, and other owner PDFs — extract and review",
   },
   {
     id: "receipts",
@@ -49,11 +62,12 @@ export const CONSOLE_SECTIONS: AppSection[] = ["now", "timeline", "evidence"];
 export const SECTION_SHORTCUTS: Record<AppSection, string> = {
   now: "1",
   timeline: "2",
-  receipts: "3",
-  evidence: "4",
-  context: "5",
-  notes: "6",
-  quotes: "7",
+  imports: "3",
+  receipts: "4",
+  evidence: "5",
+  context: "6",
+  notes: "7",
+  quotes: "8",
 };
 
 type AppUiState = {

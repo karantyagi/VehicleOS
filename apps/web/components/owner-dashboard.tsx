@@ -28,6 +28,7 @@ import { NowQueueConsole } from "./now-queue-console";
 import { OwnerServiceNotePanel } from "./owner-service-note-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 import { useVehicleConsole } from "@/lib/vehicle-console-context";
+import { RecordImportPanel } from "./record-import-panel";
 import { VerificationMaturityPanel } from "./verification-maturity-panel";
 import type {
   MaintenanceScheduleView,
@@ -385,7 +386,7 @@ export function OwnerDashboard() {
       {activeSection === "now" ? (
         <PanelCard
           title="Owner verification"
-          description="Filter, inspect lineage, decide — nothing changes until you confirm."
+          description="Tap an item to confirm or dismiss — nothing changes until you do."
         >
           <div className="space-y-4">
             {verificationMaturity ? <VerificationMaturityPanel maturity={verificationMaturity} /> : null}
@@ -407,6 +408,28 @@ export function OwnerDashboard() {
             effectiveMilesPerYear={maintenanceSchedule.effectiveMilesPerYear}
             disabled={isBusy}
             onOpenEvidence={openEvidence}
+          />
+        </PanelCard>
+      ) : null}
+
+      {activeSection === "imports" ? (
+        <PanelCard
+          title="Record import"
+          description="Upload portal PDFs by category — CARFAX now (JSON interim), RMV follow-up."
+        >
+          <RecordImportPanel
+            vehicleId={vehicle.id}
+            apiBase={apiBase}
+            disabled={isBusy}
+            onError={(message) => notify(message, "error")}
+            onImported={(body) => {
+              setTimeline(body.timeline as TimelineEntry[]);
+              if (body.maintenanceSchedule) {
+                setMaintenanceSchedule(body.maintenanceSchedule as MaintenanceScheduleView);
+              }
+              feedback(`${body.importedCount} service row(s) imported — check Service history.`);
+              void loadVehicleState(vehicle);
+            }}
           />
         </PanelCard>
       ) : null}
