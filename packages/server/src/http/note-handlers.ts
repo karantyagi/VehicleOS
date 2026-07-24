@@ -82,7 +82,8 @@ export const submitOwnerServiceNote = async (
     });
   }
 
-  return jsonResponse(201, {
+  return jsonResponse(result.result.skippedDuplicate ? 200 : 201, {
+    duplicateSkipped: result.result.skippedDuplicate ?? false,
     recommendation: result.result.recommendation,
     task: result.result.task,
     ...buildVehicleStateView(result.result.state, vehicle),

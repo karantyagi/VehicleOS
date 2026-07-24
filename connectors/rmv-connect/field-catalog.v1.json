@@ -1,0 +1,51 @@
+{
+  "portal": "myrmv-ma",
+  "version": "1",
+  "description": "PDF label → extract key mapping for Massachusetts myRMV vehicle page print layout.",
+  "sections": {
+    "owner": {
+      "pdfLabels": ["Date of Birth", "Class D License", "Issued", "Expires", "Passenger", "Commercial", "Restrictions"],
+      "keys": {
+        "dateOfBirth": "Date of Birth: MMM-DD-YYYY",
+        "licenseClass": "Class D License → D",
+        "licenseIssued": "Issued: MMM-DD-YYYY",
+        "licenseExpires": "Expires: MMM-DD-YYYY",
+        "passengerStatus": "Passenger: Active|None",
+        "commercialStatus": "Commercial: Active|None",
+        "restrictions": "Restrictions → string array"
+      },
+      "mapsToImport": "owner profile (future) — not VehicleOsRmvImport v1"
+    },
+    "vehicle": {
+      "pdfLabels": ["VIN", "year make model line"],
+      "keys": {
+        "yearMakeModel": "e.g. 2021 ACUR TLX",
+        "year": "parsed integer",
+        "make": "parsed string",
+        "model": "parsed string",
+        "vin": "VIN: 17-char"
+      }
+    },
+    "registration": {
+      "pdfLabels": ["Registration Information", "Type/Number", "Effective Date", "Expiration Date", "Status"],
+      "keys": {
+        "typeNumber": "Type/Number: …",
+        "plate": "suffix after Plate/",
+        "effectiveDate": "Effective Date",
+        "expirationDate": "Expiration Date",
+        "status": "Status: Active|…",
+        "alreadyRenewed": "Already Renewed flag"
+      },
+      "mapsToImport": "vehicle.record.recorded eventType registration"
+    },
+    "title": {
+      "pdfLabels": ["Title Information", "Title Number", "Title Date", "Title Status"],
+      "keys": {
+        "titleNumber": "Title Number:",
+        "titleDate": "Title Date:",
+        "titleStatus": "Title Status:"
+      },
+      "mapsToImport": "vehicle.record.recorded eventType title"
+    }
+  }
+}

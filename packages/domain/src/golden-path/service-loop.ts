@@ -1,6 +1,7 @@
 import { EVENT_TYPES, EVENT_VERSIONS } from "../events/catalog.js";
 import type { CatalogDomainEvent } from "../events/catalog.js";
 import { detectServiceConflict } from "../conflicts/detect-service-conflict.js";
+import { isDuplicateServiceRow } from "../import/dedupe-import-rows.js";
 import { enrichRecommendationReason } from "../owner-context/enrich-recommendation-reason.js";
 import type { OwnerContextMemory } from "../owner-context/types.js";
 import { foldEvents } from "../projections/apply.js";
@@ -28,6 +29,7 @@ export type RecordServiceInput = {
 export type GoldenPathResult = {
   events: CatalogDomainEvent[];
   state: ReturnType<typeof foldEvents>;
+  skippedDuplicate?: boolean;
   recommendation: {
     recommendationId: string;
     title: string;
@@ -56,6 +58,26 @@ export const recordServiceAndRecommend = async (deps: {
   input: RecordServiceInput;
 }): Promise<GoldenPathResult> => {
   const { eventStore, policyEngine, input } = deps;
+
+  const priorVehicleEvents = eventsForVehicle(await eventStore.loadAll(), input.vehicleId);
+  const priorState = foldEvents(input.vehicleId, priorVehicleEvents);
+
+  if (
+    isDuplicateServiceRow(priorState.timeline, {
+      serviceDate: input.serviceDate,
+      mileage: input.mileage,
+      shop: input.shop,
+    })
+  ) {
+    return {
+      events: priorVehicleEvents,
+      state: priorState,
+      skippedDuplicate: true,
+      recommendation: null,
+      task: null,
+    };
+  }
+
   const serviceId = input.serviceId ?? crypto.randomUUID();
   const correlationId = input.correlationId ?? crypto.randomUUID();
 
@@ -173,7 +195,7 @@ export const decideTask = async (deps: {
 };
 
 export type ServiceConfirmResult =
-  | { conflict: false; result: GoldenPathResult }
+  | { conflict: false; duplicate?: boolean; result: GoldenPathResult }
   | {
       conflict: true;
       conflictId: string;
@@ -196,9 +218,11 @@ export const confirmServiceWithConflictCheck = async (deps: {
   });
 
   if (!conflict) {
+    const result = await recordServiceAndRecommend({ eventStore, policyEngine, input });
     return {
       conflict: false,
-      result: await recordServiceAndRecommend({ eventStore, policyEngine, input }),
+      duplicate: result.skippedDuplicate ?? false,
+      result,
     };
   }
 

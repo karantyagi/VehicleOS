@@ -107,8 +107,9 @@ export const submitVoiceMemory = async (
 
   const view = buildVehicleStateView(result.result.state, vehicle);
 
-  return jsonResponse(201, {
+  return jsonResponse(result.result.skippedDuplicate ? 200 : 201, {
     documentId,
+    duplicateSkipped: result.result.skippedDuplicate ?? false,
     parsed: extracted,
     transcript,
     recommendation: result.result.recommendation,

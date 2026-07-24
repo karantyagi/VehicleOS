@@ -32,8 +32,10 @@ import { RecordImportPanel } from "./record-import-panel";
 import { VerificationMaturityPanel } from "./verification-maturity-panel";
 import type {
   MaintenanceScheduleView,
+  OwnershipRecordEntry,
   PipelinePhase,
   QueueItem,
+  ServiceHistoryTab,
   TimelineEntry,
   VerificationMaturityView,
 } from "@/lib/console-types";
@@ -52,9 +54,12 @@ export function OwnerDashboard() {
   const apiBase = getApiBase();
   const { setSnapshot } = useVehicleConsole();
   const activeSection = useAppUiStore((state) => state.activeSection);
+  const setActiveSection = useAppUiStore((state) => state.setActiveSection);
   const sectionMeta = APP_SECTIONS.find((section) => section.id === activeSection) ?? APP_SECTIONS[0];
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
+  const [ownershipRecords, setOwnershipRecords] = useState<OwnershipRecordEntry[]>([]);
+  const [serviceHistoryTab, setServiceHistoryTab] = useState<ServiceHistoryTab>("history");
   const [nowQueue, setNowQueue] = useState<QueueItem[]>([]);
   const [isBusy, setIsBusy] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -127,6 +132,7 @@ export function OwnerDashboard() {
       const body = (await response.json()) as {
         timeline: TimelineEntry[];
         nowQueue: QueueItem[];
+        ownershipRecords?: OwnershipRecordEntry[];
         quoteAnalyses?: QuoteAnalysisView[];
         evidenceVault?: EvidenceVaultItem[];
         knowledgeSchedule?: { serviceName: string; intervalMiles?: number; manualTitle: string }[];
@@ -136,6 +142,7 @@ export function OwnerDashboard() {
       };
 
       setTimeline(body.timeline);
+      setOwnershipRecords(body.ownershipRecords ?? []);
       setNowQueue(body.nowQueue);
       setQuoteAnalyses(body.quoteAnalyses ?? []);
       setEvidenceVault(body.evidenceVault ?? []);
@@ -398,16 +405,20 @@ export function OwnerDashboard() {
       {activeSection === "timeline" ? (
         <PanelCard
           title="Service history"
-          description="Past service events and a forward OEM schedule projection."
+          description="Past maintenance, forward OEM schedule, and RMV/DMV ownership records."
         >
           <MaintenanceTimelineSection
             timeline={timeline}
+            ownershipRecords={ownershipRecords}
             scheduleNear={maintenanceSchedule.near}
             scheduleExtended={maintenanceSchedule.extended}
             scheduleFull={maintenanceSchedule.full}
             effectiveMilesPerYear={maintenanceSchedule.effectiveMilesPerYear}
+            activeTab={serviceHistoryTab}
+            onTabChange={setServiceHistoryTab}
             disabled={isBusy}
             onOpenEvidence={openEvidence}
+            onGoToImport={() => setActiveSection("imports")}
           />
         </PanelCard>
       ) : null}
@@ -415,7 +426,7 @@ export function OwnerDashboard() {
       {activeSection === "imports" ? (
         <PanelCard
           title="Record import"
-          description="Upload portal PDFs by category — CARFAX now (JSON interim), RMV follow-up."
+          description="Upload portal PDFs or JSON — CARFAX service history and RMV/DMV ownership."
         >
           <RecordImportPanel
             vehicleId={vehicle.id}
@@ -427,11 +438,36 @@ export function OwnerDashboard() {
               if (body.maintenanceSchedule) {
                 setMaintenanceSchedule(body.maintenanceSchedule as MaintenanceScheduleView);
               }
-              feedback(`${body.importedCount} service row(s) imported — check Service history.`);
+              const skipped = body.skippedCount ?? 0;
+              if (body.importedCount === 0 && skipped > 0) {
+                feedback(`All ${skipped} row(s) already on your timeline — nothing new imported.`);
+              } else if (skipped > 0) {
+                feedback(
+                  `${body.importedCount} new service row(s) imported (${skipped} duplicate(s) skipped). Check Service history.`,
+                );
+              } else {
+                feedback(`${body.importedCount} service row(s) imported — check Service history.`);
+              }
               void loadVehicleState(vehicle);
             }}
             onRmvImported={(body) => {
-              feedback(`${body.importedCount} ownership record(s) imported for the assistant.`);
+              setOwnershipRecords(body.ownershipRecords as OwnershipRecordEntry[]);
+              const skipped = body.skippedCount ?? 0;
+              if (body.importedCount === 0 && skipped > 0) {
+                feedback(`All ${skipped} ownership record(s) already on file — nothing new imported.`);
+                setServiceHistoryTab("ownership");
+                setActiveSection("timeline");
+              } else if (skipped > 0) {
+                setServiceHistoryTab("ownership");
+                setActiveSection("timeline");
+                feedback(
+                  `${body.importedCount} new ownership record(s) imported (${skipped} duplicate(s) skipped).`,
+                );
+              } else if (body.importedCount > 0) {
+                setServiceHistoryTab("ownership");
+                setActiveSection("timeline");
+                feedback(`${body.importedCount} ownership record(s) imported — see Ownership tab.`);
+              }
               void loadVehicleState(vehicle);
             }}
           />

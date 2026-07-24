@@ -1,0 +1,46 @@
+{
+  "$id": "https://vehicleos.app/schema/carfax-service-history.extract.v1.json",
+  "title": "CarfaxServiceHistoryExtractV1",
+  "description": "Layer 1 — fixed keys from CARFAX Car Care service history print-to-PDF template.",
+  "type": "object",
+  "required": ["version", "portal", "source", "extractedAt", "vehicleHint", "serviceRows", "warnings"],
+  "properties": {
+    "version": { "const": "1" },
+    "portal": { "const": "carfax-car-care" },
+    "source": { "type": "string" },
+    "extractedAt": { "type": "string", "format": "date-time" },
+    "vehicleHint": {
+      "type": "object",
+      "required": ["maxMileage"],
+      "properties": {
+        "maxMileage": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "serviceRows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["shop", "serviceDate", "mileage", "lineItems", "total"],
+        "properties": {
+          "shop": { "type": "string" },
+          "serviceDate": { "type": "string", "format": "date" },
+          "mileage": { "type": "integer", "minimum": 0 },
+          "lineItems": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "total": { "type": "string" }
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "fieldConfidence": {
+      "type": "object",
+      "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 }
+    }
+  }
+}

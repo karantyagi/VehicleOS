@@ -148,6 +148,44 @@ export {
 export { parseCarfaxPdfText, type ParseCarfaxPdfTextResult } from "./import/parse-carfax-pdf-text.js";
 export { parseRmvPdfText, type ParseRmvPdfTextResult } from "./import/parse-rmv-pdf-text.js";
 export {
+  filterNewImportServices,
+  filterNewOwnershipRecords,
+  isDuplicateServiceRow,
+  serviceRowFingerprint,
+  ownershipRecordFingerprint,
+} from "./import/dedupe-import-rows.js";
+export {
+  extractCarfaxServiceHistoryFromPdfText,
+  type ExtractCarfaxServiceHistoryInput,
+} from "./import/extract-carfax-service-history.js";
+export {
+  extractMyRmvMaVehiclePageFromPdfText,
+  extractMyRmvVin,
+  isMyRmvPortalLayout,
+  type ExtractMyRmvMaVehiclePageInput,
+} from "./import/extract-myrmv-ma-vehicle-page.js";
+export {
+  mapCarfaxExtractToImport,
+  type MapCarfaxExtractInput,
+  type VehicleOsImportV1,
+} from "./import/map-carfax-extract-to-import.js";
+export {
+  mapMyRmvExtractToImport,
+  type MapMyRmvExtractInput,
+  type VehicleOsRmvImportV1,
+} from "./import/map-myrmv-extract-to-import.js";
+export type {
+  CarfaxServiceHistoryExtractV1,
+  CarfaxServiceHistoryRowExtract,
+  ExtractFieldConfidence,
+  MyRmvMaVehiclePageExtractV1,
+  MyRmvOwnerLicenseExtract,
+  MyRmvRegistrationExtract,
+  MyRmvTitleExtract,
+  MyRmvVehicleExtract,
+  VehicleImportDefaults,
+} from "./import/extract-types.js";
+export {
   AGGRESSIVE_DUE_SOON_DAYS,
   computeEffectiveMilesPerYear,
   computeObservedMilesPerYear,

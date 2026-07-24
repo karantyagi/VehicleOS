@@ -224,8 +224,9 @@ export const submitReceipt = async (
 
   const view = buildVehicleStateView(result.result.state, owned.vehicle);
 
-  return jsonResponse(201, {
+  return jsonResponse(result.result.skippedDuplicate ? 200 : 201, {
     documentId,
+    duplicateSkipped: result.result.skippedDuplicate ?? false,
     recommendation: result.result.recommendation,
     task: result.result.task,
     timeline: view.timeline,

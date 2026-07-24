@@ -1,0 +1,81 @@
+{
+  "$id": "https://vehicleos.app/schema/myrmv-ma-vehicle-page.extract.v1.json",
+  "title": "MyRmvMaVehiclePageExtractV1",
+  "description": "Layer 1 — fixed keys from Massachusetts myRMV vehicle dashboard print-to-PDF.",
+  "type": "object",
+  "required": ["version", "portal", "source", "extractedAt", "owner", "vehicle", "registration", "title", "warnings"],
+  "properties": {
+    "version": { "const": "1" },
+    "portal": { "const": "myrmv-ma" },
+    "source": { "type": "string" },
+    "extractedAt": { "type": "string", "format": "date-time" },
+    "owner": {
+      "type": "object",
+      "required": [
+        "dateOfBirth",
+        "licenseClass",
+        "licenseIssued",
+        "licenseExpires",
+        "passengerStatus",
+        "commercialStatus",
+        "restrictions"
+      ],
+      "properties": {
+        "dateOfBirth": { "type": ["string", "null"], "format": "date" },
+        "licenseClass": { "type": ["string", "null"] },
+        "licenseIssued": { "type": ["string", "null"], "format": "date" },
+        "licenseExpires": { "type": ["string", "null"], "format": "date" },
+        "passengerStatus": { "type": ["string", "null"] },
+        "commercialStatus": { "type": ["string", "null"] },
+        "restrictions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "vehicle": {
+      "type": "object",
+      "required": ["yearMakeModel", "year", "make", "model", "vin"],
+      "properties": {
+        "yearMakeModel": { "type": ["string", "null"] },
+        "year": { "type": ["integer", "null"] },
+        "make": { "type": ["string", "null"] },
+        "model": { "type": ["string", "null"] },
+        "vin": { "type": ["string", "null"] }
+      }
+    },
+    "registration": {
+      "type": "object",
+      "required": [
+        "typeNumber",
+        "plate",
+        "effectiveDate",
+        "expirationDate",
+        "status",
+        "alreadyRenewed"
+      ],
+      "properties": {
+        "typeNumber": { "type": ["string", "null"] },
+        "plate": { "type": ["string", "null"] },
+        "effectiveDate": { "type": ["string", "null"], "format": "date" },
+        "expirationDate": { "type": ["string", "null"], "format": "date" },
+        "status": { "type": ["string", "null"] },
+        "alreadyRenewed": { "type": "boolean" }
+      }
+    },
+    "title": {
+      "type": "object",
+      "required": ["titleNumber", "titleDate", "titleStatus"],
+      "properties": {
+        "titleNumber": { "type": ["string", "null"] },
+        "titleDate": { "type": ["string", "null"], "format": "date" },
+        "titleStatus": { "type": ["string", "null"] }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "fieldConfidence": {
+      "type": "object",
+      "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 }
+    }
+  }
+}
