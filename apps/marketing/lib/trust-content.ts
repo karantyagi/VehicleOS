@@ -57,7 +57,7 @@ export const privacySections = [
     title: "Your rights",
     bullets: [
       `Request a copy of your data before deleting — email ${siteConfig.contactEmail}.`,
-      "Delete your account and associated vehicle data from Settings in the app. Deletion is permanent and removes your sign-in.",
+      "Delete your account and associated vehicle data from Account in the app. Deletion is permanent and removes your sign-in.",
       "We do not sell your personal information or vehicle history to third parties.",
     ],
   },
@@ -65,7 +65,7 @@ export const privacySections = [
     id: "sharing",
     title: "Sharing & subprocessors",
     bullets: [
-      "Vercel — hosts the Owners web app and API route handlers.",
+      "Vercel — hosts the hosted early-access app and API route handlers.",
       "Supabase — hosts Postgres and authentication (Google/GitHub OAuth).",
       "We do not share your vehicle data with CARFAX, dealers, or LLM providers as part of the golden-path loop today.",
     ],
@@ -118,7 +118,7 @@ export const termsSections = [
     title: "Account & termination",
     bullets: [
       "Sign in with Google or GitHub via Supabase Auth — we never receive your password.",
-      "You may delete your account from Settings; deletion removes your hosted vehicle data per our Privacy Policy.",
+      "You may delete your account from Account in the app; deletion removes your hosted vehicle data per our Privacy Policy.",
       "We may suspend access for abuse or security risk during early access.",
     ],
   },
@@ -144,7 +144,7 @@ export const securitySections = [
     id: "hosting",
     title: "Where data lives",
     bullets: [
-      "Owners app and synchronous API: Vercel (United States regions).",
+      "Hosted early-access app and synchronous API: Vercel (United States regions).",
       "Postgres database and auth: Supabase (AWS-backed, project region shown in your Supabase dashboard).",
       "Vehicle OS Connect CLI imports run on your machine — import files are not uploaded to our servers in the v0 CLI flow.",
     ],

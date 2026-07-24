@@ -127,7 +127,7 @@ export function VehicleSettingsPanel() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Your vehicle</CardTitle>
+          <CardTitle>Vehicle record</CardTitle>
           <CardDescription>Loading…</CardDescription>
         </CardHeader>
       </Card>
@@ -138,8 +138,8 @@ export function VehicleSettingsPanel() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Your vehicle</CardTitle>
-          <CardDescription>No vehicle on file — complete onboarding from the dashboard.</CardDescription>
+          <CardTitle>Vehicle record</CardTitle>
+          <CardDescription>No vehicle on file — complete onboarding from the assistant workspace.</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -148,7 +148,7 @@ export function VehicleSettingsPanel() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Your vehicle</CardTitle>
+        <CardTitle>Vehicle record</CardTitle>
         <CardDescription>Update mileage or details when your situation changes. Deleting removes all history for this car.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

@@ -13,7 +13,7 @@ import { APP_SECTIONS, useAppUiStore } from "@/lib/store/app-ui-store";
 import { notify, notifyAuto } from "@/lib/notify";
 import { toast } from "sonner";
 import { getApiBase } from "../lib/api-base";
-import { isGarageSetupComplete } from "@/lib/setup-completion";
+import { isOwnerSetupComplete } from "@/lib/setup-completion";
 import { OnboardingWizard, type OnboardingVehicle } from "./onboarding-wizard";
 import { SetupDriverGate } from "./setup-driver-gate";
 import { ReceiptCapture, type UploadedReceipt } from "./receipt-capture";
@@ -65,7 +65,7 @@ export function OwnerDashboard() {
     effectiveMilesPerYear: 10_000,
   });
   const [pipelinePhase, setPipelinePhase] = useState<PipelinePhase>("idle");
-  const [garageSetupComplete, setGarageSetupComplete] = useState(false);
+  const [ownerSetupComplete, setOwnerSetupComplete] = useState(false);
 
   const feedback = useCallback((message: string) => {
     notifyAuto(message);
@@ -161,7 +161,7 @@ export function OwnerDashboard() {
 
         if (isMounted) {
           setVehicle(existing);
-          setGarageSetupComplete(isGarageSetupComplete(existing));
+          setOwnerSetupComplete(isOwnerSetupComplete(existing));
           setForm((current) => ({ ...current, mileage: existing.currentMileage }));
           await loadVehicleState(existing);
         }
@@ -183,7 +183,7 @@ export function OwnerDashboard() {
 
   const handleOnboardingComplete = async (created: OnboardingVehicle) => {
     setVehicle(created);
-    setGarageSetupComplete(true);
+    setOwnerSetupComplete(true);
     setForm((current) => ({ ...current, mileage: created.currentMileage }));
     feedback("Setup complete. Upload a receipt under Receipt intake to run the golden path.");
     await loadVehicleState(created);
@@ -335,12 +335,12 @@ export function OwnerDashboard() {
     return <OnboardingWizard onComplete={handleOnboardingComplete} />;
   }
 
-  if (!garageSetupComplete) {
+  if (!ownerSetupComplete) {
     return (
       <SetupDriverGate
         vehicleId={vehicle.id}
         vehicleLabel={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-        onComplete={() => setGarageSetupComplete(true)}
+        onComplete={() => setOwnerSetupComplete(true)}
       />
     );
   }
@@ -348,7 +348,7 @@ export function OwnerDashboard() {
   return (
     <>
       <PageHeader
-        eyebrow="Assistant Diary · Early access"
+        eyebrow="Assistant workspace · Early access"
         title={sectionMeta.label}
         description={sectionMeta.description}
         badge={
@@ -359,7 +359,7 @@ export function OwnerDashboard() {
               </Badge>
             ) : null}
             {activeSection === "now" && pendingCount > 0 ? (
-              <Badge className="tabular-nums">{pendingCount} pending</Badge>
+              <Badge className="tabular-nums">{pendingCount} awaiting verification</Badge>
             ) : null}
           </>
         }
@@ -371,15 +371,18 @@ export function OwnerDashboard() {
       </p>
 
       {activeSection === "now" ? (
-        <PanelCard title="Inbox" description="Filter, inspect lineage, decide — nothing changes until you confirm.">
+        <PanelCard
+          title="Owner verification"
+          description="Filter, inspect lineage, decide — nothing changes until you confirm."
+        >
           <NowQueueConsole items={nowQueue} disabled={isBusy} onDecide={decide} />
         </PanelCard>
       ) : null}
 
       {activeSection === "timeline" ? (
         <PanelCard
-          title="Timeline"
-          description="History of committed service events and a forward OEM schedule projection."
+          title="Service history"
+          description="Past service events and a forward OEM schedule projection."
         >
           <MaintenanceTimelineSection
             timeline={timeline}
@@ -394,7 +397,7 @@ export function OwnerDashboard() {
 
       {activeSection === "receipts" ? (
         <PanelCard
-          title="Receipt capture"
+          title="Receipt intake"
           description="Upload, confirm details, and run the service loop."
           variant="inset"
         >
@@ -549,7 +552,7 @@ export function OwnerDashboard() {
                 feedback(
                   body.conflict
                     ? "Conflict detected — check Owner verification in the sidebar."
-                    : "Owner note saved to your timeline.",
+                    : "Owner note saved to your service history.",
                 );
                 void loadVehicleState(vehicle);
               }}

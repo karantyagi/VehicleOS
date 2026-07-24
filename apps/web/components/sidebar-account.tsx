@@ -16,7 +16,7 @@ export function SidebarAccount({ user }: SidebarAccountProps) {
       </p>
       <div className="flex flex-col gap-2">
         <Button variant="outline" size="sm" className="w-full justify-center" asChild>
-          <Link href="/settings">Settings</Link>
+          <Link href="/settings">Account</Link>
         </Button>
         <form action="/auth/signout" method="post" className="w-full">
           <Button type="submit" variant="ghost" size="sm" className="w-full justify-center text-primary">

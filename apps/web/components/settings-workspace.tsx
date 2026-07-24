@@ -14,7 +14,7 @@ export function SettingsWorkspace({ user }: SettingsWorkspaceProps) {
     <>
       <PageHeader
         eyebrow="Account"
-        title="Settings"
+        title="Account"
         description="Login identity and sign-out — outside the assistant's working files."
       />
 

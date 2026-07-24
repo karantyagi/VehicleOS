@@ -36,7 +36,7 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     shortcuts: [
       {
-        name: "Capture receipt",
+        name: "Receipt intake",
         short_name: "Receipts",
         description: "Photo or PDF at the shop",
         url: "/?section=receipts",

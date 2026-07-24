@@ -47,6 +47,14 @@ const severityRail = (category: ReturnType<typeof classifyItem>): string => {
   return "border-l-border";
 };
 
+const queueStatusLabel = (status: string): string => {
+  if (status === "pending") return "awaiting verification";
+  if (status === "approved") return "approved";
+  if (status === "dismissed") return "dismissed";
+  if (status === "snoozed") return "snoozed";
+  return status;
+};
+
 type NowQueuePanelProps = {
   items: QueueItem[];
   disabled?: boolean;
@@ -126,7 +134,7 @@ export function NowQueuePanel({ items, disabled = false, onDecide }: NowQueuePan
             {recent.map((item) => (
               <li key={item.taskId} className="flex flex-wrap items-center justify-between gap-2 text-[13px]">
                 <strong>{item.title}</strong>
-                <Badge variant="secondary">{item.status}</Badge>
+                <Badge variant="secondary">{queueStatusLabel(item.status)}</Badge>
               </li>
             ))}
           </ul>

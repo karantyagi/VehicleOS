@@ -142,7 +142,7 @@ export const statusRows: StatusRow[] = [
   { item: "Vehicle OS Connect v0 CLI (validate / preview)", status: "shipped" },
   { item: "Receipt → recommendation vertical slice", status: "in-progress" },
   { item: "Demo video (YouTube stand-in; full V1 re-record at freeze)", status: "in-progress" },
-  { item: "Hosted Owners app — API + Postgres + golden path", status: "shipped" },
+  { item: "Hosted early-access app — API + Postgres + golden path", status: "shipped" },
   { item: "Privacy & security trust pages", status: "shipped" },
   { item: "Self-serve account deletion", status: "shipped" },
   { item: "Auth + vehicle onboarding wizard", status: "shipped" },

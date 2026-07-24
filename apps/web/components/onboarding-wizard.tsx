@@ -157,21 +157,21 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         )}
         <CardTitle className={cn(step === "welcome" && "text-2xl")}>
           {step === "welcome"
-            ? "Start your ownership timeline"
+            ? "Set up your reminding assistant"
             : step === "car"
-              ? "Tell us about your car"
+              ? "Vehicle record"
               : step === "driver"
-                ? "How do you drive?"
+                ? "Driving profile"
                 : "Review and finish setup"}
         </CardTitle>
         <CardDescription className={cn(step === "welcome" && "max-w-md")}>
           {step === "welcome"
-            ? "Two quick steps — car and driver — then your workspace unlocks."
+            ? "Two quick steps — vehicle record and driving profile — then your assistant workspace unlocks."
             : step === "car"
               ? "We use this to project calendar reminders — the assistant handles mileage math."
               : step === "driver"
                 ? "Driving style shapes preemptive nudges. Annual miles fine-tunes Schedule dates."
-                : "Confirm everything looks right, then open your workspace."}
+                : "Confirm everything looks right, then open your assistant workspace."}
         </CardDescription>
       </CardHeader>
 
@@ -179,7 +179,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         {step === "welcome" ? (
           <>
             <Button type="button" size="lg" className="w-full sm:w-auto" onClick={() => setStep("car")}>
-              Set up car & driver
+              Set up Owner profile
             </Button>
             <ol className="grid gap-3 sm:grid-cols-3" aria-label="How setup works">
               {[

@@ -75,7 +75,7 @@ export function AccountMenu({ user, className }: AccountMenuProps) {
               >
                 <span className="absolute bottom-1 left-0 top-1 w-0.5 rounded-full bg-primary opacity-0 transition-opacity group-hover:opacity-100" />
                 <Settings className="h-4 w-4 text-muted-foreground" aria-hidden />
-                Settings
+                Account
               </Link>
             </div>
             <div className="my-1 h-px bg-border/80" />

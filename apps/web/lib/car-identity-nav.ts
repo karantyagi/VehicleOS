@@ -1,4 +1,4 @@
-/** User-facing labels — route stays `/garage` internally. */
+/** User-facing labels — internal route remains `/garage`. */
 export const CAR_IDENTITY_GROUP_LABEL = "Owner";
 
 export const CAR_IDENTITY_NAV = [

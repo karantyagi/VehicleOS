@@ -47,8 +47,8 @@ export function NowQueueConsole({ items, disabled = false, onDecide }: NowQueueC
     return (
       <EmptyState
         icon={ListChecks}
-        title="Nothing needs a decision"
-        description="Refresh recommendations after service or check Timeline for history."
+        title="Nothing awaiting verification"
+        description="Refresh recommendations after service or open Service history."
       />
     );
   }

@@ -105,7 +105,7 @@ export function OwnerContextPanel({ vehicleId }: OwnerContextPanelProps) {
               id="owner-context-climate"
               value={draft.climateNotesInput}
               rows={3}
-              placeholder={"Heavy winter salt\nGarage kept in winter"}
+              placeholder={"Heavy winter salt\nParked indoors in winter"}
               onChange={(event) => setDraft({ ...draft, climateNotesInput: event.target.value })}
             />
           </FormField>

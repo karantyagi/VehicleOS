@@ -23,7 +23,7 @@ function DemoSection() {
           <span className="demo-dot" />
           <span className="demo-dot" />
           <span className="demo-dot" />
-          <span className="demo-url">{siteConfig.appUrl}/dashboard</span>
+          <span className="demo-url">{siteConfig.appUrl}/</span>
         </div>
         <div className="demo-embed">
           <iframe
@@ -42,7 +42,7 @@ function DemoSection() {
         <span className="demo-dot" />
         <span className="demo-dot" />
         <span className="demo-dot" />
-        <span className="demo-url">{siteConfig.appUrl}/dashboard</span>
+        <span className="demo-url">{siteConfig.appUrl}/</span>
       </div>
       <div className="demo-body">
         <div className="demo-play" aria-hidden="true">

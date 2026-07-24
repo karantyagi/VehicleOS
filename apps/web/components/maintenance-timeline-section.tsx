@@ -33,7 +33,7 @@ export function MaintenanceTimelineSection({
       <div
         className="grid w-full grid-cols-2 rounded-lg border border-border bg-muted/40 p-0.5 sm:inline-flex sm:w-auto"
         role="tablist"
-        aria-label="Timeline views"
+        aria-label="Service history views"
       >
         {(
           [

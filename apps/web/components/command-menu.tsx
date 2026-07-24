@@ -115,7 +115,7 @@ export function CommandMenu() {
                 <span className="font-medium">Owner</span>
               </Command.Item>
               <Command.Item
-                value="Settings"
+                value="Account login identity"
                 onSelect={() => {
                   setCommandOpen(false);
                   router.push("/settings");
@@ -123,7 +123,7 @@ export function CommandMenu() {
                 className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
               >
                 <Settings className="text-muted-foreground" aria-hidden />
-                <span className="font-medium">Settings</span>
+                <span className="font-medium">Account</span>
               </Command.Item>
               <Command.Item
                 value="Light"

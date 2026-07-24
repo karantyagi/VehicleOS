@@ -41,7 +41,7 @@ export function VehicleContextBar() {
         )}
         <Badge variant={snapshot.pendingNowCount > 0 ? "default" : "secondary"} className="tabular-nums gap-1">
           <ListChecks className="h-3 w-3" aria-hidden />
-          {snapshot.pendingNowCount} open
+          {snapshot.pendingNowCount} awaiting verification
         </Badge>
         <span
           className={cn(

@@ -84,7 +84,7 @@ export function DriverHabitsPanel({ vehicleId }: DriverHabitsPanelProps) {
 
   return (
     <PanelCard
-      title="Driver habits"
+      title="Driving profile"
       description="How you drive shapes preemptive recommendations — not OEM due dates."
     >
       <p className="text-xs leading-relaxed text-muted-foreground">
@@ -103,7 +103,7 @@ export function DriverHabitsPanel({ vehicleId }: DriverHabitsPanelProps) {
           />
 
           <Button type="button" onClick={() => void saveDraft()} disabled={!vehicleId || isSaving}>
-            {isSaving ? "Saving…" : "Save driver habits"}
+            {isSaving ? "Saving…" : "Save driving profile"}
           </Button>
         </>
       )}

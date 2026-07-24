@@ -15,7 +15,7 @@
 | 1 | Sign in (Google or GitHub) | ⬜ |
 | 2 | Onboarding: **Acura · TLX · 2021+** · current odometer | ⬜ |
 | 3 | **Receipts** → Take photo or upload PDF → confirm → submit loop | ⬜ |
-| 4 | **Timeline** → new row · detail panel | ⬜ |
+| 4 | **Service history** → new row · detail panel | ⬜ |
 | 5 | **Owner verification** → item visible · Verify, Dismiss, or Snooze | ⬜ |
 | 6 | **Evidence** → artifact · View original | ⬜ |
 | 7 | **Evidence** → Export resale report downloads | ⬜ |

@@ -55,7 +55,7 @@ function GarageWorkspaceContent() {
       <div
         className="flex flex-wrap gap-1 rounded-lg border border-border bg-muted/30 p-1"
         role="tablist"
-        aria-label="Car and driver sections"
+        aria-label="Owner sections"
       >
         {GARAGE_TABS.map((tab) => (
           <button
