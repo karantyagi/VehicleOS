@@ -6,6 +6,10 @@ import type { MaintenanceRecommendation } from "../policy/types.js";
 import { enrichRecommendationReason } from "../owner-context/enrich-recommendation-reason.js";
 import type { OwnerContextMemory } from "../owner-context/types.js";
 import type { DrivingStyle } from "../schedule/resolve-schedule-projection-context.js";
+import {
+  buildTimeFirstTaskCopy,
+  projectScheduleRowsForRecommendations,
+} from "./prepare-recommendation-task.js";
 
 export type RefreshMaintenanceRecommendationInput = {
   eventStore: EventStore;
@@ -95,6 +99,12 @@ export const refreshMaintenanceRecommendation = async (
   });
 
   const taskId = crypto.randomUUID();
+  const scheduleRows = projectScheduleRowsForRecommendations({
+    state,
+    drivingStyle: input.drivingStyle,
+  });
+  const taskCopy = buildTimeFirstTaskCopy({ recommendation, scheduleRows });
+
   await input.eventStore.append({
     aggregateType: "task",
     aggregateId: taskId,
@@ -104,11 +114,12 @@ export const refreshMaintenanceRecommendation = async (
       vehicleId: input.vehicleId,
       taskId,
       recommendationId: recommendation.recommendationId,
-      title: recommendation.title,
-      reason: recommendation.reason,
+      title: taskCopy.title,
+      reason: taskCopy.reason,
       status: "pending",
       taskKind: "recommendation",
       ruleId: recommendation.ruleId,
+      dueBy: taskCopy.dueBy,
     },
     causationId: recommendationEvent.id,
     correlationId,

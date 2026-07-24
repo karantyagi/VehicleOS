@@ -85,6 +85,7 @@ export type TaskCreatedPayload = {
   taskKind?: "recommendation" | "verification";
   verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE";
   ruleId?: string;
+  dueBy?: string | null;
 };
 
 export type ConflictDetectedPayload = {
@@ -128,6 +129,8 @@ export type TaskDecidedPayload = {
   taskId: string;
   decision: TaskDecision;
   decidedAt: string;
+  snoozeUntil?: string;
+  snoozeDays?: number;
 };
 
 export type KnowledgeScheduleRow = {

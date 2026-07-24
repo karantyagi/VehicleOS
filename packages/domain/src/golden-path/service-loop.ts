@@ -9,6 +9,11 @@ import type { PolicyEngine } from "../policy/policy-engine.js";
 import type { EventStore } from "../ports/event-store.js";
 import type { ServiceRecordSource, TaskDecision } from "../events/catalog.js";
 import type { DrivingStyle } from "../schedule/resolve-schedule-projection-context.js";
+import { computeSnoozeUntil } from "../now/ensure-stale-odometer-prompt.js";
+import {
+  buildTimeFirstTaskCopy,
+  projectScheduleRowsForRecommendations,
+} from "../now/prepare-recommendation-task.js";
 
 export type RecordServiceInput = {
   vehicleId: string;
@@ -115,6 +120,12 @@ export const recordServiceAndRecommend = async (deps: {
   let task: GoldenPathResult["task"] = null;
 
   if (recommendation) {
+    const scheduleRows = projectScheduleRowsForRecommendations({
+      state,
+      drivingStyle: input.drivingStyle,
+    });
+    const taskCopy = buildTimeFirstTaskCopy({ recommendation, scheduleRows });
+
     const recommendationEvent = await eventStore.append({
       aggregateType: "vehicle",
       aggregateId: input.vehicleId,
@@ -143,11 +154,12 @@ export const recordServiceAndRecommend = async (deps: {
         vehicleId: input.vehicleId,
         taskId,
         recommendationId: recommendation.recommendationId,
-        title: recommendation.title,
-        reason: recommendation.reason,
+        title: taskCopy.title,
+        reason: taskCopy.reason,
         status: "pending",
         taskKind: "recommendation",
         ruleId: recommendation.ruleId,
+        dueBy: taskCopy.dueBy,
       },
       causationId: recommendationEvent.id,
       correlationId,
@@ -156,8 +168,8 @@ export const recordServiceAndRecommend = async (deps: {
     task = {
       taskId,
       recommendationId: recommendation.recommendationId,
-      title: recommendation.title,
-      reason: recommendation.reason,
+      title: taskCopy.title,
+      reason: taskCopy.reason,
       status: "pending",
     };
   }
@@ -177,7 +189,12 @@ export const decideTask = async (deps: {
   vehicleId: string;
   taskId: string;
   decision: TaskDecision;
+  snoozeDays?: number;
 }): Promise<CatalogDomainEvent> => {
+  const decidedAt = new Date().toISOString();
+  const today = decidedAt.slice(0, 10);
+  const snoozeDays = deps.snoozeDays ?? 14;
+
   const decided = await deps.eventStore.append({
     aggregateType: "task",
     aggregateId: deps.taskId,
@@ -187,7 +204,13 @@ export const decideTask = async (deps: {
       vehicleId: deps.vehicleId,
       taskId: deps.taskId,
       decision: deps.decision,
-      decidedAt: new Date().toISOString(),
+      decidedAt,
+      ...(deps.decision === "snooze"
+        ? {
+            snoozeDays,
+            snoozeUntil: computeSnoozeUntil(today, snoozeDays),
+          }
+        : {}),
     },
   });
 
