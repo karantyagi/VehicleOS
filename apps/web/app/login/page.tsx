@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { FileText } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
-import { LoginTestimonial } from "@/components/login-testimonial";
+import { LoginValueCards } from "@/components/login-value-cards";
 import { ThemeSegmentedToggle } from "@/components/theme-segmented-toggle";
 import { SignInButtons } from "../../components/sign-in-buttons";
 import { LogoMark } from "../../lib/logo-mark";
@@ -36,14 +36,14 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
         </header>
 
         <div className="flex flex-1 flex-col justify-center py-10 sm:py-12">
-          <div className="mx-auto w-full max-w-[17.5rem] space-y-7">
-            <div className="space-y-1.5">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">Owner app</p>
-              <h1 className="text-[1.75rem] font-semibold leading-tight tracking-[-0.025em] text-foreground">
-                Welcome back
+          <div className="mx-auto w-full max-w-[19rem] space-y-7">
+            <div className="space-y-2">
+              <h1 className="text-[1.65rem] font-semibold leading-tight tracking-[-0.025em] text-foreground">
+                Sign in to your maintenance assistant
               </h1>
               <p className="text-[13px] leading-relaxed text-muted-foreground">
-                Sign in to your car maintenance assistant
+                Like hiring an AI assistant for your car — hand off records once, get gentle reminders when it
+                matters. It works quietly in the background. You stop planning; nothing gets missed.
               </p>
             </div>
 
@@ -101,13 +101,13 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
         </div>
 
         <div className="flex flex-1 items-center justify-center px-8 xl:px-14">
-          <LoginTestimonial />
+          <LoginValueCards />
         </div>
       </section>
 
       {/* Mobile — compact testimonial */}
       <section className="border-t border-primary/10 bg-primary/[0.04] px-6 py-10 lg:hidden">
-        <LoginTestimonial />
+        <LoginValueCards />
       </section>
     </main>
   );

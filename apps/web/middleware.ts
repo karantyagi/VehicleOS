@@ -10,6 +10,7 @@ export const config = {
     "/",
     "/login",
     "/settings",
+    "/garage",
     "/auth/:path*",
     "/api/:path*",
     "/design-preview",

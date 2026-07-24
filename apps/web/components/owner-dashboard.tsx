@@ -13,7 +13,9 @@ import { APP_SECTIONS, useAppUiStore } from "@/lib/store/app-ui-store";
 import { notify, notifyAuto } from "@/lib/notify";
 import { toast } from "sonner";
 import { getApiBase } from "../lib/api-base";
+import { isGarageSetupComplete } from "@/lib/setup-completion";
 import { OnboardingWizard, type OnboardingVehicle } from "./onboarding-wizard";
+import { SetupDriverGate } from "./setup-driver-gate";
 import { ReceiptCapture, type UploadedReceipt } from "./receipt-capture";
 import { QuoteAnalysisPanel, type QuoteAnalysisView } from "./quote-analysis-panel";
 import { EvidenceVaultConsole } from "./evidence-vault-console";
@@ -63,6 +65,7 @@ export function OwnerDashboard() {
     effectiveMilesPerYear: 10_000,
   });
   const [pipelinePhase, setPipelinePhase] = useState<PipelinePhase>("idle");
+  const [garageSetupComplete, setGarageSetupComplete] = useState(false);
 
   const feedback = useCallback((message: string) => {
     notifyAuto(message);
@@ -158,12 +161,13 @@ export function OwnerDashboard() {
 
         if (isMounted) {
           setVehicle(existing);
+          setGarageSetupComplete(isGarageSetupComplete(existing.id));
           setForm((current) => ({ ...current, mileage: existing.currentMileage }));
           await loadVehicleState(existing);
         }
       } catch {
         if (isMounted) {
-          feedback("Could not load your garage. Refresh to try again.");
+          feedback("Could not load your workspace. Refresh to try again.");
         }
       } finally {
         if (isMounted) setIsLoading(false);
@@ -179,8 +183,9 @@ export function OwnerDashboard() {
 
   const handleOnboardingComplete = async (created: OnboardingVehicle) => {
     setVehicle(created);
+    setGarageSetupComplete(true);
     setForm((current) => ({ ...current, mileage: created.currentMileage }));
-    feedback("Vehicle saved. Upload a receipt below to run the golden path.");
+    feedback("Setup complete. Upload a receipt under Receipt intake to run the golden path.");
     await loadVehicleState(created);
   };
 
@@ -218,8 +223,8 @@ export function OwnerDashboard() {
       setNowQueue(body.nowQueue);
       feedback(
         body.conflict
-          ? "Conflict detected — review the verification task in your Now queue."
-          : "Golden path complete — review the Now queue.",
+          ? "Conflict detected — check Owner verification in the sidebar."
+          : "Golden path complete — check Owner verification for next steps.",
       );
       setUploadedReceipt(null);
       setCaptureError("");
@@ -270,9 +275,9 @@ export function OwnerDashboard() {
       }
       setNowQueue(body.nowQueue);
       if (body.created && body.recommendation) {
-        feedback(`Added to Now queue: ${body.recommendation.title}`);
+        feedback(`Added to Owner verification: ${body.recommendation.title}`);
       } else if (body.skippedReason === "already_pending") {
-        feedback("A matching recommendation is already in your Now queue.");
+        feedback("A matching item is already in Owner verification.");
       } else {
         feedback("No new maintenance actions due right now.");
       }
@@ -313,10 +318,10 @@ export function OwnerDashboard() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6" aria-busy="true" aria-label="Loading garage">
+      <div className="space-y-6" aria-busy="true" aria-label="Loading workspace">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-4 w-full max-w-md" />
-        <PanelCard title="Loading" description="Opening your garage…">
+        <PanelCard title="Loading" description="Opening your workspace…">
           <div className="space-y-3">
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-24 w-full" />
@@ -328,6 +333,16 @@ export function OwnerDashboard() {
 
   if (!vehicle) {
     return <OnboardingWizard onComplete={handleOnboardingComplete} />;
+  }
+
+  if (!garageSetupComplete) {
+    return (
+      <SetupDriverGate
+        vehicleId={vehicle.id}
+        vehicleLabel={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+        onComplete={() => setGarageSetupComplete(true)}
+      />
+    );
   }
 
   return (
@@ -462,7 +477,7 @@ export function OwnerDashboard() {
       {activeSection === "context" ? (
         <div className="space-y-6">
           <PanelCard
-            title="Add context"
+            title="Manual & OEM"
             description="Like onboarding a new assistant — upload the basics so recommendations start from your car, not a blank slate."
           >
             <ManualKnowledgePanel
@@ -513,8 +528,8 @@ export function OwnerDashboard() {
                 setNowQueue(body.nowQueue as QueueItem[]);
                 feedback(
                   body.conflict
-                    ? "Conflict detected — review the verification task in your Now queue."
-                    : "Voice note saved — review the Now queue.",
+                    ? "Conflict detected — check Owner verification in the sidebar."
+                    : "Voice note saved — check Owner verification for next steps.",
                 );
                 void loadVehicleState(vehicle);
               }}
@@ -533,7 +548,7 @@ export function OwnerDashboard() {
                 setNowQueue(body.nowQueue as QueueItem[]);
                 feedback(
                   body.conflict
-                    ? "Conflict detected — review the verification task in your Now queue."
+                    ? "Conflict detected — check Owner verification in the sidebar."
                     : "Owner note saved to your timeline.",
                 );
                 void loadVehicleState(vehicle);
@@ -564,7 +579,7 @@ export function OwnerDashboard() {
               onRefreshed={(body) => {
                 setNowQueue(body.nowQueue as QueueItem[]);
                 if (body.created.length > 0) {
-                  feedback(`${body.created.length} seasonal prompt(s) added to your Now queue.`);
+                  feedback(`${body.created.length} seasonal prompt(s) added to Owner verification.`);
                 }
               }}
             />

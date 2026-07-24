@@ -29,7 +29,7 @@ export function SignInButtons({ className }: SignInButtonsProps) {
         className="flex h-11 w-full items-center justify-center gap-2.5 rounded-lg border border-[#747775] bg-white px-3 text-[13px] font-medium text-[#1f1f1f] shadow-sm transition-[box-shadow,background-color] hover:bg-[#f8f9fa] hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:border-[#8e918f] dark:bg-[#131314] dark:text-[#e3e3e3] dark:hover:bg-[#1a1a1b]"
       >
         <GoogleLogoMark className="shrink-0" />
-        <span>Sign in with Google</span>
+        <span>Continue with Google</span>
       </button>
 
       {/* GitHub — dark mark on near-black button (github.com/logos). */}
@@ -39,7 +39,7 @@ export function SignInButtons({ className }: SignInButtonsProps) {
         className="flex h-11 w-full items-center justify-center gap-2.5 rounded-lg border border-[#24292f] bg-[#24292f] px-3 text-[13px] font-medium text-white shadow-sm transition-[background-color,box-shadow] hover:bg-[#1b1f23] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <GitHubLogoMark className="shrink-0 text-white" />
-        <span>Sign in with GitHub</span>
+        <span>Continue with GitHub</span>
       </button>
 
       <p className="pt-0.5 text-center text-[11px] leading-relaxed text-muted-foreground">

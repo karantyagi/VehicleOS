@@ -60,12 +60,12 @@ export function NowQueuePanel({ items, disabled = false, onDecide }: NowQueuePan
   return (
     <div className="space-y-4">
       <p className="text-[13px] leading-relaxed text-muted-foreground">
-        Plain-English recommendations — you approve, dismiss, or snooze before anything changes.
+        Items awaiting Owner verification — resolve conflicts or confirm; dismiss or snooze when done.
       </p>
 
       {pending.length === 0 ? (
         <p className="surface-inset px-4 py-6 text-center text-sm text-muted-foreground">
-          Nothing needs a decision right now. Check back after your next service or refresh recommendations.
+          Nothing awaiting verification. As the assistant learns your car, this stays quiet.
         </p>
       ) : (
         <ul className="space-y-3">

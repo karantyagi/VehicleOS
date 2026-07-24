@@ -3,15 +3,46 @@ import type { ConsoleDensity } from "@/lib/console-types";
 
 export type AppSection = "now" | "timeline" | "receipts" | "evidence" | "context" | "notes" | "quotes";
 
+/** Assistant-office labels — stable section ids for routing and store. */
 export const APP_SECTIONS: { id: AppSection; label: string; description: string }[] = [
-  { id: "now", label: "Now", description: "Decisions waiting on you" },
-  { id: "timeline", label: "Timeline", description: "Service history" },
-  { id: "receipts", label: "Receipts", description: "Photo or PDF capture" },
-  { id: "evidence", label: "Evidence", description: "Stored artifacts" },
-  { id: "context", label: "Add context", description: "Manual and maintenance schedule" },
-  { id: "notes", label: "Notes", description: "Voice and owner entries" },
-  { id: "quotes", label: "Quotes", description: "Dealer quotes and seasonal" },
+  {
+    id: "now",
+    label: "Owner verification",
+    description: "Rare conflicts the assistant can't resolve alone",
+  },
+  {
+    id: "timeline",
+    label: "Service history",
+    description: "Past services from records and events",
+  },
+  {
+    id: "receipts",
+    label: "Receipt intake",
+    description: "Photos and PDFs handed to the assistant",
+  },
+  {
+    id: "evidence",
+    label: "Evidence vault",
+    description: "Stored artifacts for trust and resale",
+  },
+  {
+    id: "context",
+    label: "Manual & OEM",
+    description: "Owner manual and maintenance intervals",
+  },
+  {
+    id: "notes",
+    label: "Owner notes intake",
+    description: "Voice and structured owner entries",
+  },
+  {
+    id: "quotes",
+    label: "Quote review",
+    description: "Dealer quotes and seasonal checks",
+  },
 ];
+
+export const ASSISTANT_WORKSPACE_GROUP_LABEL = "Assistant workspace";
 
 export const CONSOLE_SECTIONS: AppSection[] = ["now", "timeline", "evidence"];
 

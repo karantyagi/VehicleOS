@@ -1,6 +1,7 @@
 "use client";
 
 import { Gauge, ListChecks } from "lucide-react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useVehicleConsoleOptional } from "@/lib/vehicle-console-context";
@@ -23,7 +24,12 @@ export function VehicleContextBar() {
       )}
     >
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
-        <p className="min-w-0 truncate font-medium text-foreground">{snapshot.label}</p>
+        <Link
+          href="/garage?tab=car"
+          className="min-w-0 truncate font-medium text-foreground underline-offset-4 hover:underline"
+        >
+          {snapshot.label}
+        </Link>
         <span className="tabular-nums text-muted-foreground">{snapshot.mileage.toLocaleString()} mi</span>
         {snapshot.lastServiceDate ? (
           <span className="hidden text-muted-foreground sm:inline">
@@ -35,7 +41,7 @@ export function VehicleContextBar() {
         )}
         <Badge variant={snapshot.pendingNowCount > 0 ? "default" : "secondary"} className="tabular-nums gap-1">
           <ListChecks className="h-3 w-3" aria-hidden />
-          {snapshot.pendingNowCount} pending
+          {snapshot.pendingNowCount} open
         </Badge>
         <span
           className={cn(

@@ -173,7 +173,7 @@ export function VehicleSettingsPanel() {
         ) : (
           <div className="space-y-3 rounded-lg border border-destructive/20 bg-destructive/5 p-4">
             <p className="text-sm text-muted-foreground">
-              This permanently removes timeline, evidence links, and Now queue items for this vehicle. Type{" "}
+              This permanently removes service history, evidence links, and Owner verification items for this vehicle. Type{" "}
               <strong className="text-foreground">DELETE</strong> to confirm.
             </p>
             <FormField label="Confirmation" htmlFor="vehicle-delete-confirm">

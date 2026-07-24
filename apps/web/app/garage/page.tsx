@@ -1,18 +1,18 @@
 import { redirect } from "next/navigation";
-import { SettingsWorkspace } from "../../components/settings-workspace";
 import { AppHeader } from "../../components/app-header";
 import { AppShell } from "../../components/app-shell";
+import { GarageWorkspace } from "../../components/garage-workspace";
 import { getSessionUser } from "../../lib/auth/session";
 import { isAuthEnabled } from "../../lib/supabase/env";
 
-export default async function SettingsPage() {
+export default async function GaragePage() {
   if (!isAuthEnabled()) {
     redirect("/");
   }
 
   const user = await getSessionUser();
   if (!user) {
-    redirect("/login?next=/settings");
+    redirect("/login?next=/garage");
   }
 
   return (
@@ -21,7 +21,7 @@ export default async function SettingsPage() {
       sidebarHeader={<AppHeader user={user} placement="sidebar" />}
       mobileBar={<AppHeader user={user} placement="mobile" />}
     >
-      <SettingsWorkspace user={user} />
+      <GarageWorkspace />
     </AppShell>
   );
 }

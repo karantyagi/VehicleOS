@@ -41,7 +41,11 @@ export const updateSession = async (request: NextRequest): Promise<NextResponse>
     pathname === "/api/health" ||
     pathname.startsWith("/design-preview");
 
-  if (!user && !isPublic && (pathname === "/" || pathname === "/settings" || pathname.startsWith("/api/"))) {
+  if (
+    !user &&
+    !isPublic &&
+    (pathname === "/" || pathname === "/settings" || pathname === "/garage" || pathname.startsWith("/api/"))
+  ) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     loginUrl.searchParams.set("next", pathname);

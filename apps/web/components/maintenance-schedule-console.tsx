@@ -57,7 +57,7 @@ export function MaintenanceScheduleConsole({
       <EmptyState
         icon={CalendarClock}
         title="No OEM schedule yet"
-        description="Upload and confirm your owner manual under Add context to project upcoming maintenance."
+        description="Upload and confirm your owner manual under Manual & OEM to project upcoming maintenance."
       />
     );
   }

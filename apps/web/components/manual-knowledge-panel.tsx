@@ -11,6 +11,7 @@ import {
   MANUAL_UPLOAD_GUIDANCE,
   MAX_MANUAL_BYTES,
   manualFileTooLargeMessage,
+  mapManualStorageUploadError,
   manualStorageRejectedMessage,
 } from "@/lib/manual-upload-limits";
 import { createClient } from "@/lib/supabase/client";
@@ -156,11 +157,7 @@ export function ManualKnowledgePanel({
         });
 
         if (error) {
-          throw new Error(
-            error.message.includes("maximum")
-              ? "Manual PDF exceeds storage limit — ask admin to run migration 004_manual_storage_limit.sql (50 MB)."
-              : error.message || "Upload to storage failed.",
-          );
+          throw new Error(mapManualStorageUploadError(error.message));
         }
       }
 
