@@ -4,6 +4,7 @@ import {
   StubPolicyEngine,
   confirmServiceWithConflictCheck,
   decideTask,
+  ensureStaleOdometerPrompt,
   foldEvents,
   recordVehicleOsImport,
   recordVehicleOsRmvImport,
@@ -27,7 +28,15 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
   const eventStore = deps.eventStore;
   const policyEngine = deps.policyEngine ?? new StubPolicyEngine();
 
-  const getVehicleState = async (vehicleId: string) => {
+  const getVehicleState = async (vehicleId: string, options?: { vehicleCreatedAt?: string }) => {
+    if (options?.vehicleCreatedAt) {
+      await ensureStaleOdometerPrompt({
+        eventStore,
+        vehicleId,
+        vehicleCreatedAt: options.vehicleCreatedAt,
+      });
+    }
+
     const events = await loadVehicleEvents(eventStore, vehicleId);
     return {
       vehicleId,
@@ -90,7 +99,12 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
 
     getVehicleState,
 
-    async decideOnTask(input: { vehicleId: string; taskId: string; decision: TaskDecision }) {
+    async decideOnTask(input: {
+      vehicleId: string;
+      taskId: string;
+      decision: TaskDecision;
+      snoozeDays?: number;
+    }) {
       await decideTask({ eventStore, ...input });
       return getVehicleState(input.vehicleId);
     },
