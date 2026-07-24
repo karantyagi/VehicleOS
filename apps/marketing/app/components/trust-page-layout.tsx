@@ -19,6 +19,7 @@ export function TrustPageLayout({ title, updated, children }: TrustPageLayoutPro
           </Link>
           <nav className="nav-links" aria-label="Primary">
             <Link href="/privacy">Privacy</Link>
+            <Link href="/terms">Terms</Link>
             <Link href="/security">Security</Link>
             <a className="nav-cta" href={siteConfig.appUrl}>
               Open app
@@ -35,6 +36,8 @@ export function TrustPageLayout({ title, updated, children }: TrustPageLayoutPro
         <p className="trust-related">
           See also{" "}
           <Link href="/privacy">Privacy</Link>
+          {" · "}
+          <Link href="/terms">Terms</Link>
           {" · "}
           <Link href="/security">Security</Link>
         </p>
@@ -54,6 +57,9 @@ export function TrustPageLayout({ title, updated, children }: TrustPageLayoutPro
             <ul>
               <li>
                 <Link href="/privacy">Privacy</Link>
+              </li>
+              <li>
+                <Link href="/terms">Terms</Link>
               </li>
               <li>
                 <Link href="/security">Security</Link>
