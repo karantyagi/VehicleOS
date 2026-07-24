@@ -8,6 +8,7 @@ import { CarIdentityNav } from "@/components/car-identity-nav";
 import { ConsoleKeyboardShortcuts } from "@/components/console-keyboard-shortcuts";
 import { CommandMenu, CommandMenuTrigger, SidebarUtilityRow } from "@/components/command-menu";
 import { AccountMenu } from "@/components/account-menu";
+import { PwaInstallBanner } from "@/components/pwa-install-banner";
 import { PwaSectionLauncher } from "@/components/pwa-section-launcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { VehicleContextBar } from "@/components/vehicle-context-bar";
@@ -107,6 +108,7 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
             )}
           >
             <VehicleContextBar />
+            {user ? <PwaInstallBanner /> : null}
             {children}
           </div>
         </main>

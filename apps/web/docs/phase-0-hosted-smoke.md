@@ -19,6 +19,7 @@
 | 5 | **Owner verification** → item visible · Verify, Dismiss, or Snooze | ⬜ |
 | 6 | **Evidence** → artifact · View original | ⬜ |
 | 7 | **Evidence** → Export resale report downloads | ⬜ |
+| 8 | **Add to Home Screen** (Android Chrome or iOS Share) → opens standalone · Receipts shortcut works | ⬜ |
 
 ## Log failures
 
