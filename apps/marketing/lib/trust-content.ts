@@ -11,6 +11,10 @@ export const trustMeta = {
     description:
       "How VehicleOS protects owner data in early access — hosting, encryption, access controls, and AI boundaries.",
   },
+  terms: {
+    title: "Terms of Service — VehicleOS",
+    description: "Early-access terms for the VehicleOS owner app — acceptable use, service scope, and account basics.",
+  },
 } as const;
 
 export const privacySections = [
@@ -72,6 +76,58 @@ export const privacySections = [
     paragraphs: [
       `Questions about privacy or data rights: ${siteConfig.contactEmail}.`,
       "We aim to respond within a few business days during early access.",
+    ],
+  },
+] as const;
+
+export const termsSections = [
+  {
+    id: "overview",
+    title: "Overview",
+    paragraphs: [
+      "These terms apply to the VehicleOS owner app during free early access at app.vehicleos.app. By signing in, you agree to use the service responsibly and understand it is evolving software — not dealer, legal, or mechanical advice.",
+    ],
+  },
+  {
+    id: "service",
+    title: "What we provide",
+    bullets: [
+      "A hosted workspace to store vehicle context you confirm — receipts, notes, manuals, and schedule rules.",
+      "Recommendations and reminders driven by rules-first policy — you approve changes before they affect your timeline.",
+      "Early access may change, pause, or limit features without notice while we dogfood and improve the product.",
+    ],
+  },
+  {
+    id: "use",
+    title: "Acceptable use",
+    bullets: [
+      "Use your own account — do not attempt to access another owner's vehicle data.",
+      "Do not upload malware, illegal content, or material you do not have the right to store.",
+      "Do not scrape, reverse-engineer, or abuse API endpoints beyond normal app use.",
+    ],
+  },
+  {
+    id: "advice",
+    title: "Not professional advice",
+    paragraphs: [
+      "VehicleOS helps you organize history and surface plain-English guidance. It does not replace a certified mechanic, dealer service advisor, or legal counsel. You remain responsible for maintenance decisions and shop visits.",
+    ],
+  },
+  {
+    id: "account",
+    title: "Account & termination",
+    bullets: [
+      "Sign in with Google or GitHub via Supabase Auth — we never receive your password.",
+      "You may delete your account from Settings; deletion removes your hosted vehicle data per our Privacy Policy.",
+      "We may suspend access for abuse or security risk during early access.",
+    ],
+  },
+  {
+    id: "contact",
+    title: "Contact",
+    paragraphs: [
+      `Questions about these terms: ${siteConfig.contactEmail}.`,
+      "See also our Privacy and Security pages for data handling details.",
     ],
   },
 ] as const;

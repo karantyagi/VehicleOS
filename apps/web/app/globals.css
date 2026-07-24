@@ -151,3 +151,35 @@
     }
   }
 }
+
+@layer components {
+  .logo-mark {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.4375rem;
+    background: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--primary)));
+    box-shadow: 0 2px 8px -2px hsl(158 64% 28% / 0.35);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .logo-mark svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .logo-mark--login {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+  }
+
+  .login-page__panel {
+    box-shadow: inset 3px 0 0 hsl(var(--primary));
+  }
+
+  .dark .login-page__panel {
+    box-shadow: inset 3px 0 0 hsl(var(--primary) / 0.65);
+  }
+}
