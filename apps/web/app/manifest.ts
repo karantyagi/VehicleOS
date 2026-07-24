@@ -38,6 +38,13 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     shortcuts: [
       {
+        name: "Reminders",
+        short_name: "Reminders",
+        description: "Calendar-first maintenance nudges",
+        url: "/?section=reminders",
+        icons: [{ src: "/icons/icon.svg", sizes: "512x512", type: "image/svg+xml" }],
+      },
+      {
         name: "Receipt intake",
         short_name: "Receipts",
         description: "Photo or PDF at the shop",

@@ -1,6 +1,6 @@
 "use client";
 
-import { Gauge, ListChecks } from "lucide-react";
+import { BellRing, Gauge, ListChecks } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,10 +39,16 @@ export function VehicleContextBar() {
         ) : (
           <span className="hidden text-muted-foreground sm:inline">No service recorded yet</span>
         )}
-        <Badge variant={snapshot.pendingNowCount > 0 ? "default" : "secondary"} className="tabular-nums gap-1">
-          <ListChecks className="h-3 w-3" aria-hidden />
-          {snapshot.pendingNowCount} awaiting verification
+        <Badge variant={snapshot.pendingReminderCount > 0 ? "default" : "secondary"} className="tabular-nums gap-1">
+          <BellRing className="h-3 w-3" aria-hidden />
+          {snapshot.pendingReminderCount} reminder{snapshot.pendingReminderCount === 1 ? "" : "s"}
         </Badge>
+        {snapshot.pendingVerificationCount > 0 ? (
+          <Badge variant="warning" className="tabular-nums gap-1">
+            <ListChecks className="h-3 w-3" aria-hidden />
+            {snapshot.pendingVerificationCount} to verify
+          </Badge>
+        ) : null}
         <span
           className={cn(
             "inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs",

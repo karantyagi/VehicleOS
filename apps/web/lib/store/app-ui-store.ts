@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { ConsoleDensity } from "@/lib/console-types";
 
 export type AppSection =
+  | "reminders"
   | "now"
   | "timeline"
   | "imports"
@@ -13,6 +14,11 @@ export type AppSection =
 
 /** Assistant-office labels — stable section ids for routing and store. */
 export const APP_SECTIONS: { id: AppSection; label: string; description: string }[] = [
+  {
+    id: "reminders",
+    label: "Reminders",
+    description: "Calendar-first nudges — act this week or snooze",
+  },
   {
     id: "now",
     label: "Owner verification",
@@ -57,17 +63,18 @@ export const APP_SECTIONS: { id: AppSection; label: string; description: string 
 
 export const ASSISTANT_WORKSPACE_GROUP_LABEL = "Assistant workspace";
 
-export const CONSOLE_SECTIONS: AppSection[] = ["now", "timeline", "evidence"];
+export const CONSOLE_SECTIONS: AppSection[] = ["reminders", "now", "timeline", "evidence"];
 
 export const SECTION_SHORTCUTS: Record<AppSection, string> = {
-  now: "1",
-  timeline: "2",
-  imports: "3",
-  receipts: "4",
-  evidence: "5",
-  context: "6",
-  notes: "7",
-  quotes: "8",
+  reminders: "1",
+  now: "2",
+  timeline: "3",
+  imports: "4",
+  receipts: "5",
+  evidence: "6",
+  context: "7",
+  notes: "8",
+  quotes: "9",
 };
 
 type AppUiState = {
@@ -98,7 +105,7 @@ const clearSelections = {
 };
 
 export const useAppUiStore = create<AppUiState>((set, get) => ({
-  activeSection: "now",
+  activeSection: "reminders",
   mobileNavOpen: false,
   commandOpen: false,
   density: "comfortable",
