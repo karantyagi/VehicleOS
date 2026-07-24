@@ -64,3 +64,15 @@ export type MaintenanceScheduleView = {
     full: string;
   };
 };
+
+export type VerificationMaturityView = {
+  thisWeekCount: number;
+  lastWeekCount: number;
+  weekOverWeekDelta: number;
+  weeklyCounts: { weekStart: string; count: number }[];
+  expectedCurve: { weekStart: string; count: number }[];
+  maturityStage: "onboarding" | "learning" | "steady";
+  hasEnoughRealData: boolean;
+  trendMessage: string;
+  celebrateTrend: boolean;
+};

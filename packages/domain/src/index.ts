@@ -109,6 +109,13 @@ export {
   type RefreshMaintenanceRecommendationResult,
 } from "./now/refresh-maintenance-recommendation.js";
 export {
+  computeVerificationMaturity,
+  type AssistantMaturityStage,
+  type ComputeVerificationMaturityInput,
+  type VerificationMaturityView,
+  type VerificationWeeklyBucket,
+} from "./now/compute-verification-maturity.js";
+export {
   projectMaintenanceSchedule,
   DEFAULT_EFFECTIVE_MILES_PER_YEAR,
   DEFAULT_SCHEDULE_HORIZON_MONTHS,

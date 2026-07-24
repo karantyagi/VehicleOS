@@ -1,5 +1,6 @@
-import type { VehicleProjectionState } from "@vehicleos/domain";
+import type { CatalogDomainEvent, VehicleProjectionState } from "@vehicleos/domain";
 import {
+  computeVerificationMaturity,
   enrichTimelineForDisplay,
   projectMaintenanceSchedule,
   resolveScheduleProjectionContext,
@@ -14,6 +15,7 @@ export type VehicleProfileInput = Pick<
 export const buildVehicleStateView = (
   state: VehicleProjectionState,
   profile?: VehicleProfileInput,
+  events?: CatalogDomainEvent[],
 ) => {
   const scheduleContext = resolveScheduleProjectionContext({
     ownedSince: profile?.ownedSince ?? null,
@@ -59,6 +61,9 @@ export const buildVehicleStateView = (
     evidenceVault: state.evidenceVault,
     knowledgeSchedule: state.knowledgeSchedule,
     currentMileage: state.currentMileage,
+    verificationMaturity: events
+      ? computeVerificationMaturity({ vehicleId: state.vehicleId, events })
+      : null,
     maintenanceSchedule: {
       near: scheduleNear.rows,
       extended: scheduleExtended.rows,

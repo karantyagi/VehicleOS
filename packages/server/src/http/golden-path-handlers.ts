@@ -151,7 +151,7 @@ export const getVehicleState = async (
   const snapshot = await services.goldenPath.getVehicleState(vehicleId);
   return jsonResponse(200, {
     vehicle: owned.vehicle,
-    ...buildVehicleStateView(snapshot.state, owned.vehicle),
+    ...buildVehicleStateView(snapshot.state, owned.vehicle, snapshot.events),
     eventCount: snapshot.events.length,
   });
 };

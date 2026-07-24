@@ -28,7 +28,14 @@ import { NowQueueConsole } from "./now-queue-console";
 import { OwnerServiceNotePanel } from "./owner-service-note-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 import { useVehicleConsole } from "@/lib/vehicle-console-context";
-import type { MaintenanceScheduleView, PipelinePhase, QueueItem, TimelineEntry } from "@/lib/console-types";
+import { VerificationMaturityPanel } from "./verification-maturity-panel";
+import type {
+  MaintenanceScheduleView,
+  PipelinePhase,
+  QueueItem,
+  TimelineEntry,
+  VerificationMaturityView,
+} from "@/lib/console-types";
 
 type Vehicle = OnboardingVehicle;
 
@@ -65,6 +72,7 @@ export function OwnerDashboard() {
     full: [],
     effectiveMilesPerYear: 10_000,
   });
+  const [verificationMaturity, setVerificationMaturity] = useState<VerificationMaturityView | null>(null);
   const [pipelinePhase, setPipelinePhase] = useState<PipelinePhase>("idle");
   const [ownerSetupComplete, setOwnerSetupComplete] = useState(false);
 
@@ -122,6 +130,7 @@ export function OwnerDashboard() {
         evidenceVault?: EvidenceVaultItem[];
         knowledgeSchedule?: { serviceName: string; intervalMiles?: number; manualTitle: string }[];
         maintenanceSchedule?: MaintenanceScheduleView;
+        verificationMaturity?: VerificationMaturityView | null;
         currentMileage?: number;
       };
 
@@ -138,6 +147,7 @@ export function OwnerDashboard() {
           effectiveMilesPerYear: 10_000,
         },
       );
+      setVerificationMaturity(body.verificationMaturity ?? null);
       if (body.currentMileage && body.currentMileage > nextVehicle.currentMileage) {
         setVehicle({ ...nextVehicle, currentMileage: body.currentMileage });
       }
@@ -377,7 +387,10 @@ export function OwnerDashboard() {
           title="Owner verification"
           description="Filter, inspect lineage, decide — nothing changes until you confirm."
         >
-          <NowQueueConsole items={nowQueue} disabled={isBusy} onDecide={decide} />
+          <div className="space-y-4">
+            {verificationMaturity ? <VerificationMaturityPanel maturity={verificationMaturity} /> : null}
+            <NowQueueConsole items={nowQueue} disabled={isBusy} onDecide={decide} />
+          </div>
         </PanelCard>
       ) : null}
 
