@@ -1,0 +1,313 @@
+{
+  "version": "1",
+  "source": "carfax-pdf-manual",
+  "exportedAt": "2026-07-24T16:00:00.000Z",
+  "vehicle": {
+    "vin": "UPDATE-WITH-YOUR-VIN",
+    "year": 2021,
+    "make": "Acura",
+    "model": "TLX",
+    "trim": "2021+",
+    "currentMileage": 58819
+  },
+  "services": [
+    {
+      "shop": "Costco Tire Center",
+      "serviceDate": "2026-07-15",
+      "mileage": 58819,
+      "lineItems": ["Tires rotated"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Ira Acura Westwood",
+      "serviceDate": "2026-05-30",
+      "mileage": 57310,
+      "lineItems": [
+        "Vehicle serviced",
+        "Maintenance inspection completed",
+        "Antifreeze/coolant flushed/changed",
+        "Brake fluid flushed/changed",
+        "Front brake pads replaced",
+        "Front brake rotor(s) replaced",
+        "Vehicle washed/detailed"
+      ],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Massachusetts",
+      "serviceDate": "2026-04-16",
+      "mileage": 56221,
+      "lineItems": ["Passed safety inspection", "Passed emissions inspection"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Costco Tire Center",
+      "serviceDate": "2026-01-20",
+      "mileage": 53225,
+      "lineItems": ["Tires rotated", "Four tires balanced"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "MetroWest Acura",
+      "serviceDate": "2025-09-15",
+      "mileage": 49919,
+      "lineItems": [
+        "Vehicle serviced",
+        "Maintenance inspection completed",
+        "Oil and filter changed",
+        "Transmission fluid changed"
+      ],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Ira Acura Westwood",
+      "serviceDate": "2025-07-17",
+      "mileage": 47402,
+      "lineItems": [
+        "Vehicle serviced",
+        "Maintenance inspection completed",
+        "Vehicle washed/detailed",
+        "Battery replaced"
+      ],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Costco Tire Center",
+      "serviceDate": "2025-06-24",
+      "mileage": 45243,
+      "lineItems": ["Tires rotated"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Self-Service (DIY)",
+      "serviceDate": "2025-06-11",
+      "mileage": 44590,
+      "lineItems": ["Cabin air filter replaced/cleaned", "Air filter replaced"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Ira Acura Westwood",
+      "serviceDate": "2025-06-11",
+      "mileage": 44590,
+      "lineItems": [
+        "Vehicle serviced",
+        "Maintenance inspection completed",
+        "Brakes checked",
+        "Rear brake pads replaced",
+        "Rear brake rotor(s) replaced",
+        "Vehicle washed/detailed"
+      ],
+      "total": "$0.00"
+    },
+    {
+      "shop": "MetroWest Acura",
+      "serviceDate": "2025-06-11",
+      "mileage": 44567,
+      "lineItems": [
+        "Vehicle serviced",
+        "Maintenance inspection completed",
+        "Differential serviced",
+        "Oil and filter changed",
+        "Rear differential fluid flushed/changed",
+        "Rear differential serviced"
+      ],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Self Reported",
+      "serviceDate": "2025-05-11",
+      "mileage": 43190,
+      "lineItems": ["Oil and filter changed"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Massachusetts",
+      "serviceDate": "2025-03-31",
+      "mileage": 42095,
+      "lineItems": ["Passed safety inspection", "Passed emissions inspection"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "MetroWest Acura",
+      "serviceDate": "2025-03-31",
+      "mileage": 42000,
+      "lineItems": ["Vehicle serviced", "Emissions or safety inspection performed"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Self Reported",
+      "serviceDate": "2025-02-10",
+      "mileage": 42095,
+      "lineItems": ["Oil and filter changed"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Costco Tire Center",
+      "serviceDate": "2025-01-06",
+      "mileage": 39390,
+      "lineItems": ["Four tires replaced"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Self-Service (DIY)",
+      "serviceDate": "2024-11-12",
+      "mileage": 37883,
+      "lineItems": [
+        "Wiper(s) replaced",
+        "Brakes checked",
+        "Oil and filter changed",
+        "Tires rotated"
+      ],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Ira Acura Westwood",
+      "serviceDate": "2024-11-11",
+      "mileage": 37883,
+      "lineItems": ["Vehicle serviced", "Oil and filter changed"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Ira Acura Westwood",
+      "serviceDate": "2024-03-25",
+      "mileage": 30777,
+      "lineItems": [
+        "Vehicle serviced",
+        "Drive belts checked",
+        "Emissions or safety inspection performed",
+        "Oil and filter changed",
+        "Tire condition and pressure checked",
+        "Tires rotated",
+        "Air filter replaced",
+        "Cabin air filter replaced/cleaned",
+        "Safety inspection performed",
+        "Emissions inspection performed"
+      ],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Massachusetts",
+      "serviceDate": "2024-03-25",
+      "mileage": 30777,
+      "lineItems": ["Passed safety inspection", "Passed emissions inspection"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "MetroWest Acura",
+      "serviceDate": "2023-07-07",
+      "mileage": 23558,
+      "lineItems": [
+        "Vehicle serviced",
+        "Maintenance inspection completed",
+        "Brake fluid flushed/changed",
+        "Brake fluid checked",
+        "Oil and filter changed",
+        "Safety inspection performed",
+        "Tires rotated"
+      ],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Automax Framingham",
+      "serviceDate": "2023-03-30",
+      "mileage": 21365,
+      "lineItems": ["Vehicle serviced", "Emissions or safety inspection performed"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Massachusetts",
+      "serviceDate": "2023-03-29",
+      "mileage": 21365,
+      "lineItems": ["Passed safety inspection", "Passed emissions inspection"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Automax Framingham",
+      "serviceDate": "2023-03-29",
+      "mileage": 21365,
+      "lineItems": ["Emissions inspection performed", "Safety inspection performed"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Ira Acura Westwood",
+      "serviceDate": "2022-08-04",
+      "mileage": 16042,
+      "lineItems": [
+        "Vehicle serviced",
+        "Oil and filter changed",
+        "Tires rotated",
+        "Brakes checked",
+        "Four wheel alignment performed",
+        "Four tires balanced",
+        "15,000 mile service performed"
+      ],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Massachusetts",
+      "serviceDate": "2022-03-08",
+      "mileage": 11869,
+      "lineItems": ["Passed safety inspection", "Passed emissions inspection"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Ira Acura Westwood",
+      "serviceDate": "2022-01-20",
+      "mileage": 10825,
+      "lineItems": [
+        "Vehicle serviced",
+        "Oil and filter changed",
+        "Tires rotated",
+        "Brakes checked",
+        "Safety inspection performed",
+        "10,000 mile service performed"
+      ],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Prime Acura",
+      "serviceDate": "2021-08-16",
+      "mileage": 5149,
+      "lineItems": [
+        "Vehicle serviced",
+        "Maintenance inspection completed",
+        "Brakes checked",
+        "Oil and filter changed",
+        "Tires rotated",
+        "Vehicle washed/detailed"
+      ],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Prime Acura",
+      "serviceDate": "2021-03-17",
+      "mileage": 10,
+      "lineItems": [
+        "Vehicle serviced",
+        "Emissions or safety inspection performed",
+        "Paint sealant/protection checked",
+        "Paint protection applied"
+      ],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Self Reported",
+      "serviceDate": "2021-03-01",
+      "mileage": 15,
+      "lineItems": ["Four tires replaced"],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Prime Acura",
+      "serviceDate": "2021-02-24",
+      "mileage": 10,
+      "lineItems": [
+        "Vehicle serviced",
+        "Pre-delivery inspection completed",
+        "Drivability/performance checked",
+        "Wheel locks installed"
+      ],
+      "total": "$0.00"
+    }
+  ]
+}

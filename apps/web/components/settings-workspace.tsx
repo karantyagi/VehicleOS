@@ -1,6 +1,7 @@
 "use client";
 
 import { DeleteAccountPanel } from "@/components/delete-account-panel";
+import { VehicleDeletePanel } from "@/components/vehicle-delete-panel";
 import { PageHeader } from "@/components/page-header";
 import { PanelCard } from "@/components/panel-card";
 import type { SessionUser } from "@/lib/auth/types";
@@ -21,6 +22,9 @@ export function SettingsWorkspace({ user }: SettingsWorkspaceProps) {
       <div className="space-y-6">
         <PanelCard title="Signed in as" description="Your early-access identity for VehicleOS.">
           <p className="text-sm font-medium">{user.email ?? user.id}</p>
+        </PanelCard>
+        <PanelCard title="Vehicle" description="Remove this car and all service history.">
+          <VehicleDeletePanel />
         </PanelCard>
         <DeleteAccountPanel />
       </div>

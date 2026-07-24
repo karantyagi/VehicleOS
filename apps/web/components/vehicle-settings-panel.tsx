@@ -24,9 +24,6 @@ export function VehicleSettingsPanel() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleteConfirm, setDeleteConfirm] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -106,23 +103,6 @@ export function VehicleSettingsPanel() {
     }
   };
 
-  const deleteVehicle = async () => {
-    if (!vehicle || deleteConfirm !== "DELETE") return;
-    setIsDeleting(true);
-    setError("");
-    try {
-      const response = await fetch(`/api/vehicles/${vehicle.id}`, { method: "DELETE" });
-      const body = (await response.json()) as { deleted?: boolean; error?: string };
-      if (!response.ok) throw new Error(body.error ?? "Delete failed");
-      notify("Vehicle and service history removed.", "success");
-      window.location.href = "/";
-    } catch (deleteError) {
-      setError(deleteError instanceof Error ? deleteError.message : "Delete failed");
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
   if (isLoading) {
     return (
       <Card>
@@ -149,7 +129,7 @@ export function VehicleSettingsPanel() {
     <Card>
       <CardHeader>
         <CardTitle>Vehicle record</CardTitle>
-        <CardDescription>Update mileage or details when your situation changes. Deleting removes all history for this car.</CardDescription>
+        <CardDescription>Update mileage or details when your situation changes.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -199,48 +179,6 @@ export function VehicleSettingsPanel() {
             {isSaving ? "Saving…" : "Save changes"}
           </Button>
         </FormActions>
-
-        {!deleteOpen ? (
-          <Button type="button" variant="destructive" onClick={() => setDeleteOpen(true)}>
-            Delete this vehicle and all history
-          </Button>
-        ) : (
-          <div className="space-y-3 rounded-lg border border-destructive/20 bg-destructive/5 p-4">
-            <p className="text-sm text-muted-foreground">
-              This permanently removes service history, evidence links, and Owner verification items for this vehicle. Type{" "}
-              <strong className="text-foreground">DELETE</strong> to confirm.
-            </p>
-            <FormField label="Confirmation" htmlFor="vehicle-delete-confirm">
-              <Input
-                id="vehicle-delete-confirm"
-                value={deleteConfirm}
-                onChange={(event) => setDeleteConfirm(event.target.value)}
-                autoComplete="off"
-              />
-            </FormField>
-            <FormActions>
-              <Button
-                type="button"
-                variant="destructive"
-                disabled={deleteConfirm !== "DELETE" || isDeleting}
-                onClick={() => void deleteVehicle()}
-              >
-                {isDeleting ? "Deleting…" : "Confirm delete vehicle"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                disabled={isDeleting}
-                onClick={() => {
-                  setDeleteOpen(false);
-                  setDeleteConfirm("");
-                }}
-              >
-                Cancel
-              </Button>
-            </FormActions>
-          </div>
-        )}
 
         {error ? <Alert variant="destructive">{error}</Alert> : null}
       </CardContent>

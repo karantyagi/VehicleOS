@@ -1,34 +1,18 @@
-/** Five login-panel value pillars — keep in sync with assistant-product-model.md § Login page — five value cards */
+/** Login carousel hooks — sync with assistant-product-model.md § Login page */
 export type LoginValueCard = {
   id: string;
   title: string;
-  body: string;
+  tagline: string;
 };
 
 export const LOGIN_VALUE_CARDS: LoginValueCard[] = [
-  {
-    id: "planner",
-    title: "Stop being the planner",
-    body: "Maintenance shouldn't live in your head or scattered folders. Hand off records once — your assistant owns the schedule.",
-  },
-  {
-    id: "missed",
-    title: "Nothing gets missed",
-    body: "Timely reminders with plain-English why — oil, brakes, renewals — before they're overdue or costly.",
-  },
-  {
-    id: "background",
-    title: "Quietly in the background",
-    body: "Light-touch nudges when it matters. No daily app habit — the assistant works while you live your life.",
-  },
-  {
-    id: "verify",
-    title: "Verify once, rarely again",
-    body: "Early setup may ask you to clear a few data conflicts. That's the assistant learning your car — it gets quieter every week.",
-  },
-  {
-    id: "execute",
-    title: "You just show up",
-    body: "Book, pay, drive. Zero planning overhead. The assistant remembers so you don't have to.",
-  },
+  { id: "planner", title: "Stop being the planner", tagline: "Hand off once. It remembers." },
+  { id: "missed", title: "Nothing gets missed", tagline: "Reminded before it's overdue." },
+  { id: "background", title: "Works in the background", tagline: "Light nudges. Quiet weeks." },
+  { id: "verify", title: "Gets smarter over time", tagline: "Fewer questions each week." },
+  { id: "execute", title: "You just show up", tagline: "Book. Drive. Done." },
 ];
+
+export const LOGIN_CAROUSEL_MS = 3000;
+
+/** Auto-rotate dwell (title only). Tagline shows on hover, focus, or manual browse. Transition ~700ms in globals.css */
