@@ -112,11 +112,21 @@ export {
   projectMaintenanceSchedule,
   DEFAULT_EFFECTIVE_MILES_PER_YEAR,
   DEFAULT_SCHEDULE_HORIZON_MONTHS,
+  DEFAULT_DUE_SOON_DAYS,
   EXTENDED_SCHEDULE_HORIZON_MONTHS,
   type ProjectMaintenanceScheduleInput,
   type ProjectMaintenanceScheduleResult,
   type ScheduleProjectionRow,
   type ScheduleProjectionStatus,
 } from "./schedule/project-maintenance-schedule.js";
+export {
+  AGGRESSIVE_DUE_SOON_DAYS,
+  computeEffectiveMilesPerYear,
+  computeObservedMilesPerYear,
+  resolveDueSoonDays,
+  resolveScheduleProjectionContext,
+  type DrivingStyle,
+  type ScheduleProjectionContext,
+} from "./schedule/resolve-schedule-projection-context.js";
 export type { KnowledgeScheduleEntry } from "./projections/types.js";
 export type { KnowledgeScheduleRow } from "./events/catalog.js";

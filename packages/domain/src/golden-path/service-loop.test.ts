@@ -23,7 +23,7 @@ describe("golden path flow catalog", () => {
 });
 
 describe("recordServiceAndRecommend", () => {
-  it("records service, projects timeline, and creates a Now queue task", async () => {
+  it("records service, projects timeline, and creates an Owner verification task", async () => {
     const eventStore = new InMemoryEventStore();
     const policyEngine = new StubPolicyEngine();
     const vehicleId = crypto.randomUUID();

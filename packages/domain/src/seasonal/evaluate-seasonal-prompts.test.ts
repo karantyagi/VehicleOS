@@ -36,7 +36,7 @@ describe("evaluateSeasonalPrompts", () => {
 });
 
 describe("recordSeasonalPrompts", () => {
-  it("creates a seasonal Now queue task once per season", async () => {
+  it("creates a seasonal Owner verification task once per season", async () => {
     const eventStore = new InMemoryEventStore();
     const vehicleId = crypto.randomUUID();
     const referenceDate = "2026-01-15T12:00:00.000Z";

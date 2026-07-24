@@ -10,7 +10,7 @@ Coverage:
 
 - Vehicle create → receipt ingest → `service.recorded` → recommendation → task
 - Task approve/dismiss/snooze via `task.decided`
-- Projection correctness for timeline + Now queue
+- Projection correctness for timeline + Owner verification
 
 Postgres persistence is optional for CI (in-memory `EventStore` + vehicle repo). Local Postgres:
 

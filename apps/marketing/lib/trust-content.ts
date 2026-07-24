@@ -22,7 +22,7 @@ export const privacySections = [
     id: "overview",
     title: "Overview",
     paragraphs: [
-      "VehicleOS is operational memory for vehicle ownership. During early access we collect only what we need to run the hosted app at app.vehicleos.app — not to sell data or build ad profiles.",
+      "VehicleOS is a reminding assistant for vehicle ownership. During early access we collect only what we need to run the hosted app at app.vehicleos.app — not to sell data or build ad profiles.",
     ],
   },
   {
@@ -40,7 +40,7 @@ export const privacySections = [
     title: "Why we use it",
     bullets: [
       "Authenticate you and keep your vehicles private to your account.",
-      "Run the maintenance timeline, Now queue, and golden-path loop you see in the app.",
+      "Run the maintenance timeline, Owner verification inbox, and golden-path loop you see in the app.",
       "Improve reliability and fix bugs during early access.",
     ],
   },
@@ -93,7 +93,7 @@ export const termsSections = [
     title: "What we provide",
     bullets: [
       "A hosted workspace to store vehicle context you confirm — receipts, notes, manuals, and schedule rules.",
-      "Recommendations and reminders driven by rules-first policy — you approve changes before they affect your timeline.",
+      "Recommendations and reminders driven by rules-first policy — calendar-first nudges; Owner verification when data conflicts.",
       "Early access may change, pause, or limit features without notice while we dogfood and improve the product.",
     ],
   },
@@ -171,7 +171,7 @@ export const securitySections = [
     id: "ai",
     title: "AI & data boundaries",
     bullets: [
-      "The schedule engine and Now queue are rules-first — deterministic policy, not an LLM deciding what is due.",
+      "The schedule engine is rules-first — deterministic policy, not an LLM deciding what is due. Owner verification handles conflicts; Reminders (push/email) are the target delivery channel.",
       "When LLM extraction ships for receipts, we will document what fields leave your account and why.",
       "Today’s golden path uses structured receipt fields you confirm in the UI — no document sent to an external model in that flow.",
     ],

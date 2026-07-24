@@ -82,7 +82,7 @@ What Cursor **is good at**:
 
 - You run `pnpm --filter @vehicleos/web dev` with **your** `.env.local` (Supabase URL, anon key, redirect URLs).
 - You sign in with **Google once** in the browser.
-- In Cursor chat: “Walk through golden path: receipt → Now queue → timeline” — agent reads code, you click, or use **Cursor Browser** (if enabled) for **non-OAuth** steps after you’re logged in.
+- In Cursor chat: “Walk through golden path: receipt → Owner verification → timeline” — agent reads code, you click, or use **Cursor Browser** (if enabled) for **non-OAuth** steps after you’re logged in.
 - Agent runs **Playwright** specs you add; you re-auth when `storageState` expires.
 
 What Cursor **is not** a replacement for:
