@@ -78,16 +78,7 @@
         "Vehicle serviced",
         "Maintenance inspection completed",
         "Vehicle washed/detailed",
-        "Battery replaced"
-      ],
-      "parts": [
-        {
-          "category": "battery",
-          "purchasedAt": "Walmart",
-          "brand": "EverStart",
-          "installedBy": "Ira Acura Westwood",
-          "warrantyYears": 4
-        }
+        "Battery replaced (Walmart EverStart, installed at dealer)"
       ],
       "total": "$0.00"
     },
@@ -165,17 +156,9 @@
       "shop": "Costco Tire Center",
       "serviceDate": "2025-01-06",
       "mileage": 39390,
-      "lineItems": ["Four tires replaced"],
-      "products": [
-        {
-          "brand": "Michelin",
-          "model": "Pilot Sport All Season 4",
-          "size": "255/40ZR19",
-          "loadIndex": 100,
-          "speedRating": "Y",
-          "season": "all-season",
-          "warrantyMiles": 45000
-        }
+      "lineItems": [
+        "Four tires replaced",
+        "Michelin Pilot Sport All Season 4 255/40ZR19"
       ],
       "total": "$0.00"
     },

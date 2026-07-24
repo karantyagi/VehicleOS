@@ -1,0 +1,23 @@
+{
+  "vin": "19UUB6F47MA008400",
+  "year": 2021,
+  "make": "Acura",
+  "model": "TLX",
+  "trim": "A-Spec SH-AWD",
+  "currentMileage": 58819,
+  "ownedSince": "2021-03-18",
+  "drivingStyle": "aggressive",
+  "statedMilesPerYear": 10000,
+  "ownerContextMemory": {
+    "primaryCity": "Boston",
+    "climateNotes": ["winter salt", "pot holes", "freeze-thaw"],
+    "lastTireProduct": "Michelin Pilot Sport All Season 4 255/40ZR19",
+    "ownerStatedPriorities": [
+      "safety",
+      "planted_handling",
+      "winter_reliability",
+      "performance",
+      "reject_upsell_without_measurement"
+    ]
+  }
+}
