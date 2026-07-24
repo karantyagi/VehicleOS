@@ -3,9 +3,11 @@
 import { useEffect } from "react";
 import { useAppSectionNavigation } from "@/lib/use-app-section-navigation";
 import { APP_SECTIONS, SECTION_SHORTCUTS, useAppUiStore } from "@/lib/store/app-ui-store";
+import { isSectionVisibleInMode } from "@/lib/console-mode";
 
 export function ConsoleKeyboardShortcuts() {
   const setCommandOpen = useAppUiStore((s) => s.setCommandOpen);
+  const consoleMode = useAppUiStore((s) => s.consoleMode);
   const { goToSection } = useAppSectionNavigation();
 
   useEffect(() => {
@@ -26,7 +28,10 @@ export function ConsoleKeyboardShortcuts() {
 
       if (!(event.metaKey || event.ctrlKey) || event.shiftKey || event.altKey) return;
 
-      const section = APP_SECTIONS.find((entry) => SECTION_SHORTCUTS[entry.id] === event.key);
+      const section = APP_SECTIONS.find(
+        (entry) =>
+          SECTION_SHORTCUTS[entry.id] === event.key && isSectionVisibleInMode(entry.id, consoleMode),
+      );
       if (section) {
         event.preventDefault();
         goToSection(section.id);
@@ -35,7 +40,7 @@ export function ConsoleKeyboardShortcuts() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [goToSection, setCommandOpen]);
+  }, [consoleMode, goToSection, setCommandOpen]);
 
   return null;
 }

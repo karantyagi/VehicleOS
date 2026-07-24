@@ -3,12 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { cn } from "@/lib/utils";
 
 type PanelCardProps = {
-  title: string;
+  title?: string;
   description?: string;
   children: ReactNode;
   className?: string;
   variant?: "raised" | "inset";
   headerAction?: ReactNode;
+  hideHeader?: boolean;
 };
 
 export function PanelCard({
@@ -18,7 +19,10 @@ export function PanelCard({
   className,
   variant = "raised",
   headerAction,
+  hideHeader = false,
 }: PanelCardProps) {
+  const showHeader = !hideHeader && (title || description || headerAction);
+
   return (
     <Card
       className={cn(
@@ -28,16 +32,20 @@ export function PanelCard({
         className,
       )}
     >
-      <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0 pb-4">
-        <div className="space-y-1.5">
-          <CardTitle className="text-base font-semibold tracking-tight">{title}</CardTitle>
-          {description ? (
-            <CardDescription className="text-[13px] leading-relaxed">{description}</CardDescription>
-          ) : null}
-        </div>
-        {headerAction ? <div className="shrink-0">{headerAction}</div> : null}
-      </CardHeader>
-      <CardContent className="space-y-4 pt-0">{children}</CardContent>
+      {showHeader ? (
+        <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0 pb-4">
+          <div className="space-y-1.5">
+            {title ? (
+              <CardTitle className="text-base font-semibold tracking-tight">{title}</CardTitle>
+            ) : null}
+            {description ? (
+              <CardDescription className="text-[13px] leading-relaxed">{description}</CardDescription>
+            ) : null}
+          </div>
+          {headerAction ? <div className="shrink-0">{headerAction}</div> : null}
+        </CardHeader>
+      ) : null}
+      <CardContent className={cn("space-y-4", showHeader ? "pt-0" : "pt-6")}>{children}</CardContent>
     </Card>
   );
 }

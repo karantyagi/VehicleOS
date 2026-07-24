@@ -10,12 +10,36 @@ import { cn } from "@/lib/utils";
 
 export function VehicleContextBar() {
   const ctx = useVehicleConsoleOptional();
+  const consoleMode = useAppUiStore((s) => s.consoleMode);
   const density = useAppUiStore((s) => s.density);
   const toggleDensity = useAppUiStore((s) => s.toggleDensity);
 
   if (!ctx?.snapshot) return null;
 
   const { snapshot } = ctx;
+  const isDeveloper = consoleMode === "developer";
+
+  if (!isDeveloper) {
+    const hasAttention = snapshot.pendingReminderCount > 0 || snapshot.pendingVerificationCount > 0;
+    if (!hasAttention) return null;
+
+    return (
+      <div className="console-motion-fade -mx-4 mb-4 flex flex-wrap items-center gap-2 px-4 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
+        {snapshot.pendingReminderCount > 0 ? (
+          <Badge variant="default" className="tabular-nums gap-1">
+            <BellRing className="h-3 w-3" aria-hidden />
+            {snapshot.pendingReminderCount} due
+          </Badge>
+        ) : null}
+        {snapshot.pendingVerificationCount > 0 ? (
+          <Badge variant="warning" className="tabular-nums gap-1">
+            <ListChecks className="h-3 w-3" aria-hidden />
+            {snapshot.pendingVerificationCount} to verify
+          </Badge>
+        ) : null}
+      </div>
+    );
+  }
 
   return (
     <div

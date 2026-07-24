@@ -12,7 +12,9 @@ import {
   Receipt,
 } from "lucide-react";
 import { APP_SECTIONS, ASSISTANT_WORKSPACE_GROUP_LABEL, type AppSection } from "@/lib/store/app-ui-store";
+import { isSectionVisibleInMode } from "@/lib/console-mode";
 import { useAppSectionNavigation } from "@/lib/use-app-section-navigation";
+import { useAppUiStore } from "@/lib/store/app-ui-store";
 import { cn } from "@/lib/utils";
 
 const SECTION_ICONS: Record<AppSection, typeof ListChecks> = {
@@ -34,13 +36,15 @@ type AppSidebarProps = {
 
 export function AppSidebar({ onNavigate, className }: AppSidebarProps) {
   const { goToSection, isSectionActive } = useAppSectionNavigation();
+  const consoleMode = useAppUiStore((state) => state.consoleMode);
+  const visibleSections = APP_SECTIONS.filter((section) => isSectionVisibleInMode(section.id, consoleMode));
 
   return (
     <nav className={cn("flex flex-col gap-0.5 px-2", className)} aria-label={ASSISTANT_WORKSPACE_GROUP_LABEL}>
       <p className="px-3 pb-2 pt-0.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
         {ASSISTANT_WORKSPACE_GROUP_LABEL}
       </p>
-      {APP_SECTIONS.map((section) => {
+      {visibleSections.map((section) => {
         const Icon = SECTION_ICONS[section.id];
         const isActive = isSectionActive(section.id);
         return (
@@ -58,7 +62,7 @@ export function AppSidebar({ onNavigate, className }: AppSidebarProps) {
                 ? "bg-primary text-primary-foreground shadow-[0_1px_2px_hsl(158_64%_20%/0.2)]"
                 : "text-sidebar-foreground hover:bg-sidebar-accent/70",
             )}
-            title={section.description}
+            title={consoleMode === "developer" ? section.description : undefined}
           >
             <Icon className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
             <span className="font-medium leading-tight">{section.label}</span>

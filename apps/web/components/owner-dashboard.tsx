@@ -27,6 +27,7 @@ import { MaintenanceTimelineSection } from "./maintenance-timeline-section";
 import { NowQueueConsole } from "./now-queue-console";
 import { RemindersConsole } from "./reminders-console";
 import { useReminderNotifications } from "@/lib/use-reminder-notifications";
+import { OwnerReceiptHandoff } from "./owner-receipt-handoff";
 import { OwnerServiceNotePanel } from "./owner-service-note-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 import { useVehicleConsole } from "@/lib/vehicle-console-context";
@@ -57,7 +58,9 @@ export function OwnerDashboard() {
   const apiBase = getApiBase();
   const { setSnapshot } = useVehicleConsole();
   const activeSection = useAppUiStore((state) => state.activeSection);
+  const consoleMode = useAppUiStore((state) => state.consoleMode);
   const setActiveSection = useAppUiStore((state) => state.setActiveSection);
+  const isDeveloper = consoleMode === "developer";
   const sectionMeta = APP_SECTIONS.find((section) => section.id === activeSection) ?? APP_SECTIONS[0];
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
@@ -355,7 +358,7 @@ export function OwnerDashboard() {
   const pendingVerificationCount = verifications.filter((item) => item.status === "pending").length;
 
   const headerAction =
-    activeSection === "reminders" || activeSection === "now" ? (
+    isDeveloper && (activeSection === "reminders" || activeSection === "now") ? (
       <Button
         type="button"
         variant="outline"
@@ -365,7 +368,7 @@ export function OwnerDashboard() {
       >
         {isRefreshingNow ? "Refreshing…" : "Refresh from schedule"}
       </Button>
-    ) : activeSection === "receipts" ? (
+    ) : isDeveloper && activeSection === "receipts" ? (
       <Button type="button" size="sm" disabled={isBusy || !uploadedReceipt} onClick={() => void submitReceipt()}>
         Confirm receipt
       </Button>
@@ -407,23 +410,25 @@ export function OwnerDashboard() {
   return (
     <>
       <PageHeader
-        eyebrow="Assistant workspace · Early access"
+        eyebrow={isDeveloper ? "Assistant workspace · Developer" : "Assistant workspace"}
         title={sectionMeta.label}
-        description={sectionMeta.description}
+        description={isDeveloper ? sectionMeta.description : undefined}
         badge={
-          <>
-            {vehicleLabel ? (
-              <Badge variant="secondary" className="tabular-nums font-normal">
-                {vehicleLabel}
-              </Badge>
-            ) : null}
-            {activeSection === "reminders" && pendingReminderCount > 0 ? (
-              <Badge className="tabular-nums">{pendingReminderCount} due</Badge>
-            ) : null}
-            {activeSection === "now" && pendingVerificationCount > 0 ? (
-              <Badge className="tabular-nums">{pendingVerificationCount} to verify</Badge>
-            ) : null}
-          </>
+          isDeveloper ? (
+            <>
+              {vehicleLabel ? (
+                <Badge variant="secondary" className="tabular-nums font-normal">
+                  {vehicleLabel}
+                </Badge>
+              ) : null}
+              {activeSection === "reminders" && pendingReminderCount > 0 ? (
+                <Badge className="tabular-nums">{pendingReminderCount} due</Badge>
+              ) : null}
+              {activeSection === "now" && pendingVerificationCount > 0 ? (
+                <Badge className="tabular-nums">{pendingVerificationCount} to verify</Badge>
+              ) : null}
+            </>
+          ) : null
         }
         action={headerAction}
       />
@@ -434,20 +439,24 @@ export function OwnerDashboard() {
 
       {activeSection === "reminders" ? (
         <PanelCard
+          hideHeader={!isDeveloper}
           title="Reminders"
           description="Calendar-first nudges — act this week, snooze, or mark scheduled. The assistant handles mileage math."
         >
-          <RemindersConsole items={reminders} disabled={isBusy} onDecide={decide} />
+          <RemindersConsole items={reminders} disabled={isBusy} onDecide={decide} minimal={!isDeveloper} />
         </PanelCard>
       ) : null}
 
       {activeSection === "now" ? (
         <PanelCard
+          hideHeader={!isDeveloper}
           title="Owner verification"
           description="Rare conflicts — resolve when the assistant can't settle records alone."
         >
           <div className="space-y-4">
-            {verificationMaturity ? <VerificationMaturityPanel maturity={verificationMaturity} /> : null}
+            {isDeveloper && verificationMaturity ? (
+              <VerificationMaturityPanel maturity={verificationMaturity} />
+            ) : null}
             <NowQueueConsole
               items={verifications.length > 0 ? verifications : nowQueue}
               disabled={isBusy}
@@ -455,6 +464,7 @@ export function OwnerDashboard() {
               apiBase={apiBase}
               currentMileage={vehicle.currentMileage}
               onDecide={decide}
+              ownerSimple={!isDeveloper}
               onOdometerSaved={() => {
                 if (vehicle) void loadVehicleState(vehicle);
               }}
@@ -466,6 +476,7 @@ export function OwnerDashboard() {
 
       {activeSection === "timeline" ? (
         <PanelCard
+          hideHeader={!isDeveloper}
           title="Service history"
           description="Past maintenance, forward OEM schedule, and RMV/DMV ownership records."
         >
@@ -478,6 +489,8 @@ export function OwnerDashboard() {
             effectiveMilesPerYear={maintenanceSchedule.effectiveMilesPerYear}
             activeTab={serviceHistoryTab}
             onTabChange={setServiceHistoryTab}
+            historyOnly={!isDeveloper}
+            ownerSimple={!isDeveloper}
             disabled={isBusy}
             onOpenEvidence={openEvidence}
             onGoToImport={() => setActiveSection("imports")}
@@ -485,7 +498,7 @@ export function OwnerDashboard() {
         </PanelCard>
       ) : null}
 
-      {activeSection === "imports" ? (
+      {isDeveloper && activeSection === "imports" ? (
         <PanelCard
           title="Record import"
           description="Upload portal PDFs or JSON — CARFAX service history and RMV/DMV ownership."
@@ -537,6 +550,7 @@ export function OwnerDashboard() {
       ) : null}
 
       {activeSection === "receipts" ? (
+        isDeveloper ? (
         <PanelCard
           title="Receipt intake"
           description="Upload, confirm details, and run the service loop."
@@ -605,9 +619,24 @@ export function OwnerDashboard() {
             </p>
           </div>
         </PanelCard>
+        ) : (
+          <PanelCard hideHeader>
+            <OwnerReceiptHandoff
+              vehicleId={vehicle.id}
+              apiBase={apiBase}
+              currentMileage={vehicle.currentMileage}
+              disabled={isBusy}
+              onHandedOff={() => {
+                feedback("Receipt handed off — your assistant will file it.");
+                void loadVehicleState(vehicle);
+              }}
+              onError={(message) => notify(message, "error")}
+            />
+          </PanelCard>
+        )
       ) : null}
 
-      {activeSection === "evidence" ? (
+      {isDeveloper && activeSection === "evidence" ? (
         <PanelCard title="Evidence vault" description="Immutable artifacts — table and inspection panel.">
           <EvidenceVaultConsole
             vehicleId={vehicle.id}
@@ -618,7 +647,7 @@ export function OwnerDashboard() {
         </PanelCard>
       ) : null}
 
-      {activeSection === "context" ? (
+      {isDeveloper && activeSection === "context" ? (
         <div className="space-y-6">
           <PanelCard
             title="Manual & OEM"
@@ -658,7 +687,7 @@ export function OwnerDashboard() {
         </div>
       ) : null}
 
-      {activeSection === "notes" ? (
+      {isDeveloper && activeSection === "notes" ? (
         <div className="space-y-6">
           <PanelCard title="Voice note" description="Capture what happened at the shop in your own words.">
             <VoiceMemoryPanel
@@ -702,7 +731,7 @@ export function OwnerDashboard() {
         </div>
       ) : null}
 
-      {activeSection === "quotes" ? (
+      {isDeveloper && activeSection === "quotes" ? (
         <div className="space-y-6">
           <PanelCard title="Quote check" description="Paste a dealer quote — compare against your history and fair range.">
             <QuoteAnalysisPanel

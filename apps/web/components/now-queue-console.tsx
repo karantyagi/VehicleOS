@@ -24,6 +24,7 @@ type NowQueueConsoleProps = {
   onDecide: (taskId: string, decision: "approve" | "dismiss" | "snooze") => void;
   onOdometerSaved?: () => void;
   onError?: (message: string) => void;
+  ownerSimple?: boolean;
 };
 
 export function NowQueueConsole({
@@ -35,6 +36,7 @@ export function NowQueueConsole({
   onDecide,
   onOdometerSaved,
   onError,
+  ownerSimple = false,
 }: NowQueueConsoleProps) {
   const selectedId = useAppUiStore((s) => s.selectedNowTaskId);
   const setSelectedId = useAppUiStore((s) => s.setSelectedNowTaskId);
@@ -62,9 +64,58 @@ export function NowQueueConsole({
     return (
       <EmptyState
         icon={ListChecks}
-        title="No conflicts to verify"
-        description="When records disagree, the assistant will ask you here — usually rare."
+        title="All clear"
+        description={ownerSimple ? undefined : "When records disagree, the assistant will ask you here — usually rare."}
       />
+    );
+  }
+
+  if (ownerSimple) {
+    return (
+      <ul className="space-y-3">
+        {pending.map((item) => {
+          const showOdometerForm =
+            item.verificationCode === "VERIFY_ODOMETER" && vehicleId && apiBase && currentMileage !== undefined;
+
+          return (
+            <li key={item.taskId} className="rounded-xl border border-border bg-card p-4 shadow-sm">
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <h3 className="font-semibold leading-tight">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground">{item.reason}</p>
+                </div>
+                {showOdometerForm ? (
+                  <OdometerInlineForm
+                    vehicleId={vehicleId}
+                    apiBase={apiBase}
+                    defaultMileage={currentMileage}
+                    disabled={disabled}
+                    onSaved={() => {
+                      onOdometerSaved?.();
+                      onDecide(item.taskId, "approve");
+                    }}
+                    onError={(message) => onError?.(message)}
+                  />
+                ) : null}
+                <div className="flex flex-wrap gap-2">
+                  <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
+                    Confirm
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    disabled={disabled}
+                    onClick={() => onDecide(item.taskId, "dismiss")}
+                  >
+                    Dismiss
+                  </Button>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     );
   }
 

@@ -6,6 +6,8 @@ import { Suspense, useEffect } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { CarIdentityNav } from "@/components/car-identity-nav";
 import { ConsoleKeyboardShortcuts } from "@/components/console-keyboard-shortcuts";
+import { ConsoleModeHydrator } from "@/components/console-mode-hydrator";
+import { ConsoleModeToggle, DeveloperModeBanner } from "@/components/console-mode-toggle";
 import { CommandMenu, CommandMenuTrigger, SidebarUtilityRow } from "@/components/command-menu";
 import { AccountMenu } from "@/components/account-menu";
 import { PwaInstallBanner } from "@/components/pwa-install-banner";
@@ -28,6 +30,8 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
   const mobileNavOpen = useAppUiStore((state) => state.mobileNavOpen);
   const setMobileNavOpen = useAppUiStore((state) => state.setMobileNavOpen);
   const activeSection = useAppUiStore((state) => state.activeSection);
+  const consoleMode = useAppUiStore((state) => state.consoleMode);
+  const isDeveloper = consoleMode === "developer";
   const isConsoleLayout = CONSOLE_SECTIONS.includes(activeSection);
 
   useEffect(() => {
@@ -46,7 +50,10 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
   const sidebarBody = (
     <>
       <div className="border-b border-sidebar-border px-4 py-4">{sidebarHeader}</div>
-      <SidebarUtilityRow />
+      {isDeveloper ? <SidebarUtilityRow /> : null}
+      <div className="px-3 pb-2">
+        <ConsoleModeToggle />
+      </div>
       <CarIdentityNav className="pb-1" />
       <div className="mx-4 border-t border-sidebar-border" aria-hidden />
       <AppSidebar className="flex-1 overflow-y-auto py-2" />
@@ -59,6 +66,7 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
       <Suspense fallback={null}>
         <PwaSectionLauncher />
       </Suspense>
+      <ConsoleModeHydrator />
       <CommandMenu />
       <ConsoleKeyboardShortcuts />
       <aside className="hidden w-72 shrink-0 border-r border-sidebar-border bg-sidebar shadow-[1px_0_0_hsl(var(--sidebar-border))] lg:block">
@@ -78,7 +86,7 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
             {mobileNavOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </Button>
           <div className="min-w-0 flex-1">{mobileBar ?? sidebarHeader}</div>
-          <CommandMenuTrigger compact />
+          {isDeveloper ? <CommandMenuTrigger compact /> : null}
           <ThemeToggle variant="icon" />
         </header>
 
@@ -103,12 +111,14 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
         <main id="main-content" className="flex-1 bg-muted/25 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
           <div
             className={cn(
-              "mx-auto w-full space-y-8",
+              "mx-auto w-full",
+              isDeveloper ? "space-y-8" : "space-y-6",
               isConsoleLayout ? "max-w-6xl" : "max-w-3xl",
             )}
           >
             <VehicleContextBar />
-            {user ? <PwaInstallBanner /> : null}
+            <DeveloperModeBanner />
+            {user ? <PwaInstallBanner minimal={!isDeveloper} /> : null}
             {children}
           </div>
         </main>
