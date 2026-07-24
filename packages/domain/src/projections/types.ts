@@ -1,4 +1,10 @@
-import type { IngestChannel, ServiceRecordSource, TaskStatus } from "../events/catalog.js";
+import type {
+  IngestChannel,
+  ServiceRecordSource,
+  TaskStatus,
+  VehicleRecordEventType,
+  VehicleRecordSource,
+} from "../events/catalog.js";
 
 export type ServiceTimelineEntry = {
   serviceId: string;
@@ -58,6 +64,17 @@ export type KnowledgeScheduleEntry = {
   recordedAt: string;
 };
 
+export type OwnershipRecordEntry = {
+  recordId: string;
+  agency: string;
+  recordDate: string;
+  mileage: number | null;
+  eventType: VehicleRecordEventType;
+  description: string;
+  details: string[];
+  source: VehicleRecordSource;
+};
+
 export type VehicleProjectionState = {
   vehicleId: string;
   currentMileage: number;
@@ -66,6 +83,7 @@ export type VehicleProjectionState = {
   quoteAnalyses: QuoteAnalysisEntry[];
   evidenceVault: EvidenceVaultEntry[];
   knowledgeSchedule: KnowledgeScheduleEntry[];
+  ownershipRecords: OwnershipRecordEntry[];
 };
 
 export const createEmptyVehicleState = (vehicleId: string): VehicleProjectionState => ({
@@ -76,4 +94,5 @@ export const createEmptyVehicleState = (vehicleId: string): VehicleProjectionSta
   quoteAnalyses: [],
   evidenceVault: [],
   knowledgeSchedule: [],
+  ownershipRecords: [],
 });

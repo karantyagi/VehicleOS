@@ -1,0 +1,34 @@
+{
+  "version": "1",
+  "source": "rmv-pdf-manual",
+  "exportedAt": "2026-07-24T18:00:00.000Z",
+  "vehicle": {
+    "vin": "UPDATE-WITH-YOUR-VIN",
+    "year": 2021,
+    "make": "Acura",
+    "model": "TLX",
+    "currentMileage": 58819
+  },
+  "records": [
+    {
+      "agency": "Massachusetts RMV",
+      "recordDate": "2026-01-21",
+      "mileage": null,
+      "eventType": "title",
+      "description": "Title issued or updated",
+      "details": [
+        "Title issued or updated",
+        "Registration updated when owner moved the vehicle to a new location",
+        "Vehicle color noted as Gray"
+      ]
+    },
+    {
+      "agency": "Massachusetts RMV",
+      "recordDate": "2024-10-01",
+      "mileage": null,
+      "eventType": "registration",
+      "description": "Registration issued or renewed",
+      "details": ["Registration issued or renewed", "Loan or lien reported", "Vehicle color noted as Gray"]
+    }
+  ]
+}

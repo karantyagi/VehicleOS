@@ -1,16 +1,19 @@
 "use client";
 
-import { FileJson, FileUp, Lock, Upload } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { FileJson, FileUp, Loader2, Upload } from "lucide-react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   parseVehicleOsImportJson,
+  parseVehicleOsRmvImportJson,
   RECORD_IMPORT_CATEGORIES,
+  RMV_EVENT_LABELS,
   type RecordImportCategoryId,
   type VehicleOsImportV1,
+  type VehicleOsRmvImportV1,
 } from "@/lib/record-import-types";
 import { cn } from "@/lib/utils";
 
@@ -19,18 +22,19 @@ type RecordImportPanelProps = {
   apiBase: string;
   disabled?: boolean;
   onError: (message: string) => void;
-  onImported: (body: {
+  onCarfaxImported: (body: {
     importedCount: number;
     timeline: unknown[];
     maintenanceSchedule?: unknown;
   }) => void;
+  onRmvImported: (body: { importedCount: number; ownershipRecords: unknown[] }) => void;
 };
 
-const CARFAX_FLOW_STEPS = [
-  "Log in to CARFAX Car Care and open Service History.",
+const FLOW_STEPS = [
+  "Log in to the portal and open the relevant vehicle page.",
   "Print the page → Save as PDF (Ctrl+P / Cmd+P).",
-  "Upload PDF — assistant extracts rows (under development).",
-  "Review extracted rows, then confirm import.",
+  "Upload PDF — assistant extracts rows for review.",
+  "Confirm import — rows commit to your vehicle record.",
 ] as const;
 
 export function RecordImportPanel({
@@ -38,40 +42,88 @@ export function RecordImportPanel({
   apiBase,
   disabled = false,
   onError,
-  onImported,
+  onCarfaxImported,
+  onRmvImported,
 }: RecordImportPanelProps) {
   const [activeCategory, setActiveCategory] = useState<RecordImportCategoryId>("carfax");
   const [jsonDraft, setJsonDraft] = useState("");
-  const [preview, setPreview] = useState<VehicleOsImportV1 | null>(null);
+  const [carfaxPreview, setCarfaxPreview] = useState<VehicleOsImportV1 | null>(null);
+  const [rmvPreview, setRmvPreview] = useState<VehicleOsRmvImportV1 | null>(null);
   const [parseError, setParseError] = useState("");
+  const [extractWarnings, setExtractWarnings] = useState<string[]>([]);
   const [isImporting, setIsImporting] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [pdfFileName, setPdfFileName] = useState<string | null>(null);
 
   const category = useMemo(
     () => RECORD_IMPORT_CATEGORIES.find((entry) => entry.id === activeCategory) ?? RECORD_IMPORT_CATEGORIES[0],
     [activeCategory],
   );
 
-  const loadJsonText = useCallback((raw: string) => {
-    setJsonDraft(raw);
-    if (!raw.trim()) {
-      setPreview(null);
-      setParseError("");
-      return;
-    }
-    const result = parseVehicleOsImportJson(raw);
-    if (!result.ok) {
-      setPreview(null);
-      setParseError(result.error);
-      return;
-    }
-    setPreview(result.data);
+  const resetPreview = useCallback(() => {
+    setCarfaxPreview(null);
+    setRmvPreview(null);
     setParseError("");
+    setExtractWarnings([]);
+    setPdfFileName(null);
   }, []);
 
-  const handleFile = useCallback(
+  const switchCategory = (next: RecordImportCategoryId) => {
+    setActiveCategory(next);
+    setJsonDraft("");
+    resetPreview();
+  };
+
+  const applyCarfaxDraft = (draft: VehicleOsImportV1, warnings: string[] = []) => {
+    setCarfaxPreview(draft);
+    setRmvPreview(null);
+    setJsonDraft(JSON.stringify(draft, null, 2));
+    setParseError("");
+    setExtractWarnings(warnings);
+  };
+
+  const applyRmvDraft = (draft: VehicleOsRmvImportV1, warnings: string[] = []) => {
+    setRmvPreview(draft);
+    setCarfaxPreview(null);
+    setJsonDraft(JSON.stringify(draft, null, 2));
+    setParseError("");
+    setExtractWarnings(warnings);
+  };
+
+  const loadJsonText = useCallback(
+    (raw: string) => {
+      setJsonDraft(raw);
+      if (!raw.trim()) {
+        resetPreview();
+        return;
+      }
+
+      if (activeCategory === "carfax") {
+        const result = parseVehicleOsImportJson(raw);
+        if (!result.ok) {
+          resetPreview();
+          setParseError(result.error);
+          return;
+        }
+        applyCarfaxDraft(result.data);
+        return;
+      }
+
+      const result = parseVehicleOsRmvImportJson(raw);
+      if (!result.ok) {
+        resetPreview();
+        setParseError(result.error);
+        return;
+      }
+      applyRmvDraft(result.data);
+    },
+    [activeCategory, resetPreview],
+  );
+
+  const handleJsonFile = useCallback(
     async (file: File) => {
       if (!file.name.endsWith(".json")) {
-        onError("Choose a .json file (VehicleOSImport v1).");
+        onError("Choose a .json import file.");
         return;
       }
       const raw = await file.text();
@@ -80,45 +132,117 @@ export function RecordImportPanel({
     [loadJsonText, onError],
   );
 
-  const commitImport = async () => {
-    if (!preview || activeCategory !== "carfax") return;
-    setIsImporting(true);
+  const handlePdfFile = async (file: File) => {
+    if (!file.name.toLowerCase().endsWith(".pdf") && file.type !== "application/pdf") {
+      onError("Choose a PDF file.");
+      return;
+    }
+
+    setIsExtracting(true);
+    setParseError("");
+    resetPreview();
+    setPdfFileName(file.name);
+
     try {
-      const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/import`, {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("category", activeCategory);
+
+      const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/import/extract`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          version: preview.version,
-          source: preview.source,
-          exportedAt: preview.exportedAt,
-          vehicle: preview.vehicle,
-          services: preview.services,
-        }),
+        body: formData,
       });
+
       const body = (await response.json()) as {
         error?: string;
-        importedCount?: number;
-        timeline?: unknown[];
-        maintenanceSchedule?: unknown;
+        category?: RecordImportCategoryId;
+        warnings?: string[];
+        draft?: VehicleOsImportV1 | VehicleOsRmvImportV1;
       };
+
       if (!response.ok) {
-        onError(body.error ?? "Import failed.");
+        onError(body.error ?? "PDF extraction failed.");
+        setPdfFileName(null);
         return;
       }
-      onImported({
-        importedCount: body.importedCount ?? preview.services.length,
-        timeline: body.timeline ?? [],
-        maintenanceSchedule: body.maintenanceSchedule,
-      });
+
+      if (body.category === "carfax" && body.draft && "services" in body.draft) {
+        applyCarfaxDraft(body.draft, body.warnings ?? []);
+        return;
+      }
+
+      if (body.category === "rmv" && body.draft && "records" in body.draft) {
+        applyRmvDraft(body.draft as VehicleOsRmvImportV1, body.warnings ?? []);
+        return;
+      }
+
+      onError("Unexpected extraction response.");
+    } catch {
+      onError("Network error during PDF extraction.");
+      setPdfFileName(null);
+    } finally {
+      setIsExtracting(false);
+    }
+  };
+
+  const commitImport = async () => {
+    setIsImporting(true);
+    try {
+      if (activeCategory === "carfax" && carfaxPreview) {
+        const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/import`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(carfaxPreview),
+        });
+        const body = (await response.json()) as {
+          error?: string;
+          importedCount?: number;
+          timeline?: unknown[];
+          maintenanceSchedule?: unknown;
+        };
+        if (!response.ok) {
+          onError(body.error ?? "Import failed.");
+          return;
+        }
+        onCarfaxImported({
+          importedCount: body.importedCount ?? carfaxPreview.services.length,
+          timeline: body.timeline ?? [],
+          maintenanceSchedule: body.maintenanceSchedule,
+        });
+      } else if (activeCategory === "rmv" && rmvPreview) {
+        const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/import/rmv`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(rmvPreview),
+        });
+        const body = (await response.json()) as {
+          error?: string;
+          importedCount?: number;
+          ownershipRecords?: unknown[];
+        };
+        if (!response.ok) {
+          onError(body.error ?? "RMV import failed.");
+          return;
+        }
+        onRmvImported({
+          importedCount: body.importedCount ?? rmvPreview.records.length,
+          ownershipRecords: body.ownershipRecords ?? [],
+        });
+      } else {
+        return;
+      }
+
       setJsonDraft("");
-      setPreview(null);
-      setParseError("");
+      resetPreview();
     } catch {
       onError("Network error — try again.");
     } finally {
       setIsImporting(false);
     }
   };
+
+  const rowCount =
+    activeCategory === "carfax" ? (carfaxPreview?.services.length ?? 0) : (rmvPreview?.records.length ?? 0);
 
   return (
     <div className="space-y-6">
@@ -130,7 +254,7 @@ export function RecordImportPanel({
               key={entry.id}
               type="button"
               disabled={disabled}
-              onClick={() => setActiveCategory(entry.id)}
+              onClick={() => switchCategory(entry.id)}
               className={cn(
                 "rounded-lg border p-4 text-left transition-colors",
                 isActive
@@ -140,15 +264,9 @@ export function RecordImportPanel({
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="text-sm font-semibold">{entry.label}</p>
-                {entry.status === "coming-soon" ? (
-                  <Badge variant="secondary" className="shrink-0 text-[10px] uppercase tracking-wide">
-                    Follow-up
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="shrink-0 text-[10px] uppercase tracking-wide">
-                    JSON now
-                  </Badge>
-                )}
+                <Badge variant="outline" className="shrink-0 text-[10px] uppercase tracking-wide">
+                  PDF + JSON
+                </Badge>
               </div>
               <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{entry.description}</p>
             </button>
@@ -165,154 +283,215 @@ export function RecordImportPanel({
         </ol>
       </div>
 
-      {activeCategory === "carfax" ? (
-        <>
-          <div className="space-y-4">
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="text-sm font-medium">Import funnel</p>
-              <Badge variant="secondary">Product shape</Badge>
-            </div>
-            <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {CARFAX_FLOW_STEPS.map((step, index) => (
-                <li
-                  key={step}
-                  className="rounded-md border border-border/70 bg-card p-3 text-xs leading-relaxed text-muted-foreground"
-                >
-                  <span className="mb-1 block font-semibold tabular-nums text-foreground">Step {index + 1}</span>
-                  {step}
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <Label htmlFor="carfax-pdf-upload" className="text-sm font-medium">
-                Upload CARFAX PDF
-              </Label>
-              <Badge variant="outline" className="text-[10px] uppercase tracking-wide">
-                Under development
-              </Badge>
-            </div>
-            <div
-              className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border/80 bg-muted/30 px-4 py-8 text-center"
-              aria-disabled="true"
+      <div className="space-y-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-sm font-medium">Import funnel</p>
+          <Badge variant="secondary">Extract → review → confirm</Badge>
+        </div>
+        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {FLOW_STEPS.map((step, index) => (
+            <li
+              key={step}
+              className="rounded-md border border-border/70 bg-card p-3 text-xs leading-relaxed text-muted-foreground"
             >
-              <Lock className="h-5 w-5 text-muted-foreground" aria-hidden />
-              <p className="text-sm text-muted-foreground">
-                PDF extraction ships with ENG-2. Use JSON import below for now.
-              </p>
-              <Button type="button" variant="outline" size="sm" disabled>
+              <span className="mb-1 block font-semibold tabular-nums text-foreground">Step {index + 1}</span>
+              {step}
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <Label htmlFor="record-import-pdf" className="text-sm font-medium">
+            Upload PDF
+          </Label>
+          <Badge className="text-[10px] uppercase tracking-wide">Primary</Badge>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button type="button" variant="outline" size="sm" disabled={disabled || isExtracting} asChild>
+            <label className="cursor-pointer">
+              {isExtracting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+              ) : (
                 <Upload className="mr-2 h-4 w-4" aria-hidden />
-                Choose PDF
-              </Button>
-            </div>
-          </div>
-
-          <div className="space-y-3 border-t border-border/70 pt-6">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <Label htmlFor="carfax-json" className="text-sm font-medium">
-                Import JSON (early access)
-              </Label>
-              <Badge className="text-[10px] uppercase tracking-wide">Available now</Badge>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Paste or upload a <code className="text-[11px]">VehicleOSImport.v1</code> file — e.g. from{" "}
-              <code className="text-[11px]">connectors/carfax-connect/examples/tlx-carfax-history.v1.json</code>.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
-                <label className="cursor-pointer">
-                  <FileUp className="mr-2 h-4 w-4" aria-hidden />
-                  Choose JSON file
-                  <input
-                    type="file"
-                    accept="application/json,.json"
-                    className="sr-only"
-                    disabled={disabled}
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      if (file) void handleFile(file);
-                      event.target.value = "";
-                    }}
-                  />
-                </label>
-              </Button>
-            </div>
-            <Textarea
-              id="carfax-json"
-              value={jsonDraft}
-              onChange={(event) => loadJsonText(event.target.value)}
-              placeholder='{"version":"1","source":"carfax-pdf-manual",...}'
-              rows={6}
-              disabled={disabled}
-              className="font-mono text-xs"
-            />
-            {parseError ? <p className="text-sm text-destructive">{parseError}</p> : null}
-          </div>
-
-          {preview ? (
-            <div className="space-y-3">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-sm font-medium">
-                  Review before import · {preview.services.length} service row
-                  {preview.services.length === 1 ? "" : "s"}
-                </p>
-                <p className="text-xs text-muted-foreground tabular-nums">
-                  {preview.vehicle.year} {preview.vehicle.make} {preview.vehicle.model} ·{" "}
-                  {preview.vehicle.currentMileage.toLocaleString()} mi
-                </p>
-              </div>
-              <div className="max-h-80 overflow-auto rounded-md border border-border">
-                <table className="w-full text-left text-xs">
-                  <thead className="sticky top-0 bg-muted/80 backdrop-blur">
-                    <tr>
-                      <th className="px-3 py-2 font-medium">Date</th>
-                      <th className="px-3 py-2 font-medium">Mileage</th>
-                      <th className="px-3 py-2 font-medium">Shop</th>
-                      <th className="px-3 py-2 font-medium">Line items</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[...preview.services]
-                      .sort((a, b) => b.serviceDate.localeCompare(a.serviceDate))
-                      .map((service, index) => (
-                        <tr key={`${service.serviceDate}-${service.shop}-${index}`} className="border-t border-border/60">
-                          <td className="px-3 py-2 tabular-nums whitespace-nowrap">{service.serviceDate}</td>
-                          <td className="px-3 py-2 tabular-nums whitespace-nowrap">
-                            {service.mileage.toLocaleString()} mi
-                          </td>
-                          <td className="px-3 py-2">{service.shop}</td>
-                          <td className="px-3 py-2 text-muted-foreground">{service.lineItems.join(" · ")}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-              <Button
-                type="button"
-                disabled={disabled || isImporting}
-                onClick={() => void commitImport()}
-              >
-                <FileJson className="mr-2 h-4 w-4" aria-hidden />
-                {isImporting ? "Importing…" : `Confirm import (${preview.services.length} rows)`}
-              </Button>
-            </div>
+              )}
+              {isExtracting ? "Extracting…" : "Choose PDF"}
+              <input
+                id="record-import-pdf"
+                type="file"
+                accept="application/pdf,.pdf"
+                className="sr-only"
+                disabled={disabled || isExtracting}
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) void handlePdfFile(file);
+                  event.target.value = "";
+                }}
+              />
+            </label>
+          </Button>
+          {pdfFileName ? (
+            <span className="text-xs text-muted-foreground truncate max-w-xs">{pdfFileName}</span>
           ) : null}
-        </>
-      ) : (
-        <div className="rounded-lg border border-dashed border-border/80 bg-muted/20 px-4 py-10 text-center">
-          <Lock className="mx-auto h-5 w-5 text-muted-foreground" aria-hidden />
-          <p className="mt-3 text-sm font-medium">RMV / DMV import — follow-up</p>
-          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-            Registration, title, and lien events are car-related but not maintenance. The assistant will track them
-            separately once CARFAX import is validated on your TLX.
-          </p>
-          <Badge variant="secondary" className="mt-4">
-            Same PDF → extract → review flow
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Rules-based extraction (v1). ENG-2 will add LLM assist with confidence scores for messy PDFs.
+        </p>
+      </div>
+
+      <div className="space-y-3 border-t border-border/70 pt-6">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <Label htmlFor="record-import-json" className="text-sm font-medium">
+            Or import JSON
+          </Label>
+          <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
+            Alternate
           </Badge>
         </div>
-      )}
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
+            <label className="cursor-pointer">
+              <FileUp className="mr-2 h-4 w-4" aria-hidden />
+              Choose JSON file
+              <input
+                type="file"
+                accept="application/json,.json"
+                className="sr-only"
+                disabled={disabled}
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) void handleJsonFile(file);
+                  event.target.value = "";
+                }}
+              />
+            </label>
+          </Button>
+        </div>
+        <Textarea
+          id="record-import-json"
+          value={jsonDraft}
+          onChange={(event) => loadJsonText(event.target.value)}
+          placeholder={
+            activeCategory === "carfax"
+              ? '{"version":"1","source":"carfax-pdf-manual",...}'
+              : '{"version":"1","source":"rmv-pdf-manual",...}'
+          }
+          rows={5}
+          disabled={disabled}
+          className="font-mono text-xs"
+        />
+        {parseError ? <p className="text-sm text-destructive">{parseError}</p> : null}
+        {extractWarnings.length > 0 ? (
+          <ul className="space-y-1 text-xs text-amber-700 dark:text-amber-400">
+            {extractWarnings.map((warning) => (
+              <li key={warning}>{warning}</li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
+
+      {activeCategory === "carfax" && carfaxPreview ? (
+        <ImportReviewTable
+          title={`Review before import · ${carfaxPreview.services.length} service row${carfaxPreview.services.length === 1 ? "" : "s"}`}
+          subtitle={`${carfaxPreview.vehicle.year} ${carfaxPreview.vehicle.make} ${carfaxPreview.vehicle.model} · ${carfaxPreview.vehicle.currentMileage.toLocaleString()} mi`}
+          disabled={disabled || isImporting}
+          confirmLabel={isImporting ? "Importing…" : `Confirm import (${carfaxPreview.services.length} rows)`}
+          onConfirm={() => void commitImport()}
+        >
+          <table className="w-full text-left text-xs">
+            <thead className="sticky top-0 bg-muted/80 backdrop-blur">
+              <tr>
+                <th className="px-3 py-2 font-medium">Date</th>
+                <th className="px-3 py-2 font-medium">Mileage</th>
+                <th className="px-3 py-2 font-medium">Shop</th>
+                <th className="px-3 py-2 font-medium">Line items</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...carfaxPreview.services]
+                .sort((a, b) => b.serviceDate.localeCompare(a.serviceDate))
+                .map((service, index) => (
+                  <tr key={`${service.serviceDate}-${service.shop}-${index}`} className="border-t border-border/60">
+                    <td className="px-3 py-2 tabular-nums whitespace-nowrap">{service.serviceDate}</td>
+                    <td className="px-3 py-2 tabular-nums whitespace-nowrap">
+                      {service.mileage.toLocaleString()} mi
+                    </td>
+                    <td className="px-3 py-2">{service.shop}</td>
+                    <td className="px-3 py-2 text-muted-foreground">{service.lineItems.join(" · ")}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </ImportReviewTable>
+      ) : null}
+
+      {activeCategory === "rmv" && rmvPreview ? (
+        <ImportReviewTable
+          title={`Review ownership records · ${rmvPreview.records.length} row${rmvPreview.records.length === 1 ? "" : "s"}`}
+          subtitle="These do not appear on the maintenance timeline — the assistant uses them for ownership context."
+          disabled={disabled || isImporting}
+          confirmLabel={isImporting ? "Importing…" : `Confirm import (${rmvPreview.records.length} records)`}
+          onConfirm={() => void commitImport()}
+        >
+          <table className="w-full text-left text-xs">
+            <thead className="sticky top-0 bg-muted/80 backdrop-blur">
+              <tr>
+                <th className="px-3 py-2 font-medium">Date</th>
+                <th className="px-3 py-2 font-medium">Type</th>
+                <th className="px-3 py-2 font-medium">Agency</th>
+                <th className="px-3 py-2 font-medium">Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...rmvPreview.records]
+                .sort((a, b) => b.recordDate.localeCompare(a.recordDate))
+                .map((record, index) => (
+                  <tr key={`${record.recordDate}-${record.description}-${index}`} className="border-t border-border/60">
+                    <td className="px-3 py-2 tabular-nums whitespace-nowrap">{record.recordDate}</td>
+                    <td className="px-3 py-2">{RMV_EVENT_LABELS[record.eventType]}</td>
+                    <td className="px-3 py-2">{record.agency}</td>
+                    <td className="px-3 py-2 text-muted-foreground">{record.details.join(" · ")}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </ImportReviewTable>
+      ) : null}
+
+      {rowCount === 0 && pdfFileName && !isExtracting && !parseError ? (
+        <p className="text-sm text-muted-foreground">No rows extracted yet — try a different PDF export.</p>
+      ) : null}
+    </div>
+  );
+}
+
+function ImportReviewTable({
+  title,
+  subtitle,
+  disabled,
+  confirmLabel,
+  onConfirm,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  disabled: boolean;
+  confirmLabel: string;
+  onConfirm: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm font-medium">{title}</p>
+        <p className="text-xs text-muted-foreground">{subtitle}</p>
+      </div>
+      <div className="max-h-80 overflow-auto rounded-md border border-border">{children}</div>
+      <Button type="button" disabled={disabled} onClick={onConfirm}>
+        <FileJson className="mr-2 h-4 w-4" aria-hidden />
+        {confirmLabel}
+      </Button>
     </div>
   );
 }

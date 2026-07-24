@@ -10,6 +10,7 @@ export const EVENT_TYPES = {
   MAINTENANCE_RECOMMENDATION_CREATED: "maintenance.recommendation.created",
   TASK_CREATED: "task.created",
   TASK_DECIDED: "task.decided",
+  VEHICLE_RECORD_RECORDED: "vehicle.record.recorded",
 } as const;
 
 export type DomainEventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];
@@ -22,6 +23,10 @@ export type ServiceRecordSource =
   | "owner_note"
   | "dealer"
   | "carfax_import";
+
+export type VehicleRecordEventType = "registration" | "title" | "inspection" | "lien" | "other";
+
+export type VehicleRecordSource = "rmv_import" | "carfax_import";
 
 export type ExtractedServiceFields = {
   shop: string;
@@ -142,6 +147,18 @@ export type KnowledgeScheduleRecordedPayload = {
   recordedAt: string;
 };
 
+export type VehicleRecordRecordedPayload = {
+  vehicleId: string;
+  recordId: string;
+  agency: string;
+  recordDate: string;
+  mileage: number | null;
+  eventType: VehicleRecordEventType;
+  description: string;
+  details: string[];
+  source: VehicleRecordSource;
+};
+
 export type DomainEventPayloadMap = {
   [EVENT_TYPES.DOCUMENT_INGESTED]: DocumentIngestedPayload;
   [EVENT_TYPES.DOCUMENT_EXTRACTION_COMPLETED]: DocumentExtractionCompletedPayload;
@@ -152,6 +169,7 @@ export type DomainEventPayloadMap = {
   [EVENT_TYPES.MAINTENANCE_RECOMMENDATION_CREATED]: MaintenanceRecommendationCreatedPayload;
   [EVENT_TYPES.TASK_CREATED]: TaskCreatedPayload;
   [EVENT_TYPES.TASK_DECIDED]: TaskDecidedPayload;
+  [EVENT_TYPES.VEHICLE_RECORD_RECORDED]: VehicleRecordRecordedPayload;
 };
 
 export type CatalogDomainEvent = {
@@ -168,6 +186,7 @@ export const EVENT_VERSIONS: Record<DomainEventType, number> = {
   [EVENT_TYPES.MAINTENANCE_RECOMMENDATION_CREATED]: 1,
   [EVENT_TYPES.TASK_CREATED]: 1,
   [EVENT_TYPES.TASK_DECIDED]: 1,
+  [EVENT_TYPES.VEHICLE_RECORD_RECORDED]: 1,
 };
 
 export const GOLDEN_PATH_FLOW: DomainEventType[] = [

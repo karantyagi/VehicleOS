@@ -422,12 +422,16 @@ export function OwnerDashboard() {
             apiBase={apiBase}
             disabled={isBusy}
             onError={(message) => notify(message, "error")}
-            onImported={(body) => {
+            onCarfaxImported={(body) => {
               setTimeline(body.timeline as TimelineEntry[]);
               if (body.maintenanceSchedule) {
                 setMaintenanceSchedule(body.maintenanceSchedule as MaintenanceScheduleView);
               }
               feedback(`${body.importedCount} service row(s) imported — check Service history.`);
+              void loadVehicleState(vehicle);
+            }}
+            onRmvImported={(body) => {
+              feedback(`${body.importedCount} ownership record(s) imported for the assistant.`);
               void loadVehicleState(vehicle);
             }}
           />

@@ -1,5 +1,7 @@
-import type { VehicleOsImportService } from "@vehicleos/domain";
+import type { VehicleOsImportService, VehicleOsRmvRecord } from "@vehicleos/domain";
+import { parseCarfaxPdfText, parseRmvPdfText } from "@vehicleos/domain";
 import type { ApiServices } from "../services/index.js";
+import { extractPdfText } from "../import/pdf-text.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
 
@@ -72,5 +74,156 @@ export const submitVehicleOsImport = async (
     importSource: body.source?.trim() || "vehicleos-import",
     timeline: view.timeline,
     maintenanceSchedule: view.maintenanceSchedule,
+  });
+};
+
+type VehicleOsRmvImportBody = {
+  version?: "1";
+  source?: string;
+  exportedAt?: string;
+  vehicle?: {
+    currentMileage?: number;
+  };
+  records?: VehicleOsRmvRecord[];
+};
+
+export type RecordImportCategory = "carfax" | "rmv";
+
+const MAX_IMPORT_PDF_BYTES = 15 * 1024 * 1024;
+
+export const extractRecordImportPdf = async (
+  services: ApiServices,
+  vehicleId: string,
+  input: { category: RecordImportCategory; pdfBuffer: Buffer; fileName: string },
+  auth?: AuthContext,
+): Promise<JsonResponse> => {
+  if (!auth?.userId) return unauthorized();
+
+  const vehicle = await services.vehicles.findById(vehicleId);
+  if (!vehicle) return jsonResponse(404, { error: "Vehicle not found" });
+  if (vehicle.userId !== auth.userId) return forbidden();
+
+  if (input.pdfBuffer.byteLength === 0) {
+    return jsonResponse(400, { error: "PDF file is empty" });
+  }
+  if (input.pdfBuffer.byteLength > MAX_IMPORT_PDF_BYTES) {
+    return jsonResponse(413, { error: "PDF exceeds 15 MB limit" });
+  }
+
+  let text = "";
+  try {
+    text = await extractPdfText(input.pdfBuffer);
+  } catch {
+    return jsonResponse(422, { error: "Could not read PDF text. Try re-exporting from your browser." });
+  }
+
+  if (!text.trim()) {
+    return jsonResponse(422, { error: "PDF contained no extractable text. Use print-to-PDF, not a scanned image." });
+  }
+
+  const exportedAt = new Date().toISOString();
+  const vehicleBlock = {
+    vin: vehicle.vin,
+    year: vehicle.year,
+    make: vehicle.make,
+    model: vehicle.model,
+    trim: vehicle.trim ?? undefined,
+    currentMileage: vehicle.currentMileage,
+  };
+
+  if (input.category === "carfax") {
+    const parsed = parseCarfaxPdfText(text);
+    if (parsed.services.length === 0) {
+      return jsonResponse(422, {
+        error: "No CARFAX service rows found. Open Service History in Car Care, then print the full page to PDF.",
+      });
+    }
+
+    const currentMileage = Math.max(vehicle.currentMileage, parsed.maxMileage);
+    return jsonResponse(200, {
+      category: "carfax",
+      extractor: "rules-v1",
+      warnings: parsed.warnings,
+      draft: {
+        version: "1" as const,
+        source: "carfax-pdf-extract",
+        exportedAt,
+        vehicle: { ...vehicleBlock, currentMileage },
+        services: parsed.services,
+      },
+    });
+  }
+
+  const parsed = parseRmvPdfText(text);
+  if (parsed.records.length === 0) {
+    return jsonResponse(422, {
+      error: "No RMV/DMV ownership rows found. Print your registration or title summary from myRMV (or equivalent).",
+    });
+  }
+
+  return jsonResponse(200, {
+    category: "rmv",
+    extractor: "rules-v1",
+    warnings: parsed.warnings,
+    draft: {
+      version: "1" as const,
+      source: "rmv-pdf-extract",
+      exportedAt,
+      vehicle: vehicleBlock,
+      records: parsed.records,
+    },
+  });
+};
+
+export const submitVehicleOsRmvImport = async (
+  services: ApiServices,
+  vehicleId: string,
+  body: VehicleOsRmvImportBody,
+  auth?: AuthContext,
+): Promise<JsonResponse> => {
+  if (!auth?.userId) return unauthorized();
+
+  const vehicle = await services.vehicles.findById(vehicleId);
+  if (!vehicle) return jsonResponse(404, { error: "Vehicle not found" });
+  if (vehicle.userId !== auth.userId) return forbidden();
+
+  const records = body.records ?? [];
+  if (records.length === 0) {
+    return jsonResponse(400, { error: "records array is required" });
+  }
+
+  for (const [index, record] of records.entries()) {
+    if (!record.recordDate?.trim()) {
+      return jsonResponse(400, { error: `records[${index}].recordDate is required` });
+    }
+    if (!record.description?.trim()) {
+      return jsonResponse(400, { error: `records[${index}].description is required` });
+    }
+    if (!Array.isArray(record.details) || record.details.length === 0) {
+      return jsonResponse(400, { error: `records[${index}].details is required` });
+    }
+  }
+
+  const importResult = await services.goldenPath.importVehicleOsRmvHistory({
+    vehicleId,
+    importSource: body.source?.trim() || "vehicleos-rmv-import",
+    records,
+  });
+
+  const nextMileage = body.vehicle?.currentMileage;
+  const shouldUpdateMileage =
+    typeof nextMileage === "number" &&
+    Number.isFinite(nextMileage) &&
+    nextMileage > vehicle.currentMileage;
+  const updatedVehicle = shouldUpdateMileage
+    ? await services.vehicles.update(vehicleId, auth.userId, { currentMileage: nextMileage })
+    : vehicle;
+
+  const view = buildVehicleStateView(importResult.state, updatedVehicle ?? vehicle);
+
+  return jsonResponse(201, {
+    importedCount: importResult.importedCount,
+    importSource: body.source?.trim() || "vehicleos-rmv-import",
+    ownershipRecords: view.ownershipRecords,
   });
 };
