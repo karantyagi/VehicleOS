@@ -1,0 +1,42 @@
+{
+  "version": "1",
+  "source": "myrmv-pdf-manual",
+  "exportedAt": "2026-07-24T18:31:00.000Z",
+  "vehicle": {
+    "vin": "19UUB6F47MA008400",
+    "year": 2021,
+    "make": "Acura",
+    "model": "TLX",
+    "currentMileage": 58819
+  },
+  "records": [
+    {
+      "agency": "Massachusetts RMV (myRMV)",
+      "recordDate": "2026-01-21",
+      "mileage": null,
+      "eventType": "title",
+      "description": "Title active — CM185996",
+      "details": [
+        "Title Number: CM185996",
+        "Title Date: Jan-21-2026",
+        "Title Status: Active",
+        "VIN: 19UUB6F47MA008400",
+        "Vehicle: 2021 ACURA TLX"
+      ]
+    },
+    {
+      "agency": "Massachusetts RMV (myRMV)",
+      "recordDate": "2024-10-01",
+      "mileage": null,
+      "eventType": "registration",
+      "description": "Registration active — plate 3KXT69",
+      "details": [
+        "Type/Number: Passenger Normal Red Plate/3KXT69",
+        "Effective Date: Oct-01-2024",
+        "Expiration Date: Sep-30-2026",
+        "Status: Active",
+        "Already Renewed"
+      ]
+    }
+  ]
+}

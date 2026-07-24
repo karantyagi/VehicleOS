@@ -1,4 +1,5 @@
 import type { VehicleOsRmvRecord } from "./record-vehicleos-rmv-import.js";
+import { parseMyRmvPortalPdfText } from "./parse-myrmv-portal-pdf-text.js";
 
 export type ParseRmvPdfTextResult = {
   records: VehicleOsRmvRecord[];
@@ -52,6 +53,9 @@ const dedupeRecords = (records: VehicleOsRmvRecord[]): VehicleOsRmvRecord[] => {
 };
 
 export const parseRmvPdfText = (rawText: string): ParseRmvPdfTextResult => {
+  const myRmvPortal = parseMyRmvPortalPdfText(rawText);
+  if (myRmvPortal) return myRmvPortal;
+
   const lines = rawText.split(/\r?\n/).map((line) => line.trim());
   const records: VehicleOsRmvRecord[] = [];
   const warnings: string[] = [];
