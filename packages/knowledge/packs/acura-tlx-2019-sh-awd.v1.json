@@ -4,7 +4,7 @@
   "manualTitle": "2019 Acura TLX Owner's Manual — Maintenance Minder (U.S., SH-AWD, gen2)",
   "scheduleKind": "maintenance_minder",
   "qaStatus": "creator_review_required",
-  "qaNotes": "Official 2019 lane PDF code table is image-only (not text-extractable). Rows derived from gen2 Acura MM pattern + lane PDF prose; verify against full 2019 OM before Tier-1 ship.",
+  "qaNotes": "Phase A+B complete — dual-extract agree. Awaiting Phase C promotion to auto_verified.",
   "sourceManifestRef": "sources/manifest.json#acura-tlx-2019-sh-awd",
   "vehicle": {
     "make": "Acura",

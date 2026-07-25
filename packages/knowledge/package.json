@@ -11,12 +11,16 @@
     "test": "vitest run",
     "validate": "node --import tsx/esm src/cli/validate-catalog.ts",
     "generate:tier1": "node --import tsx/esm src/cli/generate-tier1-packs.ts",
-    "generate:tier1:missing": "node --import tsx/esm src/cli/generate-tier1-packs.ts --skip-existing"
+    "generate:tier1:missing": "node --import tsx/esm src/cli/generate-tier1-packs.ts --skip-existing",
+    "verify:oem": "node --import tsx/esm src/cli/verify-oem-packs.ts --all",
+    "verify:oem:pack": "node --import tsx/esm src/cli/verify-oem-packs.ts"
   },
   "dependencies": {
-    "@vehicleos/domain": "workspace:*"
+    "@vehicleos/domain": "workspace:*",
+    "pdf-parse": "1.1.1"
   },
   "devDependencies": {
+    "@types/pdf-parse": "1.1.4",
     "@types/node": "^22.7.5",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",

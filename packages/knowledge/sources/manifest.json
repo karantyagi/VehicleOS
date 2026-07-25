@@ -7,20 +7,115 @@
         "workspace/knowledge/sources/acura-tlx-2021-sh-awd/maintenance-minder-official-supplement.pdf"
       ],
       "sha256": {
-        "owner-manual.pdf": "9ef0b750bf52a05f2583e86f831d4d3aa95efd1ce837d5bc740fe3260f7a2012"
+        "owner-manual.pdf": "9ef0b750bf52a05f2583e86f831d4d3aa95efd1ce837d5bc740fe3260f7a2012",
+        "maintenance-minder-official-supplement.pdf": "3955c82d85e01399433aaf9ab050a9f0d1bb96386c987e3d044166ed92f79d61"
       },
       "officialUrls": [
         "https://owners.acura.com/static/pdfs/2021/TLX/2021_TLX_Maintenance_Minder_System.pdf"
-      ]
+      ],
+      "verifiedAt": "2026-07-25",
+      "dualExtractAgree": true,
+      "notes": "dual-extract agree"
     },
     "acura-tlx-2019-sh-awd": {
       "localPdfPaths": [
-        "workspace/knowledge/sources/acura-tlx-2019-sh-awd/maintenance-minder.pdf"
+        "workspace/knowledge/sources/acura-tlx-2019-sh-awd/maintenance-minder.pdf",
+        "workspace/knowledge/sources/acura-tlx-2019-sh-awd/owner-manual.pdf"
       ],
       "officialUrls": [
         "https://owners.acura.com/static/pdfs/2019/TLX/2019_TLX_Lane_Maintenance_Minder.pdf"
       ],
-      "notes": "Lane PDF only — code table is image-based; full OM not on public CDN."
+      "notes": "dual-extract agree",
+      "sha256": {
+        "owner-manual.pdf": "b5c5a27283b14f0ffcd413d6aff1623c83817b125f82ee101951ec7641c0db04",
+        "maintenance-minder.pdf": "b5c5a27283b14f0ffcd413d6aff1623c83817b125f82ee101951ec7641c0db04"
+      },
+      "verifiedAt": "2026-07-25",
+      "dualExtractAgree": true
+    },
+    "honda-cr-v-2024-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-cr-v-2024-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "6722f4b50862f5b91ec308ed0398820e659715b83ac48dc7d74a0712b5612d1c"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2024/CR-V/2024_CR-V_Maintenance_Minder_System.pdf"
+      ],
+      "verifiedAt": "2026-07-25",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "honda-pilot-2024-ex-l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-pilot-2024-ex-l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "666099a0b759df46a6583305e10179efbd6705d81fea009583c7c941d497cde8"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2024/Pilot/2024_Pilot_Maintenance_Minder_System.pdf"
+      ],
+      "verifiedAt": "2026-07-25",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "honda-hrv-2024-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-hrv-2024-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "e2f569205e2f1a86f8f68eac12503e0e94ed4114a7e4bbbe5820c210cfc4e439"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2024/HR-V/2024_HR-V_Maintenance_Minder_System.pdf"
+      ],
+      "verifiedAt": "2026-07-25",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "acura-tlx-2019-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/acura-tlx-2019-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "b5c5a27283b14f0ffcd413d6aff1623c83817b125f82ee101951ec7641c0db04"
+      },
+      "officialUrls": [
+        "https://owners.acura.com/static/pdfs/2019/TLX/2019_TLX_Lane_Maintenance_Minder.pdf"
+      ],
+      "verifiedAt": "2026-07-25",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2024-ex-l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2024-ex-l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0cb8ba342617a23008cf640079936e33c9f25742561921eddc6df35ac94f8af0"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2024/Passport/2024_Passport_Maintenance_Minder.pdf"
+      ],
+      "verifiedAt": "2026-07-25",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "acura-rdx-2024-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/acura-rdx-2024-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "83614d4363520217eb2d52a35f7a0c8db41f2ec53c1f589e75a16d902dbca54d"
+      },
+      "officialUrls": [
+        "https://owners.acura.com/static/pdfs/2024/RDX/2024_RDX_Maintenance_Minder_System.pdf"
+      ],
+      "verifiedAt": "2026-07-25",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
     }
   }
 }
