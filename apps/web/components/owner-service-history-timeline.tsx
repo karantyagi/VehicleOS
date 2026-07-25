@@ -1,7 +1,20 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Check, ChevronDown, ChevronRight, Clock3, Pencil, X } from "lucide-react";
+import { useEffect, useMemo, useState, type ElementType } from "react";
+import {
+  Building2,
+  Check,
+  ChevronRight,
+  ChevronUp,
+  Clock3,
+  FileJson,
+  Mic,
+  PenLine,
+  Pencil,
+  Receipt,
+  Wrench,
+  X,
+} from "lucide-react";
 import { DateField } from "@/components/date-field";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
@@ -48,6 +61,48 @@ const formatServiceDate = (iso: string): string => {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 };
 
+const parseTotalDollars = (total: string | undefined): number | null => {
+  if (!total?.trim()) return null;
+  const match = total.match(/\$?\s*([\d,]+(?:\.\d{2})?)/);
+  if (!match) return null;
+  const value = Number(match[1].replace(/,/g, ""));
+  return Number.isFinite(value) ? value : null;
+};
+
+const formatCostDisplay = (total: string | undefined): string => {
+  const dollars = parseTotalDollars(total);
+  if (dollars === null || dollars <= 0) return "$—";
+  return `$${dollars.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+};
+
+const sumEntryCosts = (entries: TimelineEntry[]): string => {
+  let sum = 0;
+  let hasCost = false;
+  for (const entry of entries) {
+    const dollars = parseTotalDollars(entry.total);
+    if (dollars !== null && dollars > 0) {
+      sum += dollars;
+      hasCost = true;
+    }
+  }
+  if (!hasCost) return "$—";
+  return `$${sum.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+};
+
+const isDiyShop = (shop: string): boolean => {
+  const normalized = shop.trim().toLowerCase();
+  return normalized.includes("self") || normalized.includes("diy");
+};
+
+const sourceIcon = (entry: TimelineEntry): ElementType => {
+  if (isDiyShop(entry.shop)) return Wrench;
+  if (entry.source === "receipt") return Receipt;
+  if (entry.source === "voice") return Mic;
+  if (entry.source === "owner_note") return PenLine;
+  if (entry.source === "dealer") return Building2;
+  return FileJson;
+};
+
 const groupEntriesByYear = (entries: TimelineEntry[]): [number, TimelineEntry[]][] => {
   const groups = new Map<number, TimelineEntry[]>();
   for (const entry of entries) {
@@ -70,6 +125,8 @@ export function OwnerServiceHistoryTimeline({
     [entries],
   );
   const yearGroups = useMemo(() => groupEntriesByYear(sortedEntries), [sortedEntries]);
+  const latestEntry = sortedEntries[0] ?? null;
+  const totalCost = useMemo(() => sumEntryCosts(entries), [entries]);
 
   const [expandedYears, setExpandedYears] = useState<Set<number>>(() => new Set());
   const [expandedCards, setExpandedCards] = useState<Set<string>>(() => new Set());
@@ -240,21 +297,12 @@ export function OwnerServiceHistoryTimeline({
             Tap save again to confirm these changes.
           </p>
         ) : null}
-      </div>
-    );
-  };
-
-  const renderCardActions = (entry: TimelineEntry, isEditing: boolean) => {
-    if (!onUpdateService) return null;
-
-    if (isEditing) {
-      return (
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex gap-1">
           <Button
             type="button"
             size="icon"
             variant="ghost"
-            className="h-8 w-8 text-primary hover:bg-primary/10 hover:text-primary"
+            className="h-8 w-8 text-history-highlight hover:bg-history-highlight/10 hover:text-history-highlight"
             disabled={isSaving}
             aria-label={requireEditConfirmation && !confirmSave ? "Review save" : "Save changes"}
             onClick={() => handleSaveClick(entry)}
@@ -273,135 +321,196 @@ export function OwnerServiceHistoryTimeline({
             <X className="h-4 w-4" aria-hidden />
           </Button>
         </div>
-      );
-    }
+      </div>
+    );
+  };
 
+  const renderSourceGlyph = (entry: TimelineEntry) => {
+    const Icon = sourceIcon(entry);
     return (
-      <Button
-        type="button"
-        size="icon"
-        variant="ghost"
-        className="h-8 w-8 shrink-0 text-slate-400 hover:bg-slate-500/10 hover:text-slate-600 dark:hover:text-slate-300"
-        disabled={disabled}
-        aria-label="Edit service record"
-        onClick={() => startEditing(entry)}
+      <span
+        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-history-highlight/10 text-history-highlight"
+        aria-hidden
       >
-        <Pencil className="h-3.5 w-3.5" aria-hidden />
-      </Button>
+        <Icon className="h-4 w-4" />
+      </span>
     );
   };
 
   return (
-    <div className="relative space-y-6">
-      <div className="pointer-events-none absolute bottom-0 left-[0.4375rem] top-2 w-px bg-gradient-to-b from-primary/35 via-primary/15 to-transparent" />
+    <div className="space-y-6">
+      {latestEntry ? (
+        <section className="history-surface p-4 sm:p-5">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-history-highlight">
+                Latest service
+              </p>
+              <div className="mt-2 flex items-start gap-3">
+                {renderSourceGlyph(latestEntry)}
+                <div className="min-w-0">
+                  <p className="text-lg font-semibold tracking-tight text-foreground">
+                    {formatServiceDate(latestEntry.serviceDate)}
+                  </p>
+                  <p className="mt-0.5 text-sm text-muted-foreground">{formatShopLine(latestEntry)}</p>
+                  <p className="mt-1 text-sm tabular-nums text-muted-foreground">
+                    {latestEntry.mileage.toLocaleString()} mi · {formatCostDisplay(latestEntry.total)}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <dl className="flex shrink-0 gap-5 text-sm tabular-nums">
+              <div>
+                <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">Records</dt>
+                <dd className="mt-0.5 font-semibold text-foreground">{entries.length}</dd>
+              </div>
+              <div>
+                <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">Total</dt>
+                <dd className="mt-0.5 font-semibold text-foreground">{totalCost}</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+      ) : null}
 
-      {yearGroups.map(([year, yearEntries]) => {
-        const isYearOpen = expandedYears.has(year);
+      <div className="relative space-y-6">
+        <div className="pointer-events-none absolute bottom-0 left-[0.4375rem] top-2 w-px bg-gradient-to-b from-history-highlight/35 via-history-highlight/12 to-transparent" />
 
-        return (
-          <section key={year} className="relative">
-            <button
-              type="button"
-              className="group flex w-full items-center gap-2 rounded-lg py-1 pl-6 pr-2 text-left transition-colors hover:bg-muted/40"
-              aria-expanded={isYearOpen}
-              onClick={() => toggleYear(year)}
-            >
-              <span
-                className="absolute left-0 top-2.5 h-2.5 w-2.5 rounded-full border-2 border-background bg-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.15)]"
-                aria-hidden
-              />
+        {yearGroups.map(([year, yearEntries]) => {
+          const isYearOpen = expandedYears.has(year);
+          const yearCost = sumEntryCosts(yearEntries);
+
+          return (
+            <section key={year} className="relative">
+              <button
+                type="button"
+                className="group flex w-full items-center gap-2 rounded-lg py-1 pl-6 pr-2 text-left history-interactive"
+                aria-expanded={isYearOpen}
+                onClick={() => toggleYear(year)}
+              >
+                <span
+                  className="absolute left-0 top-2.5 h-2.5 w-2.5 rounded-full border-2 border-background bg-history-highlight shadow-[0_0_0_3px_hsl(var(--history-highlight)/0.18)] transition-shadow group-hover:shadow-[0_0_0_4px_hsl(var(--history-highlight)/0.28)]"
+                  aria-hidden
+                />
+                {isYearOpen ? (
+                  <ChevronUp className="h-4 w-4 shrink-0 text-history-highlight" aria-hidden />
+                ) : (
+                  <ChevronRight
+                    className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-history-highlight"
+                    aria-hidden
+                  />
+                )}
+                <span className="text-base font-semibold tracking-tight text-foreground">{year}</span>
+                <span className="text-sm tabular-nums text-muted-foreground group-hover:text-history-highlight/85">
+                  {yearEntries.length} record{yearEntries.length === 1 ? "" : "s"} · {yearCost}
+                </span>
+              </button>
+
               {isYearOpen ? (
-                <ChevronDown className="h-4 w-4 shrink-0 text-primary/70" aria-hidden />
-              ) : (
-                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
-              )}
-              <span className="text-base font-semibold tracking-tight text-slate-700 dark:text-slate-200">{year}</span>
-              <span className="text-sm text-muted-foreground">
-                {yearEntries.length} visit{yearEntries.length === 1 ? "" : "s"}
-              </span>
-            </button>
+                <ul className="history-accent-rail mt-2 space-y-2.5">
+                  {yearEntries.map((entry) => {
+                    const isEditing = editingId === entry.serviceId;
+                    const isExpanded = isEditing || expandedCards.has(entry.serviceId);
+                    const serviceCount = entry.lineItems.length;
+                    const previewItem = entry.lineItems[0];
+                    const costDisplay = formatCostDisplay(entry.total);
 
-            {isYearOpen ? (
-              <ul className="mt-2 space-y-2.5 border-l border-primary/15 pl-6">
-                {yearEntries.map((entry) => {
-                  const isEditing = editingId === entry.serviceId;
-                  const isExpanded = isEditing || expandedCards.has(entry.serviceId);
-                  const serviceCount = entry.lineItems.length;
-                  const previewItem = entry.lineItems[0];
-
-                  return (
-                    <li
-                      key={entry.serviceId}
-                      className={cn(
-                        "rounded-xl border bg-card/90 p-3.5 shadow-sm transition-shadow sm:p-4",
-                        isEditing
-                          ? "border-primary/25 shadow-[0_8px_24px_-12px_hsl(var(--primary)/0.25)]"
-                          : "border-border/70 hover:border-primary/20 hover:shadow-md",
-                      )}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="min-w-0 flex-1">
-                          <p className="text-lg font-semibold tracking-tight text-slate-800 dark:text-slate-100">
-                            {formatServiceDate(entry.serviceDate)}
-                          </p>
-                          <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
-                            {formatShopLine(entry)} · {entry.mileage.toLocaleString()} mi
-                          </p>
-                        </div>
-                        {renderCardActions(entry, isEditing)}
-                      </div>
-
-                      {!isEditing ? (
-                        <>
-                          {!isExpanded ? (
+                    return (
+                      <li
+                        key={entry.serviceId}
+                        className={cn(
+                          "overflow-hidden rounded-xl border bg-card/90 shadow-sm",
+                          isEditing || isExpanded ? "history-interactive-active" : "border-border/70 history-interactive",
+                        )}
+                      >
+                        <div className="flex items-start gap-2 p-3.5 sm:p-4">
+                          {!isEditing ? (
                             <button
                               type="button"
-                              className="mt-2.5 flex w-full items-center gap-2 rounded-md px-1 py-1 text-left text-sm text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+                              className="flex min-w-0 flex-1 items-start gap-3 text-left"
+                              aria-expanded={isExpanded}
                               onClick={() => toggleCard(entry.serviceId)}
                             >
-                              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-primary/60" aria-hidden />
-                              <span className="truncate">
-                                {serviceCount === 1
-                                  ? previewItem
-                                  : `${previewItem}${serviceCount > 1 ? ` · +${serviceCount - 1} more` : ""}`}
-                              </span>
+                              {renderSourceGlyph(entry)}
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-start justify-between gap-2">
+                                  <p className="text-lg font-semibold tracking-tight text-foreground">
+                                    {formatServiceDate(entry.serviceDate)}
+                                  </p>
+                                  {isExpanded ? (
+                                    <ChevronUp className="mt-1 h-4 w-4 shrink-0 text-history-highlight" aria-hidden />
+                                  ) : (
+                                    <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-history-highlight/70" aria-hidden />
+                                  )}
+                                </div>
+                                <p className="mt-0.5 text-sm text-muted-foreground">{formatShopLine(entry)}</p>
+                                <p className="mt-0.5 text-sm tabular-nums text-muted-foreground">
+                                  {entry.mileage.toLocaleString()} mi · {costDisplay}
+                                </p>
+                                {!isExpanded ? (
+                                  <p className="mt-2 truncate text-sm text-muted-foreground">
+                                    {serviceCount === 1
+                                      ? previewItem
+                                      : `${previewItem}${serviceCount > 1 ? ` · +${serviceCount - 1}` : ""}`}
+                                  </p>
+                                ) : null}
+                              </div>
                             </button>
                           ) : (
-                            <div className="mt-3 border-t border-border/60 pt-3">
-                              <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-slate-400">
-                                Services performed
-                              </p>
-                              <ul className="mt-2 space-y-1.5 text-sm text-slate-600 dark:text-slate-300">
-                                {entry.lineItems.map((item) => (
-                                  <li key={item} className="leading-snug">
-                                    {item}
-                                  </li>
-                                ))}
-                              </ul>
-                              {entry.total && entry.total !== "$0.00" ? (
-                                <p className="mt-2 text-sm font-medium text-slate-500">Total · {entry.total}</p>
-                              ) : null}
-                              <button
-                                type="button"
-                                className="mt-2 text-xs font-medium text-primary/80 hover:text-primary"
-                                onClick={() => toggleCard(entry.serviceId)}
-                              >
-                                Show less
-                              </button>
+                            <div className="flex min-w-0 flex-1 items-start gap-3">
+                              {renderSourceGlyph(entry)}
+                              <div className="min-w-0 flex-1">
+                                <p className="text-lg font-semibold tracking-tight text-foreground">
+                                  {formatServiceDate(entry.serviceDate)}
+                                </p>
+                                <p className="mt-0.5 text-sm text-muted-foreground">{formatShopLine(entry)}</p>
+                              </div>
                             </div>
                           )}
-                        </>
-                      ) : (
-                        renderEditForm(entry)
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : null}
-          </section>
-        );
-      })}
+
+                          {onUpdateService && !isEditing ? (
+                            <Button
+                              type="button"
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-history-highlight/10 hover:text-history-highlight"
+                              disabled={disabled}
+                              aria-label="Edit service record"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                startEditing(entry);
+                              }}
+                            >
+                              <Pencil className="h-3.5 w-3.5" aria-hidden />
+                            </Button>
+                          ) : null}
+                        </div>
+
+                        {!isEditing && isExpanded ? (
+                          <div className="border-t border-border/60 px-3.5 pb-3.5 pt-3 sm:px-4 sm:pb-4">
+                            <ul className="space-y-1.5 text-sm text-foreground/85">
+                              {entry.lineItems.map((item) => (
+                                <li key={item} className="leading-snug">
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                            <p className="mt-3 text-sm tabular-nums font-medium text-muted-foreground">
+                              {costDisplay}
+                            </p>
+                          </div>
+                        ) : null}
+
+                        {isEditing ? renderEditForm(entry) : null}
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : null}
+            </section>
+          );
+        })}
+      </div>
     </div>
   );
 }
