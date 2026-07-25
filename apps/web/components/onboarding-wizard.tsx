@@ -98,6 +98,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const [form, setForm] = useState<VehicleForm>(emptyVehicleForm);
   const [catalog, setCatalog] = useState<CatalogVehicleRow[]>([]);
   const [catalogError, setCatalogError] = useState("");
+  const [catalogLoadAttempt, setCatalogLoadAttempt] = useState(0);
   const [isCatalogLoading, setIsCatalogLoading] = useState(false);
   const [driverDraft, setDriverDraft] = useState<DriverHabitsDraft>({
     drivingStyle: "casual",
@@ -137,7 +138,13 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     return () => {
       cancelled = true;
     };
-  }, [apiBase, catalog.length, step]);
+  }, [apiBase, catalog.length, step, catalogLoadAttempt]);
+
+  const retryCatalogLoad = () => {
+    setCatalog([]);
+    setCatalogError("");
+    setCatalogLoadAttempt((attempt) => attempt + 1);
+  };
 
   const selectedVehicle = useMemo(
     () => catalog.find((row) => row.packId === form.packId) ?? null,
@@ -396,7 +403,14 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               — unsupported models are not available in the app yet.
             </p>
 
-            {catalogError ? <p className="sm:col-span-2 text-sm text-destructive">{catalogError}</p> : null}
+            {catalogError ? (
+              <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
+                <p className="text-sm text-destructive">{catalogError}</p>
+                <Button type="button" variant="outline" size="sm" onClick={retryCatalogLoad}>
+                  Retry
+                </Button>
+              </div>
+            ) : null}
           </div>
         ) : null}
 
