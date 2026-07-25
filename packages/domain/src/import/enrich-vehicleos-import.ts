@@ -2,6 +2,10 @@ import { resolveShopLocation } from "./infer-shop-location.js";
 import { normalizeCarfaxLineItems } from "./normalize-carfax-line-items.js";
 import type { VehicleOsImportService } from "./record-vehicleos-import.js";
 
+export type EnrichVehicleOsImportOptions = {
+  ownerShopLocations?: Record<string, string>;
+};
+
 export type VehicleOsImportDraft = {
   version: "1";
   source: string;
@@ -17,13 +21,23 @@ export type VehicleOsImportDraft = {
   services: VehicleOsImportService[];
 };
 
-export const enrichVehicleOsImportService = (service: VehicleOsImportService): VehicleOsImportService => ({
+export const enrichVehicleOsImportService = (
+  service: VehicleOsImportService,
+  options?: EnrichVehicleOsImportOptions,
+): VehicleOsImportService => ({
   ...service,
-  shopLocation: resolveShopLocation({ shop: service.shop, shopLocation: service.shopLocation }),
+  shopLocation: resolveShopLocation({
+    shop: service.shop,
+    shopLocation: service.shopLocation,
+    ownerShopLocations: options?.ownerShopLocations,
+  }),
   lineItems: normalizeCarfaxLineItems(service.lineItems),
 });
 
-export const enrichVehicleOsImport = (draft: VehicleOsImportDraft): VehicleOsImportDraft => ({
+export const enrichVehicleOsImport = (
+  draft: VehicleOsImportDraft,
+  options?: EnrichVehicleOsImportOptions,
+): VehicleOsImportDraft => ({
   ...draft,
-  services: draft.services.map(enrichVehicleOsImportService),
+  services: draft.services.map((service) => enrichVehicleOsImportService(service, options)),
 });

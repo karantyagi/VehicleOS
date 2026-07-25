@@ -207,6 +207,48 @@ PDF or JSON ingest
 
 ---
 
+## Part 9 — Knowledge compounding, who adds rows, new-user path
+
+See also [`feature-readiness-gate.md`](../../../workspace/strategy/feature-readiness-gate.md) for the mandatory dogfood vs new-user checklist.
+
+### The curated pack is dogfood bootstrap — not production scale
+
+The **Shop Pack** ships ~5 Boston-area dealer mappings for TLX dogfood. That is **Plane A product data** maintained offline by the creator — not how arbitrary new users get nationwide coverage.
+
+### Who adds shop location rows, and how
+
+| Source | Who | When | Where stored | Plane |
+|--------|-----|------|--------------|-------|
+| **Explicit on row** | PDF extract or owner edit | Import review | On service row | B |
+| **Owner confirmed memory** | Owner | After import confirm | `OwnerContextMemory.shopLocations` | B |
+| **Creator Shop Pack** | Creator offline (factory) | QA on sample CARFAX | `shop-pack.v1.json` | A |
+| **Nominatim geocoding** | System (server) | Cache miss on dealer shop | Proposed → owner memory after confirm | B |
+| **LLM disambiguation** | System proposes | Nominatim returns 3+ matches | Tier C verification card | Edge |
+| **Runtime auto-expand pack** | **Never** | — | — | — |
+
+### How knowledge improves over time (per owner)
+
+```text
+Import 1 (new user, ~30 CARFAX rows)
+  → Row has address from PDF: auto
+  → Shop in owner memory: auto
+  → Shop in creator pack (dogfood): auto
+  → Unknown dealer: Nominatim on server enrich
+  → Still miss: Tier C — owner adds "City, ST" once → memory grows
+
+Import 2 (same user)
+  → Known shops: auto from owner memory
+  → Only net-new shops hit lookup or review
+```
+
+**Per-owner memory compounds. Cross-user shop cache is OUT of Phase 1.**
+
+### Interview line (shop locations)
+
+> “We don’t ship a 10,000-row shop database. We ship a resolution ladder: explicit row data, per-owner confirmed memory, a small creator seed pack for dogfood, then Nominatim geocoding on cache miss. Second import is easier than first because memory compounds per owner.”
+
+---
+
 ## Alternatives considered
 
 | Option | Rejected because |
@@ -238,7 +280,10 @@ PDF or JSON ingest
 | When LLM? | Iff rules extract fails OR optional shop disambiguation — schema-bound, owner-gated |
 | Shop memory? | Per-owner after confirm + creator map — not shared LLM cache |
 | Meaningful line items? | Denylist at runtime; creator expands offline — not LLM per row |
-| Places vs LLM? | Places API for structured geo; LLM only to disambiguate, never silent write |
+| Places vs LLM? | Nominatim/OSM first for structured geo; LLM only to disambiguate, never silent write |
+| Why only ~5 shops in pack? | Dogfood bootstrap (Plane A factory) — new users use Nominatim + owner memory |
+| Who adds pack rows? | Creator offline factory — not runtime assistant |
+| How does knowledge improve? | Per-owner `shopLocations` compounds; 2nd import easier than 1st |
 | Why IMP-11 as a feature? | Enrichment + tiering + UX + memory + verification — not a single function |
 
 ---

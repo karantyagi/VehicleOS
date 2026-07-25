@@ -17,7 +17,7 @@ export type QueueItem = {
   status: string;
   taskKind?: "recommendation" | "verification";
   ruleId?: string;
-  verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE" | "VERIFY_VEHICLE_PROFILE";
+  verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE" | "VERIFY_VEHICLE_PROFILE" | "VERIFY_IMPORT_ROW";
   dueBy?: string | null;
   snoozeUntil?: string | null;
   snoozeCount?: number;

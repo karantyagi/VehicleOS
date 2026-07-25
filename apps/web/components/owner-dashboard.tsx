@@ -28,7 +28,6 @@ import { MaintenanceTimelineSection } from "./maintenance-timeline-section";
 import { NowQueueConsole } from "./now-queue-console";
 import { RemindersConsole } from "./reminders-console";
 import { useReminderNotifications } from "@/lib/use-reminder-notifications";
-import { OwnerReceiptHandoff } from "./owner-receipt-handoff";
 import { OwnerServiceNotePanel } from "./owner-service-note-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 import { useVehicleConsole } from "@/lib/vehicle-console-context";
@@ -236,7 +235,7 @@ export function OwnerDashboard() {
     setVehicle(created);
     setOwnerSetupComplete(true);
     setForm((current) => ({ ...current, mileage: created.currentMileage }));
-    feedback("Setup complete. Import history anytime from the sidebar, or hand off receipts under Receipt intake.");
+    feedback("Setup complete. Import history from the sidebar; snap receipts on your phone (Add to Home Screen).");
     await loadVehicleState(created);
   };
 
@@ -557,6 +556,7 @@ export function OwnerDashboard() {
           <RecordImportPanel
             vehicleId={vehicle.id}
             apiBase={apiBase}
+            ownerShopLocations={vehicle.ownerContextMemory?.shopLocations}
             disabled={isBusy}
             onError={(message) => notify(message, "error")}
             onCarfaxImported={(body) => {
@@ -573,6 +573,9 @@ export function OwnerDashboard() {
                 );
               } else {
                 feedback(`${body.importedCount} service row(s) imported — check Service history.`);
+              }
+              if (body.verificationTaskId) {
+                feedback("Some imported rows need verification in your assistant queue.");
               }
               void loadVehicleState(vehicle);
             }}
@@ -605,11 +608,10 @@ export function OwnerDashboard() {
         </PanelCard>
       ) : null}
 
-      {activeSection === "receipts" ? (
-        isDeveloper ? (
+      {isDeveloper && activeSection === "receipts" ? (
         <PanelCard
           title="Upload receipt"
-          description="Upload, confirm details, and run the service loop."
+          description="Developer testing — upload, confirm details, and run the golden-path service loop."
           variant="inset"
         >
           <ReceiptCapture
@@ -691,21 +693,6 @@ export function OwnerDashboard() {
             </p>
           </div>
         </PanelCard>
-        ) : (
-          <PanelCard hideHeader>
-            <OwnerReceiptHandoff
-              vehicleId={vehicle.id}
-              apiBase={apiBase}
-              currentMileage={vehicle.currentMileage}
-              disabled={isBusy}
-              onHandedOff={() => {
-                feedback("Receipt handed off — your assistant will file it.");
-                void loadVehicleState(vehicle);
-              }}
-              onError={(message) => notify(message, "error")}
-            />
-          </PanelCard>
-        )
       ) : null}
 
       {isDeveloper && activeSection === "evidence" ? (

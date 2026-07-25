@@ -14,6 +14,21 @@ const normalizeStringList = (value: unknown): string[] | undefined => {
   return items.length > 0 ? items : undefined;
 };
 
+const normalizeShopLocations = (value: unknown): Record<string, string> | undefined => {
+  if (!value || typeof value !== "object") return undefined;
+
+  const entries = Object.entries(value as Record<string, unknown>)
+    .map(([shop, location]) => {
+      const normalizedLocation = normalizeString(location);
+      if (!normalizedLocation) return null;
+      return [shop.trim().toLowerCase().replace(/\s+/g, " "), normalizedLocation] as const;
+    })
+    .filter((entry): entry is readonly [string, string] => entry !== null);
+
+  if (entries.length === 0) return undefined;
+  return Object.fromEntries(entries);
+};
+
 export const normalizeOwnerContextMemory = (value: unknown): OwnerContextMemory => {
   if (!value || typeof value !== "object") return {};
 
@@ -21,9 +36,11 @@ export const normalizeOwnerContextMemory = (value: unknown): OwnerContextMemory 
 
   return {
     primaryCity: normalizeString(record.primaryCity),
+    primaryCityUpdatedAt: normalizeString(record.primaryCityUpdatedAt),
     climateNotes: normalizeStringList(record.climateNotes),
     lastTireProduct: normalizeString(record.lastTireProduct),
     ownerStatedPriorities: normalizeStringList(record.ownerStatedPriorities),
+    shopLocations: normalizeShopLocations(record.shopLocations),
   };
 };
 
@@ -33,6 +50,7 @@ export const hasOwnerContextMemory = (value: OwnerContextMemory | null | undefin
     value.primaryCity ||
       (value.climateNotes?.length ?? 0) > 0 ||
       value.lastTireProduct ||
-      (value.ownerStatedPriorities?.length ?? 0) > 0,
+      (value.ownerStatedPriorities?.length ?? 0) > 0 ||
+      Object.keys(value.shopLocations ?? {}).length > 0,
   );
 };

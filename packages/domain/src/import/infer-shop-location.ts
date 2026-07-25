@@ -1,11 +1,7 @@
-const SHOP_LOCATION_BY_KEY: Record<string, string> = {
-  "ira acura westwood": "Westwood, MA",
-  "metrowest acura": "Framingham, MA",
-  "costco tire center": "Waltham, MA",
-  "automax framingham": "Framingham, MA",
-  "prime acura": "Westwood, MA",
-  massachusetts: "Massachusetts",
-};
+import { normalizeShopKey } from "./shop-location-keys.js";
+import { CURATED_SHOP_PACK } from "./shop-pack.js";
+
+const SHOP_LOCATION_BY_KEY: Record<string, string> = CURATED_SHOP_PACK;
 
 const ADDRESS_LINE = /,\s*[A-Z]{2}\b|\b[A-Z]{2}\s+\d{5}\b/;
 
@@ -16,7 +12,7 @@ export const looksLikeShopAddressLine = (line: string): boolean => {
 };
 
 export const inferShopLocation = (shop: string): string | undefined => {
-  const normalized = shop.trim().toLowerCase().replace(/\s+/g, " ");
+  const normalized = normalizeShopKey(shop);
   if (!normalized) return undefined;
 
   const direct = SHOP_LOCATION_BY_KEY[normalized];
@@ -35,8 +31,13 @@ export const inferShopLocation = (shop: string): string | undefined => {
 export const resolveShopLocation = (input: {
   shop: string;
   shopLocation?: string | null;
+  ownerShopLocations?: Record<string, string>;
 }): string | undefined => {
   const explicit = input.shopLocation?.trim();
   if (explicit) return explicit;
+
+  const ownerLocation = input.ownerShopLocations?.[normalizeShopKey(input.shop)]?.trim();
+  if (ownerLocation) return ownerLocation;
+
   return inferShopLocation(input.shop);
 };

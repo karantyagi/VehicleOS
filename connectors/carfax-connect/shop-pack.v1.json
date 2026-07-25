@@ -1,0 +1,15 @@
+{
+  "version": "1",
+  "source": "creator-curated",
+  "region": "Boston metro · dogfood",
+  "shops": {
+    "ira acura westwood": "Westwood, MA",
+    "metrowest acura": "Framingham, MA",
+    "costco tire center": "Waltham, MA",
+    "automax framingham": "Framingham, MA",
+    "prime acura": "Westwood, MA",
+    "massachusetts": "Massachusetts",
+    "self reported": "Owner reported",
+    "self-service (diy)": "Owner DIY"
+  }
+}

@@ -12,7 +12,7 @@ export const CAR_IDENTITY_NAV = [
     id: "driver" as const,
     label: "Driving profile",
     href: "/garage?tab=driver",
-    description: "Driving style and annual miles",
+    description: "Garage city, driving style, and annual miles",
   },
 ];
 

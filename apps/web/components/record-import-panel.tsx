@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { CarfaxImportReview, type CarfaxReviewRow } from "@/components/carfax-import-review";
 import {
   parseVehicleOsImportJson,
   parseVehicleOsRmvImportJson,
@@ -19,13 +20,14 @@ import {
   type VehicleOsRmvImportV1,
   type VehicleOsRmvRecord,
 } from "@/lib/record-import-types";
-import { enrichVehicleOsImport } from "@vehicleos/domain";
+import { enrichVehicleOsImport, normalizeShopKey, tierImportRows, type ShopLocationHint } from "@vehicleos/domain";
 import { DOGFOOD_FIXTURES, fetchDogfoodJson } from "@/lib/extraction-status";
 import { cn } from "@/lib/utils";
 
 type RecordImportPanelProps = {
   vehicleId: string;
   apiBase: string;
+  ownerShopLocations?: Record<string, string>;
   disabled?: boolean;
   onError: (message: string) => void;
   onCarfaxImported: (body: {
@@ -33,6 +35,13 @@ type RecordImportPanelProps = {
     skippedCount?: number;
     timeline: unknown[];
     maintenanceSchedule?: unknown;
+    verificationTaskId?: string;
+    importReview?: {
+      autoCount: number;
+      enrichedCount: number;
+      verifyCount: number;
+      blockCount: number;
+    };
   }) => void;
   onRmvImported: (body: {
     importedCount: number;
@@ -43,14 +52,13 @@ type RecordImportPanelProps = {
   }) => void;
 };
 
-type CarfaxReviewRow = VehicleOsImportService & { id: string; included: boolean };
 type RmvReviewRow = VehicleOsRmvRecord & { id: string; included: boolean };
 
 const FLOW_STEPS = [
   "Log in to the portal and open the relevant vehicle page.",
   "Print the page → Save as PDF (Ctrl+P / Cmd+P).",
-  "Upload PDF — assistant extracts rows for review.",
-  "Edit or exclude rows, then confirm import.",
+  "Upload PDF — assistant extracts and cleans rows.",
+  "Confirm the summary — review exceptions only.",
 ] as const;
 
 const createRowId = (): string =>
@@ -58,17 +66,51 @@ const createRowId = (): string =>
     ? crypto.randomUUID()
     : `row-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
-const initCarfaxReviewRows = (services: VehicleOsImportService[]): CarfaxReviewRow[] =>
-  services.map((service) => ({ ...service, id: createRowId(), included: true }));
+const initCarfaxReviewRows = (
+  services: VehicleOsImportService[],
+  shopLocationHints?: Record<string, ShopLocationHint>,
+): CarfaxReviewRow[] => {
+  const summary = tierImportRows(services);
+  return summary.rows.map((tiered) => ({
+    ...tiered.service,
+    id: createRowId(),
+    included: tiered.tier !== "block",
+    tier: tiered.tier,
+    tierReasons: tiered.reasons,
+    locationCandidates: shopLocationHints?.[normalizeShopKey(tiered.service.shop)]?.candidates,
+  }));
+};
+
+const reTierCarfaxRows = (rows: CarfaxReviewRow[]): CarfaxReviewRow[] => {
+  const summary = tierImportRows(
+    rows.map(
+      ({
+        id: _id,
+        included: _included,
+        tier: _tier,
+        tierReasons: _reasons,
+        locationCandidates: _candidates,
+        ...service
+      }) => service,
+    ),
+  );
+  return rows.map((row, index) => {
+    const tiered = summary.rows[index];
+    if (!tiered) return row;
+    const wasIncluded = row.included;
+    const hadLocation = Boolean(row.shopLocation?.trim());
+    return {
+      ...row,
+      tier: tiered.tier,
+      tierReasons: tiered.reasons,
+      included: tiered.tier === "block" ? false : wasIncluded,
+      locationCandidates: hadLocation ? undefined : row.locationCandidates,
+    };
+  });
+};
 
 const initRmvReviewRows = (records: VehicleOsRmvRecord[]): RmvReviewRow[] =>
   records.map((record) => ({ ...record, id: createRowId(), included: true }));
-
-const parseLineItemsField = (raw: string): string[] =>
-  raw
-    .split(/[·;,]/)
-    .map((line) => line.trim())
-    .filter(Boolean);
 
 const parseDetailsField = (raw: string): string[] =>
   raw
@@ -79,6 +121,7 @@ const parseDetailsField = (raw: string): string[] =>
 export function RecordImportPanel({
   vehicleId,
   apiBase,
+  ownerShopLocations,
   disabled = false,
   onError,
   onCarfaxImported,
@@ -118,12 +161,35 @@ export function RecordImportPanel({
     resetPreview();
   };
 
-  const applyCarfaxDraft = (draft: VehicleOsImportV1, warnings: string[] = []) => {
-    const enriched = enrichVehicleOsImport(draft);
+  const applyCarfaxDraft = async (
+    draft: VehicleOsImportV1,
+    warnings: string[] = [],
+    shopLocationHints?: Record<string, ShopLocationHint>,
+  ) => {
+    let enriched = enrichVehicleOsImport(draft, { ownerShopLocations });
+    let hints = shopLocationHints;
+    try {
+      const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/import/enrich`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ draft }),
+      });
+      if (response.ok) {
+        const body = (await response.json()) as {
+          draft?: VehicleOsImportV1;
+          shopLocationHints?: Record<string, ShopLocationHint>;
+        };
+        if (body.draft) enriched = body.draft;
+        if (body.shopLocationHints) hints = body.shopLocationHints;
+      }
+    } catch {
+      // Client-side enrich fallback when server enrich is unavailable.
+    }
+
     setCarfaxPreview(enriched);
     setRmvPreview(null);
     setRmvReviewRows([]);
-    setCarfaxReviewRows(initCarfaxReviewRows(enriched.services));
+    setCarfaxReviewRows(initCarfaxReviewRows(enriched.services, hints));
     setJsonDraft(JSON.stringify(enriched, null, 2));
     setParseError("");
     setExtractWarnings(warnings);
@@ -154,7 +220,7 @@ export function RecordImportPanel({
           setParseError(result.error);
           return;
         }
-        applyCarfaxDraft(result.data);
+        void applyCarfaxDraft(result.data);
         return;
       }
 
@@ -166,7 +232,7 @@ export function RecordImportPanel({
       }
       applyRmvDraft(result.data);
     },
-    [activeCategory, resetPreview],
+    [activeCategory, resetPreview, ownerShopLocations, apiBase, vehicleId],
   );
 
   const handleJsonFile = useCallback(
@@ -187,7 +253,7 @@ export function RecordImportPanel({
     try {
       if (activeCategory === "carfax") {
         const draft = await fetchDogfoodJson<VehicleOsImportV1>(DOGFOOD_FIXTURES.carfax);
-        applyCarfaxDraft(draft, ["Dogfood CARFAX JSON loaded — review rows before confirming."]);
+        await applyCarfaxDraft(draft, ["Dogfood CARFAX JSON loaded — review rows before confirming."]);
         return;
       }
       const draft = await fetchDogfoodJson<VehicleOsRmvImportV1>(DOGFOOD_FIXTURES.rmv);
@@ -252,6 +318,16 @@ export function RecordImportPanel({
     }
   };
 
+  const carfaxTierSummary = useMemo(
+    () =>
+      tierImportRows(
+        carfaxReviewRows.map(
+          ({ id: _id, included: _included, tier: _tier, tierReasons: _reasons, ...service }) => service,
+        ),
+      ),
+    [carfaxReviewRows],
+  );
+
   const selectedCarfaxRows = useMemo(
     () => carfaxReviewRows.filter((row) => row.included),
     [carfaxReviewRows],
@@ -298,6 +374,13 @@ export function RecordImportPanel({
           skippedCount?: number;
           timeline?: unknown[];
           maintenanceSchedule?: unknown;
+          verificationTaskId?: string;
+          importReview?: {
+            autoCount: number;
+            enrichedCount: number;
+            verifyCount: number;
+            blockCount: number;
+          };
         };
         if (!response.ok) {
           onError(body.error ?? "Import failed.");
@@ -308,6 +391,8 @@ export function RecordImportPanel({
           skippedCount: body.skippedCount ?? 0,
           timeline: body.timeline ?? [],
           maintenanceSchedule: body.maintenanceSchedule,
+          verificationTaskId: body.verificationTaskId,
+          importReview: body.importReview,
         });
       } else if (activeCategory === "rmv" && rmvPreview) {
         if (selectedRmvRows.length === 0) {
@@ -376,7 +461,7 @@ export function RecordImportPanel({
     activeCategory === "carfax" ? carfaxReviewRows.length : rmvReviewRows.length;
 
   const updateCarfaxRow = (id: string, patch: Partial<CarfaxReviewRow>) => {
-    setCarfaxReviewRows((rows) => rows.map((row) => (row.id === id ? { ...row, ...patch } : row)));
+    setCarfaxReviewRows((rows) => reTierCarfaxRows(rows.map((row) => (row.id === id ? { ...row, ...patch } : row))));
   };
 
   const updateRmvRow = (id: string, patch: Partial<RmvReviewRow>) => {
@@ -384,7 +469,18 @@ export function RecordImportPanel({
   };
 
   const setAllCarfaxIncluded = (included: boolean) => {
-    setCarfaxReviewRows((rows) => rows.map((row) => ({ ...row, included })));
+    setCarfaxReviewRows((rows) =>
+      rows.map((row) => ({ ...row, included: row.tier === "block" ? false : included })),
+    );
+  };
+
+  const includeAllReadyCarfax = () => {
+    setCarfaxReviewRows((rows) =>
+      rows.map((row) => ({
+        ...row,
+        included: row.tier === "auto" || row.tier === "enriched" ? true : row.included,
+      })),
+    );
   };
 
   const setAllRmvIncluded = (included: boolean) => {
@@ -551,109 +647,17 @@ export function RecordImportPanel({
       </div>
 
       {activeCategory === "carfax" && carfaxPreview && carfaxReviewRows.length > 0 ? (
-        <ImportReviewTable
-          title={`Review before import · ${carfaxReviewRows.length} service row${carfaxReviewRows.length === 1 ? "" : "s"}`}
-          subtitle={`${carfaxPreview.vehicle.year} ${carfaxPreview.vehicle.make} ${carfaxPreview.vehicle.model} · ${carfaxPreview.vehicle.currentMileage.toLocaleString()} mi · edit fields or uncheck rows to exclude`}
-          selectedCount={selectedCarfaxRows.length}
-          totalCount={carfaxReviewRows.length}
-          disabled={disabled || isImporting}
-          confirmLabel={
-            isImporting
-              ? "Importing…"
-              : `Confirm import (${selectedCarfaxRows.length} of ${carfaxReviewRows.length} rows)`
-          }
-          onConfirm={() => void commitImport()}
-          onIncludeAll={() => setAllCarfaxIncluded(true)}
+        <CarfaxImportReview
+          vehicleLabel={`${carfaxPreview.vehicle.year} ${carfaxPreview.vehicle.make} ${carfaxPreview.vehicle.model} · ${carfaxPreview.vehicle.currentMileage.toLocaleString()} mi`}
+          summary={carfaxTierSummary}
+          rows={carfaxReviewRows}
+          disabled={disabled}
+          isImporting={isImporting}
+          onRowChange={updateCarfaxRow}
+          onIncludeAllReady={includeAllReadyCarfax}
           onExcludeAll={() => setAllCarfaxIncluded(false)}
-        >
-          <table className="w-full text-left text-xs">
-            <thead className="sticky top-0 bg-muted/80 backdrop-blur">
-              <tr>
-                <th className="w-10 px-2 py-2 font-medium">
-                  <span className="sr-only">Include</span>
-                </th>
-                <th className="px-2 py-2 font-medium">Date</th>
-                <th className="px-2 py-2 font-medium">Mileage</th>
-                <th className="px-2 py-2 font-medium">Shop</th>
-                <th className="px-2 py-2 font-medium">Location</th>
-                <th className="px-2 py-2 font-medium">Line items</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...carfaxReviewRows]
-                .sort((a, b) => b.serviceDate.localeCompare(a.serviceDate))
-                .map((row) => (
-                  <tr
-                    key={row.id}
-                    className={cn(
-                      "border-t border-border/60",
-                      !row.included && "bg-muted/40 opacity-60",
-                    )}
-                  >
-                    <td className="px-2 py-2 align-top">
-                      <input
-                        type="checkbox"
-                        checked={row.included}
-                        disabled={disabled || isImporting}
-                        aria-label={`Include service on ${row.serviceDate}`}
-                        className="h-4 w-4 rounded border-border"
-                        onChange={(event) => updateCarfaxRow(row.id, { included: event.target.checked })}
-                      />
-                    </td>
-                    <td className="px-2 py-2 align-top">
-                      <Input
-                        value={row.serviceDate}
-                        disabled={disabled || isImporting || !row.included}
-                        className="h-8 min-w-[7rem] text-xs"
-                        onChange={(event) => updateCarfaxRow(row.id, { serviceDate: event.target.value })}
-                      />
-                    </td>
-                    <td className="px-2 py-2 align-top">
-                      <Input
-                        type="number"
-                        value={row.mileage}
-                        disabled={disabled || isImporting || !row.included}
-                        className="h-8 w-24 text-xs tabular-nums"
-                        onChange={(event) =>
-                          updateCarfaxRow(row.id, { mileage: Number(event.target.value) || 0 })
-                        }
-                      />
-                    </td>
-                    <td className="px-2 py-2 align-top">
-                      <Input
-                        value={row.shop}
-                        disabled={disabled || isImporting || !row.included}
-                        className="h-8 min-w-[8rem] text-xs"
-                        onChange={(event) => updateCarfaxRow(row.id, { shop: event.target.value })}
-                      />
-                    </td>
-                    <td className="px-2 py-2 align-top">
-                      <Input
-                        value={row.shopLocation ?? ""}
-                        disabled={disabled || isImporting || !row.included}
-                        className="h-8 min-w-[7rem] text-xs"
-                        placeholder="City, ST"
-                        onChange={(event) =>
-                          updateCarfaxRow(row.id, { shopLocation: event.target.value || undefined })
-                        }
-                      />
-                    </td>
-                    <td className="px-2 py-2 align-top">
-                      <Input
-                        value={row.lineItems.join(" · ")}
-                        disabled={disabled || isImporting || !row.included}
-                        className="h-8 min-w-[12rem] text-xs"
-                        placeholder="Oil change · Filter"
-                        onChange={(event) =>
-                          updateCarfaxRow(row.id, { lineItems: parseLineItemsField(event.target.value) })
-                        }
-                      />
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </ImportReviewTable>
+          onConfirm={() => void commitImport()}
+        />
       ) : null}
 
       {activeCategory === "rmv" && rmvPreview && rmvReviewRows.length > 0 ? (

@@ -55,7 +55,7 @@ export default function manifest(): MetadataRoute.Manifest {
         name: "Upload receipt",
         short_name: "Receipts",
         description: "Photo or PDF at the shop",
-        url: "/?section=receipts",
+        url: "/capture/receipt",
         icons: [{ src: "/icons/icon.svg", sizes: "512x512", type: "image/svg+xml" }],
       },
       {

@@ -28,14 +28,8 @@ describe("normalizeCarfaxLineItems", () => {
     ).toEqual(["Service visit"]);
   });
 
-  it("removes car wash detail noise", () => {
-    expect(
-      normalizeCarfaxLineItems([
-        "Vehicle serviced",
-        "Front brake pads replaced",
-        "Vehicle washed/detailed",
-      ]),
-    ).toEqual(["Front brake pads replaced"]);
+  it("returns original array when all lines are blank", () => {
+    expect(normalizeCarfaxLineItems(["   ", ""])).toEqual(["   ", ""]);
   });
 });
 

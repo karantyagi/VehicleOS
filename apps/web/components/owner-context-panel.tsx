@@ -86,7 +86,12 @@ export function OwnerContextPanel({ vehicleId }: OwnerContextPanelProps) {
         <p className="text-sm text-muted-foreground">Loading assistant context…</p>
       ) : (
         <div className="space-y-4">
-          <FormField label="Primary city" htmlFor="owner-context-city" optional>
+          <FormField
+            label="Primary city"
+            htmlFor="owner-context-city"
+            optional
+            hint="Owner-facing source of truth: Garage → Driver profile (required at setup)"
+          >
             <Input
               id="owner-context-city"
               value={draft.primaryCity}

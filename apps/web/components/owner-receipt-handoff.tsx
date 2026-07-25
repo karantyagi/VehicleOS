@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ExtractionStatusBanner } from "@/components/extraction-status-banner";
 import { ReceiptCapture, type UploadedReceipt } from "@/components/receipt-capture";
 import { Button } from "@/components/ui/button";
 
@@ -57,6 +58,10 @@ export function OwnerReceiptHandoff({
 
   return (
     <div className="space-y-4">
+      <ExtractionStatusBanner variant="llm-not-ready-receipt" />
+      <p className="text-sm text-muted-foreground">
+        Snap a photo after service — add VehicleOS to your home screen for one-tap capture.
+      </p>
       <ReceiptCapture
         vehicleId={vehicleId}
         apiBase={apiBase}

@@ -96,7 +96,7 @@ export type TaskCreatedPayload = {
   reason: string;
   status: TaskStatus;
   taskKind?: "recommendation" | "verification";
-  verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE" | "VERIFY_VEHICLE_PROFILE";
+  verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE" | "VERIFY_VEHICLE_PROFILE" | "VERIFY_IMPORT_ROW";
   ruleId?: string;
   dueBy?: string | null;
 };

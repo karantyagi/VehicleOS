@@ -5,12 +5,14 @@ import { DrivingStyleFields } from "@/components/driving-style-fields";
 import { Button } from "@/components/ui/button";
 import { PanelCard } from "@/components/panel-card";
 import {
+  buildOwnerContextWithPrimaryCity,
   parseStatedMilesPerYear,
   patchVehicleProfile,
   vehicleProfileFromRecord,
   type DriverHabitsDraft,
   type VehicleOwnerProfile,
 } from "@/lib/driver-habits";
+import type { OwnerContextMemory } from "@/lib/owner-context";
 import { notify } from "@/lib/notify";
 
 export type { DriverHabitsDraft, DrivingStyle } from "@/lib/driver-habits";
@@ -24,7 +26,9 @@ export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPa
   const [draft, setDraft] = useState<DriverHabitsDraft>({
     drivingStyle: "casual",
     statedMilesPerYear: null,
+    primaryCity: "",
   });
+  const [existingContext, setExistingContext] = useState<OwnerContextMemory | null>(null);
   const [milesInput, setMilesInput] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -43,6 +47,7 @@ export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPa
         if (!response.ok) throw new Error(body.error ?? "Could not load vehicle");
         const vehicle = body.vehicles?.find((entry) => entry.id === vehicleId) ?? null;
         const loaded = vehicleProfileFromRecord(vehicle);
+        setExistingContext(vehicle?.ownerContextMemory ?? null);
         setDraft(loaded);
         setMilesInput(loaded.statedMilesPerYear ? String(loaded.statedMilesPerYear) : "");
       } catch (loadError) {
@@ -59,6 +64,11 @@ export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPa
       return;
     }
 
+    if (!draft.primaryCity.trim()) {
+      notify("Garage city is required — it anchors seasonal reminders and shop lookups.", "error");
+      return;
+    }
+
     const parsedMiles = parseStatedMilesPerYear(milesInput);
     if (parsedMiles === "invalid") {
       notify("Enter annual mileage between 1,000 and 80,000.", "error");
@@ -70,10 +80,13 @@ export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPa
       await patchVehicleProfile(vehicleId, {
         drivingStyle: draft.drivingStyle,
         statedMilesPerYear: parsedMiles,
+        ownerContextMemory: buildOwnerContextWithPrimaryCity(existingContext, draft.primaryCity),
       });
+      setExistingContext(buildOwnerContextWithPrimaryCity(existingContext, draft.primaryCity));
       setDraft({
         drivingStyle: draft.drivingStyle,
         statedMilesPerYear: parsedMiles,
+        primaryCity: draft.primaryCity.trim(),
       });
       notify("Driving profile saved.", "success");
     } catch (saveError) {
@@ -87,7 +100,7 @@ export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPa
     <PanelCard
       hideHeader={minimal}
       title="Driving profile"
-      description="How you drive shapes preemptive recommendations — not OEM due dates."
+      description="How you drive and where you garage the car shape preemptive recommendations — not OEM due dates."
     >
       {!minimal ? (
         <p className="text-xs leading-relaxed text-muted-foreground">
