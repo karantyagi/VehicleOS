@@ -60,7 +60,7 @@ export function OwnerReceiptHandoff({
     <div className="space-y-4">
       <ExtractionStatusBanner variant="llm-not-ready-receipt" />
       <p className="text-sm text-muted-foreground">
-        Best on your phone — open this page from mobile or add to home screen. Desktop works for testing.
+        Snap a photo after service — add VehicleOS to your home screen for one-tap capture.
       </p>
       <ReceiptCapture
         vehicleId={vehicleId}

@@ -39,7 +39,7 @@ export const APP_SECTIONS: { id: AppSection; label: string; description: string 
   {
     id: "receipts",
     label: "Upload receipt",
-    description: "Photos and PDFs — best on mobile; same page on desktop for testing",
+    description: "Developer testing — golden-path confirm with manual fields (owners capture on mobile)",
   },
   {
     id: "evidence",
