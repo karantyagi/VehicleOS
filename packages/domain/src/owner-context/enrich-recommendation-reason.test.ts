@@ -37,7 +37,7 @@ describe("enrichRecommendationReason", () => {
     expect(enriched.reason).toContain("Driving in Boston");
     expect(enriched.reason).toContain("heavy winter salt");
     expect(enriched.reason).toContain("Michelin Pilot Sport 4S");
-    expect(enriched.reason).toContain("Aggressive driving profile");
+    expect(enriched.reason).toContain("Sporty driving profile");
     expect(enriched.reason).toContain("Owner priority: Keep brakes quiet");
   });
 });

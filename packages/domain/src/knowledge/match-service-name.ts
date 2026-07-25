@@ -3,7 +3,7 @@ import type { ServiceTimelineEntry } from "../projections/types.js";
 export const serviceNamePattern = (serviceName: string): RegExp => {
   const normalized = serviceName.toLowerCase();
   if (normalized.includes("oil")) {
-    return /oil change|oil & filter|engine oil|synthetic oil|lube,? oil|oil filter/i;
+    return /oil change|oil (&|and|\/)\s*filter|engine oil|replace engine oil|synthetic oil|lube,? oil|oil filter/i;
   }
   if (normalized.includes("tire")) {
     return /tire rotation|rotate tires|tires rotated|rotation \(tires\)/i;

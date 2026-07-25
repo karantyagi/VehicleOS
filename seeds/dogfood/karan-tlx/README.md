@@ -57,7 +57,7 @@ pnpm exec vehicleos-connect validate ../examples/tlx-carfax-history.v1.json
 ## Seed facts (quick reference)
 
 - **VIN:** 19UUB6F47MA008400 · **Mileage:** 58,819 (Jul 15, 2026)
-- **Driving:** aggressive · **~10k mi/yr** · **Boston / NE**
+- **Driving:** sporty · **~10k mi/yr** · **Boston / NE**
 - **Tires:** Michelin Pilot Sport AS4 255/40ZR19 @ Costco (Jan 2025)
 - **Battery:** Walmart EverStart · installed Ira Acura Westwood (Jul 2025)
 - **Registration:** renewed Jul 2026 (awaiting new doc)

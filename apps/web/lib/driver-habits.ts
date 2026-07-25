@@ -34,10 +34,15 @@ export const DRIVING_STYLE_OPTIONS: {
   },
   {
     id: "aggressive",
-    label: "Aggressive",
-    description: "Hard accel/brake/cornering — more preemptive wear-item nudges.",
+    label: "Sporty",
+    description: "Hard acceleration and braking — earlier reminders on brakes, tires, and fluids.",
   },
 ];
+
+export const drivingStyleLabel = (style: DrivingStyle | null | undefined): string => {
+  const match = DRIVING_STYLE_OPTIONS.find((option) => option.id === style);
+  return match?.label ?? "Casual";
+};
 
 export const parseStatedMilesPerYear = (milesInput: string): number | null | "invalid" => {
   if (!milesInput.trim()) return null;

@@ -33,7 +33,7 @@ export const enrichRecommendationReason = (
   }
 
   if (input.drivingStyle === "aggressive" && isWearItemRecommendation(input.recommendation)) {
-    snippets.push("Aggressive driving profile — surfacing wear items earlier");
+    snippets.push("Sporty driving profile — surfacing wear items earlier");
   }
 
   if (context.ownerStatedPriorities?.length) {

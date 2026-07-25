@@ -1,6 +1,7 @@
 "use client";
 
 import { BellRing } from "lucide-react";
+import { useState } from "react";
 import { EmptyState } from "@/components/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,13 @@ const urgencyVariant = (urgency: OwnerReminderItem["urgency"]) => {
   return "outline" as const;
 };
 
+const SNOOZE_OPTIONS = [
+  { label: "1 week", days: 7 },
+  { label: "2 weeks", days: 14 },
+  { label: "3 weeks", days: 21 },
+  { label: "1 month", days: 30 },
+] as const;
+
 type RemindersConsoleProps = {
   items: OwnerReminderItem[];
   disabled?: boolean;
@@ -31,6 +39,8 @@ type RemindersConsoleProps = {
 };
 
 export function RemindersConsole({ items, disabled = false, onDecide, minimal = false }: RemindersConsoleProps) {
+  const [snoozePickerTaskId, setSnoozePickerTaskId] = useState<string | null>(null);
+
   if (items.length === 0) {
     return (
       <EmptyState
@@ -45,6 +55,8 @@ export function RemindersConsole({ items, disabled = false, onDecide, minimal = 
     <ul className="space-y-3">
       {items.map((item) => {
         const isOverdue = item.urgency === "overdue";
+        const isSnoozePickerOpen = snoozePickerTaskId === item.taskId;
+
         return (
           <li
             key={item.taskId}
@@ -82,30 +94,22 @@ export function RemindersConsole({ items, disabled = false, onDecide, minimal = 
                 ) : null}
               </div>
             </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
-                {minimal ? "Done" : "Mark scheduled"}
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant="secondary"
-                disabled={disabled}
-                onClick={() => onDecide(item.taskId, "snooze", 14)}
-              >
-                Snooze 2 weeks
-              </Button>
-              {!minimal ? (
-                <>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    disabled={disabled}
-                    onClick={() => onDecide(item.taskId, "snooze", 30)}
-                  >
-                    Snooze 1 month
-                  </Button>
+            <div className="mt-4 space-y-2">
+              <div className="flex flex-wrap gap-2">
+                <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
+                  {minimal ? "Done" : "Mark scheduled"}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={isSnoozePickerOpen ? "default" : "secondary"}
+                  disabled={disabled}
+                  aria-expanded={isSnoozePickerOpen}
+                  onClick={() => setSnoozePickerTaskId(isSnoozePickerOpen ? null : item.taskId)}
+                >
+                  Snooze
+                </Button>
+                {!minimal ? (
                   <Button
                     type="button"
                     size="sm"
@@ -115,7 +119,26 @@ export function RemindersConsole({ items, disabled = false, onDecide, minimal = 
                   >
                     Dismiss
                   </Button>
-                </>
+                ) : null}
+              </div>
+              {isSnoozePickerOpen ? (
+                <div className="flex flex-wrap gap-2 rounded-lg border border-border/70 bg-muted/30 p-2">
+                  {SNOOZE_OPTIONS.map((option) => (
+                    <Button
+                      key={option.days}
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={disabled}
+                      onClick={() => {
+                        onDecide(item.taskId, "snooze", option.days);
+                        setSnoozePickerTaskId(null);
+                      }}
+                    >
+                      {option.label}
+                    </Button>
+                  ))}
+                </div>
               ) : null}
             </div>
           </li>
