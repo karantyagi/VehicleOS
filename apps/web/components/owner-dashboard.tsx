@@ -33,6 +33,8 @@ import { OwnerServiceNotePanel } from "./owner-service-note-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 import { useVehicleConsole } from "@/lib/vehicle-console-context";
 import { RecordImportPanel } from "./record-import-panel";
+import { DateField } from "@/components/date-field";
+import { todayIsoDate } from "@/lib/date-input";
 import { ImportHistoryNudge } from "./import-history-nudge";
 import { VerificationMaturityPanel } from "./verification-maturity-panel";
 import type {
@@ -592,6 +594,11 @@ export function OwnerDashboard() {
                 setActiveSection("timeline");
                 feedback(`${body.importedCount} ownership record(s) imported — see Ownership tab.`);
               }
+              if (body.profilePatch?.vin) {
+                feedback(`VIN ${body.profilePatch.vin} saved from your RMV PDF.`);
+              } else if (body.verificationTaskId) {
+                feedback("Profile conflicts from the PDF need your review in the assistant queue.");
+              }
               void loadVehicleState(vehicle);
             }}
           />
@@ -643,13 +650,12 @@ export function OwnerDashboard() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="receipt-date">Service date</Label>
-              <Input
+              <DateField
                 id="receipt-date"
-                type="date"
-                className="tabular-nums"
                 value={form.serviceDate}
+                max={todayIsoDate()}
                 disabled={isBusy}
-                onChange={(event) => setForm({ ...form, serviceDate: event.target.value })}
+                onChange={(serviceDate) => setForm({ ...form, serviceDate })}
               />
             </div>
             <div className="space-y-2">

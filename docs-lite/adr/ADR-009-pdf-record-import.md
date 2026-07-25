@@ -82,3 +82,4 @@ Owner logs into portal (CARFAX, RMV, …)
 
 - [`workspace/strategy/build-personal-real-car-program.md`](../../../workspace/strategy/build-personal-real-car-program.md)
 - [`connectors/carfax-connect/README.md`](../../connectors/carfax-connect/README.md)
+- [ADR-011](./ADR-011-import-enrichment-assistant-review-and-shop-memory.md) — enrichment, shop memory, assistant review tiers (IMP-11)

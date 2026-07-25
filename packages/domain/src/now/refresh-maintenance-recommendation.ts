@@ -1,4 +1,5 @@
 import { EVENT_TYPES, EVENT_VERSIONS, type CatalogDomainEvent } from "../events/catalog.js";
+import { decideTask } from "../golden-path/service-loop.js";
 import { foldEvents } from "../projections/apply.js";
 import type { EventStore } from "../ports/event-store.js";
 import type { PolicyEngine } from "../policy/policy-engine.js";
@@ -8,6 +9,7 @@ import type { OwnerContextMemory } from "../owner-context/types.js";
 import type { DrivingStyle } from "../schedule/resolve-schedule-projection-context.js";
 import {
   buildTimeFirstTaskCopy,
+  matchScheduleRowForRule,
   projectScheduleRowsForRecommendations,
 } from "./prepare-recommendation-task.js";
 
@@ -21,6 +23,7 @@ export type RefreshMaintenanceRecommendationInput = {
 
 export type RefreshMaintenanceRecommendationResult = {
   created: boolean;
+  dismissedStaleCount?: number;
   skippedReason?: "none_due" | "already_pending";
   recommendation: MaintenanceRecommendation | null;
   nowQueue: ReturnType<typeof foldEvents>["nowQueue"];
@@ -40,11 +43,52 @@ const loadVehicleEvents = async (
   );
 };
 
+const dismissStaleKnowledgeReminders = async (input: {
+  eventStore: EventStore;
+  vehicleId: string;
+  state: ReturnType<typeof foldEvents>;
+  drivingStyle?: DrivingStyle | null;
+}): Promise<number> => {
+  const scheduleRows = projectScheduleRowsForRecommendations({
+    state: input.state,
+    drivingStyle: input.drivingStyle,
+  });
+
+  const staleTasks = input.state.nowQueue.filter((item) => {
+    if (item.status !== "pending" || item.taskKind === "verification") return false;
+    const row = matchScheduleRowForRule(item.ruleId, scheduleRows);
+    return Boolean(item.ruleId?.startsWith("knowledge.policy.") && row?.status === "upcoming");
+  });
+
+  for (const task of staleTasks) {
+    await decideTask({
+      eventStore: input.eventStore,
+      vehicleId: input.vehicleId,
+      taskId: task.taskId,
+      decision: "dismiss",
+    });
+  }
+
+  return staleTasks.length;
+};
+
 export const refreshMaintenanceRecommendation = async (
   input: RefreshMaintenanceRecommendationInput,
 ): Promise<RefreshMaintenanceRecommendationResult> => {
   const events = await loadVehicleEvents(input.eventStore, input.vehicleId);
-  const state = foldEvents(input.vehicleId, events);
+  let state = foldEvents(input.vehicleId, events);
+  const dismissedStaleCount = await dismissStaleKnowledgeReminders({
+    eventStore: input.eventStore,
+    vehicleId: input.vehicleId,
+    state,
+    drivingStyle: input.drivingStyle,
+  });
+
+  if (dismissedStaleCount > 0) {
+    const nextEvents = await loadVehicleEvents(input.eventStore, input.vehicleId);
+    state = foldEvents(input.vehicleId, nextEvents);
+  }
+
   const evaluated = input.policyEngine.evaluate({
     vehicleId: input.vehicleId,
     state,
@@ -60,6 +104,7 @@ export const refreshMaintenanceRecommendation = async (
   if (!recommendation) {
     return {
       created: false,
+      dismissedStaleCount,
       skippedReason: "none_due",
       recommendation: null,
       nowQueue: state.nowQueue,
@@ -73,6 +118,7 @@ export const refreshMaintenanceRecommendation = async (
   if (hasPendingSameRule) {
     return {
       created: false,
+      dismissedStaleCount,
       skippedReason: "already_pending",
       recommendation: null,
       nowQueue: state.nowQueue,
@@ -129,6 +175,7 @@ export const refreshMaintenanceRecommendation = async (
 
   return {
     created: true,
+    dismissedStaleCount,
     recommendation,
     nowQueue: foldEvents(input.vehicleId, nextEvents).nowQueue,
   };

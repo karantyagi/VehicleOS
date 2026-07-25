@@ -32,6 +32,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "confirm must be DELETE" }, { status: 400 });
   }
 
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.error("Account deletion blocked: SUPABASE_SERVICE_ROLE_KEY is not set");
+    return NextResponse.json(
+      { error: "Account deletion is not configured on this server. Contact support." },
+      { status: 503 },
+    );
+  }
+
   try {
     await deleteUserData(getPool(), user.id);
 
@@ -51,6 +59,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ deleted: true });
   } catch (error) {
     console.error("Account deletion failed", error);
-    return NextResponse.json({ error: "Deletion failed" }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Deletion failed";
+    const isMisconfigured = message.includes("SUPABASE_SERVICE_ROLE_KEY");
+    return NextResponse.json(
+      { error: isMisconfigured ? "Account deletion is not configured on this server. Contact support." : "Deletion failed" },
+      { status: isMisconfigured ? 503 : 500 },
+    );
   }
 }

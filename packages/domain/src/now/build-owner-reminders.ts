@@ -100,7 +100,14 @@ export const buildOwnerReminderViews = (input: {
 }): OwnerReminderView[] => {
   const today = input.today ?? new Date().toISOString().slice(0, 10);
   return splitOwnerQueues(input.items).reminders
-    .filter((item) => isActiveReminder(item, today))
+    .filter((item) => {
+      if (!isActiveReminder(item, today)) return false;
+      const row = matchScheduleRowForRule(item.ruleId, input.scheduleRows);
+      if (item.ruleId?.startsWith("knowledge.policy.") && row?.status === "upcoming") {
+        return false;
+      }
+      return true;
+    })
     .map((item) => buildOwnerReminderView({ item, scheduleRows: input.scheduleRows, today }))
     .sort((a, b) => {
       const urgencyOrder: Record<ReminderUrgency, number> = {

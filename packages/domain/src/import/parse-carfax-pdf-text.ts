@@ -1,5 +1,6 @@
 import { extractCarfaxServiceHistoryFromPdfText } from "./extract-carfax-service-history.js";
 import type { VehicleOsImportService } from "./record-vehicleos-import.js";
+import { normalizeCarfaxLineItems } from "./normalize-carfax-line-items.js";
 import { resolveShopLocation } from "./infer-shop-location.js";
 
 export type ParseCarfaxPdfTextResult = {
@@ -17,7 +18,7 @@ export const parseCarfaxPdfText = (rawText: string): ParseCarfaxPdfTextResult =>
       shopLocation: resolveShopLocation({ shop: row.shop, shopLocation: row.shopLocation }),
       serviceDate: row.serviceDate,
       mileage: row.mileage,
-      lineItems: row.lineItems,
+      lineItems: normalizeCarfaxLineItems(row.lineItems),
       total: row.total,
     })),
     maxMileage: extract.vehicleHint.maxMileage,

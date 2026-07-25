@@ -178,7 +178,7 @@ export class VehicleRepository {
 
       await client.query(
         `delete from domain_events
-         where aggregate_id = $1
+         where aggregate_id = $1::uuid
             or payload_json->>'vehicleId' = $1`,
         [vehicleId],
       );

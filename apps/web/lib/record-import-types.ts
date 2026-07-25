@@ -1,3 +1,5 @@
+import { enrichVehicleOsImport } from "@vehicleos/domain";
+
 export type VehicleOsImportService = {
   shop: string;
   shopLocation?: string;
@@ -117,7 +119,7 @@ export const parseVehicleOsImportJson = (
     }
   }
 
-  return { ok: true, data: data as VehicleOsImportV1 };
+  return { ok: true, data: enrichVehicleOsImport(data as VehicleOsImportV1) };
 };
 
 export const parseVehicleOsRmvImportJson = (

@@ -1,10 +1,14 @@
 import type { VehicleOsImportService, VehicleOsRmvRecord } from "@vehicleos/domain";
 import {
+  enrichVehicleOsImportService,
   extractCarfaxServiceHistoryFromPdfText,
   extractMyRmvMaVehiclePageFromPdfText,
   mapCarfaxExtractToImport,
   mapMyRmvExtractToImport,
   parseRmvPdfText,
+  profileImportWarnings,
+  reconcileImportVehicleProfile,
+  recordProfileImportVerification,
 } from "@vehicleos/domain";
 import type { ApiServices } from "../services/index.js";
 import { extractPdfText } from "../import/pdf-text.js";
@@ -61,7 +65,7 @@ export const submitVehicleOsImport = async (
   const importResult = await services.goldenPath.importVehicleOsHistory({
     vehicleId,
     importSource: body.source?.trim() || "vehicleos-import",
-    services: importServices,
+    services: importServices.map((service) => enrichVehicleOsImportService(service)),
   });
 
   const nextMileage = body.vehicle?.currentMileage;
@@ -89,9 +93,34 @@ type VehicleOsRmvImportBody = {
   source?: string;
   exportedAt?: string;
   vehicle?: {
+    vin?: string;
+    year?: number;
+    make?: string;
+    model?: string;
     currentMileage?: number;
   };
   records?: VehicleOsRmvRecord[];
+};
+
+const vehicleProfileSnapshot = (vehicle: {
+  vin: string;
+  year: number;
+  make: string;
+  model: string;
+}) => ({
+  vin: vehicle.vin,
+  year: vehicle.year,
+  make: vehicle.make,
+  model: vehicle.model,
+});
+
+const mergeRmvProfileWarnings = (
+  vehicle: { vin: string; year: number; make: string; model: string },
+  imported: VehicleOsRmvImportBody["vehicle"],
+  baseWarnings: string[],
+): string[] => {
+  if (!imported) return baseWarnings;
+  return [...baseWarnings, ...profileImportWarnings(vehicleProfileSnapshot(vehicle), imported)];
 };
 
 export type RecordImportCategory = "carfax" | "rmv";
@@ -192,7 +221,7 @@ export const extractRecordImportPdf = async (
       category: "rmv",
       extractor: "rules-v1",
       extractLayer: "myrmv-ma-vehicle-page.extract.v1",
-      warnings: myRmvExtract.warnings,
+      warnings: mergeRmvProfileWarnings(vehicle, draft.vehicle, myRmvExtract.warnings),
       extract: myRmvExtract,
       draft,
     });
@@ -205,18 +234,20 @@ export const extractRecordImportPdf = async (
     });
   }
 
+  const fallbackDraft = {
+    version: "1" as const,
+    source: "rmv-pdf-extract",
+    exportedAt,
+    vehicle: vehicleBlock,
+    records: parsed.records,
+  };
+
   return jsonResponse(200, {
     category: "rmv",
     extractor: "rules-v1",
     extractLayer: "carfax-embedded-dmv-fallback",
-    warnings: parsed.warnings,
-    draft: {
-      version: "1" as const,
-      source: "rmv-pdf-extract",
-      exportedAt,
-      vehicle: vehicleBlock,
-      records: parsed.records,
-    },
+    warnings: mergeRmvProfileWarnings(vehicle, fallbackDraft.vehicle, parsed.warnings),
+    draft: fallbackDraft,
   });
 };
 
@@ -255,21 +286,42 @@ export const submitVehicleOsRmvImport = async (
     records,
   });
 
+  const importSource = body.source?.trim() || "vehicleos-rmv-import";
+  const savedProfile = vehicleProfileSnapshot(vehicle);
+  const { patch: profilePatch, conflicts } = reconcileImportVehicleProfile(
+    savedProfile,
+    body.vehicle ?? {},
+  );
+
+  let workingVehicle = vehicle;
+  if (Object.keys(profilePatch).length > 0) {
+    const patched = await services.vehicles.update(vehicleId, auth.userId, profilePatch);
+    if (patched) workingVehicle = patched;
+  }
+
+  const verification = await recordProfileImportVerification({
+    eventStore: services.eventStore,
+    input: { vehicleId, conflicts, importSource },
+  });
+
   const nextMileage = body.vehicle?.currentMileage;
   const shouldUpdateMileage =
     typeof nextMileage === "number" &&
     Number.isFinite(nextMileage) &&
-    nextMileage > vehicle.currentMileage;
+    nextMileage > workingVehicle.currentMileage;
   const updatedVehicle = shouldUpdateMileage
     ? await services.vehicles.update(vehicleId, auth.userId, { currentMileage: nextMileage })
-    : vehicle;
+    : workingVehicle;
 
-  const view = buildVehicleStateView(importResult.state, updatedVehicle ?? vehicle);
+  const view = buildVehicleStateView(importResult.state, updatedVehicle ?? workingVehicle);
 
   return jsonResponse(201, {
     importedCount: importResult.importedCount,
     skippedCount: importResult.skippedCount,
-    importSource: body.source?.trim() || "vehicleos-rmv-import",
+    importSource,
     ownershipRecords: view.ownershipRecords,
+    profilePatch: Object.keys(profilePatch).length > 0 ? profilePatch : undefined,
+    verificationTaskId: verification.taskId ?? undefined,
+    profileConflicts: conflicts.length > 0 ? conflicts : undefined,
   });
 };
