@@ -1274,3 +1274,194 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Hero release note ── */
+
+.hero-release-note {
+  margin: 16px 0 0;
+  font-size: 0.875rem;
+  color: var(--ink-tertiary);
+}
+
+/* ── Setup steps (mirrors hosted app) ── */
+
+.setup-steps {
+  margin-top: 40px;
+}
+
+.setup-steps-label {
+  margin: 0 0 16px;
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+}
+
+.setup-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.setup-step {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--panel-edge);
+  background: var(--panel-glass);
+  box-shadow: var(--panel-inset);
+}
+
+.setup-step-num {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--owners-accent);
+}
+
+.setup-step strong {
+  font-size: 0.9375rem;
+}
+
+.setup-step span:last-child {
+  font-size: 0.8125rem;
+  color: var(--ink-secondary);
+  line-height: 1.5;
+}
+
+/* ── Vehicle support check ── */
+
+.support-check {
+  margin-top: 40px;
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--panel-edge);
+  background: var(--panel-glass);
+  box-shadow: var(--panel-inset), var(--shadow-craft);
+}
+
+.support-check-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.support-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+}
+
+.support-field input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--panel-edge);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--ink);
+  font-size: 0.9375rem;
+  font-family: var(--font-sans);
+}
+
+.support-field input:focus {
+  outline: 2px solid var(--owners-accent);
+  outline-offset: 1px;
+}
+
+.support-result {
+  margin-top: 20px;
+  padding: 16px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--panel-edge);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.support-result p {
+  margin: 6px 0 0;
+  color: var(--ink-secondary);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.support-result-yes {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.support-result-waitlist {
+  border-color: rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.08);
+}
+
+.support-catalog {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--panel-edge);
+}
+
+.support-catalog-label {
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+}
+
+.support-catalog ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.support-catalog li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.875rem;
+  color: var(--ink-secondary);
+}
+
+.support-tag-yes,
+.support-tag-waitlist {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.support-tag-yes {
+  background: var(--status-shipped-soft);
+  color: var(--status-shipped);
+}
+
+.support-tag-waitlist {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+@media (max-width: 768px) {
+  .setup-steps-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .support-check-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

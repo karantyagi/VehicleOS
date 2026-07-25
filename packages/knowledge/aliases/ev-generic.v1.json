@@ -1,0 +1,35 @@
+{
+  "bundleId": "ev-generic",
+  "version": 1,
+  "oemFamily": "ev-generic",
+  "aliases": [
+    {
+      "canonicalServiceId": "generic.tire_rotation",
+      "phrase": "Tires rotated",
+      "matchKind": "contains",
+      "priority": 50,
+      "source": "creator"
+    },
+    {
+      "canonicalServiceId": "generic.tire_rotation",
+      "phrase": "Tire rotation",
+      "matchKind": "contains",
+      "priority": 55,
+      "source": "creator"
+    },
+    {
+      "canonicalServiceId": "ev.cabin_filter",
+      "phrase": "Cabin air filter",
+      "matchKind": "contains",
+      "priority": 70,
+      "source": "creator"
+    },
+    {
+      "canonicalServiceId": "generic.brake_fluid",
+      "phrase": "Brake fluid",
+      "matchKind": "contains",
+      "priority": 70,
+      "source": "creator"
+    }
+  ]
+}

@@ -6,12 +6,15 @@ import {
   earlyAccessContent,
   heroContent,
   heroPills,
+  releaseNote,
+  setupSteps,
   siteConfig,
   statusRows,
   trustSignals,
 } from "../lib/site-config";
 import { LogoMark } from "../lib/logo-marks";
 import { PositioningGapSection } from "./components/positioning-gap-section";
+import { VehicleSupportCheck } from "./components/vehicle-support-check";
 
 function DemoSection() {
   const hasDemo = Boolean(siteConfig.demoLoomUrl);
@@ -81,6 +84,7 @@ export default function HomePage() {
           </a>
           <nav className="nav-links" aria-label="Primary">
             <a href="#early-access">Early access</a>
+            <a href="#supported">Supported cars</a>
             <a href="#loop">How it works</a>
             <a href="#architecture">Architecture</a>
             <a href="#status">Roadmap</a>
@@ -127,10 +131,11 @@ export default function HomePage() {
               <a className="btn btn-primary" href={siteConfig.appUrl}>
                 Get early access
               </a>
-              <a className="btn btn-secondary" href="#demo">
-                Watch demo
+              <a className="btn btn-secondary" href="#supported">
+                Check if your car is supported
               </a>
             </div>
+            <p className="hero-release-note">{releaseNote.detail}</p>
           </div>
 
           <div className="trust-strip">
@@ -153,7 +158,7 @@ export default function HomePage() {
 
           <article className="path-card path-card-owners path-card-single">
             <div className="path-card-header">
-              <span className="path-badge path-badge-owners">Owners</span>
+              <span className="path-badge path-badge-owners">Owners · one workflow</span>
               <span className="path-price">{earlyAccessContent.priceNote}</span>
             </div>
             <ul className="path-highlights">
@@ -173,6 +178,21 @@ export default function HomePage() {
               </a>
             </div>
           </article>
+
+          <div className="setup-steps">
+            <p className="setup-steps-label">Same three steps as the hosted app</p>
+            <ol className="setup-steps-grid">
+              {setupSteps.map((step) => (
+                <li key={step.step} className="setup-step">
+                  <span className="setup-step-num">{step.step}</span>
+                  <strong>{step.title}</strong>
+                  <span>{step.detail}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <VehicleSupportCheck />
         </section>
 
         <PositioningGapSection />
@@ -182,8 +202,9 @@ export default function HomePage() {
             <span className="section-label">How it works</span>
             <h2>Hand off once. Get reminded. Just show up.</h2>
             <p className="section-desc">
-              Your assistant ingests evidence from a one-time handoff, builds memory, projects what&apos;s
-              ahead, and sends calendar-first nudges — or asks for Owner verification when data conflicts.
+              Your assistant ingests evidence from a one-time handoff, hydrates verified OEM schedules,
+              builds memory, projects what&apos;s ahead, and sends calendar-first nudges — or asks for
+              Owner verification when data conflicts.
             </p>
           </div>
 
@@ -216,9 +237,9 @@ export default function HomePage() {
             <span className="section-label">Product</span>
             <h2>See it in action</h2>
             <p className="section-desc">
-              Golden path under the hood: receipt upload → extraction → service.recorded →
-              recommendation → Owner verification when needed. Day-to-day: calendar reminders
-              you can snooze.
+              Golden path under the hood: CARFAX import → OEM pack hydrate → deterministic matching →
+              recommendation → Owner verification when needed. Day-to-day: calendar reminders you can
+              snooze.
             </p>
           </div>
 
@@ -230,7 +251,7 @@ export default function HomePage() {
           <h2>Architecture built for explainability</h2>
           <p className="section-desc">
             Rules own truth. LLMs handle extraction and explanation on async paths only.
-            Event sourcing gives auditability from day one — not bolted on later.
+            Event sourcing gives auditability from day one — OEM packs ship as versioned JSON with CI fixtures.
           </p>
 
           <div className="diagram-frame">
@@ -271,9 +292,10 @@ export default function HomePage() {
           <div className="ai-native-card">
             <p>{aiNativeBlurb}</p>
             <div className="ai-native-tags">
-              <span>human architect</span>
+              <span>staff-level architect</span>
               <span>cursor agents</span>
               <span>ADRs</span>
+              <span>OEM knowledge packs</span>
               <span>deterministic policy</span>
               <span>async LLM paths</span>
             </div>
@@ -311,7 +333,10 @@ export default function HomePage() {
 
         <section className="cta-band shell">
           <h2>Hire your reminding assistant</h2>
-          <p>Free early access — hand off your records once at app.vehicleos.app.</p>
+          <p>
+            Free early access today · {releaseNote.label}. Hand off your records once at{" "}
+            {siteConfig.appUrl.replace("https://", "")}.
+          </p>
           <div className="cta-row">
             <a className="btn btn-primary" href={siteConfig.appUrl}>
               Open the app
@@ -340,6 +365,7 @@ export default function HomePage() {
             <ul>
               <li><a href={siteConfig.appUrl}>Early access app</a></li>
               <li><a href="#early-access">What's included</a></li>
+              <li><a href="#supported">Supported vehicles</a></li>
               <li><a href="#demo">Demo</a></li>
               <li><a href="#status">Roadmap</a></li>
             </ul>

@@ -1,5 +1,6 @@
 import type { ApiServices } from "../services/index.js";
 import { normalizeOwnerContextMemory, type OwnerContextMemory } from "@vehicleos/domain";
+import { assertVehicleCreateAllowed } from "./catalog-handlers.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
 import { recommendationContextFromVehicle } from "./recommendation-context-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
@@ -62,21 +63,48 @@ export const createVehicle = async (
 ): Promise<JsonResponse> => {
   if (!auth?.userId) return unauthorized();
 
+  const allowed = assertVehicleCreateAllowed({
+    year: body.year,
+    make: body.make,
+    model: body.model,
+    trim: body.trim,
+  });
+  if (!allowed.ok) {
+    return jsonResponse(allowed.status, allowed.body);
+  }
+
+  const currentMileage = body.currentMileage ?? 0;
+  if (currentMileage <= 0) {
+    return jsonResponse(400, {
+      error: "currentMileage must be greater than zero",
+      code: "vehicle_incomplete",
+    });
+  }
+
   const vehicle = await services.vehicles.create({
     userId: auth.userId,
     vin: body.vin ?? "DEMO-VIN-001",
-    year: body.year ?? 2019,
-    make: body.make ?? "Honda",
-    model: body.model ?? "Civic",
-    trim: body.trim,
-    currentMileage: body.currentMileage ?? 41_800,
+    year: body.year!,
+    make: body.make!.trim(),
+    model: body.model!.trim(),
+    trim: body.trim!.trim(),
+    currentMileage,
     ownedSince: body.ownedSince ?? null,
     drivingStyle: body.drivingStyle ?? null,
     statedMilesPerYear: body.statedMilesPerYear ?? null,
     ownerContextMemory: normalizeOwnerContextMemory(body.ownerContextMemory),
   });
 
-  return jsonResponse(201, { vehicle });
+  const oemPack = await services.goldenPath.hydrateOemKnowledgePack({
+    id: vehicle.id,
+    year: vehicle.year,
+    make: vehicle.make,
+    model: vehicle.model,
+    trim: vehicle.trim,
+    currentMileage: vehicle.currentMileage,
+  });
+
+  return jsonResponse(201, { vehicle, oemPack, packId: allowed.packId });
 };
 
 export const listVehicles = async (

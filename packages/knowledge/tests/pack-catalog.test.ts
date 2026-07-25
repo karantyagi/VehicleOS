@@ -1,0 +1,49 @@
+import { describe, expect, it } from "vitest";
+import {
+  loadOemSchedulePack,
+  loadServiceAliasBundles,
+  loadSupportedVehicleCatalog,
+  runPackQaRules,
+  resolvePackIdForVehicle,
+} from "../src/index.js";
+
+describe("OEM schedule packs", () => {
+  it("loads and validates 2021 TLX SH-AWD dogfood pack", () => {
+    const pack = loadOemSchedulePack("acura-tlx-2021-sh-awd");
+    expect(pack.qaStatus).toBe("auto_verified");
+    expect(runPackQaRules(pack)).toEqual([]);
+    expect(pack.entries.some((entry) => entry.entryId === "code-b")).toBe(true);
+  });
+
+  it("flags 2019 pack for creator review", () => {
+    const pack = loadOemSchedulePack("acura-tlx-2019-sh-awd");
+    expect(pack.qaStatus).toBe("creator_review_required");
+  });
+
+  it("resolves dogfood vehicle to 2021 pack", () => {
+    const packId = resolvePackIdForVehicle({
+      make: "Acura",
+      model: "TLX",
+      year: 2021,
+      trim: "SH-AWD",
+    });
+    expect(packId).toBe("acura-tlx-2021-sh-awd");
+  });
+
+  it("loads alias bundles", () => {
+    const bundles = loadServiceAliasBundles();
+    expect(bundles.length).toBeGreaterThan(0);
+    const phrases = bundles.flatMap((bundle) => bundle.aliases.map((alias) => alias.phrase));
+    expect(phrases).toContain("Oil and filter changed");
+  });
+
+  it("catalog lists Tier-1 plus dogfood packs", () => {
+    const catalog = loadSupportedVehicleCatalog();
+    expect(catalog.vehicles.length).toBeGreaterThanOrEqual(50);
+    const verified = catalog.vehicles.filter((row) => row.qaStatus === "auto_verified");
+    expect(verified).toEqual([
+      expect.objectContaining({ packId: "acura-tlx-2021-sh-awd" }),
+    ]);
+    expect(verified).toHaveLength(1);
+  });
+});

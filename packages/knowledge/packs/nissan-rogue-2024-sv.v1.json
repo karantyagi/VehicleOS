@@ -1,0 +1,38 @@
+{
+  "packId": "nissan-rogue-2024-sv",
+  "version": 1,
+  "manualTitle": "2024 Nissan Rogue SV — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "creator_review_required",
+  "qaNotes": "Tier-1 factory template — creator review required before big-bang auto_verified promotion.",
+  "sourceManifestRef": "sources/manifest.json#nissan-rogue-2024-sv",
+  "vehicle": {
+    "make": "Nissan",
+    "model": "Rogue",
+    "year": 2024,
+    "trim": "SV",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "nissan.fixed.5000.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 5000,
+      "intervalMonths": 6,
+      "sourcePage": "Maintenance schedule — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "Maintenance schedule — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.91
+    }
+  ]
+}

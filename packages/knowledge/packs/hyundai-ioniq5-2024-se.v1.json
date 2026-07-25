@@ -1,0 +1,48 @@
+{
+  "packId": "hyundai-ioniq5-2024-se",
+  "version": 1,
+  "manualTitle": "2024 Hyundai IONIQ 5 SE — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "ev_simplified",
+  "qaStatus": "creator_review_required",
+  "qaNotes": "Tier-1 factory template — creator review required before big-bang auto_verified promotion.",
+  "sourceManifestRef": "sources/manifest.json#hyundai-ioniq5-2024-se",
+  "vehicle": {
+    "make": "Hyundai",
+    "model": "IONIQ 5",
+    "year": 2024,
+    "trim": "SE",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "EV maintenance schedule — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.91
+    },
+    {
+      "entryId": "cabin-air-filter",
+      "canonicalServiceId": "ev.cabin_filter",
+      "serviceName": "Replace cabin air filter",
+      "intervalMiles": 15000,
+      "intervalMonths": 12,
+      "sourcePage": "EV maintenance schedule — Cabin air filter",
+      "ruleId": "knowledge.policy.cabin-filter.v1",
+      "confidence": 0.91
+    },
+    {
+      "entryId": "brake-fluid",
+      "canonicalServiceId": "generic.brake_fluid",
+      "serviceName": "Replace brake fluid",
+      "intervalMiles": null,
+      "intervalMonths": 36,
+      "sourcePage": "EV maintenance schedule — Brake fluid",
+      "ruleId": "knowledge.policy.brake-fluid.v1",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -18,6 +18,10 @@ import {
   type VehicleOsImportService,
   type VehicleOsRmvRecord,
 } from "@vehicleos/domain";
+import {
+  hydrateOemKnowledgePack,
+  type HydrateOemKnowledgePackResult,
+} from "@vehicleos/knowledge";
 
 export type GoldenPathDeps = {
   eventStore: EventStore;
@@ -152,6 +156,21 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
       records: VehicleOsRmvRecord[];
     }) {
       return recordVehicleOsRmvImport({ eventStore, input });
+    },
+
+    async hydrateOemKnowledgePack(input: {
+      id: string;
+      year: number;
+      make: string;
+      model: string;
+      trim?: string | null;
+      currentMileage: number;
+    }): Promise<HydrateOemKnowledgePackResult> {
+      return hydrateOemKnowledgePack({
+        eventStore,
+        policyEngine,
+        vehicle: input,
+      });
     },
   };
 };

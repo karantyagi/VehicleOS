@@ -2,7 +2,7 @@
 
 **Status:** Accepted (2026-07-25)  
 **Deciders:** Product / architecture  
-**Related:** ADR-009 (PDF record import) · ADR-010 (deterministic service matching) · [`record-import-data-pipeline.md`](../../../workspace/strategy/record-import-data-pipeline.md) · [`phase-1-intelligence-scope.md`](../../../workspace/strategy/phase-1-intelligence-scope.md) · IMP-11 in [`task-queue.md`](../../../workspace/strategy/task-queue.md)
+**Related:** ADR-009 (PDF record import) · ADR-010 (deterministic service matching) · ADR-012 (product catalog vs owner runtime) · [`record-import-data-pipeline.md`](../../../workspace/strategy/record-import-data-pipeline.md) · [`phase-1-intelligence-scope.md`](../../../workspace/strategy/phase-1-intelligence-scope.md) · IMP-11 in [`task-queue.md`](../../../workspace/strategy/task-queue.md)
 
 ---
 

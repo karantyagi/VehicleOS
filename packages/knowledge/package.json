@@ -1,0 +1,27 @@
+{
+  "name": "@vehicleos/knowledge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "validate": "node --import tsx/esm src/cli/validate-catalog.ts",
+    "generate:tier1": "node --import tsx/esm src/cli/generate-tier1-packs.ts",
+    "generate:tier1:missing": "node --import tsx/esm src/cli/generate-tier1-packs.ts --skip-existing"
+  },
+  "dependencies": {
+    "@vehicleos/domain": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.3"
+  }
+}

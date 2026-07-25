@@ -1,4 +1,5 @@
 export type ManualScheduleDraftRow = {
+  entryId?: string;
   serviceName: string;
   intervalMiles?: number;
   intervalMonths?: number;

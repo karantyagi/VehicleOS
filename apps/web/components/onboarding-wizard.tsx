@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DrivingStyleFields } from "@/components/driving-style-fields";
 import { DateField } from "@/components/date-field";
 import { FormActions, FormField } from "@/components/form-field";
@@ -8,6 +8,7 @@ import { RecordImportPanel } from "@/components/record-import-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { LogoMark } from "../lib/logo-mark";
 import { getApiBase } from "../lib/api-base";
 import {
@@ -17,6 +18,11 @@ import {
 } from "@/lib/driver-habits";
 import { todayIsoDate } from "@/lib/date-input";
 import { notify } from "@/lib/notify";
+import {
+  fetchVerifiedCatalogVehicles,
+  formatCatalogVehicleLabel,
+  type CatalogVehicleRow,
+} from "@/lib/supported-vehicle-catalog";
 import { cn } from "@/lib/utils";
 
 export type OnboardingVehicle = {
@@ -36,6 +42,7 @@ export type OnboardingVehicle = {
 };
 
 type VehicleForm = {
+  packId: string;
   year: number;
   make: string;
   model: string;
@@ -49,15 +56,29 @@ type OnboardingWizardProps = {
   onComplete: (vehicle: OnboardingVehicle) => void;
 };
 
-const defaultForm: VehicleForm = {
-  year: 2019,
-  make: "Honda",
-  model: "Civic",
+const DOGFOOD_PACK_ID = "acura-tlx-2021-sh-awd";
+
+const emptyVehicleForm = (): VehicleForm => ({
+  packId: "",
+  year: 0,
+  make: "",
+  model: "",
   trim: "",
   vin: "",
-  currentMileage: 41_800,
+  currentMileage: 58_819,
   ownedSince: "",
-};
+});
+
+const vehicleFormFromCatalog = (row: CatalogVehicleRow): VehicleForm => ({
+  packId: row.packId,
+  year: row.year,
+  make: row.make,
+  model: row.model,
+  trim: row.trim,
+  vin: "",
+  currentMileage: row.packId === DOGFOOD_PACK_ID ? 58_819 : 0,
+  ownedSince: "",
+});
 
 const steps = ["welcome", "car", "driver", "history"] as const;
 type WizardStep = (typeof steps)[number];
@@ -74,7 +95,10 @@ const progressForStep = (step: WizardStep): number => {
 export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const apiBase = getApiBase();
   const [step, setStep] = useState<WizardStep>("welcome");
-  const [form, setForm] = useState<VehicleForm>(defaultForm);
+  const [form, setForm] = useState<VehicleForm>(emptyVehicleForm);
+  const [catalog, setCatalog] = useState<CatalogVehicleRow[]>([]);
+  const [catalogError, setCatalogError] = useState("");
+  const [isCatalogLoading, setIsCatalogLoading] = useState(false);
   const [driverDraft, setDriverDraft] = useState<DriverHabitsDraft>({
     drivingStyle: "casual",
     statedMilesPerYear: null,
@@ -85,6 +109,55 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (step !== "car" || catalog.length > 0) return;
+
+    let cancelled = false;
+    setIsCatalogLoading(true);
+    setCatalogError("");
+
+    void fetchVerifiedCatalogVehicles(apiBase)
+      .then((rows) => {
+        if (cancelled) return;
+        setCatalog(rows);
+        const defaultRow = rows.find((row) => row.packId === DOGFOOD_PACK_ID) ?? rows[0];
+        if (defaultRow) {
+          setForm((current) => (current.packId ? current : vehicleFormFromCatalog(defaultRow)));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setCatalogError("Could not load the supported vehicle catalog. Refresh and try again.");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setIsCatalogLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBase, catalog.length, step]);
+
+  const selectedVehicle = useMemo(
+    () => catalog.find((row) => row.packId === form.packId) ?? null,
+    [catalog, form.packId],
+  );
+
+  const selectVehicle = (packId: string) => {
+    const row = catalog.find((entry) => entry.packId === packId);
+    if (!row) return;
+    setForm((current) => ({
+      ...vehicleFormFromCatalog(row),
+      vin: current.vin,
+      ownedSince: current.ownedSince,
+      currentMileage:
+        current.packId === packId && current.currentMileage > 0
+          ? current.currentMileage
+          : vehicleFormFromCatalog(row).currentMileage,
+    }));
+  };
+
   const createVehicle = async (): Promise<OnboardingVehicle | null> => {
     setIsBusy(true);
     setError("");
@@ -92,6 +165,12 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     const parsedMiles = parseStatedMilesPerYear(milesInput);
     if (parsedMiles === "invalid") {
       setError("Enter annual mileage between 1,000 and 80,000.");
+      setIsBusy(false);
+      return null;
+    }
+
+    if (!selectedVehicle) {
+      setError("Pick a supported vehicle from the catalog.");
       setIsBusy(false);
       return null;
     }
@@ -108,16 +187,22 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
       return null;
     }
 
+    if (form.currentMileage <= 0) {
+      setError("Enter your current odometer reading.");
+      setIsBusy(false);
+      return null;
+    }
+
     try {
       const response = await fetch(`${apiBase}/api/vehicles`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           vin: form.vin.trim() || undefined,
-          year: Number(form.year),
-          make: form.make.trim(),
-          model: form.model.trim(),
-          trim: form.trim.trim() || undefined,
+          year: form.year,
+          make: form.make,
+          model: form.model,
+          trim: form.trim,
           currentMileage: Number(form.currentMileage),
           ownedSince: form.ownedSince.trim(),
           drivingStyle: driverDraft.drivingStyle,
@@ -126,9 +211,29 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         }),
       });
 
-      if (!response.ok) throw new Error("Could not create vehicle");
+      const body = (await response.json()) as {
+        vehicle?: OnboardingVehicle;
+        error?: string;
+        code?: string;
+      };
 
-      const body = (await response.json()) as { vehicle: OnboardingVehicle };
+      if (!response.ok) {
+        if (body.code === "waitlist_required") {
+          setError(
+            body.error ??
+              "This vehicle is not available in early access yet. Check vehicleos.app for waitlist updates.",
+          );
+        } else {
+          setError(body.error ?? "Could not create your vehicle.");
+        }
+        return null;
+      }
+
+      if (!body.vehicle) {
+        setError("Could not create your vehicle.");
+        return null;
+      }
+
       setCreatedVehicle(body.vehicle);
       return body.vehicle;
     } catch {
@@ -186,9 +291,9 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         </CardTitle>
         <CardDescription className={cn(step === "welcome" && "max-w-md")}>
           {step === "welcome"
-            ? "Three quick steps — vehicle record, driving profile, and import history — then your assistant workspace unlocks."
+            ? "Three quick steps — pick your supported vehicle, driving profile, and import history — then your assistant workspace unlocks."
             : step === "car"
-              ? "We use this to project calendar reminders — the assistant handles mileage math."
+              ? "Early access supports verified OEM schedules only — pick your car from the catalog."
               : step === "driver"
                 ? "Driving style and garage city shape preemptive nudges. Annual miles fine-tunes Schedule dates."
                 : "Hand off CARFAX or portal PDFs so reminders start from your actual service history."}
@@ -203,7 +308,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             </Button>
             <ol className="grid gap-3 sm:grid-cols-3" aria-label="How setup works">
               {[
-                ["01", "Vehicle record"],
+                ["01", "Pick your car"],
                 ["02", "Driving profile"],
                 ["03", "Import history"],
               ].map(([num, label]) => (
@@ -218,46 +323,42 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
         {step === "car" ? (
           <div className="grid gap-4 sm:grid-cols-2">
-            <FormField label="Year" htmlFor="ob-year">
-              <Input
-                id="ob-year"
-                type="number"
-                min={1980}
-                max={new Date().getFullYear() + 1}
-                value={form.year}
-                onChange={(event) => setForm({ ...form, year: Number(event.target.value) })}
-              />
+            <FormField
+              label="Supported vehicle"
+              htmlFor="ob-vehicle"
+              hint={`${catalog.length || "…"} verified models in early access`}
+              className="sm:col-span-2"
+            >
+              <Select
+                id="ob-vehicle"
+                value={form.packId}
+                disabled={isCatalogLoading || catalog.length === 0}
+                onChange={(event) => selectVehicle(event.target.value)}
+              >
+                <option value="" disabled>
+                  {isCatalogLoading ? "Loading catalog…" : "Select your vehicle"}
+                </option>
+                {catalog.map((row) => (
+                  <option key={row.packId} value={row.packId}>
+                    {formatCatalogVehicleLabel(row)}
+                  </option>
+                ))}
+              </Select>
             </FormField>
-            <FormField label="Make" htmlFor="ob-make">
-              <Input
-                id="ob-make"
-                value={form.make}
-                onChange={(event) => setForm({ ...form, make: event.target.value })}
-                placeholder="Honda"
-              />
-            </FormField>
-            <FormField label="Model" htmlFor="ob-model">
-              <Input
-                id="ob-model"
-                value={form.model}
-                onChange={(event) => setForm({ ...form, model: event.target.value })}
-                placeholder="Civic"
-              />
-            </FormField>
-            <FormField label="Trim" htmlFor="ob-trim" optional>
-              <Input
-                id="ob-trim"
-                value={form.trim}
-                onChange={(event) => setForm({ ...form, trim: event.target.value })}
-                placeholder="EX"
-              />
-            </FormField>
+
+            {selectedVehicle ? (
+              <p className="sm:col-span-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
+                Verified OEM maintenance schedule loads automatically for{" "}
+                <span className="font-medium">{formatCatalogVehicleLabel(selectedVehicle)}</span>.
+              </p>
+            ) : null}
+
             <FormField label="Current mileage" htmlFor="ob-mileage">
               <Input
                 id="ob-mileage"
                 type="number"
                 min={0}
-                value={form.currentMileage}
+                value={form.currentMileage || ""}
                 onChange={(event) => setForm({ ...form, currentMileage: Number(event.target.value) })}
               />
             </FormField>
@@ -272,6 +373,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               label="Owned since"
               htmlFor="ob-owned-since"
               hint="Required — anchors calendar reminders when receipts are missing"
+              className="sm:col-span-2"
             >
               <DateField
                 id="ob-owned-since"
@@ -280,6 +382,21 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 onChange={(ownedSince) => setForm({ ...form, ownedSince })}
               />
             </FormField>
+
+            <p className="sm:col-span-2 text-sm text-muted-foreground">
+              Don&apos;t see your car?{" "}
+              <a
+                href="https://vehicleos.app/#supported"
+                className="font-medium text-primary underline underline-offset-2"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Check the catalog or join the waitlist
+              </a>{" "}
+              — unsupported models are not available in the app yet.
+            </p>
+
+            {catalogError ? <p className="sm:col-span-2 text-sm text-destructive">{catalogError}</p> : null}
           </div>
         ) : null}
 
@@ -342,8 +459,8 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               <Button
                 type="button"
                 disabled={
-                  !form.make.trim() ||
-                  !form.model.trim() ||
+                  !form.packId ||
+                  isCatalogLoading ||
                   form.currentMileage <= 0 ||
                   !form.ownedSince.trim()
                 }
