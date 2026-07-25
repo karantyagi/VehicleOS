@@ -2,6 +2,7 @@ import type {
   CarfaxServiceHistoryExtractV1,
   CarfaxServiceHistoryRowExtract,
 } from "./extract-types.js";
+import { inferShopLocation, looksLikeShopAddressLine } from "./infer-shop-location.js";
 
 const UI_NOISE =
   /^(back to top|edit record|upload receipts?|view receipt|add note|rate service|leave a review|dashboard|garage|service history|maintenance schedule|repair costs|something wrong|products|resources|about us|contact us|\+ add a service record|\(\/service\/|\d+\/\d+$|https?:\/\/|-- \d+ of \d+ --|\d+\/\d+\/\d+,)/i;
@@ -72,6 +73,7 @@ export const extractCarfaxServiceHistoryFromPdfText = (
   const serviceRows: CarfaxServiceHistoryRowExtract[] = [];
   const warnings: string[] = [];
   let pendingShop: string | null = null;
+  let pendingShopLocation: string | undefined;
 
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index];
@@ -80,6 +82,15 @@ export const extractCarfaxServiceHistoryFromPdfText = (
     const shopCandidate = inferShopFromLine(line);
     if (shopCandidate && lines[index + 1] === "Date") {
       pendingShop = shopCandidate;
+      pendingShopLocation = inferShopLocation(shopCandidate);
+    } else if (
+      shopCandidate &&
+      lines[index + 1] &&
+      looksLikeShopAddressLine(lines[index + 1]) &&
+      lines[index + 2] === "Date"
+    ) {
+      pendingShop = shopCandidate;
+      pendingShopLocation = lines[index + 1]?.trim() || inferShopLocation(shopCandidate);
     }
 
     if (line !== "Date") continue;
@@ -119,11 +130,15 @@ export const extractCarfaxServiceHistoryFromPdfText = (
 
     serviceRows.push({
       shop,
+      shopLocation: pendingShopLocation,
       serviceDate,
       mileage,
       lineItems,
       total: "$0.00",
     });
+
+    pendingShop = null;
+    pendingShopLocation = undefined;
   }
 
   const deduped = dedupeRows(serviceRows);

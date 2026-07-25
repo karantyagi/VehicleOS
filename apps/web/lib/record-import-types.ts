@@ -1,5 +1,6 @@
 export type VehicleOsImportService = {
   shop: string;
+  shopLocation?: string;
   serviceDate: string;
   mileage: number;
   lineItems: string[];

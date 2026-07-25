@@ -6,6 +6,7 @@ import { filterNewImportServices } from "./dedupe-import-rows.js";
 
 export type VehicleOsImportService = {
   shop: string;
+  shopLocation?: string;
   serviceDate: string;
   mileage: number;
   lineItems: string[];
@@ -61,6 +62,7 @@ export const recordVehicleOsImport = async (deps: {
         vehicleId: input.vehicleId,
         serviceId,
         shop: service.shop,
+        shopLocation: service.shopLocation,
         serviceDate: service.serviceDate,
         mileage: service.mileage,
         lineItems: service.lineItems,

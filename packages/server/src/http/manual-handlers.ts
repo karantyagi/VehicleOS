@@ -60,8 +60,8 @@ export const confirmManualSchedule = async (
   if (!vehicle) return jsonResponse(404, { error: "Vehicle not found" });
   if (vehicle.userId !== auth.userId) return forbidden();
 
-  if (!body.storageKey) {
-    return jsonResponse(400, { error: "storageKey is required — upload your OEM manual PDF first" });
+  if (!body.storageKey?.trim()) {
+    return jsonResponse(400, { error: "storageKey is required — load JSON or upload your OEM manual PDF first" });
   }
 
   if (!body.manualTitle?.trim()) {

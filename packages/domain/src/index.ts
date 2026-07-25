@@ -12,6 +12,7 @@ export {
   type IngestChannel,
   type MaintenanceRecommendationCreatedPayload,
   type ServiceRecordedPayload,
+  type ServiceUpdatedPayload,
   type ServiceRecordSource,
   type TaskCreatedPayload,
   type TaskDecidedPayload,
@@ -233,5 +234,15 @@ export {
   enrichRecommendationReason,
   type EnrichRecommendationInput,
 } from "./owner-context/enrich-recommendation-reason.js";
-export type { KnowledgeScheduleEntry } from "./projections/types.js";
+export {
+  updateServiceRecord,
+  type ServiceRecordPatch,
+  type UpdateServiceRecordInput,
+  type UpdateServiceRecordResult,
+} from "./service/update-service-record.js";
+export {
+  inferShopLocation,
+  looksLikeShopAddressLine,
+  resolveShopLocation,
+} from "./import/infer-shop-location.js";
 export type { KnowledgeScheduleRow } from "./events/catalog.js";

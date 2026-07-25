@@ -1,0 +1,59 @@
+{
+  "version": "1",
+  "source": "dogfood-json",
+  "exportedAt": "2026-07-24T20:00:00.000Z",
+  "vehicle": {
+    "vin": "19UUB6F47MA008400",
+    "year": 2021,
+    "make": "Acura",
+    "model": "TLX",
+    "trim": "SH-AWD",
+    "currentMileage": 58819
+  },
+  "records": [
+    {
+      "agency": "Massachusetts RMV",
+      "recordDate": "2026-07-01",
+      "mileage": null,
+      "eventType": "registration",
+      "description": "Registration renewed — Jul 2026",
+      "details": [
+        "Registration renewed Jul 2026",
+        "Plate 3KXT69",
+        "Awaiting updated registration document upload"
+      ]
+    },
+    {
+      "agency": "Massachusetts RMV",
+      "recordDate": "2026-01-21",
+      "mileage": null,
+      "eventType": "title",
+      "description": "Title issued or updated",
+      "details": [
+        "Title Number: CM185996",
+        "Title status: Active",
+        "Registration updated when owner moved the vehicle to a new location"
+      ]
+    },
+    {
+      "agency": "Massachusetts RMV",
+      "recordDate": "2026-04-16",
+      "mileage": 56221,
+      "eventType": "inspection",
+      "description": "Passed safety and emissions inspection",
+      "details": ["Passed safety inspection", "Passed emissions inspection"]
+    },
+    {
+      "agency": "Massachusetts RMV",
+      "recordDate": "2024-10-01",
+      "mileage": null,
+      "eventType": "registration",
+      "description": "Registration issued or renewed",
+      "details": [
+        "Registration issued or renewed",
+        "Plate 3KXT69",
+        "Loan or lien reported"
+      ]
+    }
+  ]
+}

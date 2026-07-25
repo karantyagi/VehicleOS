@@ -1,5 +1,6 @@
 import type { CarfaxServiceHistoryExtractV1, VehicleImportDefaults } from "./extract-types.js";
 import type { VehicleOsImportService } from "./record-vehicleos-import.js";
+import { resolveShopLocation } from "./infer-shop-location.js";
 
 export type VehicleOsImportV1 = {
   version: "1";
@@ -30,6 +31,7 @@ export const mapCarfaxExtractToImport = (input: MapCarfaxExtractInput): VehicleO
     },
     services: extract.serviceRows.map((row) => ({
       shop: row.shop,
+      shopLocation: resolveShopLocation({ shop: row.shop, shopLocation: row.shopLocation }),
       serviceDate: row.serviceDate,
       mileage: row.mileage,
       lineItems: row.lineItems,
