@@ -1,0 +1,55 @@
+{
+  "bundleId": "global",
+  "version": 1,
+  "aliases": [
+    {
+      "canonicalServiceId": "acura.mm.b.oil_filter",
+      "phrase": "Oil and filter changed",
+      "matchKind": "contains",
+      "priority": 100,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.b.oil_filter",
+      "phrase": "Oil & filter",
+      "matchKind": "contains",
+      "priority": 110,
+      "source": "creator"
+    },
+    {
+      "canonicalServiceId": "generic.tire_rotation",
+      "phrase": "Tires rotated",
+      "matchKind": "contains",
+      "priority": 100,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "generic.tire_rotation",
+      "phrase": "Tire rotation",
+      "matchKind": "contains",
+      "priority": 110,
+      "source": "creator"
+    },
+    {
+      "canonicalServiceId": "acura.mm.3.transmission_transfer",
+      "phrase": "Transmission fluid changed",
+      "matchKind": "contains",
+      "priority": 100,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "generic.brake_fluid",
+      "phrase": "Brake fluid flushed",
+      "matchKind": "contains",
+      "priority": 100,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.6.rear_differential",
+      "phrase": "Rear diff fluid",
+      "matchKind": "contains",
+      "priority": 100,
+      "source": "dogfood"
+    }
+  ]
+}

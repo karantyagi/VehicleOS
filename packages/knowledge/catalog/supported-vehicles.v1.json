@@ -1,0 +1,468 @@
+{
+  "version": 1,
+  "vehicles": [
+    {
+      "packId": "acura-rdx-2024-base",
+      "make": "Acura",
+      "model": "RDX",
+      "year": 2024,
+      "trim": "Base",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "acura-tlx-2019-base",
+      "make": "Acura",
+      "model": "TLX",
+      "year": 2019,
+      "trim": "Base",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "acura-tlx-2019-sh-awd",
+      "make": "Acura",
+      "model": "TLX",
+      "year": 2019,
+      "trim": "SH-AWD",
+      "powertrain": "3.5L",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "acura-tlx-2021-sh-awd",
+      "make": "Acura",
+      "model": "TLX",
+      "year": 2021,
+      "trim": "SH-AWD",
+      "powertrain": "3.0T",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "chevy-bolt-2023-1lt",
+      "make": "Chevrolet",
+      "model": "Bolt EV",
+      "year": 2023,
+      "trim": "1LT",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "chevy-equinox-2024-lt",
+      "make": "Chevrolet",
+      "model": "Equinox",
+      "year": 2024,
+      "trim": "LT",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "chevy-traverse-2024-lt",
+      "make": "Chevrolet",
+      "model": "Traverse",
+      "year": 2024,
+      "trim": "LT",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "ford-escape-2024-se",
+      "make": "Ford",
+      "model": "Escape",
+      "year": 2024,
+      "trim": "SE",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "ford-explorer-2024-xlt",
+      "make": "Ford",
+      "model": "Explorer",
+      "year": 2024,
+      "trim": "XLT",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "ford-mach-e-2024-select",
+      "make": "Ford",
+      "model": "Mustang Mach-E",
+      "year": 2024,
+      "trim": "Select",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "honda-accord-2024-ex",
+      "make": "Honda",
+      "model": "Accord",
+      "year": 2024,
+      "trim": "EX",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "honda-civic-2024-sport",
+      "make": "Honda",
+      "model": "Civic",
+      "year": 2024,
+      "trim": "Sport",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "honda-cr-v-2024-ex",
+      "make": "Honda",
+      "model": "CR-V",
+      "year": 2024,
+      "trim": "EX",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "honda-hrv-2024-ex",
+      "make": "Honda",
+      "model": "HR-V",
+      "year": 2024,
+      "trim": "EX",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "honda-passport-2024-ex-l",
+      "make": "Honda",
+      "model": "Passport",
+      "year": 2024,
+      "trim": "EX-L",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "honda-pilot-2024-ex-l",
+      "make": "Honda",
+      "model": "Pilot",
+      "year": 2024,
+      "trim": "EX-L",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "hyundai-elantra-2024-se",
+      "make": "Hyundai",
+      "model": "Elantra",
+      "year": 2024,
+      "trim": "SE",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "hyundai-ioniq5-2024-se",
+      "make": "Hyundai",
+      "model": "IONIQ 5",
+      "year": 2024,
+      "trim": "SE",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "hyundai-santa-fe-2024-se",
+      "make": "Hyundai",
+      "model": "Santa Fe",
+      "year": 2024,
+      "trim": "SE",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "hyundai-tucson-2024-se",
+      "make": "Hyundai",
+      "model": "Tucson",
+      "year": 2024,
+      "trim": "SE",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "jeep-grand-cherokee-2024-laredo",
+      "make": "Jeep",
+      "model": "Grand Cherokee",
+      "year": 2024,
+      "trim": "Laredo",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "kia-ev6-2024-light",
+      "make": "Kia",
+      "model": "EV6",
+      "year": 2024,
+      "trim": "Light",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "kia-k5-2024-lxs",
+      "make": "Kia",
+      "model": "K5",
+      "year": 2024,
+      "trim": "LXS",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "kia-sportage-2024-lx",
+      "make": "Kia",
+      "model": "Sportage",
+      "year": 2024,
+      "trim": "LX",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "kia-telluride-2024-lx",
+      "make": "Kia",
+      "model": "Telluride",
+      "year": 2024,
+      "trim": "LX",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "lexus-es-2024-250",
+      "make": "Lexus",
+      "model": "ES",
+      "year": 2024,
+      "trim": "250",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "lexus-rx-2024-350",
+      "make": "Lexus",
+      "model": "RX",
+      "year": 2024,
+      "trim": "350",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "mazda-cx30-2024-select",
+      "make": "Mazda",
+      "model": "CX-30",
+      "year": 2024,
+      "trim": "Select",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "mazda-cx5-2024-preferred",
+      "make": "Mazda",
+      "model": "CX-5",
+      "year": 2024,
+      "trim": "Preferred",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "mazda3-2024-select",
+      "make": "Mazda",
+      "model": "3",
+      "year": 2024,
+      "trim": "Select",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "nissan-altima-2024-sv",
+      "make": "Nissan",
+      "model": "Altima",
+      "year": 2024,
+      "trim": "SV",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "nissan-leaf-2024-s",
+      "make": "Nissan",
+      "model": "LEAF",
+      "year": 2024,
+      "trim": "S",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "nissan-pathfinder-2024-sv",
+      "make": "Nissan",
+      "model": "Pathfinder",
+      "year": 2024,
+      "trim": "SV",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "nissan-rogue-2024-sv",
+      "make": "Nissan",
+      "model": "Rogue",
+      "year": 2024,
+      "trim": "SV",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "subaru-crosstrek-2024-premium",
+      "make": "Subaru",
+      "model": "Crosstrek",
+      "year": 2024,
+      "trim": "Premium",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "subaru-forester-2024-premium",
+      "make": "Subaru",
+      "model": "Forester",
+      "year": 2024,
+      "trim": "Premium",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "subaru-impreza-2024-base",
+      "make": "Subaru",
+      "model": "Impreza",
+      "year": 2024,
+      "trim": "Base",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "subaru-outback-2024-premium",
+      "make": "Subaru",
+      "model": "Outback",
+      "year": 2024,
+      "trim": "Premium",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "tesla-model-3-2024-long-range",
+      "make": "Tesla",
+      "model": "Model 3",
+      "year": 2024,
+      "trim": "Long Range",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "tesla-model-y-2024-long-range",
+      "make": "Tesla",
+      "model": "Model Y",
+      "year": 2024,
+      "trim": "Long Range",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "toyota-4runner-2024-sr5",
+      "make": "Toyota",
+      "model": "4Runner",
+      "year": 2024,
+      "trim": "SR5",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "toyota-camry-2024-le",
+      "make": "Toyota",
+      "model": "Camry",
+      "year": 2024,
+      "trim": "LE",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "toyota-camry-2024-xse",
+      "make": "Toyota",
+      "model": "Camry",
+      "year": 2024,
+      "trim": "XSE",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "toyota-corolla-2024-le",
+      "make": "Toyota",
+      "model": "Corolla",
+      "year": 2024,
+      "trim": "LE",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "toyota-corolla-cross-2024-se",
+      "make": "Toyota",
+      "model": "Corolla Cross",
+      "year": 2024,
+      "trim": "SE",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "toyota-highlander-2024-le",
+      "make": "Toyota",
+      "model": "Highlander",
+      "year": 2024,
+      "trim": "LE",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "toyota-prius-2024-xle",
+      "make": "Toyota",
+      "model": "Prius",
+      "year": 2024,
+      "trim": "XLE",
+      "powertrain": "Hybrid",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "toyota-rav4-2024-hybrid-xle",
+      "make": "Toyota",
+      "model": "RAV4",
+      "year": 2024,
+      "trim": "XLE",
+      "powertrain": "Hybrid",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "toyota-rav4-2024-le",
+      "make": "Toyota",
+      "model": "RAV4",
+      "year": 2024,
+      "trim": "LE",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "vw-id4-2024-pro",
+      "make": "Volkswagen",
+      "model": "ID.4",
+      "year": 2024,
+      "trim": "Pro",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    },
+    {
+      "packId": "vw-jetta-2024-s",
+      "make": "Volkswagen",
+      "model": "Jetta",
+      "year": 2024,
+      "trim": "S",
+      "qaStatus": "creator_review_required",
+      "supportTier": "tier1"
+    }
+  ]
+}

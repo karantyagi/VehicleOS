@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "packs": {
+    "acura-tlx-2021-sh-awd": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/acura-tlx-2021-sh-awd/owner-manual.pdf",
+        "workspace/knowledge/sources/acura-tlx-2021-sh-awd/maintenance-minder-official-supplement.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9ef0b750bf52a05f2583e86f831d4d3aa95efd1ce837d5bc740fe3260f7a2012"
+      },
+      "officialUrls": [
+        "https://owners.acura.com/static/pdfs/2021/TLX/2021_TLX_Maintenance_Minder_System.pdf"
+      ]
+    },
+    "acura-tlx-2019-sh-awd": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/acura-tlx-2019-sh-awd/maintenance-minder.pdf"
+      ],
+      "officialUrls": [
+        "https://owners.acura.com/static/pdfs/2019/TLX/2019_TLX_Lane_Maintenance_Minder.pdf"
+      ],
+      "notes": "Lane PDF only — code table is image-based; full OM not on public CDN."
+    }
+  }
+}

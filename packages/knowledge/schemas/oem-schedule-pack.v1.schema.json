@@ -1,0 +1,63 @@
+{
+  "$id": "https://vehicleos.app/schema/oem-schedule-pack.v1.json",
+  "type": "object",
+  "required": ["packId", "version", "vehicle", "manualTitle", "qaStatus", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "packId": { "type": "string", "minLength": 3 },
+    "version": { "type": "integer", "minimum": 1 },
+    "manualTitle": { "type": "string", "minLength": 3 },
+    "qaStatus": {
+      "type": "string",
+      "enum": ["auto_verified", "creator_review_required", "blocked"]
+    },
+    "qaNotes": { "type": "string" },
+    "sourceManifestRef": { "type": "string" },
+    "scheduleKind": { "type": "string", "enum": ["maintenance_minder", "fixed_interval", "ev_simplified"] },
+    "vehicle": {
+      "type": "object",
+      "required": ["make", "model", "year", "trim"],
+      "additionalProperties": false,
+      "properties": {
+        "make": { "type": "string" },
+        "model": { "type": "string" },
+        "year": { "type": "integer", "minimum": 1980, "maximum": 2035 },
+        "trim": { "type": "string" },
+        "powertrain": { "type": "string" },
+        "market": { "type": "string", "enum": ["US", "CA"] }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "entryId",
+          "canonicalServiceId",
+          "serviceName",
+          "sourcePage",
+          "confidence",
+          "ruleId"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "entryId": { "type": "string" },
+          "canonicalServiceId": { "type": "string" },
+          "serviceName": { "type": "string" },
+          "intervalMiles": { "type": ["integer", "null"], "minimum": 1000 },
+          "intervalMonths": { "type": ["integer", "null"], "minimum": 1 },
+          "sourcePage": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "ruleId": { "type": "string", "pattern": "^knowledge\\.policy\\." },
+          "mainItemCode": { "type": "string" },
+          "subItemCode": { "type": "string" },
+          "powertrain": { "type": "string" },
+          "severeIntervalMiles": { "type": "integer", "minimum": 1000 },
+          "severeIntervalRepeatMiles": { "type": "integer", "minimum": 1000 },
+          "projectionNote": { "type": "string" }
+        }
+      }
+    }
+  }
+}
