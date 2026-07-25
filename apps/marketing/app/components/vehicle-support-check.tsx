@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { siteConfig } from "../../lib/site-config";
 
 type VehicleSupportForm = {
   year: number;
@@ -18,32 +19,30 @@ type VehicleSupportResponse = {
   error?: string;
 };
 
-type CatalogVehicle = {
-  make: string;
-  model: string;
-  year: number;
-  trim: string;
-  supported: boolean;
-};
-
 const defaultForm: VehicleSupportForm = {
   year: 2021,
-  make: "Acura",
-  model: "TLX",
-  trim: "SH-AWD",
+  make: "",
+  model: "",
+  trim: "",
 };
 
 export function VehicleSupportCheck() {
   const [form, setForm] = useState<VehicleSupportForm>(defaultForm);
   const [status, setStatus] = useState<VehicleSupportResponse | null>(null);
-  const [catalog, setCatalog] = useState<CatalogVehicle[]>([]);
+  const [verifiedCount, setVerifiedCount] = useState<number | null>(null);
   const [isChecking, setIsChecking] = useState(false);
+  const [contactEmail, setContactEmail] = useState("");
+  const [note, setNote] = useState("");
+  const [requestError, setRequestError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [requestSuccess, setRequestSuccess] = useState<{ email: string } | null>(null);
 
   useEffect(() => {
     void fetch("/api/catalog/vehicles")
       .then((response) => (response.ok ? response.json() : null))
-      .then((body: { vehicles?: CatalogVehicle[] } | null) => {
-        if (body?.vehicles) setCatalog(body.vehicles);
+      .then((body: { vehicles?: { supported?: boolean }[] } | null) => {
+        if (!body?.vehicles) return;
+        setVerifiedCount(body.vehicles.filter((row) => row.supported).length);
       })
       .catch(() => undefined);
   }, []);
@@ -81,8 +80,60 @@ export function VehicleSupportCheck() {
     };
   }, [form]);
 
+  const canRequest =
+    Boolean(status) &&
+    !status?.supported &&
+    form.trim.trim().length > 0 &&
+    !requestSuccess;
+
+  const submitRequest = async () => {
+    setRequestError("");
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/catalog/vehicle-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          year: form.year,
+          make: form.make.trim(),
+          model: form.model.trim(),
+          trim: form.trim.trim(),
+          note: note.trim() || undefined,
+          contactEmail: contactEmail.trim(),
+          source: "marketing",
+        }),
+      });
+
+      const body = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        setRequestError(body.error ?? "Could not send your request. Try again.");
+        return;
+      }
+
+      setRequestSuccess({ email: contactEmail.trim() });
+    } catch {
+      setRequestError("Could not send your request. Check your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="support-check" id="supported">
+      <div className="support-check-header">
+        <div>
+          <p className="support-check-eyebrow">Compatibility check</p>
+          <h3 className="support-check-title">Is your car supported today?</h3>
+        </div>
+        {verifiedCount !== null ? (
+          <p className="support-check-meta">
+            {verifiedCount} verified {verifiedCount === 1 ? "model" : "models"} in early access
+          </p>
+        ) : null}
+      </div>
+
       <div className="support-check-form">
         <label className="support-field">
           <span>Year</span>
@@ -132,43 +183,75 @@ export function VehicleSupportCheck() {
             <p>
               Verified OEM maintenance schedule loads automatically at setup — no manual PDF upload.
             </p>
+            <div className="support-result-actions">
+              <a className="btn btn-primary support-result-cta" href={siteConfig.appUrl}>
+                Open the app — get early access
+              </a>
+            </div>
           </>
         ) : status?.waitlist ? (
           <>
-            <strong>Waitlist — pack in review</strong>
+            <strong>In review — not open for setup yet</strong>
             <p>
-              We recognize this vehicle but the OEM pack is not auto-verified yet. Join early access —
-              track history now; schedule projection ships when your pack clears QA.
+              We recognize this vehicle but the OEM pack is not auto-verified yet. Request it below
+              and we&apos;ll email you when setup unlocks.
             </p>
           </>
         ) : status && !status.supported && !status.waitlist ? (
           <>
             <strong>Not in catalog yet</strong>
             <p>
-              Tier 1 passenger packs are rolling out through late 2026. Early access still works for
-              history, reminders, and receipts — OEM projection joins when your pack ships.
+              Tier 1 passenger packs are rolling out through late 2026. Request your trim below —
+              we&apos;ll prioritize from owner demand.
             </p>
           </>
         ) : (
-          <p>Enter year, make, and model to check OEM pack support.</p>
+          <p>Enter year, make, model, and trim to check OEM pack support.</p>
         )}
       </div>
 
-      {catalog.length > 0 ? (
-        <div className="support-catalog">
-          <p className="support-catalog-label">Catalog today ({catalog.filter((row) => row.supported).length} verified)</p>
-          <ul>
-            {catalog.map((row) => (
-              <li key={`${row.year}-${row.make}-${row.model}-${row.trim}`}>
-                <span>
-                  {row.year} {row.make} {row.model} {row.trim}
-                </span>
-                <span className={row.supported ? "support-tag-yes" : "support-tag-waitlist"}>
-                  {row.supported ? "Verified" : "In review"}
-                </span>
-              </li>
-            ))}
-          </ul>
+      {requestSuccess ? (
+        <div className="support-request support-request-success" role="status">
+          <strong>Request sent</strong>
+          <p>
+            We got your {form.year} {form.make} {form.model} {form.trim}. We&apos;ll email{" "}
+            <span className="support-request-email">{requestSuccess.email}</span> when your car is ready.
+          </p>
+        </div>
+      ) : canRequest ? (
+        <div className="support-request">
+          <p className="support-request-label">Request this vehicle</p>
+          <div className="support-request-fields">
+            <label className="support-field support-field-full">
+              <span>Reply email</span>
+              <input
+                type="email"
+                autoComplete="email"
+                placeholder="you@email.com"
+                value={contactEmail}
+                onChange={(event) => setContactEmail(event.target.value)}
+              />
+            </label>
+            <label className="support-field support-field-full">
+              <span>
+                Anything else? <span className="support-field-optional">(optional)</span>
+              </span>
+              <input
+                value={note}
+                onChange={(event) => setNote(event.target.value)}
+                placeholder="e.g. SH-AWD, 2.0T"
+              />
+            </label>
+          </div>
+          {requestError ? <p className="support-request-error">{requestError}</p> : null}
+          <button
+            type="button"
+            className="btn btn-primary support-request-submit"
+            disabled={isSubmitting}
+            onClick={() => void submitRequest()}
+          >
+            {isSubmitting ? "Sending…" : "Send to VehicleOS team"}
+          </button>
         </div>
       ) : null}
     </div>

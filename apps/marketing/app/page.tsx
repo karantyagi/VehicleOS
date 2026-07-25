@@ -128,13 +128,14 @@ export default function HomePage() {
             <p className="hero-proof">{heroContent.oneLiner}</p>
 
             <div className="cta-row">
-              <a className="btn btn-primary" href={siteConfig.appUrl}>
-                Get early access
-              </a>
-              <a className="btn btn-secondary" href="#supported">
+              <a className="btn btn-primary" href="#supported">
                 Check if your car is supported
               </a>
+              <a className="btn btn-secondary" href={siteConfig.appUrl}>
+                Get early access
+              </a>
             </div>
+            <p className="hero-cta-note">Verified OEM packs only — check compatibility first, then sign in.</p>
             <p className="hero-release-note">{releaseNote.detail}</p>
           </div>
 
@@ -167,14 +168,11 @@ export default function HomePage() {
               ))}
             </ul>
             <div className="path-cta-row">
-              <a
-                className="btn btn-primary path-cta"
-                href={earlyAccessContent.cta.href}
-              >
-                {earlyAccessContent.cta.label}
-              </a>
-              <a className="path-cta-secondary" href={earlyAccessContent.ctaSecondary.href}>
+              <a className="btn btn-primary path-cta" href={earlyAccessContent.ctaSecondary.href}>
                 {earlyAccessContent.ctaSecondary.label}
+              </a>
+              <a className="btn btn-secondary path-cta" href={earlyAccessContent.cta.href}>
+                {earlyAccessContent.cta.label}
               </a>
             </div>
           </article>
