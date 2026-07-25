@@ -5,6 +5,7 @@ import { FormActions, FormField } from "@/components/form-field";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { readJsonResponseOrThrow } from "@/lib/api-response";
 import type { VehicleOwnerProfile } from "@/lib/driver-habits";
 import { notify } from "@/lib/notify";
 
@@ -20,11 +21,10 @@ export function VehicleDeletePanel() {
     void (async () => {
       try {
         const response = await fetch("/api/vehicles");
-        const body = (await response.json()) as {
+        const body = await readJsonResponseOrThrow<{
           vehicles?: VehicleOwnerProfile[];
           error?: string;
-        };
-        if (!response.ok) throw new Error(body.error ?? "Could not load vehicle");
+        }>(response, "Could not load vehicle");
         setVehicle(body.vehicles?.[0] ?? null);
       } catch (loadError) {
         setError(loadError instanceof Error ? loadError.message : "Could not load vehicle");
@@ -40,8 +40,7 @@ export function VehicleDeletePanel() {
     setError("");
     try {
       const response = await fetch(`/api/vehicles/${vehicle.id}`, { method: "DELETE" });
-      const body = (await response.json()) as { deleted?: boolean; error?: string };
-      if (!response.ok) throw new Error(body.error ?? "Delete failed");
+      await readJsonResponseOrThrow<{ deleted?: boolean; error?: string }>(response, "Delete failed");
       notify("Vehicle and service history removed.", "success");
       window.location.href = "/";
     } catch (deleteError) {

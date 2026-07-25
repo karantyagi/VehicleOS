@@ -99,7 +99,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
           <ThemeSegmentedToggle />
         </div>
 
-        <div className="flex flex-1 items-center justify-center px-10 xl:px-16">
+        <div className="flex flex-1 items-start justify-center px-10 pb-12 pt-[clamp(3.5rem,12vh,6.5rem)] xl:px-16">
           <LoginValueSpotlight />
         </div>
       </section>
