@@ -426,15 +426,9 @@ const resolveEntries = (spec: Tier1PackSpec): OemSchedulePackEntry[] => {
   }
 };
 
-const resolveQaStatus = (entries: OemSchedulePackEntry[]): OemSchedulePack["qaStatus"] => {
-  const minConfidence = Math.min(...entries.map((entry) => entry.confidence));
-  if (minConfidence >= 0.92) return "auto_verified";
-  return "creator_review_required";
-};
-
 export const generateTier1Pack = (spec: Tier1PackSpec): OemSchedulePack => {
   const entries = resolveEntries(spec);
-  const qaStatus = resolveQaStatus(entries);
+  const qaStatus: OemSchedulePack["qaStatus"] = "creator_review_required";
 
   return {
     packId: spec.packId,
@@ -443,9 +437,7 @@ export const generateTier1Pack = (spec: Tier1PackSpec): OemSchedulePack => {
     scheduleKind: spec.scheduleKind,
     qaStatus,
     qaNotes:
-      qaStatus === "auto_verified"
-        ? "Tier-1 factory template — all rows ≥0.92 confidence; pending PDF dual-extract spot audit."
-        : "Tier-1 factory template — creator review required before big-bang auto_verified promotion.",
+      "Tier-1 factory template — creator review required. Promote to auto_verified only after PDF dual-extract QA (B1–B5).",
     sourceManifestRef: `sources/manifest.json#${spec.packId}`,
     vehicle: {
       make: spec.make,

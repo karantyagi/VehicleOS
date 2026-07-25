@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2024 Mazda 3 Select — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
-  "qaStatus": "auto_verified",
-  "qaNotes": "Tier-1 factory template — all rows ≥0.92 confidence; pending PDF dual-extract spot audit.",
+  "qaStatus": "creator_review_required",
+  "qaNotes": "Tier-1 factory template — demoted pending PDF dual-extract QA. Promote to auto_verified only after sources/manifest PDF and B1–B5 gates pass.",
   "sourceManifestRef": "sources/manifest.json#mazda3-2024-select",
   "vehicle": {
     "make": "Mazda",

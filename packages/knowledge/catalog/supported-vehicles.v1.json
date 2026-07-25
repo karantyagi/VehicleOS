@@ -7,7 +7,7 @@
       "model": "RDX",
       "year": 2024,
       "trim": "Base",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -16,7 +16,7 @@
       "model": "TLX",
       "year": 2019,
       "trim": "Base",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -99,7 +99,7 @@
       "model": "Accord",
       "year": 2024,
       "trim": "EX",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -108,7 +108,7 @@
       "model": "Civic",
       "year": 2024,
       "trim": "Sport",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -117,7 +117,7 @@
       "model": "CR-V",
       "year": 2024,
       "trim": "EX",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -126,7 +126,7 @@
       "model": "HR-V",
       "year": 2024,
       "trim": "EX",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -135,7 +135,7 @@
       "model": "Passport",
       "year": 2024,
       "trim": "EX-L",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -144,7 +144,7 @@
       "model": "Pilot",
       "year": 2024,
       "trim": "EX-L",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -234,7 +234,7 @@
       "model": "ES",
       "year": 2024,
       "trim": "250",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -243,7 +243,7 @@
       "model": "RX",
       "year": 2024,
       "trim": "350",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -252,7 +252,7 @@
       "model": "CX-30",
       "year": 2024,
       "trim": "Select",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -261,7 +261,7 @@
       "model": "CX-5",
       "year": 2024,
       "trim": "Preferred",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -270,7 +270,7 @@
       "model": "3",
       "year": 2024,
       "trim": "Select",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -315,7 +315,7 @@
       "model": "Crosstrek",
       "year": 2024,
       "trim": "Premium",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -324,7 +324,7 @@
       "model": "Forester",
       "year": 2024,
       "trim": "Premium",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -333,7 +333,7 @@
       "model": "Impreza",
       "year": 2024,
       "trim": "Base",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -342,7 +342,7 @@
       "model": "Outback",
       "year": 2024,
       "trim": "Premium",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -351,7 +351,7 @@
       "model": "Model 3",
       "year": 2024,
       "trim": "Long Range",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -360,7 +360,7 @@
       "model": "Model Y",
       "year": 2024,
       "trim": "Long Range",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -369,7 +369,7 @@
       "model": "4Runner",
       "year": 2024,
       "trim": "SR5",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -378,7 +378,7 @@
       "model": "Camry",
       "year": 2024,
       "trim": "LE",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -387,7 +387,7 @@
       "model": "Camry",
       "year": 2024,
       "trim": "XSE",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -396,7 +396,7 @@
       "model": "Corolla",
       "year": 2024,
       "trim": "LE",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -405,7 +405,7 @@
       "model": "Corolla Cross",
       "year": 2024,
       "trim": "SE",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -414,7 +414,7 @@
       "model": "Highlander",
       "year": 2024,
       "trim": "LE",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -424,7 +424,7 @@
       "year": 2024,
       "trim": "XLE",
       "powertrain": "Hybrid",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -434,7 +434,7 @@
       "year": 2024,
       "trim": "XLE",
       "powertrain": "Hybrid",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {
@@ -443,7 +443,7 @@
       "model": "RAV4",
       "year": 2024,
       "trim": "LE",
-      "qaStatus": "auto_verified",
+      "qaStatus": "creator_review_required",
       "supportTier": "tier1"
     },
     {

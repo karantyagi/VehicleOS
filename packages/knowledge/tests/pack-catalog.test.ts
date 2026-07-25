@@ -41,6 +41,9 @@ describe("OEM schedule packs", () => {
     const catalog = loadSupportedVehicleCatalog();
     expect(catalog.vehicles.length).toBeGreaterThanOrEqual(50);
     const verified = catalog.vehicles.filter((row) => row.qaStatus === "auto_verified");
-    expect(verified.length).toBeGreaterThanOrEqual(25);
+    expect(verified).toEqual([
+      expect.objectContaining({ packId: "acura-tlx-2021-sh-awd" }),
+    ]);
+    expect(verified).toHaveLength(1);
   });
 });
