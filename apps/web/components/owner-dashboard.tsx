@@ -525,7 +525,7 @@ export function OwnerDashboard() {
         <PanelCard
           hideHeader={!isDeveloper}
           title="Service history"
-          description="Past maintenance, forward OEM schedule, and RMV/DMV ownership records."
+          description="Past maintenance, verified OEM schedule projection, and RMV/DMV ownership records."
         >
           <MaintenanceTimelineSection
             timeline={timeline}
@@ -534,6 +534,7 @@ export function OwnerDashboard() {
             scheduleExtended={maintenanceSchedule.extended}
             scheduleFull={maintenanceSchedule.full}
             effectiveMilesPerYear={maintenanceSchedule.effectiveMilesPerYear}
+            hasKnowledgeSchedule={knowledgeSchedule.length > 0}
             activeTab={serviceHistoryTab}
             onTabChange={setServiceHistoryTab}
             historyOnly={!isDeveloper}
@@ -557,6 +558,7 @@ export function OwnerDashboard() {
             vehicleId={vehicle.id}
             apiBase={apiBase}
             ownerShopLocations={vehicle.ownerContextMemory?.shopLocations}
+            existingTimeline={timeline}
             disabled={isBusy}
             onError={(message) => notify(message, "error")}
             onCarfaxImported={(body) => {

@@ -7,13 +7,14 @@ import {
   extractMyRmvMaVehiclePageFromPdfText,
   mapCarfaxExtractToImport,
   mapMyRmvExtractToImport,
+  filterNewImportServices,
   mergeShopLocationsFromImport,
   parseRmvPdfText,
   profileImportWarnings,
   reconcileImportVehicleProfile,
   recordProfileImportVerification,
   recordImportRowVerification,
-  tierImportRows,
+  tierNewImportRows,
 } from "@vehicleos/domain";
 import type { ApiServices } from "../services/index.js";
 import { extractPdfText } from "../import/pdf-text.js";
@@ -108,7 +109,9 @@ export const submitVehicleOsImport = async (
     ownerShopLocations,
   });
 
-  const tierSummary = tierImportRows(enrichedServices);
+  const snapshot = await services.goldenPath.getVehicleState(vehicleId);
+  const { newRows } = filterNewImportServices(snapshot.state.timeline, enrichedServices);
+  const newRowTierSummary = tierNewImportRows(snapshot.state.timeline, newRows);
 
   const importResult = await services.goldenPath.importVehicleOsHistory({
     vehicleId,
@@ -145,7 +148,7 @@ export const submitVehicleOsImport = async (
     eventStore: services.eventStore,
     input: {
       vehicleId,
-      rows: tierSummary.rows,
+      rows: newRowTierSummary.rows,
       importSource: body.source?.trim() || "vehicleos-import",
     },
   });
@@ -161,10 +164,11 @@ export const submitVehicleOsImport = async (
     verificationTaskId: verification.taskId ?? undefined,
     shopLocationsSaved: shopMemoryUpdated ? Object.keys(mergedShopLocations).length : undefined,
     importReview: {
-      autoCount: tierSummary.autoCount,
-      enrichedCount: tierSummary.enrichedCount,
-      verifyCount: tierSummary.verifyCount,
-      blockCount: tierSummary.blockCount,
+      autoCount: newRowTierSummary.autoCount,
+      enrichedCount: newRowTierSummary.enrichedCount,
+      verifyCount: newRowTierSummary.verifyCount,
+      blockCount: newRowTierSummary.blockCount,
+      alreadyOnFileCount: enrichedServices.length - newRows.length,
     },
   });
 };

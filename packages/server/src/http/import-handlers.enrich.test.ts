@@ -156,4 +156,78 @@ describe("import-handlers enrich + submit", () => {
     const body = response.body as { importedCount: number };
     expect(body.importedCount).toBe(1);
   });
+
+  it("does not create verification tasks when re-importing duplicate rows", async () => {
+    const { services, vehicle } = await buildServices();
+    const payload = {
+      services: [
+        {
+          shop: "Unknown Shop",
+          serviceDate: "2025-06-01",
+          mileage: 51000,
+          lineItems: ["Oil changed"],
+        },
+      ],
+    };
+
+    const first = await submitVehicleOsImport(services, vehicle.id, payload, { userId: vehicle.userId });
+    expect(first.status).toBe(201);
+    const firstBody = first.body as { importedCount: number };
+    expect(firstBody.importedCount).toBe(1);
+
+    const second = await submitVehicleOsImport(services, vehicle.id, payload, { userId: vehicle.userId });
+    expect(second.status).toBe(201);
+    const secondBody = second.body as {
+      importedCount: number;
+      skippedCount: number;
+      verificationTaskId?: string;
+      importReview?: { alreadyOnFileCount?: number; verifyCount: number };
+    };
+    expect(secondBody.importedCount).toBe(0);
+    expect(secondBody.skippedCount).toBe(1);
+    expect(secondBody.verificationTaskId).toBeUndefined();
+    expect(secondBody.importReview?.alreadyOnFileCount).toBe(1);
+    expect(secondBody.importReview?.verifyCount).toBe(0);
+  });
+
+  it("skips re-import when mileage differs but visit matches", async () => {
+    const { services, vehicle } = await buildServices();
+    const first = await submitVehicleOsImport(
+      services,
+      vehicle.id,
+      {
+        services: [
+          {
+            shop: "Another Mystery Shop",
+            serviceDate: "2025-07-01",
+            mileage: 52000,
+            lineItems: ["Inspection"],
+          },
+        ],
+      },
+      { userId: vehicle.userId },
+    );
+    expect(first.status).toBe(201);
+
+    const second = await submitVehicleOsImport(
+      services,
+      vehicle.id,
+      {
+        services: [
+          {
+            shop: "Another Mystery Shop",
+            serviceDate: "2025-07-01",
+            mileage: 51950,
+            lineItems: ["Inspection"],
+          },
+        ],
+      },
+      { userId: vehicle.userId },
+    );
+
+    expect(second.status).toBe(201);
+    const body = second.body as { importedCount: number; skippedCount: number };
+    expect(body.importedCount).toBe(0);
+    expect(body.skippedCount).toBe(1);
+  });
 });
