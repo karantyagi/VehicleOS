@@ -265,8 +265,35 @@ export {
   normalizeCarfaxLineItems,
 } from "./import/normalize-carfax-line-items.js";
 export {
+  mergeShopLocationsFromImport,
+} from "./import/merge-shop-locations-from-import.js";
+export {
   enrichVehicleOsImport,
   enrichVehicleOsImportService,
+  type EnrichVehicleOsImportOptions,
   type VehicleOsImportDraft,
 } from "./import/enrich-vehicleos-import.js";
+export { normalizeShopKey } from "./import/shop-location-keys.js";
+export {
+  tierImportRows,
+  type ImportTrustTier,
+  type TieredImportRow,
+  type TierImportSummary,
+} from "./import/tier-import-rows.js";
+export {
+  recordImportRowVerification,
+  type RecordImportRowVerificationInput,
+  type RecordImportRowVerificationResult,
+} from "./import/record-import-row-verification.js";
+export { CURATED_SHOP_PACK } from "./import/shop-pack.js";
+export type {
+  LookupShopLocationInput,
+  LookupShopLocationResult,
+  ShopLocationLookupPort,
+} from "./import/lookup-shop-location-port.js";
+export { stubLookupShopLocation } from "./import/stub-lookup-shop-location.js";
+export {
+  resolveShopLocationWithLookup,
+  type ResolveShopLocationWithLookupInput,
+} from "./import/resolve-shop-location-with-lookup.js";
 export type { KnowledgeScheduleRow } from "./events/catalog.js";
