@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { FormActions, FormField } from "@/components/form-field";
+import { DateField } from "@/components/date-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { todayIsoDate } from "@/lib/date-input";
 
 type OwnerServiceNotePanelProps = {
   vehicleId: string;
@@ -106,12 +108,12 @@ export function OwnerServiceNotePanel({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField label="Service date" htmlFor="note-date">
-          <Input
+          <DateField
             id="note-date"
-            type="date"
             value={serviceDate}
+            max={todayIsoDate()}
             disabled={disabled || isSubmitting}
-            onChange={(event) => setServiceDate(event.target.value)}
+            onChange={setServiceDate}
           />
         </FormField>
         <FormField label="Mileage" htmlFor="note-mileage">

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DrivingStyleFields } from "@/components/driving-style-fields";
+import { DateField } from "@/components/date-field";
 import { FormActions, FormField } from "@/components/form-field";
 import { RecordImportPanel } from "@/components/record-import-panel";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import {
   parseStatedMilesPerYear,
   type DriverHabitsDraft,
 } from "@/lib/driver-habits";
+import { todayIsoDate } from "@/lib/date-input";
 import { notify } from "@/lib/notify";
 import { cn } from "@/lib/utils";
 
@@ -254,11 +256,11 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               optional
               hint="Anchors calendar reminders when receipts are missing"
             >
-              <Input
+              <DateField
                 id="ob-owned-since"
-                type="date"
                 value={form.ownedSince}
-                onChange={(event) => setForm({ ...form, ownedSince: event.target.value })}
+                max={todayIsoDate()}
+                onChange={(ownedSince) => setForm({ ...form, ownedSince })}
               />
             </FormField>
           </div>

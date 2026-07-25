@@ -3,11 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormActions, FormField } from "@/components/form-field";
+import { DateField } from "@/components/date-field";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import type { VehicleOwnerProfile } from "@/lib/driver-habits";
+import { todayIsoDate } from "@/lib/date-input";
 import { notify } from "@/lib/notify";
 
 export function VehicleSettingsPanel({ minimal = false }: { minimal?: boolean }) {
@@ -162,11 +164,11 @@ export function VehicleSettingsPanel({ minimal = false }: { minimal?: boolean })
             optional
             hint="Calendar anchor when receipts are missing"
           >
-            <Input
+            <DateField
               id="vehicle-owned-since"
-              type="date"
               value={form.ownedSince}
-              onChange={(event) => setForm({ ...form, ownedSince: event.target.value })}
+              max={todayIsoDate()}
+              onChange={(ownedSince) => setForm({ ...form, ownedSince })}
             />
           </FormField>
           <FormField label="Make" htmlFor="vehicle-make">
