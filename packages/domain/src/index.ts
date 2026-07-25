@@ -205,6 +205,21 @@ export {
   type MapMyRmvExtractInput,
   type VehicleOsRmvImportV1,
 } from "./import/map-myrmv-extract-to-import.js";
+export {
+  isPlaceholderVin,
+  normalizeVin,
+  profileImportWarnings,
+  reconcileImportVehicleProfile,
+  type ImportVehicleProfile,
+  type ProfileField,
+  type ProfileImportConflict,
+  type VehicleProfileSnapshot,
+} from "./import/reconcile-import-vehicle-profile.js";
+export {
+  recordProfileImportVerification,
+  type RecordProfileImportVerificationInput,
+  type RecordProfileImportVerificationResult,
+} from "./import/record-profile-import-verification.js";
 export type {
   CarfaxServiceHistoryExtractV1,
   CarfaxServiceHistoryRowExtract,

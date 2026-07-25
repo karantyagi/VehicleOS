@@ -67,6 +67,10 @@ export function VehicleSettingsPanel({ minimal = false }: { minimal?: boolean })
 
   const saveVehicle = async () => {
     if (!vehicle) return;
+    if (!form.ownedSince.trim()) {
+      setError("Owned since is required — it anchors calendar reminders when receipts are missing.");
+      return;
+    }
     setIsSaving(true);
     setError("");
     try {
@@ -80,7 +84,7 @@ export function VehicleSettingsPanel({ minimal = false }: { minimal?: boolean })
           trim: form.trim.trim() || undefined,
           currentMileage: Number(form.mileage),
           vin: form.vin.trim() || undefined,
-          ownedSince: form.ownedSince.trim() || null,
+          ownedSince: form.ownedSince.trim(),
         }),
       });
       const body = (await response.json()) as {
@@ -161,8 +165,7 @@ export function VehicleSettingsPanel({ minimal = false }: { minimal?: boolean })
           <FormField
             label="Owned since"
             htmlFor="vehicle-owned-since"
-            optional
-            hint="Calendar anchor when receipts are missing"
+            hint="Required — calendar anchor when receipts are missing"
           >
             <DateField
               id="vehicle-owned-since"

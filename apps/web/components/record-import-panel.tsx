@@ -37,6 +37,8 @@ type RecordImportPanelProps = {
     importedCount: number;
     skippedCount?: number;
     ownershipRecords: unknown[];
+    profilePatch?: { vin?: string; year?: number; make?: string; model?: string };
+    verificationTaskId?: string;
   }) => void;
 };
 
@@ -341,6 +343,8 @@ export function RecordImportPanel({
           importedCount?: number;
           skippedCount?: number;
           ownershipRecords?: unknown[];
+          profilePatch?: { vin?: string; year?: number; make?: string; model?: string };
+          verificationTaskId?: string;
         };
         if (!response.ok) {
           onError(body.error ?? "RMV import failed.");
@@ -350,6 +354,8 @@ export function RecordImportPanel({
           importedCount: body.importedCount ?? 0,
           skippedCount: body.skippedCount ?? 0,
           ownershipRecords: body.ownershipRecords ?? [],
+          profilePatch: body.profilePatch,
+          verificationTaskId: body.verificationTaskId,
         });
       } else {
         return;

@@ -594,6 +594,11 @@ export function OwnerDashboard() {
                 setActiveSection("timeline");
                 feedback(`${body.importedCount} ownership record(s) imported — see Ownership tab.`);
               }
+              if (body.profilePatch?.vin) {
+                feedback(`VIN ${body.profilePatch.vin} saved from your RMV PDF.`);
+              } else if (body.verificationTaskId) {
+                feedback("Profile conflicts from the PDF need your review in the assistant queue.");
+              }
               void loadVehicleState(vehicle);
             }}
           />

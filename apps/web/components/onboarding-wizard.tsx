@@ -91,6 +91,12 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
       return null;
     }
 
+    if (!form.ownedSince.trim()) {
+      setError("Owned since is required — it anchors calendar reminders when receipts are missing.");
+      setIsBusy(false);
+      return null;
+    }
+
     try {
       const response = await fetch(`${apiBase}/api/vehicles`, {
         method: "POST",
@@ -102,7 +108,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           model: form.model.trim(),
           trim: form.trim.trim() || undefined,
           currentMileage: Number(form.currentMileage),
-          ownedSince: form.ownedSince.trim() || null,
+          ownedSince: form.ownedSince.trim(),
           drivingStyle: driverDraft.drivingStyle,
           statedMilesPerYear: parsedMiles,
         }),
@@ -168,12 +174,12 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         </CardTitle>
         <CardDescription className={cn(step === "welcome" && "max-w-md")}>
           {step === "welcome"
-            ? "Three quick steps — vehicle record, driving profile, and optional history — then your assistant workspace unlocks."
+            ? "Three quick steps — vehicle record, driving profile, and import history — then your assistant workspace unlocks."
             : step === "car"
               ? "We use this to project calendar reminders — the assistant handles mileage math."
               : step === "driver"
                 ? "Driving style shapes preemptive nudges. Annual miles fine-tunes Schedule dates."
-                : "Optional — hand off CARFAX or portal PDFs so reminders start from your actual service history."}
+                : "Hand off CARFAX or portal PDFs so reminders start from your actual service history."}
         </CardDescription>
       </CardHeader>
 
@@ -187,7 +193,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               {[
                 ["01", "Vehicle record"],
                 ["02", "Driving profile"],
-                ["03", "Import history (optional)"],
+                ["03", "Import history"],
               ].map(([num, label]) => (
                 <li key={num} className="rounded-lg border border-border bg-muted/30 px-3 py-3 text-sm">
                   <span className="font-mono text-xs text-primary">{num}</span>
@@ -253,8 +259,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             <FormField
               label="Owned since"
               htmlFor="ob-owned-since"
-              optional
-              hint="Anchors calendar reminders when receipts are missing"
+              hint="Required — anchors calendar reminders when receipts are missing"
             >
               <DateField
                 id="ob-owned-since"
@@ -301,6 +306,11 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               } else {
                 notify(`${body.importedCount} ownership record(s) imported.`, "success");
               }
+              if (body.profilePatch?.vin) {
+                notify(`VIN ${body.profilePatch.vin} saved from your RMV PDF.`, "success");
+              } else if (body.verificationTaskId) {
+                notify("Profile conflicts from the PDF need your review in the assistant queue.", "success");
+              }
             }}
           />
         ) : null}
@@ -315,7 +325,12 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             {step === "car" ? (
               <Button
                 type="button"
-                disabled={!form.make.trim() || !form.model.trim() || form.currentMileage <= 0}
+                disabled={
+                  !form.make.trim() ||
+                  !form.model.trim() ||
+                  form.currentMileage <= 0 ||
+                  !form.ownedSince.trim()
+                }
                 onClick={() => setStep("driver")}
               >
                 Continue
