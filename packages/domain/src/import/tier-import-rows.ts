@@ -1,5 +1,13 @@
 import type { VehicleOsImportService } from "./record-vehicleos-import.js";
+import type { ServiceTimelineEntry } from "../projections/types.js";
 import { normalizeShopKey } from "./shop-location-keys.js";
+import { crossDayMileageRegressionByIndex } from "./cross-day-mileage-regression.js";
+import {
+  guidanceSummaryLine,
+  mileageCrossDayGuidance,
+  missingShopLocationGuidance,
+  type ImportVerifyGuidance,
+} from "./import-verify-guidance.js";
 
 export type ImportTrustTier = "auto" | "enriched" | "verify" | "block";
 
@@ -8,6 +16,7 @@ export type TieredImportRow = {
   service: VehicleOsImportService;
   tier: ImportTrustTier;
   reasons: string[];
+  ownerGuidance: ImportVerifyGuidance[];
 };
 
 export type TierImportSummary = {
@@ -46,39 +55,35 @@ const isValidServiceRow = (service: VehicleOsImportService): string | null => {
 };
 
 export const tierImportRows = (services: VehicleOsImportService[]): TierImportSummary => {
-  const chronological = services.map((service, index) => ({ service, index }));
-  const sortedByDate = [...chronological].sort((left, right) =>
-    left.service.serviceDate.localeCompare(right.service.serviceDate),
-  );
-
-  let previousMileage: number | null = null;
-  const mileageRegressionByIndex = new Map<number, boolean>();
-  for (const entry of sortedByDate) {
-    if (previousMileage !== null && entry.service.mileage < previousMileage) {
-      mileageRegressionByIndex.set(entry.index, true);
-    }
-    previousMileage = entry.service.mileage;
-  }
+  const mileageRegressionByIndex = crossDayMileageRegressionByIndex(services);
 
   const rows: TieredImportRow[] = services.map((service, index) => {
     const blockReason = isValidServiceRow(service);
     if (blockReason) {
-      return { index, service, tier: "block", reasons: [blockReason] };
+      return { index, service, tier: "block", reasons: [blockReason], ownerGuidance: [] };
     }
 
     const reasons: string[] = [];
+    const ownerGuidance: ImportVerifyGuidance[] = [];
     let tier: ImportTrustTier = "auto";
 
-    if (mileageRegressionByIndex.get(index)) {
+    const priorDaysMax = mileageRegressionByIndex.get(index);
+    if (priorDaysMax !== undefined) {
       tier = "verify";
-      reasons.push(
-        `Mileage ${service.mileage.toLocaleString()} mi is lower than an earlier visit in this import.`,
-      );
+      const guidance = mileageCrossDayGuidance({
+        mileage: service.mileage,
+        priorDaysMax,
+        serviceDate: service.serviceDate,
+      });
+      ownerGuidance.push(guidance);
+      reasons.push(guidanceSummaryLine(guidance));
     }
 
     if (shopNeedsLocation(service.shop) && !service.shopLocation?.trim()) {
       tier = "verify";
-      reasons.push(`Shop location missing for ${service.shop}.`);
+      const guidance = missingShopLocationGuidance(service.shop);
+      ownerGuidance.push(guidance);
+      reasons.push(guidanceSummaryLine(guidance));
     }
 
     if (service.lineItems.some((line) => line === "Service visit")) {
@@ -87,15 +92,63 @@ export const tierImportRows = (services: VehicleOsImportService[]): TierImportSu
     }
 
     if (tier === "auto" && reasons.length === 0) {
-      return { index, service, tier: "auto", reasons: [] };
+      return { index, service, tier: "auto", reasons: [], ownerGuidance: [] };
     }
 
     if (tier === "auto" && reasons.length > 0) {
-      return { index, service, tier: "enriched", reasons };
+      return { index, service, tier: "enriched", reasons, ownerGuidance: [] };
     }
 
-    return { index, service, tier, reasons };
+    return { index, service, tier, reasons, ownerGuidance };
   });
+
+  const autoCount = rows.filter((row) => row.tier === "auto").length;
+  const enrichedCount = rows.filter((row) => row.tier === "enriched").length;
+  const verifyCount = rows.filter((row) => row.tier === "verify").length;
+  const blockCount = rows.filter((row) => row.tier === "block").length;
+
+  return {
+    rows,
+    autoCount,
+    enrichedCount,
+    verifyCount,
+    blockCount,
+    readyCount: autoCount + enrichedCount,
+  };
+};
+
+const timelineEntryToImportService = (entry: ServiceTimelineEntry): VehicleOsImportService => ({
+  shop: entry.shop,
+  shopLocation: entry.shopLocation,
+  serviceDate: entry.serviceDate,
+  mileage: entry.mileage,
+  lineItems: entry.lineItems,
+  total: entry.total,
+  evidenceIds: entry.evidenceIds,
+});
+
+const emptyTierSummary = (): TierImportSummary => ({
+  rows: [],
+  autoCount: 0,
+  enrichedCount: 0,
+  verifyCount: 0,
+  blockCount: 0,
+  readyCount: 0,
+});
+
+/** Tier only incoming rows, with mileage checks against existing service history. */
+export const tierNewImportRows = (
+  existingTimeline: ServiceTimelineEntry[],
+  newServices: VehicleOsImportService[],
+): TierImportSummary => {
+  if (newServices.length === 0) return emptyTierSummary();
+
+  const existingServices = existingTimeline.map(timelineEntryToImportService);
+  const combinedSummary = tierImportRows([...existingServices, ...newServices]);
+  const rows = combinedSummary.rows.slice(existingServices.length).map((row, index) => ({
+    ...row,
+    index,
+  }));
 
   const autoCount = rows.filter((row) => row.tier === "auto").length;
   const enrichedCount = rows.filter((row) => row.tier === "enriched").length;

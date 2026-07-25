@@ -183,6 +183,7 @@ export {
   filterNewOwnershipRecords,
   isDuplicateServiceRow,
   serviceRowFingerprint,
+  serviceVisitFingerprint,
   ownershipRecordFingerprint,
 } from "./import/dedupe-import-rows.js";
 export {
@@ -276,10 +277,29 @@ export {
 export { normalizeShopKey } from "./import/shop-location-keys.js";
 export {
   tierImportRows,
+  tierNewImportRows,
   type ImportTrustTier,
   type TieredImportRow,
   type TierImportSummary,
 } from "./import/tier-import-rows.js";
+export {
+  crossDayMileageRegressionByIndex,
+  shouldFlagCrossDayMileageRegression,
+  CROSS_DAY_MILEAGE_TOLERANCE_MI,
+} from "./import/cross-day-mileage-regression.js";
+export {
+  mileageCrossDayGuidance,
+  missingShopLocationGuidance,
+  guidanceSummaryLine,
+  type ImportVerifyGuidance,
+  type ImportVerifyGuidanceCode,
+} from "./import/import-verify-guidance.js";
+export {
+  acceptImportRowAsReportedMessage,
+  evaluateImportReviewVerdict,
+  type ImportReviewVerdict,
+  type ImportReviewVerdictStatus,
+} from "./import/import-review-verdict.js";
 export {
   recordImportRowVerification,
   type RecordImportRowVerificationInput,

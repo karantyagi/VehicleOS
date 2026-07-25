@@ -23,10 +23,13 @@ export const recordImportRowVerification = async (deps: {
   const taskId = crypto.randomUUID();
   const correlationId = crypto.randomUUID();
   const reason = verifyRows
-    .map(
-      (row) =>
-        `${row.service.serviceDate} · ${row.service.shop} — ${row.reasons.join(" ") || "Needs confirmation."}`,
-    )
+    .map((row) => {
+      const summary =
+        row.ownerGuidance?.map((guidance) => guidance.title).join(" ") ||
+        row.reasons.join(" ") ||
+        "Needs confirmation.";
+      return `${row.service.serviceDate} · ${row.service.shop} — ${summary}`;
+    })
     .join(" ");
 
   await eventStore.append({

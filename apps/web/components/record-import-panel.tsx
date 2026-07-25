@@ -20,14 +20,24 @@ import {
   type VehicleOsRmvImportV1,
   type VehicleOsRmvRecord,
 } from "@/lib/record-import-types";
-import { enrichVehicleOsImport, normalizeShopKey, tierImportRows, type ShopLocationHint } from "@vehicleos/domain";
+import {
+  acceptImportRowAsReportedMessage,
+  enrichVehicleOsImport,
+  evaluateImportReviewVerdict,
+  isDuplicateServiceRow,
+  normalizeShopKey,
+  tierImportRows,
+  type ShopLocationHint,
+} from "@vehicleos/domain";
 import { DOGFOOD_FIXTURES, fetchDogfoodJson } from "@/lib/extraction-status";
+import type { TimelineEntry } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
 type RecordImportPanelProps = {
   vehicleId: string;
   apiBase: string;
   ownerShopLocations?: Record<string, string>;
+  existingTimeline?: TimelineEntry[];
   disabled?: boolean;
   onError: (message: string) => void;
   onCarfaxImported: (body: {
@@ -58,7 +68,7 @@ const FLOW_STEPS = [
   "Log in to the portal and open the relevant vehicle page.",
   "Print the page → Save as PDF (Ctrl+P / Cmd+P).",
   "Upload PDF — assistant extracts and cleans rows.",
-  "Confirm the summary — review exceptions only.",
+  "Review new rows only — matches already on file are skipped.",
 ] as const;
 
 const createRowId = (): string =>
@@ -66,35 +76,51 @@ const createRowId = (): string =>
     ? crypto.randomUUID()
     : `row-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
+const stripCarfaxReviewUiFields = ({
+  id: _id,
+  included: _included,
+  tier: _tier,
+  tierReasons: _reasons,
+  ownerGuidance: _guidance,
+  ownerReviewPhase: _phase,
+  assistantVerdict: _verdict,
+  alreadyOnFile: _alreadyOnFile,
+  locationCandidates: _candidates,
+  ...service
+}: CarfaxReviewRow): VehicleOsImportService => service;
+
 const initCarfaxReviewRows = (
   services: VehicleOsImportService[],
   shopLocationHints?: Record<string, ShopLocationHint>,
+  existingTimeline?: TimelineEntry[],
 ): CarfaxReviewRow[] => {
   const summary = tierImportRows(services);
-  return summary.rows.map((tiered) => ({
-    ...tiered.service,
-    id: createRowId(),
-    included: tiered.tier !== "block",
-    tier: tiered.tier,
-    tierReasons: tiered.reasons,
-    locationCandidates: shopLocationHints?.[normalizeShopKey(tiered.service.shop)]?.candidates,
-  }));
+  return summary.rows.map((tiered) => {
+    const alreadyOnFile = existingTimeline
+      ? isDuplicateServiceRow(existingTimeline, tiered.service)
+      : false;
+
+    return {
+      ...tiered.service,
+      id: createRowId(),
+      included: alreadyOnFile ? false : tiered.tier !== "block",
+      tier: tiered.tier,
+      tierReasons: tiered.reasons,
+      ownerGuidance: tiered.ownerGuidance,
+      ownerReviewPhase: alreadyOnFile ? "done" : tiered.tier === "verify" ? "active" : "none",
+      alreadyOnFile,
+      locationCandidates: shopLocationHints?.[normalizeShopKey(tiered.service.shop)]?.candidates,
+    };
+  });
 };
 
 const reTierCarfaxRows = (rows: CarfaxReviewRow[]): CarfaxReviewRow[] => {
-  const summary = tierImportRows(
-    rows.map(
-      ({
-        id: _id,
-        included: _included,
-        tier: _tier,
-        tierReasons: _reasons,
-        locationCandidates: _candidates,
-        ...service
-      }) => service,
-    ),
-  );
+  const summary = tierImportRows(rows.map(stripCarfaxReviewUiFields));
   return rows.map((row, index) => {
+    if (row.alreadyOnFile) {
+      return { ...row, included: false, ownerReviewPhase: "done" as const };
+    }
+
     const tiered = summary.rows[index];
     if (!tiered) return row;
     const wasIncluded = row.included;
@@ -103,6 +129,7 @@ const reTierCarfaxRows = (rows: CarfaxReviewRow[]): CarfaxReviewRow[] => {
       ...row,
       tier: tiered.tier,
       tierReasons: tiered.reasons,
+      ownerGuidance: tiered.ownerGuidance,
       included: tiered.tier === "block" ? false : wasIncluded,
       locationCandidates: hadLocation ? undefined : row.locationCandidates,
     };
@@ -122,6 +149,7 @@ export function RecordImportPanel({
   vehicleId,
   apiBase,
   ownerShopLocations,
+  existingTimeline = [],
   disabled = false,
   onError,
   onCarfaxImported,
@@ -189,7 +217,7 @@ export function RecordImportPanel({
     setCarfaxPreview(enriched);
     setRmvPreview(null);
     setRmvReviewRows([]);
-    setCarfaxReviewRows(initCarfaxReviewRows(enriched.services, hints));
+    setCarfaxReviewRows(initCarfaxReviewRows(enriched.services, hints, existingTimeline));
     setJsonDraft(JSON.stringify(enriched, null, 2));
     setParseError("");
     setExtractWarnings(warnings);
@@ -232,7 +260,7 @@ export function RecordImportPanel({
       }
       applyRmvDraft(result.data);
     },
-    [activeCategory, resetPreview, ownerShopLocations, apiBase, vehicleId],
+    [activeCategory, resetPreview, ownerShopLocations, existingTimeline, apiBase, vehicleId],
   );
 
   const handleJsonFile = useCallback(
@@ -319,12 +347,7 @@ export function RecordImportPanel({
   };
 
   const carfaxTierSummary = useMemo(
-    () =>
-      tierImportRows(
-        carfaxReviewRows.map(
-          ({ id: _id, included: _included, tier: _tier, tierReasons: _reasons, ...service }) => service,
-        ),
-      ),
+    () => tierImportRows(carfaxReviewRows.map(stripCarfaxReviewUiFields)),
     [carfaxReviewRows],
   );
 
@@ -360,7 +383,7 @@ export function RecordImportPanel({
 
         const payload: VehicleOsImportV1 = {
           ...carfaxPreview,
-          services: selectedCarfaxRows.map(({ id: _id, included: _included, ...service }) => service),
+          services: selectedCarfaxRows.map(stripCarfaxReviewUiFields),
         };
 
         const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/import`, {
@@ -461,7 +484,54 @@ export function RecordImportPanel({
     activeCategory === "carfax" ? carfaxReviewRows.length : rmvReviewRows.length;
 
   const updateCarfaxRow = (id: string, patch: Partial<CarfaxReviewRow>) => {
-    setCarfaxReviewRows((rows) => reTierCarfaxRows(rows.map((row) => (row.id === id ? { ...row, ...patch } : row))));
+    setCarfaxReviewRows((rows) => {
+      const priorRow = rows.find((row) => row.id === id);
+      const priorGuidanceCodes = priorRow?.ownerGuidance.map((guidance) => guidance.code);
+
+      const merged = rows.map((row) => (row.id === id ? { ...row, ...patch } : row));
+      const reTiered = reTierCarfaxRows(merged);
+
+      return reTiered.map((row) => {
+        if (row.id !== id) return row;
+        if (row.ownerReviewPhase !== "active" && row.ownerReviewPhase !== "awaiting_confirm") {
+          return row;
+        }
+
+        const verdict = evaluateImportReviewVerdict({
+          tier: row.tier,
+          ownerGuidance: row.ownerGuidance,
+          priorGuidanceCodes,
+        });
+
+        return {
+          ...row,
+          ownerReviewPhase: verdict.status === "clear" ? "awaiting_confirm" : "active",
+          assistantVerdict: verdict.message,
+        };
+      });
+    });
+  };
+
+  const confirmCarfaxReview = (id: string) => {
+    setCarfaxReviewRows((rows) =>
+      rows.map((row) =>
+        row.id === id ? { ...row, ownerReviewPhase: "done", assistantVerdict: undefined } : row,
+      ),
+    );
+  };
+
+  const acceptCarfaxAsReported = (id: string) => {
+    setCarfaxReviewRows((rows) =>
+      rows.map((row) =>
+        row.id === id
+          ? {
+              ...row,
+              ownerReviewPhase: "done",
+              assistantVerdict: acceptImportRowAsReportedMessage(),
+            }
+          : row,
+      ),
+    );
   };
 
   const updateRmvRow = (id: string, patch: Partial<RmvReviewRow>) => {
@@ -470,7 +540,10 @@ export function RecordImportPanel({
 
   const setAllCarfaxIncluded = (included: boolean) => {
     setCarfaxReviewRows((rows) =>
-      rows.map((row) => ({ ...row, included: row.tier === "block" ? false : included })),
+      rows.map((row) => ({
+        ...row,
+        included: row.alreadyOnFile || row.tier === "block" ? false : included,
+      })),
     );
   };
 
@@ -478,7 +551,13 @@ export function RecordImportPanel({
     setCarfaxReviewRows((rows) =>
       rows.map((row) => ({
         ...row,
-        included: row.tier === "auto" || row.tier === "enriched" ? true : row.included,
+        included:
+          !row.alreadyOnFile &&
+          row.ownerReviewPhase !== "active" &&
+          row.ownerReviewPhase !== "awaiting_confirm" &&
+          row.tier !== "block"
+            ? true
+            : row.included,
       })),
     );
   };
@@ -654,6 +733,8 @@ export function RecordImportPanel({
           disabled={disabled}
           isImporting={isImporting}
           onRowChange={updateCarfaxRow}
+          onConfirmReview={confirmCarfaxReview}
+          onAcceptAsReported={acceptCarfaxAsReported}
           onIncludeAllReady={includeAllReadyCarfax}
           onExcludeAll={() => setAllCarfaxIncluded(false)}
           onConfirm={() => void commitImport()}
