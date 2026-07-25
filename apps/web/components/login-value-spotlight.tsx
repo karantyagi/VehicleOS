@@ -4,6 +4,9 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { LOGIN_SPOTLIGHT_MS, LOGIN_VALUE_CARDS } from "@/lib/login-value-cards";
 import { cn } from "@/lib/utils";
 
+/** Locks list height so the eyebrow header never shifts when rows expand. */
+const LIST_MIN_HEIGHT = "20.5rem";
+
 export function LoginValueSpotlight() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -77,7 +80,7 @@ export function LoginValueSpotlight() {
 
   return (
     <figure
-      className="login-spotlight relative mx-auto w-full max-w-[30rem] px-2 outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-4 focus-visible:ring-offset-background sm:px-4 lg:max-w-[32rem]"
+      className="login-spotlight relative mx-auto flex w-full max-w-[30rem] flex-col px-2 outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-4 focus-visible:ring-offset-background sm:px-4 lg:max-w-[32rem]"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onMouseEnter={() => setIsPaused(true)}
@@ -86,7 +89,7 @@ export function LoginValueSpotlight() {
       onBlur={handleBlur}
       aria-label="Why we built VehicleOS"
     >
-      <header className="mb-7 flex items-stretch gap-3 pl-1 sm:pl-2">
+      <header className="mb-8 flex shrink-0 items-stretch gap-3 pl-1 sm:pl-2">
         <span className="login-spotlight__eyebrow-accent w-0.5 shrink-0 rounded-full" aria-hidden />
         <div className="min-w-0 pt-0.5">
           <p className="text-[13px] font-medium uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
@@ -96,18 +99,18 @@ export function LoginValueSpotlight() {
         </div>
       </header>
 
-      <div className="relative" ref={listRef}>
+      <div className="relative shrink-0" ref={listRef} style={{ minHeight: LIST_MIN_HEIGHT }}>
         <div
-          className="login-spotlight__rail pointer-events-none absolute bottom-3 left-[0.6875rem] top-3 w-px"
+          className="login-spotlight__rail pointer-events-none absolute bottom-2 left-2 top-2 w-px"
           aria-hidden
         />
         <div
-          className="login-spotlight__rail-dot pointer-events-none absolute left-3 z-[1] h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          className="login-spotlight__rail-dot pointer-events-none absolute left-2 z-[1] h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{ top: railDotTop }}
           aria-hidden
         />
 
-        <div className="relative space-y-1.5 pl-8" role="list">
+        <div className="relative space-y-1 pl-7" role="list">
           {LOGIN_VALUE_CARDS.map((card, index) => {
             const isActive = index === activeIndex;
             return (
@@ -123,42 +126,31 @@ export function LoginValueSpotlight() {
                 onFocus={() => goToIndex(index)}
                 onClick={() => goToIndex(index)}
                 className={cn(
-                  "login-spotlight__row block w-full rounded-xl text-left transition-all duration-300 ease-out",
-                  isActive
-                    ? "login-spotlight__row--active px-4 py-4 sm:px-5 sm:py-4"
-                    : "px-3 py-3 opacity-80 hover:opacity-100",
+                  "login-spotlight__row block w-full rounded-xl px-4 py-3 text-left sm:px-5",
+                  isActive ? "login-spotlight__row--active" : "login-spotlight__row--idle",
                 )}
               >
-                <span className="flex items-baseline gap-3">
-                  <span
-                    className={cn(
-                      "w-5 shrink-0 text-sm tabular-nums transition-colors duration-300",
-                      isActive ? "text-primary/80" : "text-slate-400 dark:text-slate-500",
-                    )}
-                    aria-hidden
-                  >
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span
-                    className={cn(
-                      "font-medium tracking-tight transition-all duration-300 ease-out",
-                      isActive
-                        ? "text-2xl text-slate-700 dark:text-slate-100"
-                        : "text-lg text-slate-400 dark:text-slate-500",
-                    )}
-                  >
-                    {card.title}
-                  </span>
-                </span>
-                <p
+                <span
                   className={cn(
-                    "overflow-hidden pl-[2rem] text-[17px] leading-relaxed text-slate-500 transition-all duration-300 ease-out dark:text-slate-400",
-                    isActive ? "mt-2.5 max-h-20 opacity-100" : "max-h-0 opacity-0",
+                    "login-spotlight__title flex min-h-[2rem] items-center font-medium tracking-tight sm:min-h-[2.25rem]",
+                    isActive
+                      ? "login-spotlight__title--active text-2xl text-slate-700 dark:text-slate-100"
+                      : "login-spotlight__title--idle text-lg text-slate-400 dark:text-slate-500",
+                  )}
+                >
+                  {card.title}
+                </span>
+                <div
+                  className={cn(
+                    "login-spotlight__body grid transition-[grid-template-rows,opacity,margin] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
+                    isActive ? "mt-2 grid-rows-[1fr] opacity-100" : "mt-0 grid-rows-[0fr] opacity-0",
                   )}
                   aria-hidden={!isActive}
                 >
-                  {card.body}
-                </p>
+                  <div className="overflow-hidden">
+                    <p className="text-[17px] leading-relaxed text-slate-500 dark:text-slate-400">{card.body}</p>
+                  </div>
+                </div>
               </button>
             );
           })}

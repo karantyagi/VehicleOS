@@ -34,4 +34,4 @@ export const LOGIN_VALUE_CARDS: LoginValueCard[] = [
 ];
 
 /** Auto-advance dwell between spotlight rows (ms) */
-export const LOGIN_SPOTLIGHT_MS = 2800;
+export const LOGIN_SPOTLIGHT_MS = 2200;
