@@ -2,6 +2,7 @@
 
 import { FileJson, FileUp, Loader2, Upload } from "lucide-react";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { ExtractionStatusBanner } from "@/components/extraction-status-banner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ import {
   type VehicleOsRmvImportV1,
   type VehicleOsRmvRecord,
 } from "@/lib/record-import-types";
+import { DOGFOOD_FIXTURES, fetchDogfoodJson } from "@/lib/extraction-status";
 import { cn } from "@/lib/utils";
 
 type RecordImportPanelProps = {
@@ -89,6 +91,7 @@ export function RecordImportPanel({
   const [extractWarnings, setExtractWarnings] = useState<string[]>([]);
   const [isImporting, setIsImporting] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
+  const [isLoadingDogfood, setIsLoadingDogfood] = useState(false);
   const [pdfFileName, setPdfFileName] = useState<string | null>(null);
 
   const category = useMemo(
@@ -173,6 +176,24 @@ export function RecordImportPanel({
     },
     [loadJsonText, onError],
   );
+
+  const loadDogfoodFixture = async () => {
+    setIsLoadingDogfood(true);
+    setParseError("");
+    try {
+      if (activeCategory === "carfax") {
+        const draft = await fetchDogfoodJson<VehicleOsImportV1>(DOGFOOD_FIXTURES.carfax);
+        applyCarfaxDraft(draft, ["Dogfood CARFAX JSON loaded — review rows before confirming."]);
+        return;
+      }
+      const draft = await fetchDogfoodJson<VehicleOsRmvImportV1>(DOGFOOD_FIXTURES.rmv);
+      applyRmvDraft(draft, ["Dogfood RMV JSON loaded — review records before confirming."]);
+    } catch (error) {
+      onError(error instanceof Error ? error.message : "Could not load dogfood fixture.");
+    } finally {
+      setIsLoadingDogfood(false);
+    }
+  };
 
   const handlePdfFile = async (file: File) => {
     if (!file.name.toLowerCase().endsWith(".pdf") && file.type !== "application/pdf") {
@@ -419,12 +440,14 @@ export function RecordImportPanel({
         </ol>
       </div>
 
+      <ExtractionStatusBanner variant="llm-not-ready-pdf" />
+
       <div className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Label htmlFor="record-import-pdf" className="text-sm font-medium">
             Upload PDF
           </Label>
-          <Badge className="text-[10px] uppercase tracking-wide">Primary</Badge>
+          <Badge className="text-[10px] uppercase tracking-wide">LLM upcoming</Badge>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button type="button" variant="outline" size="sm" disabled={disabled || isExtracting} asChild>
@@ -453,21 +476,31 @@ export function RecordImportPanel({
             <span className="max-w-xs truncate text-xs text-muted-foreground">{pdfFileName}</span>
           ) : null}
         </div>
-        <p className="text-xs text-muted-foreground">
-          Rules-based extraction (v1). ENG-2 will add LLM assist with confidence scores for messy PDFs.
-        </p>
       </div>
 
       <div className="space-y-3 border-t border-border/70 pt-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Label htmlFor="record-import-json" className="text-sm font-medium">
-            Or import JSON
+            Import JSON (dogfood / testing)
           </Label>
           <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
-            Alternate
+            Recommended for dogfood
           </Badge>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            disabled={disabled || isLoadingDogfood}
+            onClick={() => void loadDogfoodFixture()}
+          >
+            {isLoadingDogfood
+              ? "Loading…"
+              : activeCategory === "carfax"
+                ? "Load dogfood CARFAX JSON"
+                : "Load dogfood RMV JSON"}
+          </Button>
           <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
             <label className="cursor-pointer">
               <FileUp className="mr-2 h-4 w-4" aria-hidden />
@@ -534,6 +567,7 @@ export function RecordImportPanel({
                 <th className="px-2 py-2 font-medium">Date</th>
                 <th className="px-2 py-2 font-medium">Mileage</th>
                 <th className="px-2 py-2 font-medium">Shop</th>
+                <th className="px-2 py-2 font-medium">Location</th>
                 <th className="px-2 py-2 font-medium">Line items</th>
               </tr>
             </thead>
@@ -583,6 +617,17 @@ export function RecordImportPanel({
                         disabled={disabled || isImporting || !row.included}
                         className="h-8 min-w-[8rem] text-xs"
                         onChange={(event) => updateCarfaxRow(row.id, { shop: event.target.value })}
+                      />
+                    </td>
+                    <td className="px-2 py-2 align-top">
+                      <Input
+                        value={row.shopLocation ?? ""}
+                        disabled={disabled || isImporting || !row.included}
+                        className="h-8 min-w-[7rem] text-xs"
+                        placeholder="City, ST"
+                        onChange={(event) =>
+                          updateCarfaxRow(row.id, { shopLocation: event.target.value || undefined })
+                        }
                       />
                     </td>
                     <td className="px-2 py-2 align-top">

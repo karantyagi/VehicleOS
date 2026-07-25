@@ -1,0 +1,243 @@
+{
+  "version": "1",
+  "source": "acura-tlx-2021-owners-manual-maintenance-ch19",
+  "exportedAt": "2026-07-25T05:00:00.000Z",
+  "manualTitle": "2021 Acura TLX 2.0T SH-AWD — Full maintenance schedule (U.S. owner's manual)",
+  "storageKey": "dogfood/karan-tlx/oem-schedule.v1.json",
+  "documentRef": {
+    "fileName": "Acura-TLX_2021_EN-US_US_d046eed6ed.pdf",
+    "pages": "P. 519–574 (Maintenance chapter); codes at P. 527",
+    "vehicleContext": {
+      "engine": "2.0L turbo",
+      "drivetrain": "SH-AWD",
+      "market": "US"
+    },
+    "coverage": {
+      "included": "All U.S. Maintenance Minder main/sub items (P. 527); Code B inspection bundle as separate rows; owner periodic checks (P. 520); under-hood owner checks (oil, coolant, battery, tires, wipers).",
+      "excluded": "3.0L-only timing belt/water pump (P. 527 *5); cosmetic cleaning (P. 569–571); emergency/flat-tire procedures; separate paper maintenance booklet referenced at P. 520; dealer-only LED light assembly service unless failed."
+    },
+    "note": "TLX scheduling is Maintenance-Minder-adaptive. Miles/months are projection baselines from OEM footnotes where stated; MM-triggered items may have no fixed interval."
+  },
+  "entries": [
+    {
+      "serviceName": "Replace engine oil (Maintenance Minder A)",
+      "maintenanceMinderCode": "A",
+      "itemType": "replace",
+      "intervalMonths": 12,
+      "sourcePage": "P. 527 — Code A (*1 change annually if no MM alert within 12 mo)"
+    },
+    {
+      "serviceName": "Replace engine oil and filter (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "replace",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 527 — Code B"
+    },
+    {
+      "serviceName": "Inspect front and rear brakes (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 527 — Code B"
+    },
+    {
+      "serviceName": "Check Temporary Tire Repair Kit bottle expiration (Maintenance Minder B, if equipped)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 527 — Code B"
+    },
+    {
+      "serviceName": "Inspect tie rod ends, steering gearbox, and boots (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 527 — Code B"
+    },
+    {
+      "serviceName": "Inspect suspension components (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 527 — Code B"
+    },
+    {
+      "serviceName": "Inspect driveshaft boots (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 527 — Code B"
+    },
+    {
+      "serviceName": "Inspect brake hoses and lines including ABS/VSA (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 527 — Code B"
+    },
+    {
+      "serviceName": "Inspect all fluid levels and condition of fluids (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 527 — Code B"
+    },
+    {
+      "serviceName": "Inspect exhaust system (Maintenance Minder B, emissions warranty item)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 527 — Code B (# emissions)"
+    },
+    {
+      "serviceName": "Inspect fuel lines and connections (Maintenance Minder B, emissions warranty item)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 527 — Code B (# emissions)"
+    },
+    {
+      "serviceName": "Rotate tires (Maintenance Minder 1)",
+      "maintenanceMinderCode": "1",
+      "itemType": "replace",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 527 — Code 1; P. 560 — rotation pattern"
+    },
+    {
+      "serviceName": "Replace engine air cleaner element (Maintenance Minder 2)",
+      "maintenanceMinderCode": "2",
+      "itemType": "replace",
+      "intervalMiles": 15000,
+      "sourcePage": "P. 527 — Code 2 (*2 every 15,000 mi in dusty conditions; MM may trigger sooner)"
+    },
+    {
+      "serviceName": "Replace dust and pollen (cabin) filter (Maintenance Minder 2)",
+      "maintenanceMinderCode": "2",
+      "itemType": "replace",
+      "intervalMiles": 15000,
+      "sourcePage": "P. 527 — Code 2 (*3 every 15,000 mi in urban soot; P. 568 — replace sooner in dusty areas)"
+    },
+    {
+      "serviceName": "Inspect drive belt (Maintenance Minder 2)",
+      "maintenanceMinderCode": "2",
+      "itemType": "inspect",
+      "intervalMiles": 15000,
+      "sourcePage": "P. 527 — Code 2; adjust valves during A/B/1/2/3 if noisy"
+    },
+    {
+      "serviceName": "Replace transmission fluid and transfer fluid (Maintenance Minder 3)",
+      "maintenanceMinderCode": "3",
+      "itemType": "replace",
+      "sourcePage": "P. 527 — Code 3; P. 546 — Acura ATF Type 2.0, dealer service"
+    },
+    {
+      "serviceName": "Replace spark plugs (Maintenance Minder 4, 2.0L)",
+      "maintenanceMinderCode": "4",
+      "itemType": "replace",
+      "intervalMiles": 105000,
+      "sourcePage": "P. 527 — Code 4 (*4 2.0 L engine models)"
+    },
+    {
+      "serviceName": "Inspect valve clearance (Maintenance Minder 4, 2.0L)",
+      "maintenanceMinderCode": "4",
+      "itemType": "inspect",
+      "intervalMiles": 105000,
+      "sourcePage": "P. 527 — Code 4 (*4 2.0 L engine models)"
+    },
+    {
+      "serviceName": "Replace engine coolant — Acura Long Life Type 2 (Maintenance Minder 5)",
+      "maintenanceMinderCode": "5",
+      "itemType": "replace",
+      "sourcePage": "P. 527 — Code 5; P. 542 — 50/50 Type 2 premix"
+    },
+    {
+      "serviceName": "Replace rear differential fluid — SH-AWD (Maintenance Minder 6)",
+      "maintenanceMinderCode": "6",
+      "itemType": "replace",
+      "intervalMiles": 15000,
+      "sourcePage": "P. 527 — Code 6 (*7 first 7,500 mi then 15,000 mi under mountainous/low-speed stress; MM otherwise)"
+    },
+    {
+      "serviceName": "Replace brake fluid (Maintenance Minder 7)",
+      "maintenanceMinderCode": "7",
+      "itemType": "replace",
+      "intervalMonths": 36,
+      "sourcePage": "P. 527 — Code 7 (*8 every 3 years if no code 7 within 36 mo)"
+    },
+    {
+      "serviceName": "Check brake fluid level (owner periodic inspection)",
+      "itemType": "check",
+      "intervalMonths": 1,
+      "sourcePage": "P. 520 — Periodic inspections; P. 547"
+    },
+    {
+      "serviceName": "Check tire pressure and tread wear (owner periodic inspection)",
+      "itemType": "check",
+      "intervalMonths": 1,
+      "sourcePage": "P. 520 — Periodic inspections; P. 553"
+    },
+    {
+      "serviceName": "Check exterior lights operation (owner periodic inspection)",
+      "itemType": "check",
+      "intervalMonths": 1,
+      "sourcePage": "P. 520 — Periodic inspections; P. 548"
+    },
+    {
+      "serviceName": "Check wiper blade condition (owner periodic inspection)",
+      "itemType": "check",
+      "intervalMonths": 6,
+      "sourcePage": "P. 520 — at least every six months; P. 550 — replace when streaking"
+    },
+    {
+      "serviceName": "Check engine oil level (every refuel)",
+      "itemType": "check",
+      "intervalMonths": 1,
+      "sourcePage": "P. 535 — recommended every refuel"
+    },
+    {
+      "serviceName": "Check engine coolant level (every refuel)",
+      "itemType": "check",
+      "intervalMonths": 1,
+      "sourcePage": "P. 542 — recommended every refuel"
+    },
+    {
+      "serviceName": "Refill windshield washer fluid (as needed)",
+      "itemType": "check",
+      "sourcePage": "P. 547 — Refilling Window Washer Fluid"
+    },
+    {
+      "serviceName": "Check battery terminals for corrosion",
+      "itemType": "check",
+      "intervalMonths": 1,
+      "sourcePage": "P. 562 — Battery"
+    },
+    {
+      "serviceName": "Tire age inspection (annual after 5 years; replace all tires after 10 years)",
+      "itemType": "inspect",
+      "intervalMonths": 12,
+      "sourcePage": "P. 558 — Tire Service Life"
+    },
+    {
+      "serviceName": "Replace remote transmitter CR2032 battery (if equipped with remote start)",
+      "itemType": "replace",
+      "intervalMonths": 42,
+      "sourcePage": "P. 567 — every 3–4 years"
+    },
+    {
+      "serviceName": "Turbo engine — follow Maintenance Minder for oil changes (do not rev cold)",
+      "itemType": "inspect",
+      "sourcePage": "P. 518–519 — Turbo Engine Vehicle; oil/filter per MM"
+    }
+  ]
+}

@@ -41,6 +41,7 @@ export const applyEvent = (
       const entry: ServiceTimelineEntry = {
         serviceId: event.payload.serviceId,
         shop: event.payload.shop,
+        shopLocation: event.payload.shopLocation,
         serviceDate: event.payload.serviceDate,
         mileage: event.payload.mileage,
         lineItems: event.payload.lineItems,
@@ -54,6 +55,37 @@ export const applyEvent = (
         vehicleId: event.payload.vehicleId,
         currentMileage: Math.max(state.currentMileage, event.payload.mileage),
         timeline: [...state.timeline, entry],
+      };
+    }
+
+    case EVENT_TYPES.SERVICE_UPDATED: {
+      const { serviceId, ...patch } = event.payload;
+      const nextTimeline = state.timeline.map((entry) => {
+        if (entry.serviceId !== serviceId) return entry;
+        return {
+          ...entry,
+          ...(patch.shop !== undefined ? { shop: patch.shop } : {}),
+          ...(patch.shopLocation !== undefined
+            ? { shopLocation: patch.shopLocation ?? undefined }
+            : {}),
+          ...(patch.serviceDate !== undefined ? { serviceDate: patch.serviceDate } : {}),
+          ...(patch.mileage !== undefined ? { mileage: patch.mileage } : {}),
+          ...(patch.lineItems !== undefined ? { lineItems: patch.lineItems } : {}),
+          ...(patch.total !== undefined ? { total: patch.total } : {}),
+        };
+      });
+
+      const updatedEntry = nextTimeline.find((entry) => entry.serviceId === serviceId);
+      const nextMileage =
+        typeof updatedEntry?.mileage === "number"
+          ? Math.max(state.currentMileage, updatedEntry.mileage)
+          : state.currentMileage;
+
+      return {
+        ...state,
+        vehicleId: event.payload.vehicleId,
+        currentMileage: nextMileage,
+        timeline: nextTimeline,
       };
     }
 

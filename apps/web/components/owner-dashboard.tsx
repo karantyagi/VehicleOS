@@ -17,6 +17,7 @@ import { isOwnerSetupComplete } from "@/lib/setup-completion";
 import { OnboardingWizard, type OnboardingVehicle } from "./onboarding-wizard";
 import { SetupDriverGate } from "./setup-driver-gate";
 import { ReceiptCapture, type UploadedReceipt } from "./receipt-capture";
+import { ExtractionStatusBanner } from "@/components/extraction-status-banner";
 import { QuoteAnalysisPanel, type QuoteAnalysisView } from "./quote-analysis-panel";
 import { EvidenceVaultConsole } from "./evidence-vault-console";
 import type { EvidenceVaultItem } from "./evidence-vault-panel";
@@ -32,6 +33,7 @@ import { OwnerServiceNotePanel } from "./owner-service-note-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 import { useVehicleConsole } from "@/lib/vehicle-console-context";
 import { RecordImportPanel } from "./record-import-panel";
+import { ImportHistoryNudge } from "./import-history-nudge";
 import { VerificationMaturityPanel } from "./verification-maturity-panel";
 import type {
   MaintenanceScheduleView,
@@ -46,12 +48,12 @@ import type {
 
 type Vehicle = OnboardingVehicle;
 
-const receiptForm = {
-  shop: "Jiffy Lube",
-  serviceDate: "2026-01-12",
-  mileage: 41_800,
-  lineItems: "Oil change (synthetic)\nFilter replaced",
-  total: "$67.42",
+const emptyReceiptForm = {
+  shop: "",
+  serviceDate: "",
+  mileage: 0,
+  lineItems: "",
+  total: "",
 };
 
 export function OwnerDashboard() {
@@ -71,8 +73,9 @@ export function OwnerDashboard() {
   const [verifications, setVerifications] = useState<QueueItem[]>([]);
   const [isBusy, setIsBusy] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [form, setForm] = useState(receiptForm);
+  const [form, setForm] = useState(emptyReceiptForm);
   const [uploadedReceipt, setUploadedReceipt] = useState<UploadedReceipt | null>(null);
+  const [receiptNeedsManualEntry, setReceiptNeedsManualEntry] = useState(false);
   const [captureError, setCaptureError] = useState("");
   const [quoteAnalyses, setQuoteAnalyses] = useState<QuoteAnalysisView[]>([]);
   const [evidenceVault, setEvidenceVault] = useState<EvidenceVaultItem[]>([]);
@@ -231,7 +234,7 @@ export function OwnerDashboard() {
     setVehicle(created);
     setOwnerSetupComplete(true);
     setForm((current) => ({ ...current, mileage: created.currentMileage }));
-    feedback("Setup complete. Upload a receipt under Receipt intake to run the golden path.");
+    feedback("Setup complete. Import history anytime from the sidebar, or hand off receipts under Receipt intake.");
     await loadVehicleState(created);
   };
 
@@ -262,24 +265,59 @@ export function OwnerDashboard() {
         timeline: TimelineEntry[];
         nowQueue: QueueItem[];
         conflict?: boolean;
+        duplicateSkipped?: boolean;
         error?: string;
       };
       if (!response.ok && response.status !== 409) throw new Error(body.error ?? "receipt failed");
       setTimeline(body.timeline);
       applyQueueState(body);
-      feedback(
-        body.conflict
-          ? "Conflict detected — check Owner verification in the sidebar."
-          : "Service recorded — check Reminders for your next action.",
-      );
+      if (body.conflict) {
+        feedback("Conflict detected — check Owner verification in the sidebar.");
+      } else if (body.duplicateSkipped) {
+        feedback(
+          "This service visit is already on file (same date, mileage, and shop). Receipt saved to Evidence vault — no duplicate row added.",
+        );
+      } else {
+        feedback("Service recorded — check Reminders for your next action.");
+      }
       setUploadedReceipt(null);
       setCaptureError("");
+      setReceiptNeedsManualEntry(false);
+      setForm((current) => ({ ...emptyReceiptForm, mileage: vehicle.currentMileage }));
     } catch {
       feedback("Receipt submission failed.");
     } finally {
       toast.dismiss(loadingToast);
       setIsBusy(false);
       setPipelinePhase("idle");
+    }
+  };
+
+  const updateServiceRecord = async (serviceId: string, patch: Partial<TimelineEntry>) => {
+    if (!vehicle) return;
+    setIsBusy(true);
+    try {
+      const response = await fetch(`${apiBase}/api/vehicles/${vehicle.id}/services/${serviceId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      });
+      const body = (await response.json()) as {
+        timeline?: TimelineEntry[];
+        currentMileage?: number;
+        error?: string;
+      };
+      if (!response.ok) throw new Error(body.error ?? "Could not update service record.");
+      if (body.timeline) setTimeline(body.timeline);
+      if (typeof body.currentMileage === "number") {
+        setVehicle((current) => (current ? { ...current, currentMileage: body.currentMileage! } : current));
+      }
+      feedback(isDeveloper ? "Service record updated." : "Service history updated.");
+    } catch (error) {
+      feedback(error instanceof Error ? error.message : "Could not update service record.");
+      throw error;
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -437,6 +475,14 @@ export function OwnerDashboard() {
         Viewing {sectionMeta.label} section
       </p>
 
+      {activeSection === "reminders" && timeline.length === 0 ? (
+        <ImportHistoryNudge
+          vehicleId={vehicle.id}
+          timelineEmpty={timeline.length === 0}
+          onImport={() => setActiveSection("imports")}
+        />
+      ) : null}
+
       {activeSection === "reminders" ? (
         <PanelCard
           hideHeader={!isDeveloper}
@@ -493,14 +539,17 @@ export function OwnerDashboard() {
             ownerSimple={!isDeveloper}
             disabled={isBusy}
             onOpenEvidence={openEvidence}
+            onUpdateService={updateServiceRecord}
+            requireEditConfirmation={!isDeveloper}
             onGoToImport={() => setActiveSection("imports")}
           />
         </PanelCard>
       ) : null}
 
-      {isDeveloper && activeSection === "imports" ? (
+      {activeSection === "imports" ? (
         <PanelCard
-          title="Record import"
+          hideHeader={!isDeveloper}
+          title="Import history"
           description="Upload portal PDFs or JSON — CARFAX service history and RMV/DMV ownership."
         >
           <RecordImportPanel
@@ -552,7 +601,7 @@ export function OwnerDashboard() {
       {activeSection === "receipts" ? (
         isDeveloper ? (
         <PanelCard
-          title="Receipt intake"
+          title="Upload receipt"
           description="Upload, confirm details, and run the service loop."
           variant="inset"
         >
@@ -560,15 +609,29 @@ export function OwnerDashboard() {
             vehicleId={vehicle.id}
             apiBase={apiBase}
             disabled={isBusy}
-            onUploaded={setUploadedReceipt}
+            onUploaded={(upload) => {
+              setUploadedReceipt(upload);
+              if (upload) {
+                setReceiptNeedsManualEntry(true);
+                setForm((current) => ({
+                  ...emptyReceiptForm,
+                  mileage: vehicle.currentMileage || current.mileage,
+                }));
+              } else {
+                setReceiptNeedsManualEntry(false);
+              }
+            }}
             onError={(message) => {
               setCaptureError(message);
               notify(message, "error");
             }}
           />
           {captureError ? <p className="text-sm text-destructive">{captureError}</p> : null}
+          {receiptNeedsManualEntry ? <ExtractionStatusBanner variant="llm-not-ready-manual" /> : null}
           <div className="surface-panel space-y-4 p-4">
-            <p className="text-[13px] font-medium text-foreground">Service details</p>
+            <p className="text-[13px] font-medium text-foreground">
+              Service details{receiptNeedsManualEntry ? " (manual entry required)" : ""}
+            </p>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
               <Label htmlFor="receipt-shop">Shop</Label>
@@ -582,7 +645,10 @@ export function OwnerDashboard() {
               <Label htmlFor="receipt-date">Service date</Label>
               <Input
                 id="receipt-date"
+                type="date"
+                className="tabular-nums"
                 value={form.serviceDate}
+                disabled={isBusy}
                 onChange={(event) => setForm({ ...form, serviceDate: event.target.value })}
               />
             </div>

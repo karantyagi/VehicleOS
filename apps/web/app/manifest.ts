@@ -45,7 +45,14 @@ export default function manifest(): MetadataRoute.Manifest {
         icons: [{ src: "/icons/icon.svg", sizes: "512x512", type: "image/svg+xml" }],
       },
       {
-        name: "Receipt intake",
+        name: "Import history",
+        short_name: "Import",
+        description: "Hand off CARFAX or portal PDFs",
+        url: "/?section=imports",
+        icons: [{ src: "/icons/icon.svg", sizes: "512x512", type: "image/svg+xml" }],
+      },
+      {
+        name: "Upload receipt",
         short_name: "Receipts",
         description: "Photo or PDF at the shop",
         url: "/?section=receipts",

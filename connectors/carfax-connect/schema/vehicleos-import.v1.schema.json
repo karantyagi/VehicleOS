@@ -30,6 +30,7 @@
         "required": ["shop", "serviceDate", "mileage", "lineItems", "total"],
         "properties": {
           "shop": { "type": "string" },
+          "shopLocation": { "type": "string" },
           "serviceDate": { "type": "string", "format": "date" },
           "mileage": { "type": "integer", "minimum": 0 },
           "lineItems": {

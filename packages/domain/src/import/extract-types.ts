@@ -7,6 +7,7 @@ export type ExtractFieldConfidence = Record<string, number>;
 
 export type CarfaxServiceHistoryRowExtract = {
   shop: string;
+  shopLocation?: string;
   serviceDate: string;
   mileage: number;
   lineItems: string[];

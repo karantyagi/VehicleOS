@@ -8,10 +8,31 @@ Strategy doc: [`creator-playbook-proc-0.md`](../../../../workspace/strategy/crea
 | File | Purpose |
 |------|---------|
 | `owner-profile.v1.json` | Vehicle record + driving profile + `OwnerContextMemory` |
+| `oem-schedule.v1.json` | OEM **Maintenance Minder** intervals from 2021 TLX owner's manual (P. 527) |
+| `rmv-records.v1.json` | RMV/DMV ownership records (JSON dogfood) |
 | `load-seed.ts` | Programmatic load (profile + CARFAX history + schedule refresh) |
-| `../../../connectors/carfax-connect/examples/tlx-carfax-history.v1.json` | Service history (28 rows) |
+| `../../../connectors/carfax-connect/examples/tlx-carfax-history.v1.json` | Service history source (also copied to web public) |
+| `../../../apps/web/public/dogfood/karan-tlx/*.v1.json` | Hosted-app **Load dogfood JSON** buttons |
 
-## Load locally
+**OEM source PDF (local):** `~/Downloads/Acura-TLX_2021_EN-US_US_d046eed6ed.pdf` — 653 pp, Maintenance Minder at P. 523–527. Not committed to repo (21 MB); `oem-schedule.v1.json` is the extracted dogfood fixture.
+
+## Hosted app — JSON dogfood (recommended)
+
+Sign in at `app.vehicleos.app`, complete onboarding from `owner-profile.v1.json`, then:
+
+| Step | Section | Action |
+|------|---------|--------|
+| 1 | **Record import → CARFAX** | **Load dogfood CARFAX JSON** → review → confirm |
+| 2 | **Record import → RMV** | **Load dogfood RMV JSON** → review → confirm |
+| 3 | **Manual & OEM** | **Load dogfood OEM JSON** → review → **Confirm schedule** |
+
+Or paste/upload the `.v1.json` files from this folder (or `public/dogfood/karan-tlx/`).
+
+**LLM extraction is not live** — PDF upload paths show “not yet initialized”; JSON is the dogfood path until ENG-2 / ENG-6 ship.
+
+**Upcoming:** OEM manual via internal search agent (no PDF upload required).
+
+## Load locally (CLI)
 
 From repo root:
 
@@ -24,14 +45,6 @@ DATABASE_URL="postgresql://..." pnpm dogfood:load-karan-tlx
 ```
 
 Uses dev user `00000000-0000-4000-8000-000000000001` unless `DOGFOOD_USER_ID` is set.
-
-## Load on hosted app (manual — no server script)
-
-1. Sign in at `app.vehicleos.app`.
-2. **Onboarding** — enter profile fields from `owner-profile.v1.json` (VIN, mileage 58819, aggressive, owned since Mar 2021).
-3. **Record import** → CARFAX → upload `tlx-carfax-history.v1.json` → confirm.
-
-Re-import skips duplicate rows automatically.
 
 ## Validate CARFAX JSON
 

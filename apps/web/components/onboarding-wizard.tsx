@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { DrivingStyleFields } from "@/components/driving-style-fields";
 import { FormActions, FormField } from "@/components/form-field";
+import { RecordImportPanel } from "@/components/record-import-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,7 @@ import {
   parseStatedMilesPerYear,
   type DriverHabitsDraft,
 } from "@/lib/driver-habits";
+import { notify } from "@/lib/notify";
 import { cn } from "@/lib/utils";
 
 export type OnboardingVehicle = {
@@ -51,7 +53,7 @@ const defaultForm: VehicleForm = {
   ownedSince: "",
 };
 
-const steps = ["welcome", "car", "driver", "review"] as const;
+const steps = ["welcome", "car", "driver", "history"] as const;
 type WizardStep = (typeof steps)[number];
 
 const stepIndex = (step: WizardStep) => steps.indexOf(step);
@@ -60,7 +62,7 @@ const progressForStep = (step: WizardStep): number => {
   if (step === "welcome") return 0;
   if (step === "car") return 25;
   if (step === "driver") return 55;
-  return 100;
+  return 85;
 };
 
 export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
@@ -72,25 +74,11 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     statedMilesPerYear: null,
   });
   const [milesInput, setMilesInput] = useState("");
+  const [createdVehicle, setCreatedVehicle] = useState<OnboardingVehicle | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState("");
 
-  const vehicleLabel = useMemo(
-    () =>
-      `${form.year} ${form.make} ${form.model}${form.trim ? ` ${form.trim}` : ""} · ${form.currentMileage.toLocaleString()} mi`,
-    [form],
-  );
-
-  const drivingStyleLabel = useMemo(() => {
-    const labels: Record<DriverHabitsDraft["drivingStyle"], string> = {
-      economical: "Economical",
-      casual: "Casual",
-      aggressive: "Aggressive",
-    };
-    return labels[driverDraft.drivingStyle];
-  }, [driverDraft.drivingStyle]);
-
-  const createVehicle = async () => {
+  const createVehicle = async (): Promise<OnboardingVehicle | null> => {
     setIsBusy(true);
     setError("");
 
@@ -98,7 +86,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     if (parsedMiles === "invalid") {
       setError("Enter annual mileage between 1,000 and 80,000.");
       setIsBusy(false);
-      return;
+      return null;
     }
 
     try {
@@ -121,21 +109,33 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
       if (!response.ok) throw new Error("Could not create vehicle");
 
       const body = (await response.json()) as { vehicle: OnboardingVehicle };
-      onComplete(body.vehicle);
+      setCreatedVehicle(body.vehicle);
+      return body.vehicle;
     } catch {
       setError("Could not save your vehicle. Check your connection and try again.");
+      return null;
     } finally {
       setIsBusy(false);
     }
   };
 
+  const continueFromDriver = async () => {
+    const vehicle = await createVehicle();
+    if (vehicle) setStep("history");
+  };
+
+  const finishSetup = (vehicle: OnboardingVehicle) => {
+    onComplete(vehicle);
+  };
+
   const goBack = () => {
-    if (step === "review") setStep("driver");
+    if (step === "history") setStep("driver");
     else if (step === "driver") setStep("car");
     else if (step === "car") setStep("welcome");
   };
 
   const progress = progressForStep(step);
+  const setupStepCount = steps.length - 1;
 
   return (
     <Card className="overflow-hidden border-border/80 shadow-md">
@@ -152,7 +152,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           </div>
         ) : (
           <p className="text-xs font-medium uppercase tracking-wide text-primary">
-            Step {stepIndex(step)} of {steps.length - 1}
+            Step {stepIndex(step)} of {setupStepCount}
           </p>
         )}
         <CardTitle className={cn(step === "welcome" && "text-2xl")}>
@@ -162,16 +162,16 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               ? "Vehicle record"
               : step === "driver"
                 ? "Driving profile"
-                : "Review and finish setup"}
+                : "Import history"}
         </CardTitle>
         <CardDescription className={cn(step === "welcome" && "max-w-md")}>
           {step === "welcome"
-            ? "Two quick steps — vehicle record and driving profile — then your assistant workspace unlocks."
+            ? "Three quick steps — vehicle record, driving profile, and optional history — then your assistant workspace unlocks."
             : step === "car"
               ? "We use this to project calendar reminders — the assistant handles mileage math."
               : step === "driver"
                 ? "Driving style shapes preemptive nudges. Annual miles fine-tunes Schedule dates."
-                : "Confirm everything looks right, then open your assistant workspace."}
+                : "Optional — hand off CARFAX or portal PDFs so reminders start from your actual service history."}
         </CardDescription>
       </CardHeader>
 
@@ -185,7 +185,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               {[
                 ["01", "Vehicle record"],
                 ["02", "Driving profile"],
-                ["03", "See what's due"],
+                ["03", "Import history (optional)"],
               ].map(([num, label]) => (
                 <li key={num} className="rounded-lg border border-border bg-muted/30 px-3 py-3 text-sm">
                   <span className="font-mono text-xs text-primary">{num}</span>
@@ -273,35 +273,34 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           />
         ) : null}
 
-        {step === "review" ? (
-          <dl className="space-y-3 rounded-lg border border-border bg-muted/20 p-4 text-sm">
-            <div>
-              <dt className="text-muted-foreground">Vehicle</dt>
-              <dd className="font-medium">{vehicleLabel}</dd>
-            </div>
-            {form.vin.trim() ? (
-              <div>
-                <dt className="text-muted-foreground">VIN</dt>
-                <dd className="font-medium">{form.vin.trim()}</dd>
-              </div>
-            ) : null}
-            {form.ownedSince ? (
-              <div>
-                <dt className="text-muted-foreground">Owned since</dt>
-                <dd className="font-medium">{form.ownedSince}</dd>
-              </div>
-            ) : null}
-            <div>
-              <dt className="text-muted-foreground">Driving style</dt>
-              <dd className="font-medium">{drivingStyleLabel}</dd>
-            </div>
-            {milesInput.trim() ? (
-              <div>
-                <dt className="text-muted-foreground">Annual miles</dt>
-                <dd className="font-medium">{Number(milesInput).toLocaleString()} mi/year</dd>
-              </div>
-            ) : null}
-          </dl>
+        {step === "history" && createdVehicle ? (
+          <RecordImportPanel
+            vehicleId={createdVehicle.id}
+            apiBase={apiBase}
+            disabled={isBusy}
+            onError={(message) => notify(message, "error")}
+            onCarfaxImported={(body) => {
+              const skipped = body.skippedCount ?? 0;
+              if (body.importedCount === 0 && skipped > 0) {
+                notify(`All ${skipped} row(s) already on your timeline — nothing new imported.`, "success");
+              } else if (skipped > 0) {
+                notify(
+                  `${body.importedCount} service row(s) imported (${skipped} duplicate(s) skipped).`,
+                  "success",
+                );
+              } else {
+                notify(`${body.importedCount} service row(s) imported.`, "success");
+              }
+            }}
+            onRmvImported={(body) => {
+              const skipped = body.skippedCount ?? 0;
+              if (body.importedCount === 0 && skipped > 0) {
+                notify(`All ${skipped} ownership record(s) already on file.`, "success");
+              } else {
+                notify(`${body.importedCount} ownership record(s) imported.`, "success");
+              }
+            }}
+          />
         ) : null}
 
         {error ? <p className="text-sm text-destructive">{error}</p> : null}
@@ -321,14 +320,19 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               </Button>
             ) : null}
             {step === "driver" ? (
-              <Button type="button" onClick={() => setStep("review")}>
-                Continue
+              <Button type="button" disabled={isBusy} onClick={() => void continueFromDriver()}>
+                {isBusy ? "Saving…" : "Continue"}
               </Button>
             ) : null}
-            {step === "review" ? (
-              <Button type="button" disabled={isBusy} onClick={() => void createVehicle()}>
-                {isBusy ? "Saving…" : "Finish setup"}
-              </Button>
+            {step === "history" && createdVehicle ? (
+              <>
+                <Button type="button" variant="outline" disabled={isBusy} onClick={() => finishSetup(createdVehicle)}>
+                  Skip for now
+                </Button>
+                <Button type="button" disabled={isBusy} onClick={() => finishSetup(createdVehicle)}>
+                  Open assistant workspace
+                </Button>
+              </>
             ) : null}
           </FormActions>
         ) : null}

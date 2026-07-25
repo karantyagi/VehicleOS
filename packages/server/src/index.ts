@@ -20,6 +20,7 @@ export { refreshSeasonalPrompts } from "./http/seasonal-handlers.js";
 export { confirmManualSchedule, previewManualSchedule } from "./http/manual-handlers.js";
 export { submitOwnerServiceNote } from "./http/note-handlers.js";
 export { submitVehicleOsImport, submitVehicleOsRmvImport, extractRecordImportPdf } from "./http/import-handlers.js";
+export { updateVehicleService } from "./http/service-handlers.js";
 export { refreshNowQueue } from "./http/now-handlers.js";
 export { InMemoryVehicleRepository } from "./repositories/in-memory-vehicle-repository.js";
 export type { VehicleRepositoryLike } from "./types/repositories.js";

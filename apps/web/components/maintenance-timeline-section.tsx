@@ -19,6 +19,8 @@ type MaintenanceTimelineSectionProps = {
   onTabChange?: (tab: ServiceHistoryTab) => void;
   disabled?: boolean;
   onOpenEvidence?: (documentId: string) => void;
+  onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  requireEditConfirmation?: boolean;
   onGoToImport?: () => void;
   historyOnly?: boolean;
   ownerSimple?: boolean;
@@ -41,6 +43,8 @@ export function MaintenanceTimelineSection({
   onTabChange,
   disabled = false,
   onOpenEvidence,
+  onUpdateService,
+  requireEditConfirmation = false,
   onGoToImport,
   historyOnly = false,
   ownerSimple = false,
@@ -63,6 +67,8 @@ export function MaintenanceTimelineSection({
           entries={timeline}
           disabled={disabled}
           onOpenEvidence={onOpenEvidence}
+          onUpdateService={onUpdateService}
+          requireEditConfirmation={requireEditConfirmation}
           ownerSimple={ownerSimple}
         />
       ) : (
@@ -101,6 +107,8 @@ export function MaintenanceTimelineSection({
               entries={timeline}
               disabled={disabled}
               onOpenEvidence={onOpenEvidence}
+              onUpdateService={onUpdateService}
+              requireEditConfirmation={requireEditConfirmation}
               ownerSimple={ownerSimple}
             />
           ) : null}

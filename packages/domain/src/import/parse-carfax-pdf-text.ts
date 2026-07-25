@@ -1,5 +1,6 @@
 import { extractCarfaxServiceHistoryFromPdfText } from "./extract-carfax-service-history.js";
 import type { VehicleOsImportService } from "./record-vehicleos-import.js";
+import { resolveShopLocation } from "./infer-shop-location.js";
 
 export type ParseCarfaxPdfTextResult = {
   services: VehicleOsImportService[];
@@ -13,6 +14,7 @@ export const parseCarfaxPdfText = (rawText: string): ParseCarfaxPdfTextResult =>
   return {
     services: extract.serviceRows.map((row) => ({
       shop: row.shop,
+      shopLocation: resolveShopLocation({ shop: row.shop, shopLocation: row.shopLocation }),
       serviceDate: row.serviceDate,
       mileage: row.mileage,
       lineItems: row.lineItems,

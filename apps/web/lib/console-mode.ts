@@ -5,15 +5,9 @@ export type ConsoleMode = "owner" | "developer";
 export const CONSOLE_MODE_STORAGE_KEY = "vehicleos:console-mode";
 
 /** Owner peek — aligned with assistant-product-model.md console map. */
-export const OWNER_MODE_SECTIONS: AppSection[] = ["reminders", "now", "timeline", "receipts"];
+export const OWNER_MODE_SECTIONS: AppSection[] = ["reminders", "now", "timeline", "imports", "receipts"];
 
-export const DEVELOPER_ONLY_SECTIONS: AppSection[] = [
-  "imports",
-  "evidence",
-  "context",
-  "notes",
-  "quotes",
-];
+export const DEVELOPER_ONLY_SECTIONS: AppSection[] = ["evidence", "context", "notes", "quotes"];
 
 export const isDeveloperOnlySection = (section: AppSection): boolean =>
   DEVELOPER_ONLY_SECTIONS.includes(section);

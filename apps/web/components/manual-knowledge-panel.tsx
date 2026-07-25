@@ -1,11 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { FileUp } from "lucide-react";
+import { useState } from "react";
+import { ExtractionStatusBanner } from "@/components/extraction-status-banner";
 import { FileDropzone } from "@/components/file-dropzone";
 import { FormField } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DOGFOOD_FIXTURES, fetchDogfoodJson } from "@/lib/extraction-status";
+import {
+  parseManualScheduleImportJson,
+  type ManualScheduleImportV1,
+} from "@/lib/manual-schedule-import-types";
 import {
   MANUAL_UPLOAD_DROPZONE_HINT,
   MANUAL_UPLOAD_GUIDANCE,
@@ -70,12 +79,52 @@ export function ManualKnowledgePanel({
   const [fileName, setFileName] = useState("");
   const [manualTitle, setManualTitle] = useState("");
   const [extractionNote, setExtractionNote] = useState("");
+  const [jsonDraft, setJsonDraft] = useState("");
+  const [parseError, setParseError] = useState("");
   const [rows, setRows] = useState<ScheduleRow[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [isLoadingDogfood, setIsLoadingDogfood] = useState(false);
 
-  const loadPreview = async () => {
+  const applyManualDraft = (draft: ManualScheduleImportV1, note: string) => {
+    setManualTitle(draft.manualTitle);
+    setRows(draft.entries);
+    setStorageKey(draft.storageKey ?? `dogfood/manual-schedule.v1.json`);
+    setFileName(draft.storageKey ?? "manual-schedule.v1.json");
+    setExtractionNote(note);
+    setJsonDraft(JSON.stringify(draft, null, 2));
+    setParseError("");
+  };
+
+  const loadJsonText = (raw: string) => {
+    setJsonDraft(raw);
+    if (!raw.trim()) {
+      setParseError("");
+      return;
+    }
+    const result = parseManualScheduleImportJson(raw);
+    if (!result.ok) {
+      setParseError(result.error);
+      return;
+    }
+    applyManualDraft(result.data, "Loaded from JSON — review intervals before confirming.");
+  };
+
+  const loadDogfoodFixture = async () => {
+    setIsLoadingDogfood(true);
+    onError("");
+    try {
+      const draft = await fetchDogfoodJson<ManualScheduleImportV1>(DOGFOOD_FIXTURES.oemSchedule);
+      applyManualDraft(draft, "Dogfood OEM schedule loaded — review intervals before confirming.");
+    } catch (error) {
+      onError(error instanceof Error ? error.message : "Could not load dogfood fixture.");
+    } finally {
+      setIsLoadingDogfood(false);
+    }
+  };
+
+  const loadStubPreview = async () => {
     setIsPreviewing(true);
     onError("");
     try {
@@ -100,17 +149,13 @@ export function ManualKnowledgePanel({
       setManualTitle(body.draft.manualTitle);
       setExtractionNote(body.draft.extractionNote);
       setRows(body.draft.entries);
+      setParseError("");
     } catch (error) {
       onError(error instanceof Error ? error.message : "Preview failed.");
     } finally {
       setIsPreviewing(false);
     }
   };
-
-  useEffect(() => {
-    void loadPreview();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- refresh when vehicle context changes
-  }, [vehicleId, vehicle.year, vehicle.make, vehicle.model]);
 
   const uploadManual = async (file: File) => {
     setIsUploading(true);
@@ -163,6 +208,10 @@ export function ManualKnowledgePanel({
 
       setStorageKey(urlBody.storageKey);
       setFileName(file.name);
+      setExtractionNote("PDF stored — LLM parse not ready; load JSON dogfood or use stub preview, then edit rows.");
+      if (rows.length === 0) {
+        await loadStubPreview();
+      }
     } catch (error) {
       onError(error instanceof Error ? error.message : "Upload failed.");
     } finally {
@@ -172,7 +221,7 @@ export function ManualKnowledgePanel({
 
   const confirmSchedule = async () => {
     if (!storageKey) {
-      onError("Upload your OEM manual PDF first.");
+      onError("Load a JSON schedule or upload your OEM manual PDF first.");
       return;
     }
     if (rows.length === 0) {
@@ -210,27 +259,90 @@ export function ManualKnowledgePanel({
     setRows((current) => current.map((row, rowIndex) => (rowIndex === index ? { ...row, ...patch } : row)));
   };
 
+  const canConfirm = Boolean(storageKey) && rows.length > 0;
+
   return (
     <div className="space-y-4">
+      <ExtractionStatusBanner variant="upcoming-oem-search" />
+      <ExtractionStatusBanner variant="llm-not-ready-manual" />
+
       <p className="text-sm text-muted-foreground">
-        Upload your owner manual or maintenance schedule PDF. Review the intervals, then save — this becomes baseline
-        context for recommendations.
+        Baseline maintenance intervals feed the schedule engine. For dogfood testing, load the JSON fixture; production
+        will use LLM PDF parse or the upcoming search agent.
       </p>
 
-      <p className="rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-xs leading-relaxed text-muted-foreground">
-        {MANUAL_UPLOAD_GUIDANCE}
-      </p>
+      <div className="space-y-3 rounded-lg border border-border/80 bg-[hsl(var(--surface-inset))] p-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <Label htmlFor="manual-schedule-json" className="text-sm font-medium">
+            Import schedule JSON (dogfood / testing)
+          </Label>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            disabled={disabled || isLoadingDogfood}
+            onClick={() => void loadDogfoodFixture()}
+          >
+            {isLoadingDogfood ? "Loading…" : "Load dogfood OEM JSON"}
+          </Button>
+          <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
+            <label className="cursor-pointer">
+              <FileUp className="mr-2 h-4 w-4" aria-hidden />
+              Choose JSON file
+              <input
+                type="file"
+                accept="application/json,.json"
+                className="sr-only"
+                disabled={disabled}
+                onChange={async (event) => {
+                  const file = event.target.files?.[0];
+                  if (!file) return;
+                  loadJsonText(await file.text());
+                  event.target.value = "";
+                }}
+              />
+            </label>
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={disabled || isPreviewing}
+            onClick={() => void loadStubPreview()}
+          >
+            {isPreviewing ? "Loading stub…" : "Load stub preview (dev)"}
+          </Button>
+        </div>
+        <Textarea
+          id="manual-schedule-json"
+          value={jsonDraft}
+          onChange={(event) => loadJsonText(event.target.value)}
+          placeholder='{"version":"1","manualTitle":"2021 Acura TLX…","entries":[...]}'
+          rows={4}
+          disabled={disabled}
+          className="font-mono text-xs"
+        />
+        {parseError ? <p className="text-sm text-destructive">{parseError}</p> : null}
+      </div>
 
-      <FileDropzone
-        label="Owner manual PDF"
-        hint={MANUAL_UPLOAD_DROPZONE_HINT}
-        accept="application/pdf"
-        disabled={disabled || isConfirming}
-        busy={isUploading}
-        onFile={(file) => void uploadManual(file)}
-      />
+      <div className="space-y-3 border-t border-border/70 pt-4">
+        <p className="text-[13px] font-medium text-foreground">Or upload OEM manual PDF</p>
+        <p className="rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-xs leading-relaxed text-muted-foreground">
+          {MANUAL_UPLOAD_GUIDANCE}
+        </p>
+        <FileDropzone
+          label="Owner manual PDF"
+          hint={MANUAL_UPLOAD_DROPZONE_HINT}
+          accept="application/pdf"
+          disabled={disabled || isConfirming}
+          busy={isUploading}
+          onFile={(file) => void uploadManual(file)}
+        />
+      </div>
 
-      {fileName ? <p className="text-sm font-medium">Stored · {fileName}</p> : null}
+      {fileName ? <p className="text-sm font-medium">Source · {fileName}</p> : null}
       {extractionNote ? <p className="text-xs text-muted-foreground">{extractionNote}</p> : null}
 
       <FormField label="Manual title" htmlFor="manual-title">
@@ -294,7 +406,7 @@ export function ManualKnowledgePanel({
 
       <Button
         type="button"
-        disabled={disabled || isConfirming || isUploading || !storageKey}
+        disabled={disabled || isConfirming || isUploading || !canConfirm}
         onClick={() => void confirmSchedule()}
       >
         {isConfirming ? "Saving knowledge base…" : "Confirm schedule → feed rules engine"}

@@ -1,6 +1,7 @@
 export type TimelineEntry = {
   serviceId: string;
   shop: string;
+  shopLocation?: string;
   serviceDate: string;
   mileage: number;
   lineItems: string[];
