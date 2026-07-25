@@ -3,6 +3,7 @@
 import { Menu, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { Suspense, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
 import { CarIdentityNav } from "@/components/car-identity-nav";
 import { ConsoleKeyboardShortcuts } from "@/components/console-keyboard-shortcuts";
@@ -16,7 +17,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { VehicleContextBar } from "@/components/vehicle-context-bar";
 import { Button } from "@/components/ui/button";
 import type { SessionUser } from "@/lib/auth/types";
-import { CONSOLE_SECTIONS, useAppUiStore } from "@/lib/store/app-ui-store";
+import { useAppUiStore } from "@/lib/store/app-ui-store";
 import { cn } from "@/lib/utils";
 
 type AppShellProps = {
@@ -27,12 +28,12 @@ type AppShellProps = {
 };
 
 export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellProps) {
+  const pathname = usePathname();
   const mobileNavOpen = useAppUiStore((state) => state.mobileNavOpen);
   const setMobileNavOpen = useAppUiStore((state) => state.setMobileNavOpen);
-  const activeSection = useAppUiStore((state) => state.activeSection);
   const consoleMode = useAppUiStore((state) => state.consoleMode);
   const isDeveloper = consoleMode === "developer";
-  const isConsoleLayout = CONSOLE_SECTIONS.includes(activeSection);
+  const isAssistantWorkspace = pathname === "/";
 
   useEffect(() => {
     if (!mobileNavOpen) return;
@@ -113,7 +114,7 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
             className={cn(
               "mx-auto w-full",
               isDeveloper ? "space-y-8" : "space-y-6",
-              isConsoleLayout ? "max-w-6xl" : "max-w-3xl",
+              isAssistantWorkspace ? "max-w-6xl" : "max-w-3xl",
             )}
           >
             <VehicleContextBar />
