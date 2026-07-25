@@ -1,6 +1,7 @@
 export type ExtractionStatusVariant =
   | "llm-not-ready-manual"
   | "llm-not-ready-pdf"
+  | "llm-not-ready-receipt"
   | "upcoming-oem-search";
 
 export type ExtractionStatusContent = {
@@ -16,6 +17,10 @@ export const EXTRACTION_STATUS: Record<ExtractionStatusVariant, ExtractionStatus
   "llm-not-ready-pdf": {
     title: "LLM extraction not yet initialized",
     body: "PDF parsing uses rules-only extraction today (messy layouts may miss rows). For dogfood testing, load the JSON fixture below. LLM-assisted PDF extract is an upcoming feature.",
+  },
+  "llm-not-ready-receipt": {
+    title: "LLM extraction not yet initialized",
+    body: "Your receipt is stored in the evidence vault. Structured parsing (shop, date, line items) is manual today — full LLM extraction ships with ENG-2. Hand off now; the assistant will ask you to verify fields when parsing is ready.",
   },
   "upcoming-oem-search": {
     title: "Upcoming — assistant finds your OEM manual",

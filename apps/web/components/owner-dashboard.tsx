@@ -692,7 +692,10 @@ export function OwnerDashboard() {
           </div>
         </PanelCard>
         ) : (
-          <PanelCard hideHeader>
+          <PanelCard
+            title="Receipt intake"
+            description="Snap a photo after service — optimized for mobile. Stays on web for verify and testing until native capture ships (M-4)."
+          >
             <OwnerReceiptHandoff
               vehicleId={vehicle.id}
               apiBase={apiBase}
