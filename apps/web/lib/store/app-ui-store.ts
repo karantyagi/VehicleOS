@@ -33,12 +33,12 @@ export const APP_SECTIONS: { id: AppSection; label: string; description: string 
   },
   {
     id: "imports",
-    label: "Record import",
-    description: "CARFAX, RMV, and other owner PDFs — extract and review",
+    label: "Import history",
+    description: "CARFAX, RMV, and portal PDFs — hand off past records for review",
   },
   {
     id: "receipts",
-    label: "Receipt intake",
+    label: "Upload receipt",
     description: "Photos and PDFs handed to the assistant",
   },
   {
@@ -64,8 +64,6 @@ export const APP_SECTIONS: { id: AppSection; label: string; description: string 
 ];
 
 export const ASSISTANT_WORKSPACE_GROUP_LABEL = "Assistant workspace";
-
-export const CONSOLE_SECTIONS: AppSection[] = ["reminders", "now", "timeline", "evidence"];
 
 export const SECTION_SHORTCUTS: Record<AppSection, string> = {
   reminders: "1",
