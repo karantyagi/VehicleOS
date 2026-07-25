@@ -1,6 +1,7 @@
 import type { CarfaxServiceHistoryExtractV1, VehicleImportDefaults } from "./extract-types.js";
 import type { VehicleOsImportService } from "./record-vehicleos-import.js";
 import { resolveShopLocation } from "./infer-shop-location.js";
+import { normalizeCarfaxLineItems } from "./normalize-carfax-line-items.js";
 
 export type VehicleOsImportV1 = {
   version: "1";
@@ -34,7 +35,7 @@ export const mapCarfaxExtractToImport = (input: MapCarfaxExtractInput): VehicleO
       shopLocation: resolveShopLocation({ shop: row.shop, shopLocation: row.shopLocation }),
       serviceDate: row.serviceDate,
       mileage: row.mileage,
-      lineItems: row.lineItems,
+      lineItems: normalizeCarfaxLineItems(row.lineItems),
       total: row.total,
     })),
   };

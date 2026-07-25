@@ -1,5 +1,6 @@
 import type { VehicleOsImportService, VehicleOsRmvRecord } from "@vehicleos/domain";
 import {
+  enrichVehicleOsImportService,
   extractCarfaxServiceHistoryFromPdfText,
   extractMyRmvMaVehiclePageFromPdfText,
   mapCarfaxExtractToImport,
@@ -64,7 +65,7 @@ export const submitVehicleOsImport = async (
   const importResult = await services.goldenPath.importVehicleOsHistory({
     vehicleId,
     importSource: body.source?.trim() || "vehicleos-import",
-    services: importServices,
+    services: importServices.map((service) => enrichVehicleOsImportService(service)),
   });
 
   const nextMileage = body.vehicle?.currentMileage;

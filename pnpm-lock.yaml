@@ -91,6 +91,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.49.8
         version: 2.110.7
+      '@vehicleos/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
       '@vehicleos/server':
         specifier: workspace:*
         version: link:../../packages/server

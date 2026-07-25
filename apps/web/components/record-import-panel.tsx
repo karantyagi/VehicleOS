@@ -19,6 +19,7 @@ import {
   type VehicleOsRmvImportV1,
   type VehicleOsRmvRecord,
 } from "@/lib/record-import-types";
+import { enrichVehicleOsImport } from "@vehicleos/domain";
 import { DOGFOOD_FIXTURES, fetchDogfoodJson } from "@/lib/extraction-status";
 import { cn } from "@/lib/utils";
 
@@ -118,11 +119,12 @@ export function RecordImportPanel({
   };
 
   const applyCarfaxDraft = (draft: VehicleOsImportV1, warnings: string[] = []) => {
-    setCarfaxPreview(draft);
+    const enriched = enrichVehicleOsImport(draft);
+    setCarfaxPreview(enriched);
     setRmvPreview(null);
     setRmvReviewRows([]);
-    setCarfaxReviewRows(initCarfaxReviewRows(draft.services));
-    setJsonDraft(JSON.stringify(draft, null, 2));
+    setCarfaxReviewRows(initCarfaxReviewRows(enriched.services));
+    setJsonDraft(JSON.stringify(enriched, null, 2));
     setParseError("");
     setExtractWarnings(warnings);
   };

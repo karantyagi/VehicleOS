@@ -260,4 +260,13 @@ export {
   looksLikeShopAddressLine,
   resolveShopLocation,
 } from "./import/infer-shop-location.js";
+export {
+  isCarfaxNoiseLineItem,
+  normalizeCarfaxLineItems,
+} from "./import/normalize-carfax-line-items.js";
+export {
+  enrichVehicleOsImport,
+  enrichVehicleOsImportService,
+  type VehicleOsImportDraft,
+} from "./import/enrich-vehicleos-import.js";
 export type { KnowledgeScheduleRow } from "./events/catalog.js";
