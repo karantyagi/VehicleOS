@@ -20,7 +20,7 @@ import {
   type VehicleOsRmvImportV1,
   type VehicleOsRmvRecord,
 } from "@/lib/record-import-types";
-import { enrichVehicleOsImport, tierImportRows } from "@vehicleos/domain";
+import { enrichVehicleOsImport, normalizeShopKey, tierImportRows, type ShopLocationHint } from "@vehicleos/domain";
 import { DOGFOOD_FIXTURES, fetchDogfoodJson } from "@/lib/extraction-status";
 import { cn } from "@/lib/utils";
 
@@ -66,7 +66,10 @@ const createRowId = (): string =>
     ? crypto.randomUUID()
     : `row-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
-const initCarfaxReviewRows = (services: VehicleOsImportService[]): CarfaxReviewRow[] => {
+const initCarfaxReviewRows = (
+  services: VehicleOsImportService[],
+  shopLocationHints?: Record<string, ShopLocationHint>,
+): CarfaxReviewRow[] => {
   const summary = tierImportRows(services);
   return summary.rows.map((tiered) => ({
     ...tiered.service,
@@ -74,22 +77,34 @@ const initCarfaxReviewRows = (services: VehicleOsImportService[]): CarfaxReviewR
     included: tiered.tier !== "block",
     tier: tiered.tier,
     tierReasons: tiered.reasons,
+    locationCandidates: shopLocationHints?.[normalizeShopKey(tiered.service.shop)]?.candidates,
   }));
 };
 
 const reTierCarfaxRows = (rows: CarfaxReviewRow[]): CarfaxReviewRow[] => {
   const summary = tierImportRows(
-    rows.map(({ id: _id, included: _included, tier: _tier, tierReasons: _reasons, ...service }) => service),
+    rows.map(
+      ({
+        id: _id,
+        included: _included,
+        tier: _tier,
+        tierReasons: _reasons,
+        locationCandidates: _candidates,
+        ...service
+      }) => service,
+    ),
   );
   return rows.map((row, index) => {
     const tiered = summary.rows[index];
     if (!tiered) return row;
     const wasIncluded = row.included;
+    const hadLocation = Boolean(row.shopLocation?.trim());
     return {
       ...row,
       tier: tiered.tier,
       tierReasons: tiered.reasons,
       included: tiered.tier === "block" ? false : wasIncluded,
+      locationCandidates: hadLocation ? undefined : row.locationCandidates,
     };
   });
 };
@@ -146,8 +161,13 @@ export function RecordImportPanel({
     resetPreview();
   };
 
-  const applyCarfaxDraft = async (draft: VehicleOsImportV1, warnings: string[] = []) => {
+  const applyCarfaxDraft = async (
+    draft: VehicleOsImportV1,
+    warnings: string[] = [],
+    shopLocationHints?: Record<string, ShopLocationHint>,
+  ) => {
     let enriched = enrichVehicleOsImport(draft, { ownerShopLocations });
+    let hints = shopLocationHints;
     try {
       const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/import/enrich`, {
         method: "POST",
@@ -155,8 +175,12 @@ export function RecordImportPanel({
         body: JSON.stringify({ draft }),
       });
       if (response.ok) {
-        const body = (await response.json()) as { draft?: VehicleOsImportV1 };
+        const body = (await response.json()) as {
+          draft?: VehicleOsImportV1;
+          shopLocationHints?: Record<string, ShopLocationHint>;
+        };
         if (body.draft) enriched = body.draft;
+        if (body.shopLocationHints) hints = body.shopLocationHints;
       }
     } catch {
       // Client-side enrich fallback when server enrich is unavailable.
@@ -165,7 +189,7 @@ export function RecordImportPanel({
     setCarfaxPreview(enriched);
     setRmvPreview(null);
     setRmvReviewRows([]);
-    setCarfaxReviewRows(initCarfaxReviewRows(enriched.services));
+    setCarfaxReviewRows(initCarfaxReviewRows(enriched.services, hints));
     setJsonDraft(JSON.stringify(enriched, null, 2));
     setParseError("");
     setExtractWarnings(warnings);

@@ -8,6 +8,10 @@ import {
 import type { ShopLocationLookupPort } from "./lookup-shop-location-port.js";
 import { normalizeShopKey } from "./shop-location-keys.js";
 import { resolveShopLocationWithLookup } from "./resolve-shop-location-with-lookup.js";
+import {
+  shopLocationHintFromLookup,
+  type ShopLocationHint,
+} from "./shop-location-hints.js";
 
 const SHOPS_SKIP_LOOKUP = new Set(["self reported", "self-service (diy)", "massachusetts"]);
 
@@ -16,12 +20,28 @@ export type EnrichWithLookupOptions = EnrichVehicleOsImportOptions & {
   lookupPort?: ShopLocationLookupPort;
 };
 
+export type EnrichWithLookupResult = {
+  draft: VehicleOsImportDraft;
+  shopLocationHints: Record<string, ShopLocationHint>;
+};
+
 type LookupCache = Map<string, Awaited<ReturnType<typeof resolveShopLocationWithLookup>>>;
+
+const recordLookupHint = (
+  hints: Record<string, ShopLocationHint>,
+  shop: string,
+  lookupResult?: Awaited<ReturnType<typeof resolveShopLocationWithLookup>>,
+): void => {
+  const key = normalizeShopKey(shop);
+  const hint = shopLocationHintFromLookup(shop, lookupResult?.lookup);
+  if (hint) hints[key] = hint;
+};
 
 export const enrichVehicleOsImportServiceWithLookup = async (
   service: VehicleOsImportService,
   options?: EnrichWithLookupOptions,
   lookupCache?: LookupCache,
+  hints?: Record<string, ShopLocationHint>,
 ): Promise<VehicleOsImportService> => {
   const base = enrichVehicleOsImportService(service, {
     ownerShopLocations: options?.ownerShopLocations,
@@ -49,6 +69,8 @@ export const enrichVehicleOsImportServiceWithLookup = async (
   }
 
   const lookupResult = cache.get(cacheKey);
+  if (hints) recordLookupHint(hints, service.shop, lookupResult);
+
   if (lookupResult?.shopLocation) {
     return { ...base, shopLocation: lookupResult.shopLocation };
   }
@@ -60,14 +82,28 @@ export const enrichVehicleOsImportWithLookup = async (
   draft: VehicleOsImportDraft,
   options?: EnrichWithLookupOptions,
 ): Promise<VehicleOsImportDraft> => {
+  const result = await enrichVehicleOsImportWithLookupAndHints(draft, options);
+  return result.draft;
+};
+
+export const enrichVehicleOsImportWithLookupAndHints = async (
+  draft: VehicleOsImportDraft,
+  options?: EnrichWithLookupOptions,
+): Promise<EnrichWithLookupResult> => {
   const cache: LookupCache = new Map();
+  const shopLocationHints: Record<string, ShopLocationHint> = {};
   const services: VehicleOsImportService[] = [];
 
   for (const service of draft.services) {
-    services.push(await enrichVehicleOsImportServiceWithLookup(service, options, cache));
+    services.push(
+      await enrichVehicleOsImportServiceWithLookup(service, options, cache, shopLocationHints),
+    );
   }
 
-  return enrichVehicleOsImport({ ...draft, services }, { ownerShopLocations: options?.ownerShopLocations });
+  return {
+    draft: enrichVehicleOsImport({ ...draft, services }, { ownerShopLocations: options?.ownerShopLocations }),
+    shopLocationHints,
+  };
 };
 
 export const enrichVehicleOsImportServicesWithLookup = async (

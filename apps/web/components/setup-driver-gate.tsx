@@ -22,6 +22,7 @@ export function SetupDriverGate({ vehicleId, vehicleLabel, onComplete }: SetupDr
   const [draft, setDraft] = useState<DriverHabitsDraft>({
     drivingStyle: "casual",
     statedMilesPerYear: null,
+    primaryCity: "",
   });
   const [milesInput, setMilesInput] = useState("");
   const [isSaving, setIsSaving] = useState(false);

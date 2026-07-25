@@ -34,7 +34,7 @@ export const EXTRACTION_STATUS: Record<ExtractionStatusVariant, ExtractionStatus
   },
   "upcoming-shop-disambiguation-llm": {
     title: "LLM shop disambiguation not yet initialized",
-    body: "If Places returns multiple matches for a shop name, a future LLM step will propose the best city/state — you always confirm before we save. Until then, enter location manually on flagged rows.",
+    body: "When geocoding returns multiple matches and you need help choosing, a future LLM step may propose the best city/state — you always confirm before we save. Until then, use the location buttons on the row or type city/state manually.",
   },
 };
 

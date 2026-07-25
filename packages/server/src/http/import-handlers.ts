@@ -2,6 +2,7 @@ import type { VehicleOsImportService, VehicleOsImportDraft, VehicleOsRmvRecord }
 import {
   enrichVehicleOsImportServicesWithLookup,
   enrichVehicleOsImportWithLookup,
+  enrichVehicleOsImportWithLookupAndHints,
   extractCarfaxServiceHistoryFromPdfText,
   extractMyRmvMaVehiclePageFromPdfText,
   mapCarfaxExtractToImport,
@@ -64,9 +65,12 @@ export const enrichVehicleOsImportDraftHandler = async (
     return jsonResponse(400, { error: "draft.services is required" });
   }
 
-  const draft = await enrichVehicleOsImportWithLookup(body.draft, enrichLookupOptions(vehicle, services));
+  const { draft, shopLocationHints } = await enrichVehicleOsImportWithLookupAndHints(
+    body.draft,
+    enrichLookupOptions(vehicle, services),
+  );
 
-  return jsonResponse(200, { draft });
+  return jsonResponse(200, { draft, shopLocationHints });
 };
 
 export const submitVehicleOsImport = async (

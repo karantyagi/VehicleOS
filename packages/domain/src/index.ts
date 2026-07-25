@@ -298,10 +298,17 @@ export {
 } from "./import/resolve-shop-location-with-lookup.js";
 export {
   enrichVehicleOsImportWithLookup,
+  enrichVehicleOsImportWithLookupAndHints,
   enrichVehicleOsImportServiceWithLookup,
   enrichVehicleOsImportServicesWithLookup,
   type EnrichWithLookupOptions,
+  type EnrichWithLookupResult,
 } from "./import/enrich-vehicleos-import-with-lookup.js";
+export {
+  shopLocationHintFromLookup,
+  type ShopLocationHint,
+  type ShopLocationHintStatus,
+} from "./import/shop-location-hints.js";
 export {
   buildNominatimSearchQuery,
   buildNominatimSearchUrl,

@@ -16,6 +16,7 @@ export type CarfaxReviewRow = VehicleOsImportService & {
   included: boolean;
   tier: ImportTrustTier;
   tierReasons: string[];
+  locationCandidates?: string[];
 };
 
 type CarfaxImportReviewProps = {
@@ -163,6 +164,23 @@ function ReviewCard({
             </label>
             <label className="space-y-1 text-xs sm:col-span-2">
               <span className="font-medium text-muted-foreground">Location</span>
+              {row.locationCandidates && row.locationCandidates.length > 0 && !row.shopLocation?.trim() ? (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {row.locationCandidates.map((candidate) => (
+                    <Button
+                      key={candidate}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs"
+                      disabled={disabled || isImporting || !row.included}
+                      onClick={() => onRowChange(row.id, { shopLocation: candidate })}
+                    >
+                      {candidate}
+                    </Button>
+                  ))}
+                </div>
+              ) : null}
               <Input
                 value={row.shopLocation ?? ""}
                 disabled={disabled || isImporting || !row.included}
@@ -204,14 +222,22 @@ export function CarfaxImportReview({
   const verifyRows = sortedRows.filter((row) => row.tier === "verify");
   const readyRows = sortedRows.filter((row) => row.tier === "auto" || row.tier === "enriched");
   const blockRows = sortedRows.filter((row) => row.tier === "block");
-  const needsPlacesLookup = verifyRows.some((row) =>
-    row.tierReasons.some((reason) => reason.includes("Shop location missing")),
+  const needsLocationPick = verifyRows.some((row) => (row.locationCandidates?.length ?? 0) > 0);
+  const needsManualLocation = verifyRows.some(
+    (row) =>
+      row.tierReasons.some((reason) => reason.includes("Shop location missing")) &&
+      (row.locationCandidates?.length ?? 0) === 0,
   );
 
   return (
     <div className="space-y-4">
-      {needsPlacesLookup ? <ExtractionStatusBanner variant="upcoming-places-lookup" /> : null}
-      {needsPlacesLookup ? (
+      {needsLocationPick ? (
+        <p className="rounded-md border border-primary/20 bg-primary/5 px-3 py-2 text-xs text-muted-foreground">
+          Geocoding found more than one match for a shop — pick the correct city below.
+        </p>
+      ) : null}
+      {needsManualLocation ? <ExtractionStatusBanner variant="upcoming-places-lookup" /> : null}
+      {needsManualLocation ? (
         <ExtractionStatusBanner variant="upcoming-shop-disambiguation-llm" />
       ) : null}
       <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">

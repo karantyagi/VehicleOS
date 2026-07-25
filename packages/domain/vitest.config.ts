@@ -16,6 +16,7 @@ export default defineConfig({
         "src/import/record-import-row-verification.ts",
         "src/import/resolve-shop-location-with-lookup.ts",
         "src/import/shop-location-keys.ts",
+        "src/import/shop-location-hints.ts",
         "src/import/shop-pack.ts",
         "src/import/stub-lookup-shop-location.ts",
         "src/import/tier-import-rows.ts",

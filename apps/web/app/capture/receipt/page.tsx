@@ -1,9 +1,7 @@
 import { redirect } from "next/navigation";
-import { AppHeader } from "../../components/app-header";
-import { AppShell } from "../../components/app-shell";
-import { ReceiptCaptureWorkspace } from "../../components/receipt-capture-workspace";
-import { getSessionUser } from "../../lib/auth/session";
-import { isAuthEnabled } from "../../lib/supabase/env";
+import { ReceiptCaptureWorkspace } from "@/components/receipt-capture-workspace";
+import { getSessionUser } from "@/lib/auth/session";
+import { isAuthEnabled } from "@/lib/supabase/env";
 
 export default async function CaptureReceiptPage() {
   if (!isAuthEnabled()) {
@@ -16,12 +14,8 @@ export default async function CaptureReceiptPage() {
   }
 
   return (
-    <AppShell
-      user={user}
-      sidebarHeader={<AppHeader user={user} placement="sidebar" />}
-      mobileBar={<AppHeader user={user} placement="mobile" />}
-    >
+    <main className="container mx-auto max-w-2xl px-4 py-6">
       <ReceiptCaptureWorkspace />
-    </AppShell>
+    </main>
   );
 }

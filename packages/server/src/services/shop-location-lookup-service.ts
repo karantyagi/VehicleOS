@@ -14,6 +14,7 @@ export type ShopLocationLookupServiceOptions = {
   userAgent?: string;
   minIntervalMs?: number;
   fetchImpl?: NominatimFetch;
+  baseUrl?: string;
 };
 
 export const createShopLocationLookupService = (
@@ -36,6 +37,7 @@ export const createShopLocationLookupService = (
   const nominatim = createNominatimShopLocationLookup({
     fetch: fetchImpl,
     userAgent: options.userAgent ?? process.env.SHOP_LOOKUP_USER_AGENT ?? DEFAULT_USER_AGENT,
+    baseUrl: options.baseUrl ?? process.env.NOMINATIM_BASE_URL,
   });
 
   let chain: Promise<unknown> = Promise.resolve();
