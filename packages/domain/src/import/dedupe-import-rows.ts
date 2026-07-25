@@ -9,19 +9,25 @@ export const normalizeDedupeText = (value: string): string =>
 export const normalizeShopKey = (shop: string): string =>
   normalizeDedupeText(shop).replace(/[^\w\s]/g, "");
 
-/** Loose match — same service visit (date + odometer + shop). */
+/** Exact row — date, odometer, shop (legacy / strict). */
 export const serviceRowFingerprint = (input: {
   serviceDate: string;
   mileage: number;
   shop: string;
 }): string => `${input.serviceDate}|${input.mileage}|${normalizeShopKey(input.shop)}`;
 
+/**
+ * Same calendar visit — date + shop only.
+ * Re-import and owner edits often change mileage slightly; same visit should not duplicate.
+ */
+export const serviceVisitFingerprint = (input: { serviceDate: string; shop: string }): string =>
+  `${input.serviceDate}|${normalizeShopKey(input.shop)}`;
+
+export const timelineVisitFingerprint = (row: ServiceTimelineEntry): string =>
+  serviceVisitFingerprint({ serviceDate: row.serviceDate, shop: row.shop });
+
 export const timelineEntryFingerprint = (row: ServiceTimelineEntry): string =>
-  serviceRowFingerprint({
-    serviceDate: row.serviceDate,
-    mileage: row.mileage,
-    shop: row.shop,
-  });
+  timelineVisitFingerprint(row);
 
 export const ownershipRecordFingerprint = (input: {
   recordDate: string;
@@ -48,17 +54,19 @@ export const filterNewImportServices = (
   existingTimeline: ServiceTimelineEntry[],
   incoming: VehicleOsImportService[],
 ): DedupeFilterResult<VehicleOsImportService> => {
-  const existingKeys = new Set(existingTimeline.map(timelineEntryFingerprint));
+  const existingVisitKeys = new Set(existingTimeline.map(timelineVisitFingerprint));
   const newRows: VehicleOsImportService[] = [];
+  const seenIncoming = new Set<string>();
   let skippedCount = 0;
 
   for (const service of incoming) {
-    const key = serviceRowFingerprint(service);
-    if (existingKeys.has(key)) {
+    const visitKey = serviceVisitFingerprint(service);
+    if (existingVisitKeys.has(visitKey) || seenIncoming.has(visitKey)) {
       skippedCount += 1;
       continue;
     }
-    existingKeys.add(key);
+    seenIncoming.add(visitKey);
+    existingVisitKeys.add(visitKey);
     newRows.push(service);
   }
 
@@ -90,6 +98,6 @@ export const isDuplicateServiceRow = (
   existingTimeline: ServiceTimelineEntry[],
   input: { serviceDate: string; mileage: number; shop: string },
 ): boolean => {
-  const key = serviceRowFingerprint(input);
-  return existingTimeline.some((row) => timelineEntryFingerprint(row) === key);
+  const visitKey = serviceVisitFingerprint(input);
+  return existingTimeline.some((row) => timelineVisitFingerprint(row) === visitKey);
 };

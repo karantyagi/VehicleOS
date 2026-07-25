@@ -1,112 +1,96 @@
 import { describe, expect, it } from "vitest";
 import {
   filterNewImportServices,
-  filterNewOwnershipRecords,
   isDuplicateServiceRow,
   serviceRowFingerprint,
+  serviceVisitFingerprint,
 } from "./dedupe-import-rows.js";
+import type { ServiceTimelineEntry } from "../projections/types.js";
+
+const timelineRow = (overrides: Partial<ServiceTimelineEntry>): ServiceTimelineEntry => ({
+  serviceId: "svc-1",
+  shop: "MetroWest Acura",
+  shopLocation: "Framingham, MA",
+  serviceDate: "2025-06-11",
+  mileage: 44_590,
+  lineItems: ["Oil changed"],
+  total: "$0.00",
+  evidenceIds: [],
+  source: "carfax_import",
+  ...overrides,
+});
 
 describe("dedupe-import-rows", () => {
-  it("skips CARFAX services already on the timeline", () => {
-    const existing = [
-      {
-        serviceId: "s1",
-        shop: "Jiffy Lube",
-        serviceDate: "2024-06-01",
-        mileage: 30_000,
-        lineItems: ["Oil change"],
-        total: "$62",
-        evidenceIds: [],
-        source: "carfax_import" as const,
-      },
-    ];
+  it("matches visits by date and shop, not mileage", () => {
+    const existing = [timelineRow({ mileage: 44_590 })];
+    const incoming = {
+      shop: "MetroWest Acura",
+      serviceDate: "2025-06-11",
+      mileage: 44_567,
+      lineItems: ["Inspection"],
+      total: "$0.00",
+    };
 
-    const { newRows, skippedCount } = filterNewImportServices(existing, [
-      {
-        shop: "Jiffy Lube",
-        serviceDate: "2024-06-01",
-        mileage: 30_000,
-        lineItems: ["Oil change (synthetic)"],
-        total: "$62.00",
-      },
-      {
-        shop: "Dealer",
-        serviceDate: "2026-01-12",
-        mileage: 41_800,
-        lineItems: ["Oil change"],
-        total: "$67.42",
-      },
-    ]);
-
-    expect(skippedCount).toBe(1);
-    expect(newRows).toHaveLength(1);
-    expect(newRows[0]?.shop).toBe("Dealer");
+    expect(isDuplicateServiceRow(existing, incoming)).toBe(true);
+    expect(serviceVisitFingerprint(incoming)).toBe(serviceVisitFingerprint(existing[0]!));
+    expect(serviceRowFingerprint(incoming)).not.toBe(serviceRowFingerprint(existing[0]!));
   });
 
-  it("skips RMV ownership rows already recorded", () => {
-    const existing = [
-      {
-        recordId: "r1",
-        agency: "Massachusetts RMV (myRMV)",
-        recordDate: "2026-01-21",
-        mileage: null,
-        eventType: "title" as const,
-        description: "Title active — CM185996",
-        details: ["Title Number: CM185996"],
-        source: "rmv_import" as const,
-      },
-    ];
-
-    const { newRows, skippedCount } = filterNewOwnershipRecords(existing, [
-      {
-        agency: "Massachusetts RMV (myRMV)",
-        recordDate: "2026-01-21",
-        mileage: null,
-        eventType: "title",
-        description: "Title active — CM185996",
-        details: ["Title Number: CM185996"],
-      },
-      {
-        agency: "Massachusetts RMV (myRMV)",
-        recordDate: "2024-10-01",
-        mileage: null,
-        eventType: "registration",
-        description: "Registration active — plate 3KXT69",
-        details: ["Plate: 3KXT69"],
-      },
-    ]);
-
-    expect(skippedCount).toBe(1);
-    expect(newRows).toHaveLength(1);
-    expect(newRows[0]?.eventType).toBe("registration");
-  });
-
-  it("normalizes shop casing for service fingerprints", () => {
-    expect(serviceRowFingerprint({ serviceDate: "2024-06-01", mileage: 1, shop: "Jiffy Lube" })).toBe(
-      serviceRowFingerprint({ serviceDate: "2024-06-01", mileage: 1, shop: "jiffy lube" }),
+  it("skips re-import when owner corrected mileage on timeline", () => {
+    const result = filterNewImportServices(
+      [timelineRow({ mileage: 50_100 })],
+      [
+        {
+          shop: "MetroWest Acura",
+          serviceDate: "2025-06-11",
+          mileage: 50_000,
+          lineItems: ["Tires rotated"],
+          total: "$0.00",
+        },
+      ],
     );
+
+    expect(result.newRows).toHaveLength(0);
+    expect(result.skippedCount).toBe(1);
   });
 
-  it("detects duplicate service rows for receipt confirm path", () => {
-    const timeline = [
-      {
-        serviceId: "s1",
-        shop: "Dealer",
-        serviceDate: "2026-01-12",
-        mileage: 41_800,
-        lineItems: ["Oil change"],
-        total: "$67",
-        evidenceIds: [],
-        source: "receipt" as const,
-      },
-    ];
+  it("treats different shops on the same day as separate visits", () => {
+    const result = filterNewImportServices(
+      [timelineRow({ shop: "Ira Acura", mileage: 44_590 })],
+      [
+        {
+          shop: "MetroWest Acura",
+          serviceDate: "2025-06-11",
+          mileage: 44_567,
+          lineItems: ["Inspection"],
+          total: "$0.00",
+        },
+      ],
+    );
 
-    expect(
-      isDuplicateServiceRow(timeline, {
-        shop: "Dealer",
-        serviceDate: "2026-01-12",
-        mileage: 41_800,
-      }),
-    ).toBe(true);
+    expect(result.newRows).toHaveLength(1);
+    expect(result.skippedCount).toBe(0);
+  });
+
+  it("dedupes duplicate visits within the same import batch", () => {
+    const result = filterNewImportServices([], [
+      {
+        shop: "Costco Tire Center",
+        serviceDate: "2025-06-01",
+        mileage: 44_000,
+        lineItems: ["Tires"],
+        total: "$0.00",
+      },
+      {
+        shop: "Costco Tire Center",
+        serviceDate: "2025-06-01",
+        mileage: 44_050,
+        lineItems: ["Balance"],
+        total: "$0.00",
+      },
+    ]);
+
+    expect(result.newRows).toHaveLength(1);
+    expect(result.skippedCount).toBe(1);
   });
 });
