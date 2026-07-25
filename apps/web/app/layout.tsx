@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { AppProviders } from "../components/app-providers";
 import { Toaster } from "../components/ui/sonner";
@@ -60,6 +62,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </a>
           {children}
           <Toaster />
+          <Analytics />
+          <SpeedInsights />
         </AppProviders>
       </body>
     </html>
