@@ -2,7 +2,9 @@ export type ExtractionStatusVariant =
   | "llm-not-ready-manual"
   | "llm-not-ready-pdf"
   | "llm-not-ready-receipt"
-  | "upcoming-oem-search";
+  | "upcoming-oem-search"
+  | "upcoming-places-lookup"
+  | "upcoming-shop-disambiguation-llm";
 
 export type ExtractionStatusContent = {
   title: string;
@@ -25,6 +27,14 @@ export const EXTRACTION_STATUS: Record<ExtractionStatusVariant, ExtractionStatus
   "upcoming-oem-search": {
     title: "Upcoming — assistant finds your OEM manual",
     body: "Soon the assistant will locate your year/make/model maintenance schedule via an internal search agent and pre-populate intervals — no PDF upload required. Until then, use JSON dogfood fixtures or enter intervals manually after upload.",
+  },
+  "upcoming-places-lookup": {
+    title: "Places lookup not yet initialized",
+    body: "When a shop location is missing, the assistant will call a structured Places API (not LLM browsing) and cache city/state after you confirm. Until then, add location on exception rows or rely on your saved shop memory.",
+  },
+  "upcoming-shop-disambiguation-llm": {
+    title: "LLM shop disambiguation not yet initialized",
+    body: "If Places returns multiple matches for a shop name, a future LLM step will propose the best city/state — you always confirm before we save. Until then, enter location manually on flagged rows.",
   },
 };
 
