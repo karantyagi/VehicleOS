@@ -26,7 +26,7 @@ export const EXTRACTION_STATUS: Record<ExtractionStatusVariant, ExtractionStatus
   },
   "upcoming-oem-search": {
     title: "OEM schedule packs",
-    body: "Supported year/make/model/trim combinations load a verified maintenance schedule automatically when you create your vehicle — no PDF upload required. Unsupported vehicles join the waitlist; you can still track service history manually.",
+    body: "Supported year/make/model/trim combinations load a verified maintenance schedule automatically when you pick from the catalog. Unsupported vehicles join the waitlist on vehicleos.app — they cannot create an account vehicle yet.",
   },
   "upcoming-places-lookup": {
     title: "Shop location lookup",
