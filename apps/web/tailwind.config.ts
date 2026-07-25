@@ -47,6 +47,10 @@ const config: Config = {
           accent: "hsl(var(--sidebar-accent))",
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
         },
+        history: {
+          highlight: "hsl(var(--history-highlight))",
+          "highlight-foreground": "hsl(var(--history-highlight-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
