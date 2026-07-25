@@ -8,7 +8,10 @@ export default defineConfig({
       reporter: ["text", "html"],
       include: [
         "src/import/enrich-vehicleos-import.ts",
-        "src/import/enrich-vehicleos-import-with-lookup.ts",
+        "src/import/cross-day-mileage-regression.ts",
+        "src/import/dedupe-import-rows.ts",
+        "src/import/import-review-verdict.ts",
+        "src/import/import-verify-guidance.ts",
         "src/import/infer-shop-location.ts",
         "src/import/merge-shop-locations-from-import.ts",
         "src/import/nominatim-shop-location.ts",

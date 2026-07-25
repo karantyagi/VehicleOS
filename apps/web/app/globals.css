@@ -32,6 +32,9 @@
     --surface-inset: 160 15% 96%;
     --popover: 0 0% 100%;
     --popover-foreground: 160 25% 11%;
+    /* Owner service history — hover/selection (Agents Window direction; not full rebrand yet) */
+    --history-highlight: 142 48% 40%;
+    --history-highlight-foreground: 0 0% 100%;
   }
 
   .dark {
@@ -60,6 +63,8 @@
     --surface-inset: 220 14% 12%;
     --popover: 220 16% 11%;
     --popover-foreground: 210 20% 96%;
+    --history-highlight: 142 42% 46%;
+    --history-highlight-foreground: 160 30% 8%;
   }
 
   * {
@@ -143,6 +148,26 @@
 
   .dark .surface-panel {
     @apply shadow-[0_1px_2px_hsl(0_0%_0%/0.2),0_8px_24px_-12px_hsl(0_0%_0%/0.35)];
+  }
+
+  .history-surface {
+    @apply rounded-xl border border-history-highlight/20 bg-history-highlight/[0.04];
+  }
+
+  .history-interactive {
+    @apply transition-all duration-150 hover:border-history-highlight/35 hover:bg-history-highlight/[0.08];
+  }
+
+  .history-interactive-active {
+    @apply border-history-highlight/30 bg-history-highlight/[0.06] shadow-[0_8px_24px_-12px_hsl(var(--history-highlight)/0.22)];
+  }
+
+  .history-accent-rail {
+    @apply border-l-2 border-history-highlight/25 pl-6;
+  }
+
+  .history-cta {
+    @apply bg-history-highlight text-history-highlight-foreground hover:bg-history-highlight/90;
   }
 
   @media (display-mode: standalone) {

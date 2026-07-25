@@ -16,6 +16,23 @@ type MaintenanceScheduleConsoleProps = {
   extendedRows: ScheduleProjectionRow[];
   fullRows: ScheduleProjectionRow[];
   effectiveMilesPerYear: number;
+  hasKnowledgeSchedule?: boolean;
+};
+
+const emptyScheduleCopy = (hasKnowledgeSchedule: boolean) => {
+  if (hasKnowledgeSchedule) {
+    return {
+      title: "Schedule projection warming up",
+      description:
+        "Verified OEM intervals are loaded. Import history or confirm a receipt so baselines anchor due dates — then rows appear here.",
+    };
+  }
+
+  return {
+    title: "No OEM schedule yet",
+    description:
+      "Supported vehicles load verified OEM intervals at setup automatically. Unsupported trims join the waitlist — you can still track history and reminders from receipts.",
+  };
 };
 
 const statusLabel: Record<ScheduleProjectionRow["status"], string> = {
@@ -55,6 +72,7 @@ export function MaintenanceScheduleConsole({
   extendedRows,
   fullRows,
   effectiveMilesPerYear,
+  hasKnowledgeSchedule = false,
 }: MaintenanceScheduleConsoleProps) {
   const [horizon, setHorizon] = useState<ScheduleHorizonView>("near");
 
@@ -78,11 +96,12 @@ export function MaintenanceScheduleConsole({
   }, [rows]);
 
   if (nearRows.length === 0 && extendedRows.length === 0 && fullRows.length === 0) {
+    const emptyCopy = emptyScheduleCopy(hasKnowledgeSchedule);
     return (
       <EmptyState
         icon={CalendarClock}
-        title="No OEM schedule yet"
-        description="Upload and confirm your owner manual under Manual & OEM to project upcoming maintenance."
+        title={emptyCopy.title}
+        description={emptyCopy.description}
       />
     );
   }
@@ -91,7 +110,7 @@ export function MaintenanceScheduleConsole({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Forward OEM intervals · assumes{" "}
+          Forward OEM intervals from verified packs · assumes{" "}
           <span className="font-medium text-foreground">{effectiveMilesPerYear.toLocaleString()} mi/year</span> for
           mileage-only rows
         </p>
@@ -121,7 +140,7 @@ export function MaintenanceScheduleConsole({
       {rows.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
           Nothing due in the next {activeHorizon.emptyHint}
-          {horizon === "full" ? " window" : " months"}. Expand horizon or add OEM manual intervals.
+          {horizon === "full" ? " window" : " months"}. Expand horizon or import history to improve baselines.
         </p>
       ) : (
         grouped.map(([group, groupRows]) => (

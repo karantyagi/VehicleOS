@@ -5,7 +5,16 @@ import type { TieredImportRow } from "./tier-import-rows.js";
 const verifyRow = (overrides: Partial<TieredImportRow> = {}): TieredImportRow => ({
   index: 0,
   tier: "verify",
-  reasons: ["Shop location missing for Unknown Shop."],
+  reasons: ["Shop city not filled in yet"],
+  ownerGuidance: [
+    {
+      code: "missing_shop_location",
+      title: "Shop city not filled in yet",
+      detail: "We could not confidently place Unknown Shop on the map from your saved shops or geocoding.",
+      resolve:
+        "Pick a suggested city below, type City, ST once, or uncheck if you do not want this visit. We remember confirmed shops for your next import.",
+    },
+  ],
   service: {
     shop: "Unknown Shop",
     serviceDate: "2025-06-01",

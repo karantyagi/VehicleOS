@@ -134,7 +134,7 @@ Do **not** fully abstract review away. Service history is the **system of record
 |------|----------|--------------|------------------|
 | **A — Auto** | Date + mileage parse clean · shop recognized · lines normalized · dedupe pass · no regression | None — included in bulk confirm | Enrich + mark ready |
 | **B — Enriched** | Location from map/memory · noise stripped · aliases resolved | Summary only (“28 visits ready”) | Same + show what was cleaned |
-| **C — Verify** | Unknown shop · mileage/date regression · Places/LLM low confidence · profile conflict (VIN) | One card in **Owner verification** queue | Propose; wait for confirm |
+| **C — Verify** | Unknown shop · mileage/date regression · Places/LLM low confidence · profile conflict (VIN) · **likely source duplicate (IMP-12)** | One card in **Owner verification** queue | Propose; wait for confirm |
 | **D — Block** | Unparseable row · conflicting duplicate · extract failure | Exclude + explicit warning | Do not commit |
 
 **Target:** ≥90% of rows Tier A/B on a clean CARFAX PDF like TLX dogfood. Owner experience:
@@ -160,6 +160,37 @@ It is **not** a one-line filter in the import handler. It spans:
 | LLM extract edge | Pairs IMP-7 when rules fail |
 
 **LLM or not?** Mostly **no**. IMP-11 is primarily **deterministic product intelligence**. LLM appears only at the **extract edge** (IMP-7) and optional **shop disambiguation** (propose + confirm).
+
+---
+
+## Part 10 — CARFAX source reconciliation (IMP-12 · deferred)
+
+**Status:** Strategy locked · implementation deferred until multi-user QA fixtures exist.
+
+**Distinct from Part 4 noise:** CARFAX can show the **same real-world visit twice** through different channels:
+
+```text
+Dealer DMS ──► CARFAX backend feed ──► "MetroWest Acura · inspection"
+Owner app  ──► CARFAX self-report   ──► "Self Reported · oil change"
+                         │
+            Same visit · different shop label · 0–15 day lag · ±mileage
+```
+
+IMP-10 dedupes **exact** rows (`date + mileage + shop`). IMP-11 handles **boilerplate** and **same-day odometer noise**. Neither detects **semantic duplicates** across sources.
+
+**Principle:** Detect likely duplicates · never silent merge · owner chooses · deterministic rules only.
+
+| Signal (initial — tune with fixtures) | Example | Action |
+|----------------------------------------|---------|--------|
+| Same day + inspection lines + different shops | MA state + dealer inspection | Tier C verify |
+| ±14 days + overlapping line items + Self Reported vs dealer | Owner pre-log + late dealer feed | Tier C verify |
+| Re-import fuzzy match vs timeline | 2nd CARFAX pull adds dealer row | Verify on re-import |
+
+**Owner resolution (future UX):** Keep dealer record · Keep my entry · Keep both — reuses IMP-11 review queue and owner confirm flow.
+
+**Why wait:** Single-car dogfood cannot validate rules. Early onboard users + annotated fixtures in `connectors/carfax-connect/examples/` are the promotion gate. See [`task-queue.md`](../../../workspace/strategy/task-queue.md) § IMP-12.
+
+**Explicit non-goals until proven:** auto-collapse without owner tap · runtime LLM same-visit classifier · block entire import for unresolved suspects.
 
 ---
 
@@ -285,6 +316,7 @@ Import 2 (same user)
 | Who adds pack rows? | Creator offline factory — not runtime assistant |
 | How does knowledge improve? | Per-owner `shopLocations` compounds; 2nd import easier than 1st |
 | Why IMP-11 as a feature? | Enrichment + tiering + UX + memory + verification — not a single function |
+| Source duplicates (dealer vs Self Reported)? | IMP-12 deferred — detect + owner picks; never silent merge; needs multi-user fixtures |
 
 ---
 

@@ -1,21 +1,27 @@
 "use client";
 
-import { ChevronDown, ChevronRight, FileJson } from "lucide-react";
+import { CheckCircle2, ChevronRight, ChevronUp, FileJson } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ExtractionStatusBanner } from "@/components/extraction-status-banner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { ImportTrustTier, TierImportSummary } from "@vehicleos/domain";
+import type { ImportTrustTier, ImportVerifyGuidance, TierImportSummary } from "@vehicleos/domain";
 import { isoDateToLocalDate } from "@/lib/date-input";
 import { cn } from "@/lib/utils";
 import type { VehicleOsImportService } from "@/lib/record-import-types";
+
+export type OwnerReviewPhase = "none" | "active" | "awaiting_confirm" | "done";
 
 export type CarfaxReviewRow = VehicleOsImportService & {
   id: string;
   included: boolean;
   tier: ImportTrustTier;
   tierReasons: string[];
+  ownerGuidance: ImportVerifyGuidance[];
+  ownerReviewPhase: OwnerReviewPhase;
+  assistantVerdict?: string;
+  alreadyOnFile?: boolean;
   locationCandidates?: string[];
 };
 
@@ -26,6 +32,8 @@ type CarfaxImportReviewProps = {
   disabled?: boolean;
   isImporting?: boolean;
   onRowChange: (id: string, patch: Partial<CarfaxReviewRow>) => void;
+  onConfirmReview: (id: string) => void;
+  onAcceptAsReported: (id: string) => void;
   onIncludeAllReady: () => void;
   onExcludeAll: () => void;
   onConfirm: () => void;
@@ -42,16 +50,23 @@ const formatShopLine = (row: CarfaxReviewRow): string => {
   return location ? `${row.shop} · ${location}` : row.shop;
 };
 
-const tierBadgeVariant = (tier: ImportTrustTier): "secondary" | "warning" | "destructive" => {
-  if (tier === "verify") return "warning";
-  if (tier === "block") return "destructive";
+const isInReviewQueue = (row: CarfaxReviewRow): boolean =>
+  row.ownerReviewPhase === "active" || row.ownerReviewPhase === "awaiting_confirm";
+
+const tierBadgeVariant = (row: CarfaxReviewRow): "secondary" | "warning" | "destructive" => {
+  if (row.alreadyOnFile) return "secondary";
+  if (isInReviewQueue(row)) return "warning";
+  if (row.tier === "verify") return "warning";
+  if (row.tier === "block") return "destructive";
   return "secondary";
 };
 
-const tierLabel = (tier: ImportTrustTier): string => {
-  if (tier === "auto") return "Ready";
-  if (tier === "enriched") return "Cleaned";
-  if (tier === "verify") return "Review";
+const tierLabel = (row: CarfaxReviewRow): string => {
+  if (row.alreadyOnFile) return "On file";
+  if (row.ownerReviewPhase === "done" && row.tier === "verify") return "Accepted";
+  if (row.tier === "auto") return "Ready";
+  if (row.tier === "enriched") return "Cleaned";
+  if (row.tier === "verify") return "Review";
   return "Blocked";
 };
 
@@ -61,23 +76,32 @@ function ReviewCard({
   isImporting,
   defaultExpanded,
   onRowChange,
+  onConfirmReview,
+  onAcceptAsReported,
 }: {
   row: CarfaxReviewRow;
   disabled: boolean;
   isImporting: boolean;
   defaultExpanded: boolean;
   onRowChange: (id: string, patch: Partial<CarfaxReviewRow>) => void;
+  onConfirmReview: (id: string) => void;
+  onAcceptAsReported: (id: string) => void;
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const previewItem = row.lineItems[0];
   const extraCount = row.lineItems.length - 1;
+  const inReview = isInReviewQueue(row);
 
   return (
     <article
       className={cn(
-        "rounded-lg border bg-card transition-colors",
-        row.included ? "border-border/80" : "border-border/50 opacity-60",
-        row.tier === "verify" && row.included && "border-amber-500/40",
+        "rounded-lg border bg-card transition-all duration-150",
+        row.alreadyOnFile
+          ? "border-border/50 opacity-70"
+          : row.included
+            ? "border-border/80 history-interactive"
+            : "border-border/50 opacity-60",
+        inReview && row.included && !row.alreadyOnFile && "border-amber-500/40",
         row.tier === "block" && "border-destructive/40",
       )}
     >
@@ -96,8 +120,8 @@ function ReviewCard({
             <span className="text-xs text-muted-foreground tabular-nums">
               {row.mileage.toLocaleString()} mi
             </span>
-            <Badge variant={tierBadgeVariant(row.tier)} className="text-[10px] uppercase tracking-wide">
-              {tierLabel(row.tier)}
+            <Badge variant={tierBadgeVariant(row)} className="text-[10px] uppercase tracking-wide">
+              {tierLabel(row)}
             </Badge>
           </div>
           <p className="text-sm text-foreground">{formatShopLine(row)}</p>
@@ -107,7 +131,66 @@ function ReviewCard({
               {extraCount > 0 ? ` · +${extraCount} more` : ""}
             </p>
           ) : null}
-          {row.tierReasons.length > 0 ? (
+          {inReview && row.ownerReviewPhase === "active" && row.ownerGuidance.length > 0 ? (
+            <ul className="space-y-2 pt-1">
+              {row.ownerGuidance.map((guidance) => (
+                <li
+                  key={guidance.code}
+                  className="rounded-md border border-amber-500/30 bg-amber-500/5 px-2.5 py-2 text-xs text-amber-950 dark:text-amber-100"
+                >
+                  <p className="font-medium">{guidance.title}</p>
+                  <p className="mt-1 text-amber-900/90 dark:text-amber-100/90">{guidance.detail}</p>
+                  <p className="mt-1.5 font-medium text-amber-950 dark:text-amber-50">
+                    What to do: {guidance.resolve}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {inReview && row.assistantVerdict ? (
+            <div
+              className={cn(
+                "rounded-md border px-2.5 py-2 text-xs",
+                row.ownerReviewPhase === "awaiting_confirm"
+                  ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-950 dark:text-emerald-100"
+                  : "border-amber-500/30 bg-amber-500/5 text-amber-950 dark:text-amber-100",
+              )}
+            >
+              <p className="flex items-center gap-1.5 font-medium">
+                {row.ownerReviewPhase === "awaiting_confirm" ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                ) : null}
+                Assistant check
+              </p>
+              <p className="mt-1">{row.assistantVerdict}</p>
+              {row.ownerReviewPhase === "awaiting_confirm" ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  className="mt-2 h-7 text-xs"
+                  disabled={disabled || isImporting}
+                  onClick={() => onConfirmReview(row.id)}
+                >
+                  Add to ready import
+                </Button>
+              ) : null}
+            </div>
+          ) : null}
+          {inReview && row.ownerReviewPhase === "active" && !row.assistantVerdict ? (
+            <div className="flex flex-wrap gap-2 pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs"
+                disabled={disabled || isImporting || !row.included}
+                onClick={() => onAcceptAsReported(row.id)}
+              >
+                CARFAX looks correct — no changes
+              </Button>
+            </div>
+          ) : null}
+          {!inReview && row.tierReasons.length > 0 ? (
             <ul className="space-y-0.5 text-xs text-amber-800 dark:text-amber-300">
               {row.tierReasons.map((reason) => (
                 <li key={reason}>{reason}</li>
@@ -119,13 +202,13 @@ function ReviewCard({
           type="button"
           variant="ghost"
           size="sm"
-          className="h-8 w-8 shrink-0 p-0"
+          className="h-8 w-8 shrink-0 p-0 text-history-highlight hover:bg-history-highlight/10 hover:text-history-highlight"
           disabled={disabled || isImporting}
           aria-expanded={expanded}
           aria-label={expanded ? "Collapse row" : "Expand row"}
           onClick={() => setExpanded((value) => !value)}
         >
-          {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </Button>
       </div>
 
@@ -172,7 +255,7 @@ function ReviewCard({
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="h-7 text-xs"
+                      className="h-7 border-history-highlight/30 text-xs hover:bg-history-highlight/10 hover:text-history-highlight"
                       disabled={disabled || isImporting || !row.included}
                       onClick={() => onRowChange(row.id, { shopLocation: candidate })}
                     >
@@ -210,6 +293,8 @@ export function CarfaxImportReview({
   disabled = false,
   isImporting = false,
   onRowChange,
+  onConfirmReview,
+  onAcceptAsReported,
   onIncludeAllReady,
   onExcludeAll,
   onConfirm,
@@ -219,14 +304,18 @@ export function CarfaxImportReview({
     () => [...rows].sort((a, b) => b.serviceDate.localeCompare(a.serviceDate)),
     [rows],
   );
-  const verifyRows = sortedRows.filter((row) => row.tier === "verify");
-  const readyRows = sortedRows.filter((row) => row.tier === "auto" || row.tier === "enriched");
-  const blockRows = sortedRows.filter((row) => row.tier === "block");
+  const onFileRows = sortedRows.filter((row) => row.alreadyOnFile);
+  const importRows = sortedRows.filter((row) => !row.alreadyOnFile);
+  const verifyRows = importRows.filter(isInReviewQueue);
+  const readyRows = importRows.filter((row) => !isInReviewQueue(row) && row.tier !== "block");
+  const blockRows = importRows.filter((row) => row.tier === "block");
+  const reviewCount = verifyRows.length;
+  const readyCount = readyRows.length;
+  const onFileCount = onFileRows.length;
+
   const needsLocationPick = verifyRows.some((row) => (row.locationCandidates?.length ?? 0) > 0);
-  const needsManualLocation = verifyRows.some(
-    (row) =>
-      row.tierReasons.some((reason) => reason.includes("Shop location missing")) &&
-      (row.locationCandidates?.length ?? 0) === 0,
+  const needsManualLocation = verifyRows.some((row) =>
+    row.ownerGuidance.some((guidance) => guidance.code === "missing_shop_location"),
   );
 
   return (
@@ -240,33 +329,58 @@ export function CarfaxImportReview({
       {needsManualLocation ? (
         <ExtractionStatusBanner variant="upcoming-shop-disambiguation-llm" />
       ) : null}
-      <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+      <div className="history-surface p-4">
         <p className="text-sm font-medium">Assistant reviewed your CARFAX history</p>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-          {vehicleLabel} · {summary.readyCount} visit{summary.readyCount === 1 ? "" : "s"} ready to
-          import
-          {summary.verifyCount > 0
-            ? ` · ${summary.verifyCount} need${summary.verifyCount === 1 ? "s" : ""} a quick look`
+          {vehicleLabel}
+          {onFileCount > 0 ? ` · ${onFileCount} already on file` : ""}
+          {readyCount > 0 ? ` · ${readyCount} new record${readyCount === 1 ? "" : "s"} ready` : ""}
+          {reviewCount > 0
+            ? ` · ${reviewCount} need${reviewCount === 1 ? "s" : ""} a quick look`
             : ""}
           {summary.blockCount > 0 ? ` · ${summary.blockCount} blocked` : ""}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
-          <Badge variant="secondary">{summary.autoCount} ready</Badge>
-          {summary.enrichedCount > 0 ? (
-            <Badge variant="secondary">{summary.enrichedCount} cleaned</Badge>
-          ) : null}
-          {summary.verifyCount > 0 ? (
-            <Badge variant="warning">{summary.verifyCount} review</Badge>
-          ) : null}
+          {onFileCount > 0 ? <Badge variant="secondary">{onFileCount} on file</Badge> : null}
+          {readyCount > 0 ? <Badge variant="secondary">{readyCount} ready</Badge> : null}
+          {reviewCount > 0 ? <Badge variant="warning">{reviewCount} review</Badge> : null}
           {summary.blockCount > 0 ? (
             <Badge variant="destructive">{summary.blockCount} blocked</Badge>
           ) : null}
         </div>
       </div>
 
+      {onFileCount > 0 ? (
+        <details className="history-surface group px-3 py-2">
+          <summary className="cursor-pointer list-none text-xs text-muted-foreground marker:content-none [&::-webkit-details-marker]:hidden">
+            <span className="inline-flex items-center gap-2">
+              <ChevronRight className="h-3.5 w-3.5 text-history-highlight transition-transform group-open:rotate-90" />
+              {onFileCount} on file — skipped on re-import
+            </span>
+          </summary>
+          <ul className="mt-3 space-y-2 border-t border-border/60 pt-3">
+            {onFileRows.map((row) => (
+              <li
+                key={row.id}
+                className="flex items-center justify-between gap-2 rounded-md border border-border/60 bg-muted/20 px-2.5 py-2 text-xs text-muted-foreground"
+              >
+                <span className="tabular-nums">{formatServiceDate(row.serviceDate)}</span>
+                <span className="truncate">{row.shop}</span>
+                <Badge variant="secondary" className="shrink-0 text-[10px] uppercase">
+                  On file
+                </Badge>
+              </li>
+            ))}
+          </ul>
+        </details>
+      ) : null}
+
       {verifyRows.length > 0 ? (
         <section className="space-y-2">
           <h3 className="text-sm font-medium">Needs your review</h3>
+          <p className="text-xs text-muted-foreground">
+            Fix a row or confirm CARFAX is correct — the assistant re-checks before moving it to ready.
+          </p>
           <div className="space-y-2">
             {verifyRows.map((row) => (
               <ReviewCard
@@ -276,6 +390,8 @@ export function CarfaxImportReview({
                 isImporting={isImporting}
                 defaultExpanded
                 onRowChange={onRowChange}
+                onConfirmReview={onConfirmReview}
+                onAcceptAsReported={onAcceptAsReported}
               />
             ))}
           </div>
@@ -294,6 +410,8 @@ export function CarfaxImportReview({
                 isImporting={isImporting}
                 defaultExpanded
                 onRowChange={onRowChange}
+                onConfirmReview={onConfirmReview}
+                onAcceptAsReported={onAcceptAsReported}
               />
             ))}
           </div>
@@ -336,20 +454,35 @@ export function CarfaxImportReview({
                 isImporting={isImporting}
                 defaultExpanded={false}
                 onRowChange={onRowChange}
+                onConfirmReview={onConfirmReview}
+                onAcceptAsReported={onAcceptAsReported}
               />
             ))}
           </div>
         </section>
       ) : null}
 
-      <Button type="button" disabled={disabled || isImporting || selectedCount === 0} onClick={onConfirm}>
+      <Button
+        type="button"
+        className="history-cta"
+        disabled={disabled || isImporting || selectedCount === 0}
+        onClick={onConfirm}
+      >
         <FileJson className="mr-2 h-4 w-4" aria-hidden />
         {isImporting
           ? "Importing…"
-          : `Confirm import (${selectedCount} visit${selectedCount === 1 ? "" : "s"})`}
+          : selectedCount === 0 && onFileCount > 0
+            ? "Nothing new to import"
+            : `Confirm import (${selectedCount} new record${selectedCount === 1 ? "" : "s"})`}
       </Button>
-      {selectedCount === 0 && rows.length > 0 ? (
-        <p className="text-xs text-destructive">Select at least one visit to import.</p>
+      {reviewCount > 0 ? (
+        <p className="text-xs text-muted-foreground">
+          {reviewCount} record{reviewCount === 1 ? "" : "s"} still in review — import ready rows now, or finish
+          review first.
+        </p>
+      ) : null}
+      {selectedCount === 0 && importRows.length > 0 ? (
+        <p className="text-xs text-destructive">Select at least one new record to import.</p>
       ) : null}
     </div>
   );
