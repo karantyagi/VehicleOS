@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Check, Clock3, Pencil, X } from "lucide-react";
+import { OwnerServiceHistoryTimeline } from "@/components/owner-service-history-timeline";
 import { EmptyState } from "@/components/empty-state";
 import { ConsoleDetailPanel, ConsoleDetailPlaceholder, ConsoleSplit } from "@/components/console-split";
 import { DataGridToolbar } from "@/components/data-grid-toolbar";
@@ -261,48 +262,12 @@ export function MaintenanceTimelineConsole({
 
   if (ownerSimple) {
     return (
-      <ul className="space-y-3">
-        {sortedEntries.map((entry) => {
-          const isEditing = editingId === entry.serviceId;
-
-          return (
-            <li key={entry.serviceId} className="rounded-xl border border-border bg-card p-4 shadow-sm">
-              <p className="font-semibold leading-tight">{entry.serviceDate}</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {formatShopLine(entry)} · {entry.mileage.toLocaleString()} mi
-              </p>
-              {!isEditing ? (
-                <>
-                  <div className="mt-2">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-                      Services performed
-                    </p>
-                    {renderLineItems(entry.lineItems)}
-                  </div>
-                  {entry.total && entry.total !== "$0.00" ? (
-                    <p className="mt-2 text-sm text-muted-foreground">Total: {entry.total}</p>
-                  ) : null}
-                  {onUpdateService ? (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="mt-3"
-                      disabled={disabled}
-                      onClick={() => startEditing(entry)}
-                    >
-                      <Pencil className="mr-1.5 h-4 w-4" />
-                      Edit
-                    </Button>
-                  ) : null}
-                </>
-              ) : (
-                renderEditForm(entry)
-              )}
-            </li>
-          );
-        })}
-      </ul>
+      <OwnerServiceHistoryTimeline
+        entries={entries}
+        disabled={disabled}
+        onUpdateService={onUpdateService}
+        requireEditConfirmation={requireEditConfirmation}
+      />
     );
   }
 
