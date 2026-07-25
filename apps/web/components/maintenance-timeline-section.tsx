@@ -15,6 +15,7 @@ type MaintenanceTimelineSectionProps = {
   scheduleExtended: ScheduleProjectionRow[];
   scheduleFull: ScheduleProjectionRow[];
   effectiveMilesPerYear: number;
+  hasKnowledgeSchedule?: boolean;
   activeTab?: ServiceHistoryTab;
   onTabChange?: (tab: ServiceHistoryTab) => void;
   disabled?: boolean;
@@ -39,6 +40,7 @@ export function MaintenanceTimelineSection({
   scheduleExtended,
   scheduleFull,
   effectiveMilesPerYear,
+  hasKnowledgeSchedule = false,
   activeTab,
   onTabChange,
   disabled = false,
@@ -119,6 +121,7 @@ export function MaintenanceTimelineSection({
               extendedRows={scheduleExtended}
               fullRows={scheduleFull}
               effectiveMilesPerYear={effectiveMilesPerYear}
+              hasKnowledgeSchedule={hasKnowledgeSchedule}
             />
           ) : null}
 
