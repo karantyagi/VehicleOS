@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@vehicleos/domain": "workspace:*",
+    "@vehicleos/knowledge": "workspace:*",
     "pdf-parse": "1.1.1",
     "pg": "^8.13.1"
   },

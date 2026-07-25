@@ -22,5 +22,7 @@ export { submitOwnerServiceNote } from "./http/note-handlers.js";
 export { submitVehicleOsImport, submitVehicleOsRmvImport, extractRecordImportPdf, enrichVehicleOsImportDraftHandler } from "./http/import-handlers.js";
 export { updateVehicleService } from "./http/service-handlers.js";
 export { refreshNowQueue } from "./http/now-handlers.js";
+export { checkVehicleSupport, listSupportedVehicles } from "./http/catalog-handlers.js";
+export type { VehicleSupportQuery } from "./http/catalog-handlers.js";
 export { InMemoryVehicleRepository } from "./repositories/in-memory-vehicle-repository.js";
 export type { VehicleRepositoryLike } from "./types/repositories.js";

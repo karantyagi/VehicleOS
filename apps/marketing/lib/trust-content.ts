@@ -30,9 +30,10 @@ export const privacySections = [
     title: "What we collect",
     bullets: [
       "Account: email address and OAuth profile from Google or GitHub sign-in (via Supabase Auth).",
-      "Vehicle data you enter: VIN, year, make, model, mileage, and service receipts you confirm in the app.",
-      "Domain events: an append-only history of vehicle state changes (service recorded, tasks approved, and similar) stored in Postgres.",
-      "Technical logs: standard hosting logs from Vercel and Supabase (request metadata, errors) for reliability — not used for advertising.",
+      "Vehicle data you enter: VIN, year, make, model, trim, mileage, driving profile, and service history you confirm.",
+      "Import files you upload: CARFAX PDFs, portal exports, RMV records, and receipt photos stored in the evidence vault.",
+      "Domain events: an append-only history of vehicle state changes stored in Postgres — auditable from day one.",
+      "Technical logs: standard hosting logs from Vercel and Supabase for reliability — not used for advertising.",
     ],
   },
   {
@@ -171,9 +172,10 @@ export const securitySections = [
     id: "ai",
     title: "AI & data boundaries",
     bullets: [
-      "The schedule engine is rules-first — deterministic policy, not an LLM deciding what is due. Owner verification handles conflicts; Reminders (push/email) are the target delivery channel.",
-      "When LLM extraction ships for receipts, we will document what fields leave your account and why.",
-      "Today’s golden path uses structured receipt fields you confirm in the UI — no document sent to an external model in that flow.",
+      "The schedule engine is rules-first — deterministic OEM packs and alias matching, not an LLM deciding what is due.",
+      "Import enrichment may call external geocoding (OpenStreetMap Nominatim) for shop locations — you confirm before we save.",
+      "LLM-assisted extraction for receipts and messy PDFs is rolling out on async paths — documented before fields leave your account.",
+      "Golden-path confirmations still use structured fields you review in the UI — nothing auto-commits without owner action.",
     ],
   },
   {

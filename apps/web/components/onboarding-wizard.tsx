@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DrivingStyleFields } from "@/components/driving-style-fields";
 import { DateField } from "@/components/date-field";
 import { FormActions, FormField } from "@/components/form-field";
@@ -50,13 +50,38 @@ type OnboardingWizardProps = {
 };
 
 const defaultForm: VehicleForm = {
-  year: 2019,
-  make: "Honda",
-  model: "Civic",
-  trim: "",
+  year: 2021,
+  make: "Acura",
+  model: "TLX",
+  trim: "SH-AWD",
   vin: "",
-  currentMileage: 41_800,
+  currentMileage: 58_819,
   ownedSince: "",
+};
+
+type VehicleSupportStatus = {
+  supported: boolean;
+  waitlist: boolean;
+  qaStatus: string | null;
+};
+
+const fetchVehicleSupport = async (form: VehicleForm): Promise<VehicleSupportStatus | null> => {
+  if (!form.make.trim() || !form.model.trim() || !Number.isFinite(form.year)) {
+    return null;
+  }
+
+  const params = new URLSearchParams({
+    year: String(form.year),
+    make: form.make.trim(),
+    model: form.model.trim(),
+  });
+  if (form.trim.trim()) {
+    params.set("trim", form.trim.trim());
+  }
+
+  const response = await fetch(`/api/catalog/supported?${params.toString()}`);
+  if (!response.ok) return null;
+  return (await response.json()) as VehicleSupportStatus;
 };
 
 const steps = ["welcome", "car", "driver", "history"] as const;
@@ -84,6 +109,23 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const [createdVehicle, setCreatedVehicle] = useState<OnboardingVehicle | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState("");
+  const [supportStatus, setSupportStatus] = useState<VehicleSupportStatus | null>(null);
+
+  useEffect(() => {
+    if (step !== "car") return;
+
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      void fetchVehicleSupport(form).then((status) => {
+        if (!cancelled) setSupportStatus(status);
+      });
+    }, 350);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [form, step]);
 
   const createVehicle = async (): Promise<OnboardingVehicle | null> => {
     setIsBusy(true);
@@ -233,7 +275,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 id="ob-make"
                 value={form.make}
                 onChange={(event) => setForm({ ...form, make: event.target.value })}
-                placeholder="Honda"
+                placeholder="Acura"
               />
             </FormField>
             <FormField label="Model" htmlFor="ob-model">
@@ -241,7 +283,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 id="ob-model"
                 value={form.model}
                 onChange={(event) => setForm({ ...form, model: event.target.value })}
-                placeholder="Civic"
+                placeholder="TLX"
               />
             </FormField>
             <FormField label="Trim" htmlFor="ob-trim" optional>
@@ -249,7 +291,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 id="ob-trim"
                 value={form.trim}
                 onChange={(event) => setForm({ ...form, trim: event.target.value })}
-                placeholder="EX"
+                placeholder="SH-AWD"
               />
             </FormField>
             <FormField label="Current mileage" htmlFor="ob-mileage">
@@ -280,6 +322,22 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 onChange={(ownedSince) => setForm({ ...form, ownedSince })}
               />
             </FormField>
+            {supportStatus ? (
+              <p
+                className={cn(
+                  "sm:col-span-2 rounded-lg border px-3 py-2 text-sm",
+                  supportStatus.supported
+                    ? "border-primary/30 bg-primary/5 text-foreground"
+                    : "border-border bg-muted/40 text-muted-foreground",
+                )}
+              >
+                {supportStatus.supported
+                  ? "This vehicle has a verified OEM maintenance schedule — we load it automatically at setup."
+                  : supportStatus.waitlist
+                    ? "Not in the supported catalog yet — you can still track history; we'll notify you when your pack ships."
+                    : "Checking support…"}
+              </p>
+            ) : null}
           </div>
         ) : null}
 

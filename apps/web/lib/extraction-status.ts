@@ -25,8 +25,8 @@ export const EXTRACTION_STATUS: Record<ExtractionStatusVariant, ExtractionStatus
     body: "Your receipt is stored in the evidence vault. Structured parsing (shop, date, line items) is manual today — full LLM extraction ships with ENG-2. Hand off now; the assistant will ask you to verify fields when parsing is ready.",
   },
   "upcoming-oem-search": {
-    title: "Upcoming — assistant finds your OEM manual",
-    body: "Soon the assistant will locate your year/make/model maintenance schedule via an internal search agent and pre-populate intervals — no PDF upload required. Until then, use JSON dogfood fixtures or enter intervals manually after upload.",
+    title: "OEM schedule packs",
+    body: "Supported year/make/model/trim combinations load a verified maintenance schedule automatically when you create your vehicle — no PDF upload required. Unsupported vehicles join the waitlist; you can still track service history manually.",
   },
   "upcoming-places-lookup": {
     title: "Shop location lookup",

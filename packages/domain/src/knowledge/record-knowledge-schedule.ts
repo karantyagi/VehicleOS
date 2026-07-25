@@ -12,6 +12,7 @@ export type RecordKnowledgeScheduleInput = {
   manualTitle: string;
   entries: ManualScheduleDraftRow[];
   currentMileage: number;
+  openRecommendationIfDue?: boolean;
 };
 
 export type RecordKnowledgeScheduleResult = {
@@ -70,7 +71,7 @@ export const recordKnowledgeSchedule = async (
   });
 
   const scheduleRows = input.entries.map((entry) => ({
-    entryId: crypto.randomUUID(),
+    entryId: entry.entryId ?? crypto.randomUUID(),
     serviceName: entry.serviceName,
     intervalMiles: entry.intervalMiles,
     intervalMonths: entry.intervalMonths,
@@ -100,7 +101,9 @@ export const recordKnowledgeSchedule = async (
     ...state,
     currentMileage: Math.max(state.currentMileage, input.currentMileage),
   };
-  const recommendation = policyEngine.evaluate({ vehicleId, state: stateForPolicy });
+  const recommendation = input.openRecommendationIfDue === false
+    ? null
+    : policyEngine.evaluate({ vehicleId, state: stateForPolicy });
 
   let task: RecordKnowledgeScheduleResult["task"] = null;
 

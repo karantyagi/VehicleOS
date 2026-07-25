@@ -65,18 +65,27 @@ export const createVehicle = async (
   const vehicle = await services.vehicles.create({
     userId: auth.userId,
     vin: body.vin ?? "DEMO-VIN-001",
-    year: body.year ?? 2019,
-    make: body.make ?? "Honda",
-    model: body.model ?? "Civic",
-    trim: body.trim,
-    currentMileage: body.currentMileage ?? 41_800,
+    year: body.year ?? 2021,
+    make: body.make ?? "Acura",
+    model: body.model ?? "TLX",
+    trim: body.trim ?? "SH-AWD",
+    currentMileage: body.currentMileage ?? 58_819,
     ownedSince: body.ownedSince ?? null,
     drivingStyle: body.drivingStyle ?? null,
     statedMilesPerYear: body.statedMilesPerYear ?? null,
     ownerContextMemory: normalizeOwnerContextMemory(body.ownerContextMemory),
   });
 
-  return jsonResponse(201, { vehicle });
+  const oemPack = await services.goldenPath.hydrateOemKnowledgePack({
+    id: vehicle.id,
+    year: vehicle.year,
+    make: vehicle.make,
+    model: vehicle.model,
+    trim: vehicle.trim,
+    currentMileage: vehicle.currentMileage,
+  });
+
+  return jsonResponse(201, { vehicle, oemPack });
 };
 
 export const listVehicles = async (
