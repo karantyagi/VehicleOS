@@ -29,6 +29,9 @@ export type OnboardingVehicle = {
   ownedSince?: string | null;
   drivingStyle?: "economical" | "casual" | "aggressive" | null;
   statedMilesPerYear?: number | null;
+  ownerContextMemory?: {
+    shopLocations?: Record<string, string>;
+  };
 };
 
 type VehicleForm = {
@@ -284,6 +287,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           <RecordImportPanel
             vehicleId={createdVehicle.id}
             apiBase={apiBase}
+            ownerShopLocations={createdVehicle.ownerContextMemory?.shopLocations}
             disabled={isBusy}
             onError={(message) => notify(message, "error")}
             onCarfaxImported={(body) => {
@@ -297,6 +301,9 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 );
               } else {
                 notify(`${body.importedCount} service row(s) imported.`, "success");
+              }
+              if (body.verificationTaskId) {
+                notify("Some imported rows need verification in your assistant queue.", "success");
               }
             }}
             onRmvImported={(body) => {

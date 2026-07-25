@@ -557,6 +557,7 @@ export function OwnerDashboard() {
           <RecordImportPanel
             vehicleId={vehicle.id}
             apiBase={apiBase}
+            ownerShopLocations={vehicle.ownerContextMemory?.shopLocations}
             disabled={isBusy}
             onError={(message) => notify(message, "error")}
             onCarfaxImported={(body) => {
@@ -573,6 +574,9 @@ export function OwnerDashboard() {
                 );
               } else {
                 feedback(`${body.importedCount} service row(s) imported — check Service history.`);
+              }
+              if (body.verificationTaskId) {
+                feedback("Some imported rows need verification in your assistant queue.");
               }
               void loadVehicleState(vehicle);
             }}

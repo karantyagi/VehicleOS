@@ -1,14 +1,18 @@
 import type { VehicleOsImportService, VehicleOsRmvRecord } from "@vehicleos/domain";
 import {
+  enrichVehicleOsImport,
   enrichVehicleOsImportService,
   extractCarfaxServiceHistoryFromPdfText,
   extractMyRmvMaVehiclePageFromPdfText,
   mapCarfaxExtractToImport,
   mapMyRmvExtractToImport,
+  mergeShopLocationsFromImport,
   parseRmvPdfText,
   profileImportWarnings,
   reconcileImportVehicleProfile,
   recordProfileImportVerification,
+  recordImportRowVerification,
+  tierImportRows,
 } from "@vehicleos/domain";
 import type { ApiServices } from "../services/index.js";
 import { extractPdfText } from "../import/pdf-text.js";
@@ -62,22 +66,54 @@ export const submitVehicleOsImport = async (
     }
   }
 
+  const ownerShopLocations = vehicle.ownerContextMemory?.shopLocations;
+  const enrichedServices = importServices.map((service) =>
+    enrichVehicleOsImportService(service, { ownerShopLocations }),
+  );
+
+  const tierSummary = tierImportRows(enrichedServices);
+
   const importResult = await services.goldenPath.importVehicleOsHistory({
     vehicleId,
     importSource: body.source?.trim() || "vehicleos-import",
-    services: importServices.map((service) => enrichVehicleOsImportService(service)),
+    services: enrichedServices,
   });
+
+  const mergedShopLocations = mergeShopLocationsFromImport(ownerShopLocations, enrichedServices);
+  const shopMemoryUpdated =
+    Object.keys(mergedShopLocations).length !== Object.keys(ownerShopLocations ?? {}).length ||
+    JSON.stringify(mergedShopLocations) !== JSON.stringify(ownerShopLocations ?? {});
+
+  let workingVehicle = vehicle;
+  if (shopMemoryUpdated) {
+    const patched = await services.vehicles.update(vehicleId, auth.userId, {
+      ownerContextMemory: {
+        ...(vehicle.ownerContextMemory ?? {}),
+        shopLocations: mergedShopLocations,
+      },
+    });
+    if (patched) workingVehicle = patched;
+  }
 
   const nextMileage = body.vehicle?.currentMileage;
   const shouldUpdateMileage =
     typeof nextMileage === "number" &&
     Number.isFinite(nextMileage) &&
-    nextMileage > vehicle.currentMileage;
+    nextMileage > workingVehicle.currentMileage;
   const updatedVehicle = shouldUpdateMileage
     ? await services.vehicles.update(vehicleId, auth.userId, { currentMileage: nextMileage })
-    : vehicle;
+    : workingVehicle;
 
-  const view = buildVehicleStateView(importResult.state, updatedVehicle ?? vehicle);
+  const verification = await recordImportRowVerification({
+    eventStore: services.eventStore,
+    input: {
+      vehicleId,
+      rows: tierSummary.rows,
+      importSource: body.source?.trim() || "vehicleos-import",
+    },
+  });
+
+  const view = buildVehicleStateView(importResult.state, updatedVehicle ?? workingVehicle);
 
   return jsonResponse(201, {
     importedCount: importResult.importedCount,
@@ -85,6 +121,14 @@ export const submitVehicleOsImport = async (
     importSource: body.source?.trim() || "vehicleos-import",
     timeline: view.timeline,
     maintenanceSchedule: view.maintenanceSchedule,
+    verificationTaskId: verification.taskId ?? undefined,
+    shopLocationsSaved: shopMemoryUpdated ? Object.keys(mergedShopLocations).length : undefined,
+    importReview: {
+      autoCount: tierSummary.autoCount,
+      enrichedCount: tierSummary.enrichedCount,
+      verifyCount: tierSummary.verifyCount,
+      blockCount: tierSummary.blockCount,
+    },
   });
 };
 
@@ -180,11 +224,14 @@ export const extractRecordImportPdf = async (
       });
     }
 
-    const draft = mapCarfaxExtractToImport({
+    const mappedDraft = mapCarfaxExtractToImport({
       extract,
       vehicleDefaults: vehicleBlock,
       exportedAt,
       importSource: "carfax-pdf-extract",
+    });
+    const draft = enrichVehicleOsImport(mappedDraft, {
+      ownerShopLocations: vehicle.ownerContextMemory?.shopLocations,
     });
 
     return jsonResponse(200, {
