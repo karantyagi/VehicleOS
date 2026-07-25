@@ -22,7 +22,12 @@ export async function PATCH(request: Request, context: RouteContext) {
 }
 
 export async function DELETE(_request: Request, context: RouteContext) {
-  const user = await getSessionUser();
-  const result = await deleteVehicle(getServices(), context.params.vehicleId, toAuthContext(user));
-  return NextResponse.json(result.body, { status: result.status });
+  try {
+    const user = await getSessionUser();
+    const result = await deleteVehicle(getServices(), context.params.vehicleId, toAuthContext(user));
+    return NextResponse.json(result.body, { status: result.status });
+  } catch (error) {
+    console.error("Vehicle delete failed", error);
+    return NextResponse.json({ error: "Delete failed" }, { status: 500 });
+  }
 }

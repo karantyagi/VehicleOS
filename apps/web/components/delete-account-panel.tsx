@@ -6,6 +6,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { readJsonResponseOrThrow } from "@/lib/api-response";
 import { siteConfig } from "../lib/site-config";
 
 export function DeleteAccountPanel() {
@@ -29,10 +30,7 @@ export function DeleteAccountPanel() {
         body: JSON.stringify({ confirm: "DELETE" }),
       });
 
-      if (!response.ok) {
-        const body = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(body?.error ?? "Deletion failed");
-      }
+      await readJsonResponseOrThrow<{ deleted?: boolean; error?: string }>(response, "Deletion failed");
 
       window.location.href = "/login?deleted=1";
     } catch (deleteError) {
