@@ -1,7 +1,7 @@
-import type { VehicleOsImportService, VehicleOsRmvRecord } from "@vehicleos/domain";
+import type { VehicleOsImportService, VehicleOsImportDraft, VehicleOsRmvRecord } from "@vehicleos/domain";
 import {
-  enrichVehicleOsImport,
-  enrichVehicleOsImportService,
+  enrichVehicleOsImportServicesWithLookup,
+  enrichVehicleOsImportWithLookup,
   extractCarfaxServiceHistoryFromPdfText,
   extractMyRmvMaVehiclePageFromPdfText,
   mapCarfaxExtractToImport,
@@ -37,6 +37,38 @@ const unauthorized = (): JsonResponse => jsonResponse(401, { error: "Unauthorize
 
 const forbidden = (): JsonResponse => jsonResponse(403, { error: "Forbidden" });
 
+type VehicleWithOwnerContext = NonNullable<Awaited<ReturnType<ApiServices["vehicles"]["findById"]>>>;
+
+const enrichLookupOptions = (
+  vehicle: VehicleWithOwnerContext,
+  services: ApiServices,
+) => ({
+  ownerShopLocations: vehicle.ownerContextMemory?.shopLocations,
+  hintCity: vehicle.ownerContextMemory?.primaryCity,
+  lookupPort: services.shopLocationLookup,
+});
+
+export const enrichVehicleOsImportDraftHandler = async (
+  services: ApiServices,
+  vehicleId: string,
+  body: { draft?: VehicleOsImportDraft },
+  auth?: AuthContext,
+): Promise<JsonResponse> => {
+  if (!auth?.userId) return unauthorized();
+
+  const vehicle = await services.vehicles.findById(vehicleId);
+  if (!vehicle) return jsonResponse(404, { error: "Vehicle not found" });
+  if (vehicle.userId !== auth.userId) return forbidden();
+
+  if (!body.draft?.services?.length) {
+    return jsonResponse(400, { error: "draft.services is required" });
+  }
+
+  const draft = await enrichVehicleOsImportWithLookup(body.draft, enrichLookupOptions(vehicle, services));
+
+  return jsonResponse(200, { draft });
+};
+
 export const submitVehicleOsImport = async (
   services: ApiServices,
   vehicleId: string,
@@ -67,9 +99,10 @@ export const submitVehicleOsImport = async (
   }
 
   const ownerShopLocations = vehicle.ownerContextMemory?.shopLocations;
-  const enrichedServices = importServices.map((service) =>
-    enrichVehicleOsImportService(service, { ownerShopLocations }),
-  );
+  const enrichedServices = await enrichVehicleOsImportServicesWithLookup(importServices, {
+    ...enrichLookupOptions(vehicle, services),
+    ownerShopLocations,
+  });
 
   const tierSummary = tierImportRows(enrichedServices);
 
@@ -230,9 +263,7 @@ export const extractRecordImportPdf = async (
       exportedAt,
       importSource: "carfax-pdf-extract",
     });
-    const draft = enrichVehicleOsImport(mappedDraft, {
-      ownerShopLocations: vehicle.ownerContextMemory?.shopLocations,
-    });
+    const draft = await enrichVehicleOsImportWithLookup(mappedDraft, enrichLookupOptions(vehicle, services));
 
     return jsonResponse(200, {
       category: "carfax",

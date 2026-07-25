@@ -296,4 +296,20 @@ export {
   resolveShopLocationWithLookup,
   type ResolveShopLocationWithLookupInput,
 } from "./import/resolve-shop-location-with-lookup.js";
+export {
+  enrichVehicleOsImportWithLookup,
+  enrichVehicleOsImportServiceWithLookup,
+  enrichVehicleOsImportServicesWithLookup,
+  type EnrichWithLookupOptions,
+} from "./import/enrich-vehicleos-import-with-lookup.js";
+export {
+  buildNominatimSearchQuery,
+  buildNominatimSearchUrl,
+  createNominatimShopLocationLookup,
+  formatNominatimAddress,
+  parseNominatimSearchResponse,
+  abbreviateUsState,
+  type NominatimFetch,
+  type NominatimSearchResult,
+} from "./import/nominatim-shop-location.js";
 export type { KnowledgeScheduleRow } from "./events/catalog.js";

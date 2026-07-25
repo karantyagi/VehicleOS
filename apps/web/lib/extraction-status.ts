@@ -29,8 +29,8 @@ export const EXTRACTION_STATUS: Record<ExtractionStatusVariant, ExtractionStatus
     body: "Soon the assistant will locate your year/make/model maintenance schedule via an internal search agent and pre-populate intervals — no PDF upload required. Until then, use JSON dogfood fixtures or enter intervals manually after upload.",
   },
   "upcoming-places-lookup": {
-    title: "Places lookup not yet initialized",
-    body: "When a shop location is missing, the assistant will call a structured Places API (not LLM browsing) and cache city/state after you confirm. Until then, add location on exception rows or rely on your saved shop memory.",
+    title: "Shop location lookup",
+    body: "Missing dealer locations are resolved from your saved shop memory and OpenStreetMap geocoding (Nominatim) when you load or confirm an import. If a shop still needs review, add city/state once — we'll remember it for next time.",
   },
   "upcoming-shop-disambiguation-llm": {
     title: "LLM shop disambiguation not yet initialized",

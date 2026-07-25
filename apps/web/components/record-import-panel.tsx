@@ -146,8 +146,22 @@ export function RecordImportPanel({
     resetPreview();
   };
 
-  const applyCarfaxDraft = (draft: VehicleOsImportV1, warnings: string[] = []) => {
-    const enriched = enrichVehicleOsImport(draft, { ownerShopLocations });
+  const applyCarfaxDraft = async (draft: VehicleOsImportV1, warnings: string[] = []) => {
+    let enriched = enrichVehicleOsImport(draft, { ownerShopLocations });
+    try {
+      const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/import/enrich`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ draft }),
+      });
+      if (response.ok) {
+        const body = (await response.json()) as { draft?: VehicleOsImportV1 };
+        if (body.draft) enriched = body.draft;
+      }
+    } catch {
+      // Client-side enrich fallback when server enrich is unavailable.
+    }
+
     setCarfaxPreview(enriched);
     setRmvPreview(null);
     setRmvReviewRows([]);
@@ -182,7 +196,7 @@ export function RecordImportPanel({
           setParseError(result.error);
           return;
         }
-        applyCarfaxDraft(result.data);
+        void applyCarfaxDraft(result.data);
         return;
       }
 
@@ -194,7 +208,7 @@ export function RecordImportPanel({
       }
       applyRmvDraft(result.data);
     },
-    [activeCategory, resetPreview],
+    [activeCategory, resetPreview, ownerShopLocations, apiBase, vehicleId],
   );
 
   const handleJsonFile = useCallback(
@@ -215,7 +229,7 @@ export function RecordImportPanel({
     try {
       if (activeCategory === "carfax") {
         const draft = await fetchDogfoodJson<VehicleOsImportV1>(DOGFOOD_FIXTURES.carfax);
-        applyCarfaxDraft(draft, ["Dogfood CARFAX JSON loaded — review rows before confirming."]);
+        await applyCarfaxDraft(draft, ["Dogfood CARFAX JSON loaded — review rows before confirming."]);
         return;
       }
       const draft = await fetchDogfoodJson<VehicleOsRmvImportV1>(DOGFOOD_FIXTURES.rmv);
