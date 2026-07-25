@@ -4,6 +4,33 @@ import { InMemoryVehicleRepository } from "@vehicleos/server";
 import { buildApp } from "./app.js";
 import { TEST_USER_ID } from "./auth-context.js";
 
+type TestApp = Awaited<ReturnType<typeof buildApp>>;
+
+type DogfoodVehicleOverrides = {
+  vin?: string;
+  currentMileage?: number;
+};
+
+const dogfoodVehiclePayload = (overrides: DogfoodVehicleOverrides = {}) => ({
+  vin: overrides.vin ?? "TEST-VIN-DOGFOOD",
+  year: 2021,
+  make: "Acura",
+  model: "TLX",
+  trim: "SH-AWD",
+  currentMileage: overrides.currentMileage ?? 58_819,
+});
+
+const createTestVehicle = async (app: TestApp, overrides: DogfoodVehicleOverrides = {}) => {
+  const createResponse = await app.inject({
+    method: "POST",
+    url: "/api/vehicles",
+    payload: dogfoodVehiclePayload(overrides),
+  });
+
+  expect(createResponse.statusCode).toBe(201);
+  return createResponse.json() as { vehicle: { id: string } };
+};
+
 describe("golden path API", () => {
   const appPromise = buildApp({
     eventStore: new InMemoryEventStore(),
@@ -15,23 +42,32 @@ describe("golden path API", () => {
     await app.close();
   });
 
-  it("runs receipt → service.recorded → recommendation → task", async () => {
+  it("rejects unsupported vehicle create with waitlist_required", async () => {
     const app = await appPromise;
 
     const createResponse = await app.inject({
       method: "POST",
       url: "/api/vehicles",
       payload: {
-        vin: "TEST-VIN",
+        vin: "TEST-VIN-UNSUPPORTED",
         year: 2019,
         make: "Honda",
         model: "Civic",
+        trim: "EX",
         currentMileage: 30_000,
       },
     });
 
-    expect(createResponse.statusCode).toBe(201);
-    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+    expect(createResponse.statusCode).toBe(422);
+    const body = createResponse.json() as { code?: string; waitlistEligible?: boolean };
+    expect(body.code).toBe("waitlist_required");
+    expect(body.waitlistEligible).toBe(true);
+  });
+
+  it("runs receipt → service.recorded → recommendation → task", async () => {
+    const app = await appPromise;
+
+    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN", currentMileage: 30_000 });
 
     const receiptResponse = await app.inject({
       method: "POST",
@@ -78,20 +114,7 @@ describe("golden path API", () => {
   it("creates a verification task when receipt mileage regresses", async () => {
     const app = await appPromise;
 
-    const createResponse = await app.inject({
-      method: "POST",
-      url: "/api/vehicles",
-      payload: {
-        vin: "TEST-VIN-2",
-        year: 2020,
-        make: "Toyota",
-        model: "Camry",
-        currentMileage: 50_000,
-      },
-    });
-
-    expect(createResponse.statusCode).toBe(201);
-    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-2", currentMileage: 50_000 });
 
     const firstReceipt = await app.inject({
       method: "POST",
@@ -142,20 +165,7 @@ describe("golden path API", () => {
   it("analyzes a pasted dealer quote", async () => {
     const app = await appPromise;
 
-    const createResponse = await app.inject({
-      method: "POST",
-      url: "/api/vehicles",
-      payload: {
-        vin: "TEST-VIN-QUOTE",
-        year: 2021,
-        make: "Honda",
-        model: "Accord",
-        currentMileage: 40_000,
-      },
-    });
-
-    expect(createResponse.statusCode).toBe(201);
-    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-QUOTE", currentMileage: 40_000 });
 
     const quoteResponse = await app.inject({
       method: "POST",
@@ -186,20 +196,7 @@ Cabin air filter $59.00`,
   it("records evidence vault entries and serves access metadata", async () => {
     const app = await appPromise;
 
-    const createResponse = await app.inject({
-      method: "POST",
-      url: "/api/vehicles",
-      payload: {
-        vin: "TEST-VIN-VAULT",
-        year: 2018,
-        make: "Mazda",
-        model: "3",
-        currentMileage: 55_000,
-      },
-    });
-
-    expect(createResponse.statusCode).toBe(201);
-    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-VAULT", currentMileage: 55_000 });
 
     const receiptResponse = await app.inject({
       method: "POST",
@@ -224,12 +221,16 @@ Cabin air filter $59.00`,
     });
 
     const stateBody = stateResponse.json() as {
-      evidenceVault: { documentId: string; immutable: boolean }[];
+      evidenceVault: { documentId: string; immutable: boolean; channel?: string }[];
       timeline: { evidenceIds: string[] }[];
     };
 
-    expect(stateBody.evidenceVault).toHaveLength(1);
-    expect(stateBody.evidenceVault[0]?.immutable).toBe(true);
+    const receiptEntry = stateBody.evidenceVault.find(
+      (entry) => entry.documentId === receiptBody.documentId,
+    );
+    expect(receiptEntry).toBeDefined();
+    expect(receiptEntry?.immutable).toBe(true);
+    expect(stateBody.evidenceVault.some((entry) => entry.channel === "manual")).toBe(true);
     expect(stateBody.timeline[0]?.evidenceIds).toContain(receiptBody.documentId);
 
     const accessResponse = await app.inject({
@@ -246,20 +247,7 @@ Cabin air filter $59.00`,
   it("exports a structured resale report with timeline and vault", async () => {
     const app = await appPromise;
 
-    const createResponse = await app.inject({
-      method: "POST",
-      url: "/api/vehicles",
-      payload: {
-        vin: "TEST-VIN-EXPORT",
-        year: 2017,
-        make: "Subaru",
-        model: "Outback",
-        currentMileage: 72_000,
-      },
-    });
-
-    expect(createResponse.statusCode).toBe(201);
-    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-EXPORT", currentMileage: 72_000 });
 
     const receiptResponse = await app.inject({
       method: "POST",
@@ -295,9 +283,9 @@ Cabin air filter $59.00`,
 
     expect(report.kind).toBe("VehicleOSResaleReport.v1");
     expect(report.timeline).toHaveLength(1);
-    expect(report.evidenceVault).toHaveLength(1);
+    expect(report.evidenceVault).toHaveLength(2);
     expect(report.summary.serviceCount).toBe(1);
-    expect(report.summary.evidenceCount).toBe(1);
+    expect(report.summary.evidenceCount).toBe(2);
 
     const markdownExport = await app.inject({
       method: "GET",
@@ -313,20 +301,7 @@ Cabin air filter $59.00`,
   it("records a parsed voice note on the timeline and vault", async () => {
     const app = await appPromise;
 
-    const createResponse = await app.inject({
-      method: "POST",
-      url: "/api/vehicles",
-      payload: {
-        vin: "TEST-VIN-VOICE",
-        year: 2020,
-        make: "Toyota",
-        model: "RAV4",
-        currentMileage: 38_000,
-      },
-    });
-
-    expect(createResponse.statusCode).toBe(201);
-    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-VOICE", currentMileage: 38_000 });
 
     const voiceResponse = await app.inject({
       method: "POST",
@@ -366,20 +341,7 @@ Cabin air filter $59.00`,
   it("creates rules-driven seasonal prompts for the selected climate context", async () => {
     const app = await appPromise;
 
-    const createResponse = await app.inject({
-      method: "POST",
-      url: "/api/vehicles",
-      payload: {
-        vin: "TEST-VIN-SEASONAL",
-        year: 2019,
-        make: "Subaru",
-        model: "Outback",
-        currentMileage: 72_000,
-      },
-    });
-
-    expect(createResponse.statusCode).toBe(201);
-    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-SEASONAL", currentMileage: 72_000 });
 
     const refreshResponse = await app.inject({
       method: "POST",
@@ -413,20 +375,7 @@ Cabin air filter $59.00`,
   it("records OEM manual schedule into knowledge base and opens a due task", async () => {
     const app = await appPromise;
 
-    const createResponse = await app.inject({
-      method: "POST",
-      url: "/api/vehicles",
-      payload: {
-        vin: "TEST-VIN-MANUAL",
-        year: 2019,
-        make: "Honda",
-        model: "Civic",
-        currentMileage: 12_000,
-      },
-    });
-
-    expect(createResponse.statusCode).toBe(201);
-    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-MANUAL", currentMileage: 12_000 });
 
     const previewResponse = await app.inject({
       method: "POST",
@@ -482,20 +431,7 @@ Cabin air filter $59.00`,
   it("records an owner note on the timeline with source metadata", async () => {
     const app = await appPromise;
 
-    const createResponse = await app.inject({
-      method: "POST",
-      url: "/api/vehicles",
-      payload: {
-        vin: "TEST-VIN-NOTE",
-        year: 2021,
-        make: "Subaru",
-        model: "Outback",
-        currentMileage: 22_000,
-      },
-    });
-
-    expect(createResponse.statusCode).toBe(201);
-    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
+    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-NOTE", currentMileage: 22_000 });
 
     const noteResponse = await app.inject({
       method: "POST",
@@ -532,22 +468,9 @@ Cabin air filter $59.00`,
   it("refreshes maintenance recommendations into Owner verification", async () => {
     const app = await appPromise;
 
-    const createResponse = await app.inject({
-      method: "POST",
-      url: "/api/vehicles",
-      payload: {
-        vin: "TEST-VIN-REFRESH",
-        year: 2018,
-        make: "Toyota",
-        model: "RAV4",
-        currentMileage: 16_000,
-      },
-    });
+    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-REFRESH", currentMileage: 21_000 });
 
-    expect(createResponse.statusCode).toBe(201);
-    const { vehicle } = createResponse.json() as { vehicle: { id: string } };
-
-    await app.inject({
+    const receiptResponse = await app.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/receipts`,
       payload: {
@@ -561,32 +484,23 @@ Cabin air filter $59.00`,
       },
     });
 
-    const bumpResponse = await app.inject({
-      method: "POST",
-      url: `/api/vehicles/${vehicle.id}/notes`,
-      payload: {
-        serviceDate: "2026-01-01",
-        mileage: 16_000,
-        note: "Annual inspection — no oil service",
-        source: "dealer",
-      },
-    });
-
-    expect(bumpResponse.statusCode).toBe(201);
-    const bumpBody = bumpResponse.json() as {
+    expect(receiptResponse.statusCode).toBe(201);
+    const receiptBody = receiptResponse.json() as {
       nowQueue: { taskId: string; status: string; ruleId?: string }[];
     };
 
-    const pendingTask = bumpBody.nowQueue.find(
-      (item) => item.status === "pending" && item.ruleId?.startsWith("schedule.policy."),
+    const knowledgeTasks = receiptBody.nowQueue.filter(
+      (item) => item.status === "pending" && item.ruleId?.startsWith("knowledge.policy."),
     );
-    expect(pendingTask).toBeDefined();
+    expect(knowledgeTasks.length).toBeGreaterThan(0);
 
-    await app.inject({
-      method: "POST",
-      url: `/api/tasks/${pendingTask!.taskId}/decide`,
-      payload: { vehicleId: vehicle.id, decision: "dismiss" },
-    });
+    for (const task of knowledgeTasks) {
+      await app.inject({
+        method: "POST",
+        url: `/api/tasks/${task.taskId}/decide`,
+        payload: { vehicleId: vehicle.id, decision: "dismiss" },
+      });
+    }
 
     const refreshResponse = await app.inject({
       method: "POST",
@@ -602,7 +516,7 @@ Cabin air filter $59.00`,
     expect(refreshBody.created).toBe(true);
     expect(
       refreshBody.nowQueue.some(
-        (item) => item.status === "pending" && item.ruleId?.startsWith("schedule.policy."),
+        (item) => item.status === "pending" && item.ruleId?.startsWith("knowledge.policy."),
       ),
     ).toBe(true);
   });
