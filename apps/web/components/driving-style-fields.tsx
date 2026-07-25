@@ -68,6 +68,19 @@ export function DrivingStyleFields({
       </fieldset>
 
       <FormField
+        label="Garage city"
+        htmlFor="garage-city"
+        hint="Required — where the car is usually parked; shapes seasonal reminders and shop lookups"
+      >
+        <Input
+          id="garage-city"
+          value={draft.primaryCity}
+          placeholder="Boston"
+          onChange={(event) => onDraftChange({ ...draft, primaryCity: event.target.value })}
+        />
+      </FormField>
+
+      <FormField
         label="Annual miles (optional)"
         htmlFor="stated-miles-per-year"
         hint={`≈ ${Math.round(effectiveMiles / 12).toLocaleString()} mi/month at current estimate`}

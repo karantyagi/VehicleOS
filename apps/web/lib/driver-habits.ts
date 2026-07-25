@@ -3,9 +3,11 @@ export type DrivingStyle = "economical" | "casual" | "aggressive";
 export type DriverHabitsDraft = {
   drivingStyle: DrivingStyle;
   statedMilesPerYear: number | null;
+  primaryCity: string;
 };
 
 import type { OwnerContextMemory } from "@/lib/owner-context";
+import { todayIsoDate } from "@/lib/date-input";
 
 export type VehicleOwnerProfile = {
   id: string;
@@ -73,4 +75,14 @@ export const vehicleProfileFromRecord = (
   drivingStyle: vehicle?.drivingStyle ?? "casual",
   statedMilesPerYear:
     typeof vehicle?.statedMilesPerYear === "number" ? vehicle.statedMilesPerYear : null,
+  primaryCity: vehicle?.ownerContextMemory?.primaryCity ?? "",
+});
+
+export const buildOwnerContextWithPrimaryCity = (
+  existing: OwnerContextMemory | null | undefined,
+  primaryCity: string,
+): OwnerContextMemory => ({
+  ...(existing ?? {}),
+  primaryCity: primaryCity.trim(),
+  primaryCityUpdatedAt: todayIsoDate(),
 });

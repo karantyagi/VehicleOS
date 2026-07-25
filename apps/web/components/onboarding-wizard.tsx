@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { LogoMark } from "../lib/logo-mark";
 import { getApiBase } from "../lib/api-base";
 import {
+  buildOwnerContextWithPrimaryCity,
   parseStatedMilesPerYear,
   type DriverHabitsDraft,
 } from "@/lib/driver-habits";
@@ -77,6 +78,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const [driverDraft, setDriverDraft] = useState<DriverHabitsDraft>({
     drivingStyle: "casual",
     statedMilesPerYear: null,
+    primaryCity: "",
   });
   const [milesInput, setMilesInput] = useState("");
   const [createdVehicle, setCreatedVehicle] = useState<OnboardingVehicle | null>(null);
@@ -100,6 +102,12 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
       return null;
     }
 
+    if (!driverDraft.primaryCity.trim()) {
+      setError("Garage city is required — it anchors seasonal reminders and shop lookups.");
+      setIsBusy(false);
+      return null;
+    }
+
     try {
       const response = await fetch(`${apiBase}/api/vehicles`, {
         method: "POST",
@@ -114,6 +122,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           ownedSince: form.ownedSince.trim(),
           drivingStyle: driverDraft.drivingStyle,
           statedMilesPerYear: parsedMiles,
+          ownerContextMemory: buildOwnerContextWithPrimaryCity(null, driverDraft.primaryCity),
         }),
       });
 
@@ -181,7 +190,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             : step === "car"
               ? "We use this to project calendar reminders — the assistant handles mileage math."
               : step === "driver"
-                ? "Driving style shapes preemptive nudges. Annual miles fine-tunes Schedule dates."
+                ? "Driving style and garage city shape preemptive nudges. Annual miles fine-tunes Schedule dates."
                 : "Hand off CARFAX or portal PDFs so reminders start from your actual service history."}
         </CardDescription>
       </CardHeader>
@@ -344,7 +353,11 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               </Button>
             ) : null}
             {step === "driver" ? (
-              <Button type="button" disabled={isBusy} onClick={() => void continueFromDriver()}>
+              <Button
+                type="button"
+                disabled={isBusy || !driverDraft.primaryCity.trim()}
+                onClick={() => void continueFromDriver()}
+              >
                 {isBusy ? "Saving…" : "Continue"}
               </Button>
             ) : null}

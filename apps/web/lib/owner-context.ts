@@ -1,8 +1,10 @@
 export type OwnerContextMemory = {
   primaryCity?: string;
+  primaryCityUpdatedAt?: string;
   climateNotes?: string[];
   lastTireProduct?: string;
   ownerStatedPriorities?: string[];
+  shopLocations?: Record<string, string>;
 };
 
 export type OwnerContextDraft = {
@@ -21,12 +23,18 @@ export const parseMultilineList = (value: string): string[] =>
 export const formatMultilineList = (values: string[] | undefined): string =>
   values?.join("\n") ?? "";
 
-export const ownerContextFromDraft = (draft: OwnerContextDraft): OwnerContextMemory => ({
-  primaryCity: draft.primaryCity.trim() || undefined,
-  climateNotes: parseMultilineList(draft.climateNotesInput),
-  lastTireProduct: draft.lastTireProduct.trim() || undefined,
-  ownerStatedPriorities: parseMultilineList(draft.ownerStatedPrioritiesInput),
-});
+import { todayIsoDate } from "@/lib/date-input";
+
+export const ownerContextFromDraft = (draft: OwnerContextDraft): OwnerContextMemory => {
+  const primaryCity = draft.primaryCity.trim() || undefined;
+  return {
+    primaryCity,
+    primaryCityUpdatedAt: primaryCity ? todayIsoDate() : undefined,
+    climateNotes: parseMultilineList(draft.climateNotesInput),
+    lastTireProduct: draft.lastTireProduct.trim() || undefined,
+    ownerStatedPriorities: parseMultilineList(draft.ownerStatedPrioritiesInput),
+  };
+};
 
 export const draftFromOwnerContext = (
   memory: OwnerContextMemory | null | undefined,

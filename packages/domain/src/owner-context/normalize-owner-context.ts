@@ -36,6 +36,7 @@ export const normalizeOwnerContextMemory = (value: unknown): OwnerContextMemory 
 
   return {
     primaryCity: normalizeString(record.primaryCity),
+    primaryCityUpdatedAt: normalizeString(record.primaryCityUpdatedAt),
     climateNotes: normalizeStringList(record.climateNotes),
     lastTireProduct: normalizeString(record.lastTireProduct),
     ownerStatedPriorities: normalizeStringList(record.ownerStatedPriorities),
