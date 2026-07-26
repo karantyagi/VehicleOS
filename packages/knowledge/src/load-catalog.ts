@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import supportedVehicleCatalogJson from "../catalog/supported-vehicles.v1.json" with { type: "json" };
 import type { OemSchedulePack, ServiceAliasBundle, SupportedVehicleCatalog } from "./types.js";
 import { validateOemSchedulePack, validateServiceAliasBundle } from "./validate-pack.js";
 
@@ -45,12 +46,9 @@ export const loadServiceAliasBundles = (): ServiceAliasBundle[] => {
   });
 };
 
-export const loadSupportedVehicleCatalog = (): SupportedVehicleCatalog => {
-  const raw = JSON.parse(
-    readFileSync(join(packageRoot, "catalog", "supported-vehicles.v1.json"), "utf8"),
-  ) as SupportedVehicleCatalog;
-  return raw;
-};
+const supportedVehicleCatalog = supportedVehicleCatalogJson as SupportedVehicleCatalog;
+
+export const loadSupportedVehicleCatalog = (): SupportedVehicleCatalog => supportedVehicleCatalog;
 
 export const resolvePackIdForVehicle = (input: {
   make: string;

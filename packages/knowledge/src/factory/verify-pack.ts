@@ -1,10 +1,10 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { compareDualExtracts, dualExtractAgrees } from "./compare-extracts.js";
 import { downloadOemPdf } from "./download-oem-pdf.js";
 import { runDualExtract } from "./dual-extract/extract-pass-b.js";
 import { generateMatchingFixture } from "./generate-matching-fixture.js";
-import { upsertManifestEntry } from "./manifest.js";
-import { packJsonPath, resolveExistingPdfPath } from "./paths.js";
+import { getExpectedPackSha256, upsertManifestEntry } from "./manifest.js";
+import { packJsonPath } from "./paths.js";
 import { resolvePdfSourceSpec } from "./pdf-source-registry.js";
 import { writeReviewQueue } from "./write-review-queue.js";
 import { loadOemSchedulePack } from "../load-catalog.js";
@@ -100,56 +100,52 @@ export const verifyOemPack = async (input: {
     oemFamily: spec.oemFamily,
   });
 
-  let pdfPath = resolveExistingPdfPath(pack.packId);
-  let downloadUrl: string | undefined;
-  let sha256: string | undefined;
+  const expectedSha256 = getExpectedPackSha256(pack.packId);
+  const downloaded = await downloadOemPdf({ ...pdfSource, expectedSha256 });
 
-  if (!pdfPath) {
-    const downloaded = await downloadOemPdf(pdfSource);
-    if (!downloaded.ok) {
-      const reviewQueuePath = writeReviewQueue({
-        packId: pack.packId,
-        mismatches: [],
-        qaIssues: [],
-        pdfMissing: true,
-        triedUrls: downloaded.triedUrls,
-        notes: [downloaded.reason],
-      });
+  if (!downloaded.ok) {
+    const reviewQueuePath = writeReviewQueue({
+      packId: pack.packId,
+      mismatches: [],
+      qaIssues: [],
+      pdfMissing: true,
+      triedUrls: downloaded.triedUrls,
+      notes: [downloaded.reason],
+    });
 
-      generateMatchingFixture(pack);
+    generateMatchingFixture(pack);
 
-      return {
-        packId: pack.packId,
-        phaseA: "blocked",
-        phaseB: {
-          dualExtractAgree: false,
-          mismatchCount: 0,
-          qaIssueCount: 0,
-          schemaValid: true,
-        },
-        reviewQueuePath,
-        notes: [`PDF blocked: ${downloaded.reason}`],
-      };
-    }
-
-    pdfPath = downloaded.localPath;
-    downloadUrl = downloaded.officialUrl;
-    if (!downloaded.skippedDownload) {
-      notes.push(`Downloaded PDF from ${downloaded.officialUrl}`);
-    }
-  } else {
-    notes.push(`Using existing PDF at ${pdfPath}`);
+    return {
+      packId: pack.packId,
+      phaseA: "blocked",
+      phaseB: {
+        dualExtractAgree: false,
+        mismatchCount: 0,
+        qaIssueCount: 0,
+        schemaValid: true,
+      },
+      reviewQueuePath,
+      notes: [
+        downloaded.sha256Mismatch
+          ? `PDF blocked: SHA-256 mismatch — ${downloaded.reason}`
+          : `PDF blocked: ${downloaded.reason}`,
+      ],
+    };
   }
 
-  if (!input.dryRun && pdfPath) {
-    const { createHash } = await import("node:crypto");
-    sha256 = createHash("sha256").update(readFileSync(pdfPath)).digest("hex");
-    upsertManifestEntry({
-      packId: pack.packId,
-      localPdfPath: pdfPath,
-      sha256,
-      officialUrl: downloadUrl,
-    });
+  const pdfPath = downloaded.localPath;
+  const sha256 = downloaded.sha256;
+
+  if (downloaded.skippedDownload) {
+    notes.push(
+      downloaded.sha256Verified
+        ? `Using existing PDF at ${pdfPath} (SHA-256 verified)`
+        : `Using existing PDF at ${pdfPath}`,
+    );
+  } else if (downloaded.redownloaded) {
+    notes.push(`Re-downloaded PDF after SHA-256 mismatch from ${downloaded.downloadUrl}`);
+  } else {
+    notes.push(`Downloaded PDF from ${downloaded.downloadUrl}`);
   }
 
   const { passA, passB } = await runDualExtract({ pdfPath: pdfPath!, pack });
@@ -197,7 +193,9 @@ export const verifyOemPack = async (input: {
       packId: pack.packId,
       localPdfPath: pdfPath,
       sha256,
-      officialUrl: downloadUrl,
+      officialUrls: pdfSource.officialUrls,
+      mirrorUrls: pdfSource.mirrorUrls,
+      downloadUrl: downloaded.downloadUrl,
       dualExtractAgree: agree,
       notes: agree ? "dual-extract agree" : `${mismatches.length} mismatches`,
     });

@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2024 Kia K5 LXS — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
-  "qaStatus": "creator_review_required",
-  "qaNotes": "Tier-1 factory template — creator review required before big-bang auto_verified promotion.",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Phase C promoted — intervals from kia-tier1-pdf-discovery.md, manifest + B5 fixtures pass.",
   "sourceManifestRef": "sources/manifest.json#kia-k5-2024-lxs",
   "vehicle": {
     "make": "Kia",
@@ -19,8 +19,8 @@
       "canonicalServiceId": "kia.fixed.8000.engine_oil",
       "serviceName": "Engine oil and filter change",
       "intervalMiles": 8000,
-      "intervalMonths": 6,
-      "sourcePage": "Normal maintenance schedule — Engine oil",
+      "intervalMonths": 12,
+      "sourcePage": "P. 461 — Engine oil and filter (8,000 mi / 12 mo; printed 8-11)",
       "ruleId": "knowledge.policy.engine-oil.v1",
       "confidence": 0.92
     },
@@ -28,9 +28,9 @@
       "entryId": "tire-rotation",
       "canonicalServiceId": "generic.tire_rotation",
       "serviceName": "Rotate tires",
-      "intervalMiles": 7500,
-      "intervalMonths": 6,
-      "sourcePage": "Normal maintenance schedule — Tire rotation",
+      "intervalMiles": 8000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 461 — Tire rotation (8,000 mi / 12 mo; printed 8-11)",
       "ruleId": "knowledge.policy.tire-rotation.v1",
       "confidence": 0.92
     },
@@ -40,9 +40,19 @@
       "serviceName": "Replace cabin air filter",
       "intervalMiles": 15000,
       "intervalMonths": 12,
-      "sourcePage": "Normal maintenance schedule — Cabin air filter",
+      "sourcePage": "P. 461 — Normal maintenance schedule — Cabin air filter (printed 8-11)",
       "ruleId": "knowledge.policy.cabin-filter.v1",
-      "confidence": 0.91
+      "confidence": 0.92
+    },
+    {
+      "entryId": "brake-fluid",
+      "canonicalServiceId": "generic.brake_fluid",
+      "serviceName": "Replace brake fluid",
+      "intervalMiles": 48000,
+      "intervalMonths": 48,
+      "sourcePage": "P. 461 — Brake fluid replacement (48,000 mi / 48 mo; printed 8-11)",
+      "ruleId": "knowledge.policy.brake-fluid.v1",
+      "confidence": 0.92
     }
   ]
 }

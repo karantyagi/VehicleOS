@@ -1,11 +1,16 @@
 import type { Tier1PackSpec } from "./tier1-manifest.js";
 import { TIER1_PACK_SPECS } from "./tier1-manifest.js";
+import { partitionUrls } from "./pdf-url-classify.js";
 
 export type PdfSourceSpec = {
   packId: string;
   candidateUrls: string[];
+  officialUrls?: string[];
+  mirrorUrls?: string[];
   notes?: string;
 };
+
+const KIA_OFFICIAL_PORTAL = "https://owners.kia.com/us/en/manuals.html";
 
 const modelFolder = (model: string): string => model.replace(/\s+/g, "-");
 
@@ -181,6 +186,20 @@ const PACK_URL_OVERRIDES: Record<string, string[]> = {
   "hyundai-ioniq5-2024-se": [
     "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/ioniq-5/2024%20Ioniq%205%20OM.pdf",
   ],
+  // Exact-byte public mirrors of the KGIS session-gated owner manuals.
+  // Verified 2026-07-26 by SHA-256 against fresh owners.kia.com -> KGIS downloads.
+  "kia-k5-2024-lxs": [
+    "https://manuals.startmycar.com/published/Kia-K5_2024_EN_US_e6ae80d227.pdf",
+  ],
+  "kia-sportage-2024-lx": [
+    "https://manuals.startmycar.com/published/Kia-Sportage_2024_EN-US_US_979e9e6749.pdf",
+  ],
+  "kia-telluride-2024-lx": [
+    "https://manuals.startmycar.com/published/Kia-Telluride_2024_EN_US_60a621055c.pdf",
+  ],
+  "kia-ev6-2024-light": [
+    "https://manuals.opinautos.com/published/Kia-EV6_2024_EN-US_US_ef71c5ee49.pdf",
+  ],
   "nissan-altima-2024-sv": [
     "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/altima/2024/2024-nissan-altima-owner-manual.pdf",
   ],
@@ -246,6 +265,21 @@ const PACK_URL_OVERRIDES: Record<string, string[]> = {
   ],
 };
 
+const withProvenance = (packId: string, candidateUrls: string[]): PdfSourceSpec => {
+  const { officialUrls, mirrorUrls } = partitionUrls(candidateUrls);
+  const isKiaPack = packId.startsWith("kia-") && mirrorUrls.length > 0;
+  return {
+    packId,
+    candidateUrls,
+    officialUrls: isKiaPack
+      ? Array.from(new Set([KIA_OFFICIAL_PORTAL, ...officialUrls]))
+      : officialUrls.length > 0
+        ? officialUrls
+        : candidateUrls,
+    mirrorUrls: mirrorUrls.length > 0 ? mirrorUrls : undefined,
+  };
+};
+
 export const resolvePdfSourceSpec = (input: {
   packId: string;
   make: string;
@@ -255,7 +289,7 @@ export const resolvePdfSourceSpec = (input: {
 }): PdfSourceSpec => {
   const override = PACK_URL_OVERRIDES[input.packId];
   if (override) {
-    return { packId: input.packId, candidateUrls: override };
+    return withProvenance(input.packId, override);
   }
 
   const { year, model, make, oemFamily, packId } = input;
@@ -309,7 +343,7 @@ export const resolvePdfSourceSpec = (input: {
       candidateUrls = [];
   }
 
-  return { packId, candidateUrls };
+  return withProvenance(packId, candidateUrls);
 };
 
 export const allPackPdfSources = (): PdfSourceSpec[] => {
