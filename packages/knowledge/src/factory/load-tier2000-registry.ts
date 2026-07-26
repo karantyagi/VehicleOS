@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
@@ -93,6 +93,7 @@ export const loadTier2000PackTargets = (): Tier2000PackSpec[] =>
       scheduleKind: asScheduleKind(row.schedule_kind),
       segment: row.segment || undefined,
       priority: Number.parseInt(row.priority, 10),
+      manualSharePolicy: row.manual_share_policy || undefined,
     };
   });
 
@@ -124,8 +125,18 @@ export const loadTier2000SourceRegistryV1 = (): Tier2000SourceRow[] =>
   readCsv("tier-2000-oem-manual-sources.csv").map(mapSourceCsvRow);
 
 /** Targeted in-review retry registry — v2 rows override v1 for the same pack_id. */
-export const loadTier2000SourceRegistryV2 = (): Tier2000SourceRow[] =>
-  readCsv("tier-2000-oem-manual-sources-v2.csv").map(mapSourceCsvRow);
+export const loadTier2000SourceRegistryV2 = (): Tier2000SourceRow[] => {
+  const path = join(registryRoot, "tier-2000-oem-manual-sources-v2.csv");
+  if (!existsSync(path)) return [];
+  return readCsv("tier-2000-oem-manual-sources-v2.csv").map(mapSourceCsvRow);
+};
+
+/** Tier D re-discovery registry — v3 rows override v2/v1 for the same pack_id. */
+export const loadTier2000SourceRegistryV3 = (): Tier2000SourceRow[] => {
+  const path = join(registryRoot, "tier-2000-oem-manual-sources-v3.csv");
+  if (!existsSync(path)) return [];
+  return readCsv("tier-2000-oem-manual-sources-v3.csv").map(mapSourceCsvRow);
+};
 
 export const loadTier2000SourceRegistry = (): Tier2000SourceRow[] => {
   const byPackId = new Map<string, Tier2000SourceRow>();
@@ -133,6 +144,9 @@ export const loadTier2000SourceRegistry = (): Tier2000SourceRow[] => {
     byPackId.set(row.packId, row);
   }
   for (const row of loadTier2000SourceRegistryV2()) {
+    byPackId.set(row.packId, row);
+  }
+  for (const row of loadTier2000SourceRegistryV3()) {
     byPackId.set(row.packId, row);
   }
   return [...byPackId.values()];
