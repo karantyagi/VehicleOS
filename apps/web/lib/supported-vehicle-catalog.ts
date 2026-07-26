@@ -81,3 +81,53 @@ export const fetchVerifiedCatalogCount = async (apiBase = ""): Promise<number> =
   if (typeof body.total === "number") return body.total;
   return body.vehicles?.filter((row) => row.supported).length ?? 0;
 };
+
+const matchesMake = (row: CatalogVehicleRow, make: string): boolean =>
+  normalize(row.make) === normalize(make);
+
+const matchesModel = (row: CatalogVehicleRow, make: string, model: string): boolean =>
+  matchesMake(row, make) && normalize(row.model) === normalize(model);
+
+const matchesYear = (
+  row: CatalogVehicleRow,
+  make: string,
+  model: string,
+  year: number,
+): boolean => matchesModel(row, make, model) && row.year === year;
+
+export const listCatalogMakes = (rows: CatalogVehicleRow[]): string[] =>
+  Array.from(new Set(rows.map((row) => row.make))).sort((a, b) => a.localeCompare(b));
+
+export const listCatalogModels = (rows: CatalogVehicleRow[], make: string): string[] => {
+  if (!make.trim()) return [];
+  return Array.from(new Set(rows.filter((row) => matchesMake(row, make)).map((row) => row.model))).sort(
+    (a, b) => a.localeCompare(b),
+  );
+};
+
+export const listCatalogYears = (rows: CatalogVehicleRow[], make: string, model: string): number[] => {
+  if (!make.trim() || !model.trim()) return [];
+  return Array.from(
+    new Set(rows.filter((row) => matchesModel(row, make, model)).map((row) => row.year)),
+  ).sort((a, b) => b - a);
+};
+
+export const listCatalogTrimRows = (
+  rows: CatalogVehicleRow[],
+  make: string,
+  model: string,
+  year: number,
+): CatalogVehicleRow[] =>
+  sortCatalogVehicles(rows.filter((row) => matchesYear(row, make, model, year)));
+
+export const formatCatalogTrimOptionLabel = (
+  row: Pick<CatalogVehicleRow, "trim" | "powertrain">,
+): string => {
+  const powertrain = row.powertrain ? ` · ${row.powertrain}` : "";
+  return `${row.trim}${powertrain}`;
+};
+
+export const findCatalogVehicleByPackId = (
+  rows: CatalogVehicleRow[],
+  packId: string,
+): CatalogVehicleRow | null => rows.find((row) => row.packId === packId) ?? null;
