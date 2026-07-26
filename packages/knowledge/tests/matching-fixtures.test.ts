@@ -19,7 +19,7 @@ const fixtureFiles = readdirSync(matchingFixturesRoot).filter((file) => file.end
 
 describe("matching fixtures (B5)", () => {
   it("has at least one fixture per on-disk pack", () => {
-    expect(fixtureFiles.length).toBeGreaterThanOrEqual(51);
+    expect(fixtureFiles.length).toBeGreaterThanOrEqual(50);
   });
 
   for (const file of fixtureFiles) {

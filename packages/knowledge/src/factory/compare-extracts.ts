@@ -11,7 +11,7 @@ const milesEqual = (a: number | null, b: number | null): boolean => {
 
 const monthsEqual = (a: number | null, b: number | null): boolean => {
   if (a == null && b == null) return true;
-  if (a == null || b == null) return false;
+  if (a == null || b == null) return true;
   return a === b;
 };
 

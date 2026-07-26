@@ -58,16 +58,16 @@ describe("hydrateOemKnowledgePack", () => {
       vehicle: {
         id: crypto.randomUUID(),
         year: 2024,
-        make: "Toyota",
-        model: "Camry",
-        trim: "LE",
+        make: "Kia",
+        model: "K5",
+        trim: "LXS",
         currentMileage: 12_000,
       },
     });
 
     expect(result).toEqual({
       hydrated: false,
-      packId: "toyota-camry-2024-le",
+      packId: "kia-k5-2024-lxs",
       skippedReason: "not_auto_verified",
     });
   });

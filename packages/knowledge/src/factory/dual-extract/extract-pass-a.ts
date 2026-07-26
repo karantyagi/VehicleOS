@@ -2,6 +2,7 @@ import type { ExtractedScheduleRow } from "./types.js";
 import type { OemSchedulePack } from "../../types.js";
 import { parsePdfFile } from "../extract-pdf-text.js";
 import { estimateMmPageHint, extractMaintenanceMinderRows } from "./extract-honda-mm.js";
+import { findTireRotationInterval } from "./interval-parse.js";
 
 const pageMarker = (page: number, label: string): string => `P. ${page} — ${label}`;
 
@@ -33,13 +34,26 @@ export const extractPassA = async (input: {
     const pageHint = estimateMmPageHint(text, pageCount);
     rows.push(...extractMaintenanceMinderRows({ text, pageHint, variant: "structural" }));
   } else if (input.pack.scheduleKind === "fixed_interval") {
+    const normalized = text.replace(/\s+/g, " ");
+    const tire = findTireRotationInterval(normalized);
     const services = [
       { rowKey: "engine-oil", label: "engine oil", defaultMiles: 10000 },
-      { rowKey: "tire-rotation", label: "tire rotation", defaultMiles: 5000 },
+      { rowKey: "tire-rotation", label: "tire rotation", defaultMiles: tire.miles ?? 5000, defaultMonths: tire.months ?? 6 },
       { rowKey: "brake-fluid", label: "brake fluid", defaultMiles: null },
     ];
 
     for (const service of services) {
+      if (service.rowKey === "tire-rotation") {
+        rows.push({
+          rowKey: service.rowKey,
+          serviceName: service.label,
+          intervalMiles: service.defaultMiles,
+          intervalMonths: service.defaultMonths ?? 6,
+          sourcePage: pageMarker(1, service.label),
+        });
+        continue;
+      }
+
       const regex = new RegExp(`${service.label}[\\s\\S]{0,80}?(\\d{1,3}(?:,\\d{3})+|\\d+)\\s*(?:mi|miles|months?)`, "i");
       const match = text.match(regex);
       const intervalMiles = match ? parseMiles(match[0]) : service.defaultMiles;
@@ -53,12 +67,14 @@ export const extractPassA = async (input: {
       });
     }
   } else {
+    const normalized = text.replace(/\s+/g, " ");
+    const tire = findTireRotationInterval(normalized);
     rows.push(
       {
         rowKey: "tire-rotation",
         serviceName: "Rotate tires",
-        intervalMiles: 6250,
-        intervalMonths: 6,
+        intervalMiles: tire.miles ?? 7500,
+        intervalMonths: tire.months ?? 6,
         sourcePage: pageMarker(1, "Tire rotation"),
       },
       {

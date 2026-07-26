@@ -3,6 +3,7 @@ import type { OemSchedulePack } from "../../types.js";
 import { parsePdfFile } from "../extract-pdf-text.js";
 import { estimateMmPageHint, extractMaintenanceMinderRows } from "./extract-honda-mm.js";
 import { extractPassA } from "./extract-pass-a.js";
+import { findTireRotationInterval, TIRE_ROTATION_ANCHOR } from "./interval-parse.js";
 
 const pageMarker = (page: number, label: string): string => `P. ${page} — ${label}`;
 
@@ -33,15 +34,13 @@ export const extractPassB = async (input: {
   const pageCount = parsed.numpages;
   const rows: ExtractedScheduleRow[] = [];
 
-  const pageHint = /\b527\b/.test(text) ? 527 : /\bMaintenance Minder\b/i.test(text) ? 1 : 1;
-
   if (input.pack.scheduleKind === "maintenance_minder") {
     const pageHint = estimateMmPageHint(text, pageCount);
     rows.push(...extractMaintenanceMinderRows({ text, pageHint, variant: "footnote" }));
   } else if (input.pack.scheduleKind === "fixed_interval") {
     const anchors = [
       { rowKey: "engine-oil", anchor: /engine\s*oil|oil\s*change/i, label: "Engine oil" },
-      { rowKey: "tire-rotation", anchor: /tire\s*rotation|rotate\s*tires/i, label: "Tire rotation" },
+      { rowKey: "tire-rotation", anchor: TIRE_ROTATION_ANCHOR, label: "Tire rotation", useTireHelper: true },
       { rowKey: "brake-fluid", anchor: /brake\s*fluid/i, label: "Brake fluid" },
     ];
     for (const item of anchors) {
@@ -49,25 +48,30 @@ export const extractPassB = async (input: {
       rows.push({
         rowKey: item.rowKey,
         serviceName: item.label,
-        intervalMiles: findNearestNumber(text, item.anchor, "miles"),
-        intervalMonths: findNearestNumber(text, item.anchor, "months"),
+        intervalMiles: item.useTireHelper
+          ? findTireRotationInterval(text).miles
+          : findNearestNumber(text, item.anchor, "miles"),
+        intervalMonths: item.useTireHelper
+          ? findTireRotationInterval(text).months
+          : findNearestNumber(text, item.anchor, "months"),
         sourcePage: pageMarker(1, item.label),
       });
     }
   } else {
+    const tire = findTireRotationInterval(text);
     rows.push(
       {
         rowKey: "tire-rotation",
         serviceName: "Rotate tires",
-        intervalMiles: findNearestNumber(text, /tire\s*rotation/i, "miles") ?? 6250,
-        intervalMonths: 6,
+        intervalMiles: tire.miles ?? 7500,
+        intervalMonths: tire.months ?? 6,
         sourcePage: pageMarker(1, "Tire rotation"),
       },
       {
         rowKey: "cabin-filter",
         serviceName: "Cabin air filter",
         intervalMiles: findNearestNumber(text, /cabin\s*air\s*filter/i, "miles") ?? 20000,
-        intervalMonths: 24,
+        intervalMonths: findNearestNumber(text, /cabin\s*air\s*filter/i, "months") ?? 24,
         sourcePage: pageMarker(1, "Cabin filter"),
       },
     );

@@ -40,11 +40,21 @@ const mergeExtractIntoPack = (
   const entries: OemSchedulePackEntry[] = pack.entries.map((entry) => {
     const extracted = byKey.get(entry.entryId);
     if (!extracted) return entry;
+    const intervalMiles =
+      extracted.intervalMiles != null &&
+      extracted.intervalMiles >= 1000 &&
+      extracted.intervalMiles <= 150_000
+        ? extracted.intervalMiles
+        : entry.intervalMiles;
+    const intervalMonths =
+      extracted.intervalMonths != null && extracted.intervalMonths > 0 && extracted.intervalMonths <= 120
+        ? extracted.intervalMonths
+        : entry.intervalMonths;
     return {
       ...entry,
       sourcePage: extracted.sourcePage,
-      intervalMiles: extracted.intervalMiles ?? entry.intervalMiles,
-      intervalMonths: extracted.intervalMonths ?? entry.intervalMonths,
+      intervalMiles,
+      intervalMonths,
     };
   });
   return { ...pack, entries };

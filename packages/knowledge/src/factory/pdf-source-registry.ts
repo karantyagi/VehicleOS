@@ -26,92 +26,76 @@ const acuraMmUrls = (year: number, model: string): string[] => {
   ];
 };
 
-const lexusUrls = (year: number, model: string): string[] => {
-  const folder = modelFolder(model);
-  return [
-    `https://www.lexus.com/static/owners/pdf/${year}/${folder}/${year}_${folder}_Maintenance_Schedule.pdf`,
-    `https://www.lexus.com/content/dam/lexus/documents/owners/maintenance/${year}-${folder.toLowerCase()}-maintenance.pdf`,
-  ];
-};
-
 const toyotaUrls = (year: number, model: string): string[] => {
-  const slug = model.toLowerCase().replace(/\s+/g, "-");
+  const slug = model.replace(/\s+/g, "");
   return [
-    `https://www.toyota.com/content/dam/toyota/owners/warranty-and-maintenance/maintenance-schedules/${year}-${slug}-maintenance-schedule.pdf`,
-    `https://www.toyota.com/content/dam/toyota/owners/warranty-and-maintenance/maintenance-schedules/${year}/${year}_${model.replace(/\s+/g, "_")}_Maintenance_Guide.pdf`,
+    `https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-${String(year).slice(2)}${slug}/pdf/T-MMS-${String(year).slice(2)}${slug}.pdf`,
+    `https://www.toyota.com/content/dam/toyota/owners/warranty-and-maintenance/maintenance-schedules/${year}-${model.toLowerCase().replace(/\s+/g, "-")}-maintenance-schedule.pdf`,
   ];
 };
 
-const subaruUrls = (year: number, model: string): string[] => {
-  const folder = modelFolder(model);
+const lexusUrls = (year: number, model: string): string[] => {
+  const slug = model.replace(/\s+/g, "");
   return [
-    `https://www.subaru.com/content/dam/subaru/owners/manuals/${year}/${folder}/maintenance-schedule.pdf`,
-    `https://www.subaru.com/content/dam/subaru/owners/manuals/${year}/${folder}/${year}-${folder.toLowerCase()}-maintenance-schedule.pdf`,
+    `https://assets.sipb.toyota.com/publications/en/omms-s/L-MMS-${String(year).slice(2)}${slug}/pdf/L-MMS-${String(year).slice(2)}${slug}.pdf`,
+    `https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-${String(year).slice(2)}${slug}/pdf/L-MMS-${String(year).slice(2)}${slug}.pdf`,
   ];
 };
+
+const subaruUrls = (_year: number, _model: string): string[] => [
+  "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2024_war_and_maint_041723.pdf",
+];
 
 const hyundaiUrls = (year: number, model: string): string[] => {
   const slug = model.toLowerCase().replace(/\s+/g, "-");
   return [
-    `https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/resources/maintenance/${year}-${slug}-maintenance-schedule.pdf`,
+    `https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/${year}/${slug}/`,
   ];
 };
 
-const kiaUrls = (year: number, model: string): string[] => {
-  const slug = model.toLowerCase().replace(/\s+/g, "-");
-  return [
-    `https://owners.kia.com/content/dam/kia/us/en/owners/maintenance/${year}-${slug}-maintenance-schedule.pdf`,
-  ];
-};
+const kiaUrls = (_year: number, _model: string): string[] => [];
 
 const nissanUrls = (year: number, model: string): string[] => {
   const slug = model.toLowerCase().replace(/\s+/g, "-");
   return [
-    `https://www.nissanusa.com/content/dam/Nissan/us/owners/maintenance/${year}-${slug}-maintenance-schedule.pdf`,
+    `https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/${slug}/${year}/${year}-nissan-${slug}-owner-manual.pdf`,
   ];
 };
 
 const mazdaUrls = (year: number, model: string): string[] => {
-  const slug = model.toLowerCase().replace(/\s+/g, "-");
+  const folder = model.toLowerCase().replace(/\s+/g, "-").replace(/^3$/, "m3s").replace(/^cx-5$/, "cx-5");
   return [
-    `https://www.mazdausa.com/content/dam/mazda/us/mazdaowners/maintenance/${year}-${slug}-maintenance-schedule.pdf`,
+    `https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/${year}/${folder}/`,
   ];
 };
 
 const fordUrls = (year: number, model: string): string[] => {
-  const slug = model.toLowerCase().replace(/\s+/g, "-");
+  const fordModel = model.replace(/\s+/g, "_");
   return [
-    `https://www.ford.com/content/dam/ford/owners/maintenance/${year}-${slug}-maintenance-schedule.pdf`,
+    `https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/${year}_Ford_${fordModel}_Owners_Manual_version_1_om_EN-US.pdf`,
   ];
 };
 
 const chevyUrls = (year: number, model: string): string[] => {
-  const slug = model.toLowerCase().replace(/\s+/g, "-");
+  const chevModel = model.replace(/\s+/g, "_");
   return [
-    `https://www.chevrolet.com/content/dam/chevrolet/owners/maintenance/${year}-${slug}-maintenance-schedule.pdf`,
+    `https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/${year}/`,
+    `https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/${year}/${String(year).slice(2)}_CHEV_${chevModel}_OM_en_US`,
   ];
 };
 
-const jeepUrls = (year: number, model: string): string[] => {
-  const slug = model.toLowerCase().replace(/\s+/g, "-");
-  return [
-    `https://www.jeep.com/content/dam/jeep/owners/maintenance/${year}-${slug}-maintenance-schedule.pdf`,
-  ];
-};
+const jeepUrls = (_year: number, _model: string): string[] => [];
 
-const vwUrls = (year: number, model: string): string[] => {
-  const slug = model.toLowerCase().replace(/\s+/g, "-");
-  return [
-    `https://www.vw.com/content/dam/vw/owners/maintenance/${year}-${slug}-maintenance-schedule.pdf`,
-  ];
-};
+const vwUrls = (_year: number, _model: string): string[] => [];
 
 const teslaUrls = (year: number, model: string): string[] => {
-  const slug = model.toLowerCase().replace(/\s+/g, "-");
-  return [
-    `https://www.tesla.com/ownersmanual/${slug}/${year}`,
-    `https://www.tesla.com/sites/default/files/model_${slug.replace("-", "_")}_owners_manual.pdf`,
-  ];
+  if (model.toLowerCase().includes("model 3")) {
+    return ["https://www.tesla.com/ownersmanual/model3/en_us/Owners_Manual.pdf"];
+  }
+  if (model.toLowerCase().includes("model y")) {
+    return ["https://www.tesla.com/ownersmanual/2020_2024_modely/en_us/Owners_Manual.pdf"];
+  }
+  return [`https://www.tesla.com/ownersmanual/${model.toLowerCase().replace(/\s+/g, "-")}/${year}`];
 };
 
 const evGenericUrls = (year: number, model: string, make: string): string[] => {
@@ -122,7 +106,7 @@ const evGenericUrls = (year: number, model: string, make: string): string[] => {
   ];
 };
 
-/** Pack-specific overrides where probing found working URLs. */
+/** Pack-specific overrides — researched 2026-07-25. See workspace/knowledge/oem-pdf-url-registry.v1.json */
 const PACK_URL_OVERRIDES: Record<string, string[]> = {
   "acura-tlx-2021-sh-awd": [
     "https://owners.acura.com/static/pdfs/2021/TLX/2021_TLX_Maintenance_Minder_System.pdf",
@@ -144,6 +128,121 @@ const PACK_URL_OVERRIDES: Record<string, string[]> = {
   ],
   "honda-passport-2024-ex-l": [
     "https://owners.honda.com/static/pdfs/2024/Passport/2024_Passport_Maintenance_Minder.pdf",
+  ],
+  "honda-accord-2024-ex": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Accord+Sedan/2024_Accord_4D_Maintenance_Minder.pdf",
+  ],
+  "honda-civic-2024-sport": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Civic+Sedan/2024_Civic_4D_Maintenance_Minder_System.pdf",
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Civic+Hatchback/2024_Civic_5D_Maintenance_Minder.pdf",
+  ],
+  "toyota-camry-2024-le": [
+    "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24Camry/pdf/T-MMS-24Camry.pdf",
+  ],
+  "toyota-camry-2024-xse": [
+    "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24Camry/pdf/T-MMS-24Camry.pdf",
+  ],
+  "toyota-corolla-2024-le": [
+    "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24Corolla/pdf/T-MMS-24Corolla.pdf",
+  ],
+  "toyota-prius-2024-xle": [
+    "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24Prius/pdf/T-MMS-24Prius.pdf",
+  ],
+  "toyota-rav4-2024-le": [
+    "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24RAV4/pdf/T-MMS-24RAV4.pdf",
+  ],
+  "toyota-rav4-2024-hybrid-xle": [
+    "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24RAV4/pdf/T-MMS-24RAV4.pdf",
+  ],
+  "toyota-corolla-cross-2024-se": [
+    "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24CorollaCross/pdf/T-MMS-24CorollaCross.pdf",
+  ],
+  "toyota-highlander-2024-le": [
+    "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24Highlander/pdf/T-MMS-24Highlander.pdf",
+  ],
+  "toyota-4runner-2024-sr5": [
+    "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-244Runner/pdf/T-MMS-244Runner.pdf",
+  ],
+  "lexus-rx-2024-350": [
+    "https://assets.sipb.toyota.com/publications/en/omms-s/L-MMS-24RX350/pdf/L-MMS-24RX350.pdf",
+  ],
+  "lexus-es-2024-250": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24ES250ES350/pdf/L-MMS-24ES250ES350.pdf",
+  ],
+  "hyundai-elantra-2024-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/elantra/2024%20Elantra%20ICE%20and%20N-Line%20(CN7)%20OM.pdf",
+  ],
+  "hyundai-tucson-2024-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/tucson/2024_Tucson_Owners_Manual.pdf",
+  ],
+  "hyundai-santa-fe-2024-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/santa-fe/MX5a-2024-en_US-WEB-2C.pdf",
+  ],
+  "hyundai-ioniq5-2024-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/ioniq-5/2024%20Ioniq%205%20OM.pdf",
+  ],
+  "nissan-altima-2024-sv": [
+    "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/altima/2024/2024-nissan-altima-owner-manual.pdf",
+  ],
+  "nissan-rogue-2024-sv": [
+    "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/rogue/2024/2024-nissan-rogue-owner-manual.pdf",
+  ],
+  "nissan-pathfinder-2024-sv": [
+    "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/pathfinder/2024/2024-nissan-pathfinder-owner-manual.pdf",
+  ],
+  "nissan-leaf-2024-s": [
+    "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/leaf/2024/2024-nissan-leaf-owner-manual.pdf",
+  ],
+  "mazda3-2024-select": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/m3s/2024-mazda3-hatchback-sedan-owners-manual.pdf",
+  ],
+  "mazda-cx5-2024-preferred": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-5/2024-mazda-cx-5-vehicle-owners-manual.pdf",
+  ],
+  "mazda-cx30-2024-select": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-30/2024-cx-30-owners-manual.pdf",
+  ],
+  "subaru-impreza-2024-base": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2024_war_and_maint_041723.pdf",
+  ],
+  "subaru-forester-2024-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2024_war_and_maint_041723.pdf",
+  ],
+  "subaru-crosstrek-2024-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2024_war_and_maint_041723.pdf",
+  ],
+  "subaru-outback-2024-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2024_war_and_maint_041723.pdf",
+  ],
+  "ford-escape-2024-se": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Escape_Owners_Manual_version_1_om_EN-US.pdf",
+  ],
+  "ford-explorer-2024-xlt": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Explorer_Owners_Manual_version_1_om_EN-US.pdf",
+  ],
+  "ford-mach-e-2024-select": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf",
+  ],
+  "chevy-equinox-2024-lt": [
+    "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Equinox_OM_en_US_U_85150510B_2023JUL27_2P_INS1.pdf",
+  ],
+  "chevy-traverse-2024-lt": [
+    "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Traverse_OM_en_US_U_17442647D_2024OCT10_4P.pdf",
+  ],
+  "chevy-bolt-2023-1lt": [
+    "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2023/23_CHEV_Bolt_EV_OM_en_US_U_84953304C_2023MAR10_3P.pdf",
+  ],
+  "vw-jetta-2024-s": [
+    "https://ownersliterature.vw.com/owners-literature-service/v1/document/11025511-673f-445a-a6a5-20b5f3e5cc59",
+  ],
+  "vw-id4-2024-pro": [
+    "https://ownersliterature.vw.com/owners-literature-service/v1/document/2721b3eb-0228-4be4-94d6-0b8e24dbf74c",
+  ],
+  "tesla-model-3-2024-long-range": [
+    "https://www.tesla.com/ownersmanual/model3/en_us/Owners_Manual.pdf",
+  ],
+  "tesla-model-y-2024-long-range": [
+    "https://www.tesla.com/ownersmanual/2020_2024_modely/en_us/Owners_Manual.pdf",
   ],
 };
 

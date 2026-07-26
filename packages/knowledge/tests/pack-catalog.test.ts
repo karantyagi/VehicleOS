@@ -49,6 +49,6 @@ describe("OEM schedule packs", () => {
         expect.objectContaining({ packId: "honda-cr-v-2024-ex" }),
       ]),
     );
-    expect(verified.length).toBeGreaterThanOrEqual(16);
+    expect(verified.length).toBeGreaterThanOrEqual(46);
   });
 });
