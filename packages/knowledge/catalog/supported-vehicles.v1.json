@@ -7251,7 +7251,7 @@
       "model": "S60",
       "year": 2025,
       "trim": "Recharge",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -7307,7 +7307,7 @@
       "model": "S60",
       "year": 2023,
       "trim": "B5 Core",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -7436,7 +7436,7 @@
       "model": "S60",
       "year": 2020,
       "trim": "Recharge",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -7492,7 +7492,7 @@
       "model": "S90",
       "year": 2025,
       "trim": "B6 Core",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -7519,7 +7519,7 @@
       "model": "S90",
       "year": 2024,
       "trim": "B6 Core",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -7645,7 +7645,7 @@
       "model": "S90",
       "year": 2020,
       "trim": "Recharge",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -7708,7 +7708,7 @@
       "model": "XC40",
       "year": 2025,
       "trim": "B5 Core",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -7736,7 +7736,7 @@
       "year": 2025,
       "trim": "Recharge Pure Electric",
       "powertrain": "Electric",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -7791,7 +7791,7 @@
       "model": "XC40",
       "year": 2023,
       "trim": "B5 Plus",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -7837,7 +7837,7 @@
       "model": "XC40",
       "year": 2022,
       "trim": "Recharge",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -7893,7 +7893,7 @@
       "model": "XC40",
       "year": 2020,
       "trim": "B5 Core",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -7921,7 +7921,7 @@
       "year": 2020,
       "trim": "Recharge Pure Electric",
       "powertrain": "Electric",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8003,7 +8003,7 @@
       "model": "XC60",
       "year": 2024,
       "trim": "B5 Plus",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8030,7 +8030,7 @@
       "model": "XC60",
       "year": 2023,
       "trim": "B5 Plus",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8075,7 +8075,7 @@
       "model": "XC60",
       "year": 2021,
       "trim": "B5 Core",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8102,7 +8102,7 @@
       "model": "XC60",
       "year": 2020,
       "trim": "B5 Core",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16393,7 +16393,7 @@
       "year": 2021,
       "trim": "XLE",
       "powertrain": "Hybrid",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {

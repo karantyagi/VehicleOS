@@ -49,6 +49,7 @@ export type Tier2000PackSpec = {
   scheduleKind: Tier2000ScheduleKind;
   segment?: string;
   priority?: number;
+  manualSharePolicy?: string;
 };
 
 export type Tier2000SourceRow = {

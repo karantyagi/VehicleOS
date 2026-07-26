@@ -94,3 +94,16 @@ SHA-256:
 ```text
 tier-2000-oem-manual-sources-v2.csv 58EB3F352E0BFBE95061ED34036D0275C2CCB9862A67462D5C4B37EFFCDAD0F3
 ```
+
+## Tier D source retry v3 (Codex — pending)
+
+`tier-2000-tier-d-retry.csv` lists **913** packs with `creator_review_required` and
+merged source tier D (after v2 Audi demotions). Codex prompt:
+`CODEX-PROMPT-tier-d-v3.md`.
+
+**Output:** `tier-2000-oem-manual-sources-v3.csv` — one row per tier-d-retry
+`pack_id`. v3 overrides v2/v1 on merge. Factory runs `pnpm verify:tier-d
+--promote` after integration (Option A dual-extract only).
+
+Priority makes: Mercedes (148), Hyundai/Kia/Genesis (237), Audi (77), Ford (58),
+VW (51), Tesla (28 — expect Tier D).
