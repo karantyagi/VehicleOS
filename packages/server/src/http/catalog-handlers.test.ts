@@ -16,7 +16,7 @@ describe("assertVehicleCreateAllowed", () => {
     });
   });
 
-  it("rejects creator_review_required catalog row", () => {
+  it("allows promoted Kia K5 after Phase C", () => {
     const result = assertVehicleCreateAllowed({
       year: 2024,
       make: "Kia",
@@ -24,11 +24,10 @@ describe("assertVehicleCreateAllowed", () => {
       trim: "LXS",
     });
 
-    expect(result.ok).toBe(false);
-    if (result.ok) return;
-    expect(result.status).toBe(422);
-    expect(result.body.code).toBe("waitlist_required");
-    expect(result.body.packId).toBe("kia-k5-2024-lxs");
+    expect(result).toEqual({
+      ok: true,
+      packId: "kia-k5-2024-lxs",
+    });
   });
 
   it("rejects unknown vehicle", () => {
