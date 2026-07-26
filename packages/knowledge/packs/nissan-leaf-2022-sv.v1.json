@@ -4,7 +4,7 @@
   "manualTitle": "2022 Nissan LEAF SV — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "ev_simplified",
   "qaStatus": "auto_verified",
-  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#nissan-leaf-2022-sv",
   "vehicle": {
     "make": "Nissan",
@@ -18,9 +18,9 @@
       "entryId": "tire-rotation",
       "canonicalServiceId": "generic.tire_rotation",
       "serviceName": "Rotate tires",
-      "intervalMiles": 7500,
-      "intervalMonths": 6,
-      "sourcePage": "EV maintenance schedule — Tire rotation",
+      "intervalMiles": 15000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — Tire rotation",
       "ruleId": "knowledge.policy.tire-rotation.v1",
       "confidence": 0.92
     },

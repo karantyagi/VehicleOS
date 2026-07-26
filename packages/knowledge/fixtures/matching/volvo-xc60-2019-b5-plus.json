@@ -1,0 +1,12 @@
+{
+  "packId": "volvo-xc60-2019-b5-plus",
+  "version": 1,
+  "cases": [
+    {
+      "description": "CARFAX line maps to tire-rotation",
+      "carfaxLine": "Tires rotated",
+      "expectedCanonicalServiceId": "generic.tire_rotation",
+      "expectedEntryId": "tire-rotation"
+    }
+  ]
+}

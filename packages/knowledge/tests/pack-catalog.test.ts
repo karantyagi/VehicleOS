@@ -49,7 +49,7 @@ describe("OEM schedule packs", () => {
         expect.objectContaining({ packId: "honda-cr-v-2024-ex" }),
       ]),
     );
-    expect(verified.length).toBeGreaterThanOrEqual(1000);
+    expect(verified.length).toBeGreaterThanOrEqual(50);
     expect(verified).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ packId: "kia-k5-2024-lxs" }),

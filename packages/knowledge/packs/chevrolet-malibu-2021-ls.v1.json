@@ -4,7 +4,7 @@
   "manualTitle": "2021 Chevrolet Malibu LS — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
   "qaStatus": "auto_verified",
-  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#chevrolet-malibu-2021-ls",
   "vehicle": {
     "make": "Chevrolet",
@@ -20,7 +20,7 @@
       "serviceName": "Engine oil and filter change (Oil Life Monitor)",
       "intervalMiles": 7500,
       "intervalMonths": 6,
-      "sourcePage": "Scheduled Maintenance — Engine oil",
+      "sourcePage": "P. 1 — engine oil",
       "ruleId": "knowledge.policy.engine-oil.v1",
       "projectionNote": "OEM trigger is oil life %; miles are assistant projection.",
       "confidence": 0.92
@@ -31,7 +31,7 @@
       "serviceName": "Rotate tires",
       "intervalMiles": 7500,
       "intervalMonths": 6,
-      "sourcePage": "Scheduled Maintenance — Tire rotation",
+      "sourcePage": "P. 1 — tire rotation",
       "ruleId": "knowledge.policy.tire-rotation.v1",
       "confidence": 0.92
     }

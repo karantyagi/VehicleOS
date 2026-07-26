@@ -4,7 +4,7 @@
   "manualTitle": "2021 Genesis GV80 3.5T — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
   "qaStatus": "auto_verified",
-  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier C. Factory scaffold; refine via dual-extract QA.",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#genesis-gv80-2021-3-5t",
   "vehicle": {
     "make": "Genesis",
@@ -20,7 +20,7 @@
       "serviceName": "Engine oil and filter change",
       "intervalMiles": 8000,
       "intervalMonths": 6,
-      "sourcePage": "Genesis maintenance schedule — Engine oil",
+      "sourcePage": "P. 1 — engine oil",
       "ruleId": "knowledge.policy.engine-oil.v1",
       "confidence": 0.92
     },
@@ -28,9 +28,9 @@
       "entryId": "tire-rotation",
       "canonicalServiceId": "generic.tire_rotation",
       "serviceName": "Rotate tires",
-      "intervalMiles": 7500,
-      "intervalMonths": 6,
-      "sourcePage": "Genesis maintenance schedule — Tire rotation",
+      "intervalMiles": 16000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — tire rotation",
       "ruleId": "knowledge.policy.tire-rotation.v1",
       "confidence": 0.92
     },

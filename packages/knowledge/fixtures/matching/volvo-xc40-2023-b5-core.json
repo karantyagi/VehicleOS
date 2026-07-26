@@ -1,0 +1,12 @@
+{
+  "packId": "volvo-xc40-2023-b5-core",
+  "version": 1,
+  "cases": [
+    {
+      "description": "CARFAX line maps to tire-rotation",
+      "carfaxLine": "Tires rotated",
+      "expectedCanonicalServiceId": "generic.tire_rotation",
+      "expectedEntryId": "tire-rotation"
+    }
+  ]
+}

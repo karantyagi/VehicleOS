@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2023 Volvo XC40 B5 Plus — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
-  "qaStatus": "auto_verified",
-  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "qaStatus": "creator_review_required",
+  "qaNotes": "Scaffold auto_verified revoked — awaiting factory Phase A+B verify and dual-extract promotion.",
   "sourceManifestRef": "sources/manifest.json#volvo-xc40-2023-b5-plus",
   "vehicle": {
     "make": "Volvo",

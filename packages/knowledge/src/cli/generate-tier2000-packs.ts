@@ -80,7 +80,6 @@ const main = () => {
       preserved += 1;
     } else {
       pack = generateTier2000Pack(spec, {
-        sourceTier: sourceRow?.sourceTier || undefined,
         qaStatus: preserveAutoVerified ? "auto_verified" : undefined,
       });
       validateOemSchedulePack(pack);

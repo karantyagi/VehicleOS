@@ -4,7 +4,7 @@
   "manualTitle": "2023 Lexus RX 500h — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
   "qaStatus": "auto_verified",
-  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#lexus-rx-2023-500h",
   "vehicle": {
     "make": "Lexus",
@@ -19,8 +19,8 @@
       "canonicalServiceId": "lexus.mr.10000.engine_oil",
       "serviceName": "Engine oil and filter change",
       "intervalMiles": 10000,
-      "intervalMonths": 6,
-      "sourcePage": "Lexus maintenance schedule — Normal driving",
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — engine oil",
       "ruleId": "knowledge.policy.toyota-oil.v1",
       "projectionNote": "Toyota 10k/6mo normal; 5k severe driving per owner manual.",
       "confidence": 0.93
@@ -29,9 +29,9 @@
       "entryId": "tire-rotation",
       "canonicalServiceId": "generic.tire_rotation",
       "serviceName": "Rotate tires",
-      "intervalMiles": 5000,
-      "intervalMonths": 6,
-      "sourcePage": "Lexus maintenance schedule — Tire rotation",
+      "intervalMiles": 10000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — tire rotation",
       "ruleId": "knowledge.policy.tire-rotation.v1",
       "confidence": 0.94
     },
@@ -61,7 +61,7 @@
       "serviceName": "Replace brake fluid",
       "intervalMiles": null,
       "intervalMonths": 36,
-      "sourcePage": "Lexus maintenance schedule — Brake fluid",
+      "sourcePage": "P. 1 — brake fluid",
       "ruleId": "knowledge.policy.brake-fluid.v1",
       "confidence": 0.92
     }

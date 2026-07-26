@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2018 Audi A4 Premium — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
-  "qaStatus": "auto_verified",
-  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier C. Factory scaffold; refine via dual-extract QA.",
+  "qaStatus": "creator_review_required",
+  "qaNotes": "Phase A+B complete — dual-extract mismatch. Creator review required (Phase C).",
   "sourceManifestRef": "sources/manifest.json#audi-a4-2018-premium",
   "vehicle": {
     "make": "Audi",

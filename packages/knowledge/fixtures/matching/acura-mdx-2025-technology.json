@@ -1,0 +1,30 @@
+{
+  "packId": "acura-mdx-2025-technology",
+  "version": 1,
+  "cases": [
+    {
+      "description": "CARFAX line maps to code-b",
+      "carfaxLine": "Maintenance Minder B",
+      "expectedCanonicalServiceId": "acura.mm.b.oil_filter",
+      "expectedEntryId": "code-b"
+    },
+    {
+      "description": "CARFAX line maps to code-a",
+      "carfaxLine": "Maintenance Minder A",
+      "expectedCanonicalServiceId": "acura.mm.a.engine_oil",
+      "expectedEntryId": "code-a"
+    },
+    {
+      "description": "CARFAX line maps to mm-sub-1",
+      "carfaxLine": "Tires rotated",
+      "expectedCanonicalServiceId": "generic.tire_rotation",
+      "expectedEntryId": "mm-sub-1"
+    },
+    {
+      "description": "CARFAX line maps to mm-sub-7",
+      "carfaxLine": "Brake fluid",
+      "expectedCanonicalServiceId": "generic.brake_fluid",
+      "expectedEntryId": "mm-sub-7"
+    }
+  ]
+}

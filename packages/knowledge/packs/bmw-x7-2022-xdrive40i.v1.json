@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2022 BMW X7 xDrive40i — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
-  "qaStatus": "auto_verified",
-  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "qaStatus": "creator_review_required",
+  "qaNotes": "Phase A+B complete — dual-extract mismatch. Creator review required (Phase C).",
   "sourceManifestRef": "sources/manifest.json#bmw-x7-2022-xdrive40i",
   "vehicle": {
     "make": "BMW",

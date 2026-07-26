@@ -4,7 +4,7 @@
   "manualTitle": "2025 Ford Bronco Sport Big Bend — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
   "qaStatus": "auto_verified",
-  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#ford-bronco-sport-2025-big-bend",
   "vehicle": {
     "make": "Ford",
@@ -20,7 +20,7 @@
       "serviceName": "Engine oil and filter change (Oil Life Monitor)",
       "intervalMiles": 7500,
       "intervalMonths": 6,
-      "sourcePage": "Scheduled Maintenance — Engine oil",
+      "sourcePage": "P. 1 — engine oil",
       "ruleId": "knowledge.policy.engine-oil.v1",
       "projectionNote": "OEM trigger is oil life %; miles are assistant projection.",
       "confidence": 0.92
@@ -29,9 +29,9 @@
       "entryId": "tire-rotation",
       "canonicalServiceId": "generic.tire_rotation",
       "serviceName": "Rotate tires",
-      "intervalMiles": 7500,
+      "intervalMiles": 5000,
       "intervalMonths": 6,
-      "sourcePage": "Scheduled Maintenance — Tire rotation",
+      "sourcePage": "P. 1 — tire rotation",
       "ruleId": "knowledge.policy.tire-rotation.v1",
       "confidence": 0.92
     }

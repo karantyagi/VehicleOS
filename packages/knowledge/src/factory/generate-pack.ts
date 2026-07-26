@@ -665,18 +665,15 @@ export const generateTier1Pack = (spec: Tier1PackSpec): OemSchedulePack =>
 
 export const generateTier2000Pack = (
   spec: Tier2000PackSpec,
-  options: { qaStatus?: OemSchedulePack["qaStatus"]; sourceTier?: string } = {},
+  options: { qaStatus?: OemSchedulePack["qaStatus"] } = {},
 ): OemSchedulePack => {
   const qaStatus: OemSchedulePack["qaStatus"] =
-    options.qaStatus ??
-    (options.sourceTier === "B" || options.sourceTier === "C"
-      ? "auto_verified"
-      : "creator_review_required");
+    options.qaStatus ?? "creator_review_required";
 
   const qaNotes =
     qaStatus === "auto_verified"
-      ? `Tier-2 catalog pack — OEM PDF source tier ${options.sourceTier ?? "B/C"}. Factory scaffold; refine via dual-extract QA.`
-      : "Tier-2 catalog pack — no verified OEM PDF yet. Creator review required before auto_verified promotion.";
+      ? "Preserved factory-verified status."
+      : "Tier-2 catalog pack — creator review required until Phase A+B dual-extract verify and promotion.";
 
   return buildPack(spec, qaStatus, qaNotes, packScheduleKind(spec.scheduleKind));
 };

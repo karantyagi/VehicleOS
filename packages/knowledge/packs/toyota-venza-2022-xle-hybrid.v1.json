@@ -4,7 +4,7 @@
   "manualTitle": "2022 Toyota Venza XLE — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
   "qaStatus": "auto_verified",
-  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#toyota-venza-2022-xle-hybrid",
   "vehicle": {
     "make": "Toyota",
@@ -21,7 +21,7 @@
       "serviceName": "Engine oil and filter change",
       "intervalMiles": 10000,
       "intervalMonths": 6,
-      "sourcePage": "Maintenance Schedule — Normal driving",
+      "sourcePage": "P. 1 — engine oil",
       "ruleId": "knowledge.policy.toyota-oil.v1",
       "projectionNote": "Toyota 10k/6mo normal; 5k severe driving per owner manual.",
       "confidence": 0.93
@@ -32,7 +32,7 @@
       "serviceName": "Rotate tires",
       "intervalMiles": 5000,
       "intervalMonths": 6,
-      "sourcePage": "Maintenance Schedule — Tire rotation",
+      "sourcePage": "P. 1 — tire rotation",
       "ruleId": "knowledge.policy.tire-rotation.v1",
       "confidence": 0.94
     },
@@ -62,7 +62,7 @@
       "serviceName": "Replace brake fluid",
       "intervalMiles": null,
       "intervalMonths": 36,
-      "sourcePage": "Maintenance Schedule — Brake fluid",
+      "sourcePage": "P. 1 — brake fluid",
       "ruleId": "knowledge.policy.brake-fluid.v1",
       "confidence": 0.92
     }

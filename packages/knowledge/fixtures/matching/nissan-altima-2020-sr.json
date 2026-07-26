@@ -1,0 +1,18 @@
+{
+  "packId": "nissan-altima-2020-sr",
+  "version": 1,
+  "cases": [
+    {
+      "description": "CARFAX line maps to tire-rotation",
+      "carfaxLine": "Tires rotated",
+      "expectedCanonicalServiceId": "generic.tire_rotation",
+      "expectedEntryId": "tire-rotation"
+    },
+    {
+      "description": "CARFAX line maps to engine-oil",
+      "carfaxLine": "Oil and filter changed",
+      "expectedCanonicalServiceId": "nissan.fixed.5000.engine_oil",
+      "expectedEntryId": "engine-oil"
+    }
+  ]
+}

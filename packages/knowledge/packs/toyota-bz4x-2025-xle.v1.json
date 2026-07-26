@@ -4,7 +4,7 @@
   "manualTitle": "2025 Toyota bZ4X XLE — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "ev_simplified",
   "qaStatus": "auto_verified",
-  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#toyota-bz4x-2025-xle",
   "vehicle": {
     "make": "Toyota",
@@ -20,7 +20,7 @@
       "serviceName": "Rotate tires",
       "intervalMiles": 7500,
       "intervalMonths": 6,
-      "sourcePage": "EV maintenance schedule — Tire rotation",
+      "sourcePage": "P. 1 — Tire rotation",
       "ruleId": "knowledge.policy.tire-rotation.v1",
       "confidence": 0.92
     },
