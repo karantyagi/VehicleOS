@@ -181,6 +181,20 @@ const PACK_URL_OVERRIDES: Record<string, string[]> = {
   "hyundai-ioniq5-2024-se": [
     "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/ioniq-5/2024%20Ioniq%205%20OM.pdf",
   ],
+  // Exact-byte public mirrors of the KGIS session-gated owner manuals.
+  // Verified 2026-07-26 by SHA-256 against fresh owners.kia.com -> KGIS downloads.
+  "kia-k5-2024-lxs": [
+    "https://manuals.startmycar.com/published/Kia-K5_2024_EN_US_e6ae80d227.pdf",
+  ],
+  "kia-sportage-2024-lx": [
+    "https://manuals.startmycar.com/published/Kia-Sportage_2024_EN-US_US_979e9e6749.pdf",
+  ],
+  "kia-telluride-2024-lx": [
+    "https://manuals.startmycar.com/published/Kia-Telluride_2024_EN_US_60a621055c.pdf",
+  ],
+  "kia-ev6-2024-light": [
+    "https://manuals.opinautos.com/published/Kia-EV6_2024_EN-US_US_ef71c5ee49.pdf",
+  ],
   "nissan-altima-2024-sv": [
     "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/altima/2024/2024-nissan-altima-owner-manual.pdf",
   ],
