@@ -1,8 +1,19 @@
 import {
   loadSupportedVehicleCatalog,
+  loadTier2000SourceByPackId,
   resolvePackIdForVehicle,
+  resolveScheduleSourceLineForPack,
 } from "@vehicleos/knowledge";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
+
+let tier2000SourceByPackId: ReturnType<typeof loadTier2000SourceByPackId> | null = null;
+
+const getTier2000SourceByPackId = () => {
+  if (!tier2000SourceByPackId) {
+    tier2000SourceByPackId = loadTier2000SourceByPackId();
+  }
+  return tier2000SourceByPackId;
+};
 
 export type VehicleSupportQuery = {
   year?: string | number;
@@ -170,6 +181,7 @@ export const listSupportedVehicles = (
 ): JsonResponse => {
   const catalog = loadSupportedVehicleCatalog();
   const rows = filterSupportedVehicleRows(catalog.vehicles, options);
+  const registryByPackId = getTier2000SourceByPackId();
 
   return jsonResponse(200, {
     vehicles: rows.map((row) => ({
@@ -182,6 +194,11 @@ export const listSupportedVehicles = (
       supported: row.qaStatus === "auto_verified",
       qaStatus: row.qaStatus,
       supportTier: row.supportTier,
+      scheduleSourceLine: resolveScheduleSourceLineForPack(
+        row.packId,
+        catalog.vehicles,
+        registryByPackId,
+      ),
     })),
     total: filterSupportedVehicleRows(catalog.vehicles, {
       ...options,

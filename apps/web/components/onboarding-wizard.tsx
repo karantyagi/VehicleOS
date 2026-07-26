@@ -358,10 +358,15 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             </FormField>
 
             {selectedVehicle ? (
-              <p className="sm:col-span-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
-                Verified OEM maintenance schedule loads automatically for{" "}
-                <span className="font-medium">{formatCatalogVehicleLabel(selectedVehicle)}</span>.
-              </p>
+              <div className="sm:col-span-2 space-y-1 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
+                <p>
+                  Verified OEM maintenance schedule loads automatically for{" "}
+                  <span className="font-medium">{formatCatalogVehicleLabel(selectedVehicle)}</span>.
+                </p>
+                {selectedVehicle.scheduleSourceLine ? (
+                  <p className="text-muted-foreground">{selectedVehicle.scheduleSourceLine}</p>
+                ) : null}
+              </div>
             ) : null}
 
             <FormField label="Current mileage" htmlFor="ob-mileage">

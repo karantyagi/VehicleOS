@@ -8,6 +8,7 @@ export type CatalogVehicleRow = {
   supported: boolean;
   qaStatus: string;
   supportTier: string | null;
+  scheduleSourceLine?: string | null;
 };
 
 export type CatalogVehicleFilter = {
