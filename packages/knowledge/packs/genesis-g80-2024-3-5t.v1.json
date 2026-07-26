@@ -1,0 +1,48 @@
+{
+  "packId": "genesis-g80-2024-3-5t",
+  "version": 1,
+  "manualTitle": "2024 Genesis G80 3.5T — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "sourceManifestRef": "sources/manifest.json#genesis-g80-2024-3-5t",
+  "vehicle": {
+    "make": "Genesis",
+    "model": "G80",
+    "year": 2024,
+    "trim": "3.5T",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "genesis.fixed.8000.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 8000,
+      "intervalMonths": 6,
+      "sourcePage": "Genesis maintenance schedule — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "Genesis maintenance schedule — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "cabin-air-filter",
+      "canonicalServiceId": "generic.cabin_air_filter",
+      "serviceName": "Replace cabin air filter",
+      "intervalMiles": 15000,
+      "intervalMonths": 12,
+      "sourcePage": "Genesis maintenance schedule — Cabin air filter",
+      "ruleId": "knowledge.policy.cabin-filter.v1",
+      "confidence": 0.92
+    }
+  ]
+}

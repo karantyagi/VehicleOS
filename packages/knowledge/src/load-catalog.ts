@@ -59,7 +59,7 @@ export const resolvePackIdForVehicle = (input: {
 }): string | null => {
   const catalog = loadSupportedVehicleCatalog();
   const normalized = (value: string): string => value.trim().toLowerCase();
-  const match = catalog.vehicles.find(
+  const matches = catalog.vehicles.filter(
     (row) =>
       normalized(row.make) === normalized(input.make) &&
       normalized(row.model) === normalized(input.model) &&
@@ -69,7 +69,19 @@ export const resolvePackIdForVehicle = (input: {
         !row.powertrain ||
         normalized(row.powertrain) === normalized(input.powertrain)),
   );
-  return match?.packId ?? null;
+
+  if (matches.length === 0) return null;
+  if (matches.length === 1) return matches[0].packId;
+
+  const ranked = [...matches].sort((a, b) => {
+    if (a.qaStatus === "auto_verified" && b.qaStatus !== "auto_verified") return -1;
+    if (b.qaStatus === "auto_verified" && a.qaStatus !== "auto_verified") return 1;
+    if (a.supportTier === "tier1" && b.supportTier !== "tier1") return -1;
+    if (b.supportTier === "tier1" && a.supportTier !== "tier1") return 1;
+    return a.packId.length - b.packId.length;
+  });
+
+  return ranked[0]?.packId ?? null;
 };
 
 export type KnowledgeScheduleDraftRow = {

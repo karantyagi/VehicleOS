@@ -1,0 +1,38 @@
+{
+  "packId": "volvo-xc60-2021-recharge",
+  "version": 1,
+  "manualTitle": "2021 Volvo XC60 Recharge — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "sourceManifestRef": "sources/manifest.json#volvo-xc60-2021-recharge",
+  "vehicle": {
+    "make": "Volvo",
+    "model": "XC60",
+    "year": 2021,
+    "trim": "Recharge",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "volvo.fixed.10000.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 10000,
+      "intervalMonths": 12,
+      "sourcePage": "Service schedule — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "Service schedule — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    }
+  ]
+}

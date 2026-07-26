@@ -10,6 +10,13 @@ export type CatalogVehicleRow = {
   supportTier: string | null;
 };
 
+export type CatalogVehicleFilter = {
+  make?: string;
+  model?: string;
+  year?: number;
+  q?: string;
+};
+
 export const formatCatalogVehicleLabel = (
   row: Pick<CatalogVehicleRow, "year" | "make" | "model" | "trim" | "powertrain">,
 ): string => {
@@ -27,6 +34,36 @@ export const sortCatalogVehicles = (rows: CatalogVehicleRow[]): CatalogVehicleRo
     return a.trim.localeCompare(b.trim);
   });
 
+const normalize = (value: string): string => value.trim().toLowerCase();
+
+export const filterCatalogVehicles = (
+  rows: CatalogVehicleRow[],
+  filter: CatalogVehicleFilter = {},
+): CatalogVehicleRow[] => {
+  const q = filter.q ? normalize(filter.q) : "";
+  const make = filter.make ? normalize(filter.make) : "";
+  const model = filter.model ? normalize(filter.model) : "";
+  const year = filter.year;
+
+  return sortCatalogVehicles(rows).filter((row) => {
+    if (make && normalize(row.make) !== make) return false;
+    if (model && normalize(row.model) !== model) return false;
+    if (year && row.year !== year) return false;
+    if (!q) return true;
+    const haystack = [
+      row.make,
+      row.model,
+      String(row.year),
+      row.trim,
+      row.powertrain ?? "",
+      row.packId,
+    ]
+      .join(" ")
+      .toLowerCase();
+    return haystack.includes(q);
+  });
+};
+
 export const fetchVerifiedCatalogVehicles = async (apiBase = ""): Promise<CatalogVehicleRow[]> => {
   const response = await fetch(`${apiBase}/api/catalog/vehicles?verifiedOnly=true`);
   if (!response.ok) {
@@ -35,4 +72,12 @@ export const fetchVerifiedCatalogVehicles = async (apiBase = ""): Promise<Catalo
 
   const body = (await response.json()) as { vehicles: CatalogVehicleRow[] };
   return sortCatalogVehicles(body.vehicles.filter((row) => row.supported));
+};
+
+export const fetchVerifiedCatalogCount = async (apiBase = ""): Promise<number> => {
+  const response = await fetch(`${apiBase}/api/catalog/vehicles?verifiedOnly=true&limit=1`);
+  if (!response.ok) return 0;
+  const body = (await response.json()) as { total?: number; vehicles?: CatalogVehicleRow[] };
+  if (typeof body.total === "number") return body.total;
+  return body.vehicles?.filter((row) => row.supported).length ?? 0;
 };

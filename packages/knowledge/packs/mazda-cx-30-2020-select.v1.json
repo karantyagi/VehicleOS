@@ -1,0 +1,38 @@
+{
+  "packId": "mazda-cx-30-2020-select",
+  "version": 1,
+  "manualTitle": "2020 Mazda CX-30 Select — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "sourceManifestRef": "sources/manifest.json#mazda-cx-30-2020-select",
+  "vehicle": {
+    "make": "Mazda",
+    "model": "CX-30",
+    "year": 2020,
+    "trim": "Select",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "mazda.fixed.7500.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "Maintenance schedule — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "Maintenance schedule — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    }
+  ]
+}

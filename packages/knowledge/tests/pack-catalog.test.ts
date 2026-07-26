@@ -38,9 +38,9 @@ describe("OEM schedule packs", () => {
     expect(phrases).toContain("Oil and filter changed");
   });
 
-  it("catalog lists Tier-1 plus dogfood packs", () => {
+  it("catalog lists Tier-1 plus Tier-2 packs", () => {
     const catalog = loadSupportedVehicleCatalog();
-    expect(catalog.vehicles.length).toBeGreaterThanOrEqual(50);
+    expect(catalog.vehicles.length).toBeGreaterThanOrEqual(2000);
     const verified = catalog.vehicles.filter((row) => row.qaStatus === "auto_verified");
     expect(verified).toEqual(
       expect.arrayContaining([
@@ -49,7 +49,7 @@ describe("OEM schedule packs", () => {
         expect.objectContaining({ packId: "honda-cr-v-2024-ex" }),
       ]),
     );
-    expect(verified.length).toBeGreaterThanOrEqual(50);
+    expect(verified.length).toBeGreaterThanOrEqual(1000);
     expect(verified).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ packId: "kia-k5-2024-lxs" }),

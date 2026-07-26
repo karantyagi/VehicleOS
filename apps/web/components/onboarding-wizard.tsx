@@ -8,7 +8,7 @@ import { RecordImportPanel } from "@/components/record-import-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { VehicleCatalogPicker } from "@/components/vehicle-catalog-picker";
 import { LogoMark } from "../lib/logo-mark";
 import { getApiBase } from "../lib/api-base";
 import {
@@ -336,24 +336,16 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             <FormField
               label="Supported vehicle"
               htmlFor="ob-vehicle"
-              hint={`${catalog.length || "…"} verified models in early access`}
+              hint={`${catalog.length || "…"} verified models — search to find yours`}
               className="sm:col-span-2"
             >
-              <Select
+              <VehicleCatalogPicker
                 id="ob-vehicle"
+                vehicles={catalog}
                 value={form.packId}
                 disabled={isCatalogLoading || catalog.length === 0}
-                onChange={(event) => selectVehicle(event.target.value)}
-              >
-                <option value="" disabled>
-                  {isCatalogLoading ? "Loading catalog…" : "Select your vehicle"}
-                </option>
-                {catalog.map((row) => (
-                  <option key={row.packId} value={row.packId}>
-                    {formatCatalogVehicleLabel(row)}
-                  </option>
-                ))}
-              </Select>
+                onSelect={selectVehicle}
+              />
             </FormField>
 
             {selectedVehicle ? (

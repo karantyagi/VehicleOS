@@ -1,6 +1,7 @@
 import type { Tier1PackSpec } from "./tier1-manifest.js";
 import { TIER1_PACK_SPECS } from "./tier1-manifest.js";
 import { partitionUrls } from "./pdf-url-classify.js";
+import tier2000PdfOverrides from "../../sources/registries/tier-2000/tier-2000-pdf-overrides.json" with { type: "json" };
 
 export type PdfSourceSpec = {
   packId: string;
@@ -110,6 +111,8 @@ const evGenericUrls = (year: number, model: string, make: string): string[] => {
     `https://owners.${makeSlug}.com/content/dam/${makeSlug}/ev/maintenance/${year}-${slug}-maintenance-schedule.pdf`,
   ];
 };
+
+const TIER2000_URL_OVERRIDES = tier2000PdfOverrides as Record<string, string[]>;
 
 /** Pack-specific overrides — researched 2026-07-25. See workspace/knowledge/oem-pdf-url-registry.v1.json */
 const PACK_URL_OVERRIDES: Record<string, string[]> = {
@@ -285,9 +288,9 @@ export const resolvePdfSourceSpec = (input: {
   make: string;
   model: string;
   year: number;
-  oemFamily: Tier1PackSpec["oemFamily"];
+  oemFamily: Tier1PackSpec["oemFamily"] | string;
 }): PdfSourceSpec => {
-  const override = PACK_URL_OVERRIDES[input.packId];
+  const override = PACK_URL_OVERRIDES[input.packId] ?? TIER2000_URL_OVERRIDES[input.packId];
   if (override) {
     return withProvenance(input.packId, override);
   }

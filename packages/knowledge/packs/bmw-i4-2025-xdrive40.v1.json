@@ -1,0 +1,60 @@
+{
+  "packId": "bmw-i4-2025-xdrive40",
+  "version": 1,
+  "manualTitle": "2025 BMW i4 xDrive40 — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "ev_simplified",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "sourceManifestRef": "sources/manifest.json#bmw-i4-2025-xdrive40",
+  "vehicle": {
+    "make": "BMW",
+    "model": "i4",
+    "year": 2025,
+    "trim": "xDrive40",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "bmw.cbs.engine_oil",
+      "serviceName": "Engine oil and filter change (CBS)",
+      "intervalMiles": null,
+      "intervalMonths": 12,
+      "sourcePage": "BMW Maintenance System — Engine oil service",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "projectionNote": "CBS condition-based trigger; miles are assistant projection.",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "BMW Maintenance System — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "brake-fluid",
+      "canonicalServiceId": "generic.brake_fluid",
+      "serviceName": "Replace brake fluid",
+      "intervalMiles": null,
+      "intervalMonths": 24,
+      "sourcePage": "BMW Maintenance System — Brake fluid",
+      "ruleId": "knowledge.policy.brake-fluid.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "vehicle-check",
+      "canonicalServiceId": "bmw.cbs.vehicle_check",
+      "serviceName": "Vehicle check (CBS)",
+      "intervalMiles": null,
+      "intervalMonths": 12,
+      "sourcePage": "BMW Maintenance System — Vehicle check",
+      "ruleId": "knowledge.policy.vehicle-check.v1",
+      "projectionNote": "CBS condition-based trigger; miles are assistant projection.",
+      "confidence": 0.92
+    }
+  ]
+}

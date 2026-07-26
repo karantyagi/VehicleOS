@@ -1,0 +1,39 @@
+{
+  "packId": "jeep-grand-cherokee-2021-limited",
+  "version": 1,
+  "manualTitle": "2021 Jeep Grand Cherokee Limited — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "creator_review_required",
+  "qaNotes": "Tier-2 catalog pack — no verified OEM PDF yet. Creator review required before auto_verified promotion.",
+  "sourceManifestRef": "sources/manifest.json#jeep-grand-cherokee-2021-limited",
+  "vehicle": {
+    "make": "Jeep",
+    "model": "Grand Cherokee",
+    "year": 2021,
+    "trim": "Limited",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "jeep.olm.engine_oil",
+      "serviceName": "Engine oil and filter change (Oil Life Monitor)",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "Scheduled Maintenance — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "projectionNote": "OEM trigger is oil life %; miles are assistant projection.",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "Scheduled Maintenance — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    }
+  ]
+}

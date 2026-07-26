@@ -1,0 +1,39 @@
+{
+  "packId": "chevrolet-malibu-2021-premier",
+  "version": 1,
+  "manualTitle": "2021 Chevrolet Malibu Premier — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "sourceManifestRef": "sources/manifest.json#chevrolet-malibu-2021-premier",
+  "vehicle": {
+    "make": "Chevrolet",
+    "model": "Malibu",
+    "year": 2021,
+    "trim": "Premier",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "chevy.olm.engine_oil",
+      "serviceName": "Engine oil and filter change (Oil Life Monitor)",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "Scheduled Maintenance — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "projectionNote": "OEM trigger is oil life %; miles are assistant projection.",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "Scheduled Maintenance — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    }
+  ]
+}

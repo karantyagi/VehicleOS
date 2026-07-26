@@ -1,0 +1,62 @@
+{
+  "packId": "acura-mdx-2023-technology",
+  "version": 1,
+  "manualTitle": "2023 Acura MDX Technology — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "maintenance_minder",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "sourceManifestRef": "sources/manifest.json#acura-mdx-2023-technology",
+  "vehicle": {
+    "make": "Acura",
+    "model": "MDX",
+    "year": 2023,
+    "trim": "Technology",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "code-a",
+      "canonicalServiceId": "acura.mm.a.engine_oil",
+      "serviceName": "Replace engine oil (Maintenance Minder A)",
+      "intervalMiles": 10000,
+      "intervalMonths": 12,
+      "sourcePage": "Acura Maintenance Minder — Code A",
+      "ruleId": "knowledge.policy.code-a.v1",
+      "mainItemCode": "A",
+      "confidence": 0.94
+    },
+    {
+      "entryId": "code-b",
+      "canonicalServiceId": "acura.mm.b.oil_filter",
+      "serviceName": "Replace engine oil and filter (Maintenance Minder B)",
+      "intervalMiles": 10000,
+      "intervalMonths": 12,
+      "sourcePage": "Acura Maintenance Minder — Code B",
+      "ruleId": "knowledge.policy.code-b.v1",
+      "mainItemCode": "B",
+      "confidence": 0.94
+    },
+    {
+      "entryId": "mm-sub-1",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires (Maintenance Minder sub 1)",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "Acura Maintenance Minder — Sub 1",
+      "ruleId": "knowledge.policy.mm-sub-1.v1",
+      "subItemCode": "1",
+      "confidence": 0.93
+    },
+    {
+      "entryId": "mm-sub-7",
+      "canonicalServiceId": "generic.brake_fluid",
+      "serviceName": "Replace brake fluid (Maintenance Minder sub 7)",
+      "intervalMiles": null,
+      "intervalMonths": 36,
+      "sourcePage": "Acura Maintenance Minder — Sub 7",
+      "ruleId": "knowledge.policy.mm-sub-7.v1",
+      "subItemCode": "7",
+      "confidence": 0.92
+    }
+  ]
+}

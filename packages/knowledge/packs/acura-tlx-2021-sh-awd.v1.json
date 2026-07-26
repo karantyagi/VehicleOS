@@ -1,16 +1,17 @@
 {
   "packId": "acura-tlx-2021-sh-awd",
   "version": 1,
-  "manualTitle": "2021 Acura TLX Owner's Manual — Maintenance Minder (U.S., SH-AWD)",
+  "manualTitle": "2021 Acura TLX SH-AWD — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "maintenance_minder",
   "qaStatus": "auto_verified",
+  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
   "sourceManifestRef": "sources/manifest.json#acura-tlx-2021-sh-awd",
   "vehicle": {
     "make": "Acura",
     "model": "TLX",
     "year": 2021,
     "trim": "SH-AWD",
-    "powertrain": "3.0T",
+    "powertrain": "SH-AWD",
     "market": "US"
   },
   "entries": [
@@ -18,75 +19,57 @@
       "entryId": "code-a",
       "canonicalServiceId": "acura.mm.a.engine_oil",
       "serviceName": "Replace engine oil (Maintenance Minder A)",
-      "intervalMonths": 12,
       "intervalMiles": 10000,
-      "sourcePage": "P. 527 — Code A",
-      "confidence": 0.98,
+      "intervalMonths": 12,
+      "sourcePage": "Acura Maintenance Minder — Code A",
       "ruleId": "knowledge.policy.code-a.v1",
       "mainItemCode": "A",
-      "projectionNote": "OEM trigger is oil-life %; 12 mo minimum per footnote *1; miles are assistant projection."
+      "confidence": 0.94
     },
     {
       "entryId": "code-b",
       "canonicalServiceId": "acura.mm.b.oil_filter",
       "serviceName": "Replace engine oil and filter (Maintenance Minder B)",
-      "intervalMonths": 12,
       "intervalMiles": 10000,
-      "sourcePage": "P. 527 — Code B",
-      "confidence": 0.98,
+      "intervalMonths": 12,
+      "sourcePage": "Acura Maintenance Minder — Code B",
       "ruleId": "knowledge.policy.code-b.v1",
       "mainItemCode": "B",
-      "projectionNote": "OEM trigger is oil-life %; CARFAX line 'Oil and filter changed' maps here."
+      "confidence": 0.94
     },
     {
       "entryId": "mm-sub-1",
       "canonicalServiceId": "generic.tire_rotation",
       "serviceName": "Rotate tires (Maintenance Minder sub 1)",
-      "intervalMonths": 12,
       "intervalMiles": 7500,
-      "sourcePage": "P. 527 — Sub 1",
-      "confidence": 0.97,
+      "intervalMonths": 12,
+      "sourcePage": "Acura Maintenance Minder — Sub 1",
       "ruleId": "knowledge.policy.mm-sub-1.v1",
-      "subItemCode": "1"
-    },
-    {
-      "entryId": "mm-sub-3",
-      "canonicalServiceId": "acura.mm.3.transmission_transfer",
-      "serviceName": "Replace transmission fluid and transfer fluid (Maintenance Minder sub 3)",
-      "intervalMonths": 36,
-      "intervalMiles": 30000,
-      "sourcePage": "P. 527 — Sub 3",
-      "confidence": 0.96,
-      "ruleId": "knowledge.policy.mm-sub-3.v1",
-      "subItemCode": "3",
-      "powertrain": "SH-AWD"
-    },
-    {
-      "entryId": "mm-sub-6",
-      "canonicalServiceId": "acura.mm.6.rear_differential",
-      "serviceName": "Replace rear differential fluid (Maintenance Minder sub 6)",
-      "intervalMonths": 24,
-      "intervalMiles": 15000,
-      "severeIntervalMiles": 7500,
-      "severeIntervalRepeatMiles": 15000,
-      "sourcePage": "P. 527 — Sub 6; footnote *7",
-      "confidence": 0.97,
-      "ruleId": "knowledge.policy.mm-sub-6.v1",
-      "subItemCode": "6",
-      "powertrain": "SH-AWD",
-      "projectionNote": "Severe: first at 7,500 mi then every 15,000 mi in mountainous low-speed conditions."
+      "subItemCode": "1",
+      "confidence": 0.93
     },
     {
       "entryId": "mm-sub-7",
       "canonicalServiceId": "generic.brake_fluid",
       "serviceName": "Replace brake fluid (Maintenance Minder sub 7)",
-      "intervalMonths": 36,
       "intervalMiles": null,
-      "sourcePage": "P. 527 — Sub 7; footnote *8",
-      "confidence": 0.96,
+      "intervalMonths": 36,
+      "sourcePage": "Acura Maintenance Minder — Sub 7",
       "ruleId": "knowledge.policy.mm-sub-7.v1",
-      "subItemCode": "7"
+      "subItemCode": "7",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "mm-sub-3",
+      "canonicalServiceId": "acura.mm.3.transmission_transfer",
+      "serviceName": "Replace transmission and transfer fluid (Maintenance Minder sub 3)",
+      "intervalMiles": 30000,
+      "intervalMonths": 36,
+      "sourcePage": "Acura Maintenance Minder — Sub 3",
+      "ruleId": "knowledge.policy.mm-sub-3.v1",
+      "subItemCode": "3",
+      "powertrain": "SH-AWD",
+      "confidence": 0.92
     }
-  ],
-  "qaNotes": "PDF-curated dogfood pack — dual-extract QA passed; CARFAX oil+filter maps to code B."
+  ]
 }

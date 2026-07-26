@@ -1,0 +1,48 @@
+{
+  "packId": "toyota-bz4x-2025-limited",
+  "version": 1,
+  "manualTitle": "2025 Toyota bZ4X Limited — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "ev_simplified",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Tier-2 catalog pack — OEM PDF source tier B. Factory scaffold; refine via dual-extract QA.",
+  "sourceManifestRef": "sources/manifest.json#toyota-bz4x-2025-limited",
+  "vehicle": {
+    "make": "Toyota",
+    "model": "bZ4X",
+    "year": 2025,
+    "trim": "Limited",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "EV maintenance schedule — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "cabin-air-filter",
+      "canonicalServiceId": "ev.cabin_filter",
+      "serviceName": "Replace cabin air filter",
+      "intervalMiles": 15000,
+      "intervalMonths": 12,
+      "sourcePage": "EV maintenance schedule — Cabin air filter",
+      "ruleId": "knowledge.policy.cabin-filter.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "brake-fluid",
+      "canonicalServiceId": "generic.brake_fluid",
+      "serviceName": "Replace brake fluid",
+      "intervalMiles": null,
+      "intervalMonths": 36,
+      "sourcePage": "EV maintenance schedule — Brake fluid",
+      "ruleId": "knowledge.policy.brake-fluid.v1",
+      "confidence": 0.92
+    }
+  ]
+}

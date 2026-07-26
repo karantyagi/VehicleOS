@@ -1,0 +1,38 @@
+{
+  "packId": "subaru-outback-2025-premium",
+  "version": 1,
+  "manualTitle": "2025 Subaru Outback Premium — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "creator_review_required",
+  "qaNotes": "Tier-2 catalog pack — no verified OEM PDF yet. Creator review required before auto_verified promotion.",
+  "sourceManifestRef": "sources/manifest.json#subaru-outback-2025-premium",
+  "vehicle": {
+    "make": "Subaru",
+    "model": "Outback",
+    "year": 2025,
+    "trim": "Premium",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "subaru.fixed.6000.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 6000,
+      "intervalMonths": 6,
+      "sourcePage": "Maintenance schedule — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 6000,
+      "intervalMonths": 6,
+      "sourcePage": "Maintenance schedule — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    }
+  ]
+}

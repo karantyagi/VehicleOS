@@ -1,0 +1,49 @@
+{
+  "packId": "mercedes-benz-gle-2022-gle450e",
+  "version": 1,
+  "manualTitle": "2022 Mercedes-Benz GLE GLE450e — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "creator_review_required",
+  "qaNotes": "Tier-2 catalog pack — no verified OEM PDF yet. Creator review required before auto_verified promotion.",
+  "sourceManifestRef": "sources/manifest.json#mercedes-benz-gle-2022-gle450e",
+  "vehicle": {
+    "make": "Mercedes-Benz",
+    "model": "GLE",
+    "year": 2022,
+    "trim": "GLE450e",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "mercedes.assyst.engine_oil",
+      "serviceName": "Engine oil and filter change (Assyst Plus)",
+      "intervalMiles": 10000,
+      "intervalMonths": 12,
+      "sourcePage": "Assyst Plus — Engine oil service",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "projectionNote": "Assyst Plus flexible service; miles are assistant projection.",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "Assyst Plus — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "brake-fluid",
+      "canonicalServiceId": "generic.brake_fluid",
+      "serviceName": "Replace brake fluid",
+      "intervalMiles": null,
+      "intervalMonths": 24,
+      "sourcePage": "Assyst Plus — Brake fluid",
+      "ruleId": "knowledge.policy.brake-fluid.v1",
+      "confidence": 0.92
+    }
+  ]
+}

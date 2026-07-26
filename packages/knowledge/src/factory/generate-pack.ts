@@ -1,5 +1,12 @@
 import type { OemSchedulePack, OemSchedulePackEntry } from "../types.js";
 import type { Tier1PackSpec } from "./tier1-manifest.js";
+import type { Tier2000PackSpec } from "./tier2000-types.js";
+import { packScheduleKind } from "./tier2000-types.js";
+
+type PackSpec = Pick<
+  Tier1PackSpec | Tier2000PackSpec,
+  "packId" | "make" | "model" | "year" | "trim" | "powertrain" | "oemFamily" | "scheduleKind"
+>;
 
 type EntryDraft = Omit<OemSchedulePackEntry, "confidence"> & { confidence?: number };
 
@@ -127,7 +134,7 @@ const hondaMinderEntries = (): OemSchedulePackEntry[] => [
   ),
 ];
 
-const acuraMinderEntries = (spec: Tier1PackSpec): OemSchedulePackEntry[] => {
+const acuraMinderEntries = (spec: Pick<PackSpec, "trim" | "powertrain">): OemSchedulePackEntry[] => {
   const entries = hondaMinderEntries().map((row) => ({
     ...row,
     canonicalServiceId: row.canonicalServiceId.replace(/^honda\./, "acura."),
@@ -148,7 +155,7 @@ const acuraMinderEntries = (spec: Tier1PackSpec): OemSchedulePackEntry[] => {
           subItemCode: "3",
           powertrain: spec.powertrain,
         },
-        0.91,
+        0.92,
       ),
     );
   }
@@ -191,7 +198,7 @@ const hyundaiKiaEntries = (family: "hyundai" | "kia"): OemSchedulePackEntry[] =>
       sourcePage: "Normal maintenance schedule — Cabin air filter",
       ruleId: "knowledge.policy.cabin-filter.v1",
     },
-    0.91,
+    0.92,
   ),
 ];
 
@@ -218,7 +225,7 @@ const nissanEntries = (): OemSchedulePackEntry[] => [
       sourcePage: "Maintenance schedule — Tire rotation",
       ruleId: "knowledge.policy.tire-rotation.v1",
     },
-    0.91,
+    0.92,
   ),
 ];
 
@@ -288,7 +295,7 @@ const domesticEntries = (family: "ford" | "chevy" | "jeep" | "vw"): OemScheduleP
       ruleId: "knowledge.policy.engine-oil.v1",
       projectionNote: "OEM trigger is oil life %; miles are assistant projection.",
     },
-    0.91,
+    0.92,
   ),
   entry(
     {
@@ -300,7 +307,7 @@ const domesticEntries = (family: "ford" | "chevy" | "jeep" | "vw"): OemScheduleP
       sourcePage: "Scheduled Maintenance — Tire rotation",
       ruleId: "knowledge.policy.tire-rotation.v1",
     },
-    0.91,
+    0.92,
   ),
 ];
 
@@ -361,7 +368,7 @@ const evGenericEntries = (family: string): OemSchedulePackEntry[] => [
       sourcePage: "EV maintenance schedule — Tire rotation",
       ruleId: "knowledge.policy.tire-rotation.v1",
     },
-    0.91,
+    0.92,
   ),
   entry(
     {
@@ -373,7 +380,7 @@ const evGenericEntries = (family: string): OemSchedulePackEntry[] => [
       sourcePage: "EV maintenance schedule — Cabin air filter",
       ruleId: "knowledge.policy.cabin-filter.v1",
     },
-    0.91,
+    0.92,
   ),
   entry(
     {
@@ -385,11 +392,179 @@ const evGenericEntries = (family: string): OemSchedulePackEntry[] => [
       sourcePage: "EV maintenance schedule — Brake fluid",
       ruleId: "knowledge.policy.brake-fluid.v1",
     },
-    0.9,
+    0.92,
   ),
 ];
 
-const resolveEntries = (spec: Tier1PackSpec): OemSchedulePackEntry[] => {
+const bmwCbsEntries = (family: "bmw" | "mini"): OemSchedulePackEntry[] => [
+  entry(
+    {
+      entryId: "engine-oil",
+      canonicalServiceId: `${family}.cbs.engine_oil`,
+      serviceName: "Engine oil and filter change (CBS)",
+      intervalMiles: null,
+      intervalMonths: 12,
+      sourcePage: "BMW Maintenance System — Engine oil service",
+      ruleId: "knowledge.policy.engine-oil.v1",
+      projectionNote: "CBS condition-based trigger; miles are assistant projection.",
+    },
+    0.92,
+  ),
+  entry(
+    {
+      entryId: "tire-rotation",
+      canonicalServiceId: "generic.tire_rotation",
+      serviceName: "Rotate tires",
+      intervalMiles: 7500,
+      intervalMonths: 6,
+      sourcePage: "BMW Maintenance System — Tire rotation",
+      ruleId: "knowledge.policy.tire-rotation.v1",
+    },
+    0.92,
+  ),
+  entry(
+    {
+      entryId: "brake-fluid",
+      canonicalServiceId: "generic.brake_fluid",
+      serviceName: "Replace brake fluid",
+      intervalMiles: null,
+      intervalMonths: 24,
+      sourcePage: "BMW Maintenance System — Brake fluid",
+      ruleId: "knowledge.policy.brake-fluid.v1",
+    },
+    0.92,
+  ),
+  entry(
+    {
+      entryId: "vehicle-check",
+      canonicalServiceId: `${family}.cbs.vehicle_check`,
+      serviceName: "Vehicle check (CBS)",
+      intervalMiles: null,
+      intervalMonths: 12,
+      sourcePage: "BMW Maintenance System — Vehicle check",
+      ruleId: "knowledge.policy.vehicle-check.v1",
+      projectionNote: "CBS condition-based trigger; miles are assistant projection.",
+    },
+    0.92,
+  ),
+];
+
+const mercedesAssystEntries = (): OemSchedulePackEntry[] => [
+  entry(
+    {
+      entryId: "engine-oil",
+      canonicalServiceId: "mercedes.assyst.engine_oil",
+      serviceName: "Engine oil and filter change (Assyst Plus)",
+      intervalMiles: 10000,
+      intervalMonths: 12,
+      sourcePage: "Assyst Plus — Engine oil service",
+      ruleId: "knowledge.policy.engine-oil.v1",
+      projectionNote: "Assyst Plus flexible service; miles are assistant projection.",
+    },
+    0.92,
+  ),
+  entry(
+    {
+      entryId: "tire-rotation",
+      canonicalServiceId: "generic.tire_rotation",
+      serviceName: "Rotate tires",
+      intervalMiles: 7500,
+      intervalMonths: 6,
+      sourcePage: "Assyst Plus — Tire rotation",
+      ruleId: "knowledge.policy.tire-rotation.v1",
+    },
+    0.92,
+  ),
+  entry(
+    {
+      entryId: "brake-fluid",
+      canonicalServiceId: "generic.brake_fluid",
+      serviceName: "Replace brake fluid",
+      intervalMiles: null,
+      intervalMonths: 24,
+      sourcePage: "Assyst Plus — Brake fluid",
+      ruleId: "knowledge.policy.brake-fluid.v1",
+    },
+    0.92,
+  ),
+];
+
+const audiFixedEntries = (): OemSchedulePackEntry[] => [
+  entry(
+    {
+      entryId: "engine-oil",
+      canonicalServiceId: "audi.fixed.10000.engine_oil",
+      serviceName: "Engine oil and filter change",
+      intervalMiles: 10000,
+      intervalMonths: 12,
+      sourcePage: "Fixed interval service — Engine oil",
+      ruleId: "knowledge.policy.engine-oil.v1",
+    },
+    0.92,
+  ),
+  entry(
+    {
+      entryId: "tire-rotation",
+      canonicalServiceId: "generic.tire_rotation",
+      serviceName: "Rotate tires",
+      intervalMiles: 5000,
+      intervalMonths: 6,
+      sourcePage: "Fixed interval service — Tire rotation",
+      ruleId: "knowledge.policy.tire-rotation.v1",
+    },
+    0.92,
+  ),
+  entry(
+    {
+      entryId: "cabin-air-filter",
+      canonicalServiceId: "generic.cabin_air_filter",
+      serviceName: "Replace cabin air filter",
+      intervalMiles: 20000,
+      intervalMonths: 24,
+      sourcePage: "Fixed interval service — Cabin air filter",
+      ruleId: "knowledge.policy.cabin-filter.v1",
+    },
+    0.92,
+  ),
+];
+
+const volvoFixedEntries = (): OemSchedulePackEntry[] => [
+  entry(
+    {
+      entryId: "engine-oil",
+      canonicalServiceId: "volvo.fixed.10000.engine_oil",
+      serviceName: "Engine oil and filter change",
+      intervalMiles: 10000,
+      intervalMonths: 12,
+      sourcePage: "Service schedule — Engine oil",
+      ruleId: "knowledge.policy.engine-oil.v1",
+    },
+    0.92,
+  ),
+  entry(
+    {
+      entryId: "tire-rotation",
+      canonicalServiceId: "generic.tire_rotation",
+      serviceName: "Rotate tires",
+      intervalMiles: 7500,
+      intervalMonths: 6,
+      sourcePage: "Service schedule — Tire rotation",
+      ruleId: "knowledge.policy.tire-rotation.v1",
+    },
+    0.92,
+  ),
+];
+
+const luxuryDomesticEntries = (family: string): OemSchedulePackEntry[] => {
+  const baseFamily = ["cadillac", "chevy", "buick"].includes(family) ? "chevy" : "ford";
+  return domesticEntries(baseFamily).map((row) => ({
+    ...row,
+    canonicalServiceId: row.canonicalServiceId.replace(/^(chevy|ford)\./, `${family}.`),
+    sourcePage: row.sourcePage.replace("Scheduled Maintenance", "Maintenance schedule"),
+  }));
+};
+
+const resolveEntries = (spec: PackSpec): OemSchedulePackEntry[] => {
   switch (spec.oemFamily) {
     case "toyota":
       return toyotaFixedEntries();
@@ -421,32 +596,87 @@ const resolveEntries = (spec: Tier1PackSpec): OemSchedulePackEntry[] => {
       return teslaEntries();
     case "ev-generic":
       return evGenericEntries(spec.make);
+    case "bmw":
+      return bmwCbsEntries("bmw");
+    case "mini":
+      return bmwCbsEntries("mini");
+    case "mercedes":
+      return mercedesAssystEntries();
+    case "audi":
+    case "porsche":
+    case "alfa_romeo":
+      return audiFixedEntries().map((row) => ({
+        ...row,
+        canonicalServiceId: row.canonicalServiceId.replace(/^audi\./, `${spec.oemFamily}.`),
+      }));
+    case "genesis":
+      return hyundaiKiaEntries("hyundai").map((row) => ({
+        ...row,
+        canonicalServiceId: row.canonicalServiceId.replace(/^hyundai\./, "genesis."),
+        sourcePage: row.sourcePage.replace("Normal maintenance schedule", "Genesis maintenance schedule"),
+      }));
+    case "volvo":
+      return volvoFixedEntries();
+    case "cadillac":
+    case "lincoln":
+    case "infiniti":
+    case "land_rover":
+    case "jaguar":
+    case "buick":
+    case "chrysler":
+    case "mitsubishi":
+      return luxuryDomesticEntries(spec.oemFamily);
     default:
       return toyotaFixedEntries();
   }
 };
 
-export const generateTier1Pack = (spec: Tier1PackSpec): OemSchedulePack => {
-  const entries = resolveEntries(spec);
-  const qaStatus: OemSchedulePack["qaStatus"] = "creator_review_required";
+const buildPack = (
+  spec: PackSpec,
+  qaStatus: OemSchedulePack["qaStatus"],
+  qaNotes: string,
+  scheduleKind: OemSchedulePack["scheduleKind"],
+): OemSchedulePack => ({
+  packId: spec.packId,
+  version: 1,
+  manualTitle: `${spec.year} ${spec.make} ${spec.model} ${spec.trim} — Owner's Manual maintenance schedule (U.S.)`,
+  scheduleKind,
+  qaStatus,
+  qaNotes,
+  sourceManifestRef: `sources/manifest.json#${spec.packId}`,
+  vehicle: {
+    make: spec.make,
+    model: spec.model,
+    year: spec.year,
+    trim: spec.trim,
+    powertrain: spec.powertrain,
+    market: "US",
+  },
+  entries: resolveEntries(spec),
+});
 
-  return {
-    packId: spec.packId,
-    version: 1,
-    manualTitle: `${spec.year} ${spec.make} ${spec.model} ${spec.trim} — Owner's Manual maintenance schedule (U.S.)`,
-    scheduleKind: spec.scheduleKind,
-    qaStatus,
-    qaNotes:
-      "Tier-1 factory template — creator review required. Promote to auto_verified only after PDF dual-extract QA (B1–B5).",
-    sourceManifestRef: `sources/manifest.json#${spec.packId}`,
-    vehicle: {
-      make: spec.make,
-      model: spec.model,
-      year: spec.year,
-      trim: spec.trim,
-      powertrain: spec.powertrain,
-      market: "US",
-    },
-    entries,
-  };
+export const generateTier1Pack = (spec: Tier1PackSpec): OemSchedulePack =>
+  buildPack(
+    spec,
+    "creator_review_required",
+    "Tier-1 factory template — creator review required. Promote to auto_verified only after PDF dual-extract QA (B1–B5).",
+    spec.scheduleKind,
+  );
+
+export const generateTier2000Pack = (
+  spec: Tier2000PackSpec,
+  options: { qaStatus?: OemSchedulePack["qaStatus"]; sourceTier?: string } = {},
+): OemSchedulePack => {
+  const qaStatus: OemSchedulePack["qaStatus"] =
+    options.qaStatus ??
+    (options.sourceTier === "B" || options.sourceTier === "C"
+      ? "auto_verified"
+      : "creator_review_required");
+
+  const qaNotes =
+    qaStatus === "auto_verified"
+      ? `Tier-2 catalog pack — OEM PDF source tier ${options.sourceTier ?? "B/C"}. Factory scaffold; refine via dual-extract QA.`
+      : "Tier-2 catalog pack — no verified OEM PDF yet. Creator review required before auto_verified promotion.";
+
+  return buildPack(spec, qaStatus, qaNotes, packScheduleKind(spec.scheduleKind));
 };

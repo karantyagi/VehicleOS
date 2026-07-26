@@ -18,7 +18,7 @@ type MatchingFixture = {
 const fixtureFiles = readdirSync(matchingFixturesRoot).filter((file) => file.endsWith(".json"));
 
 describe("matching fixtures (B5)", () => {
-  it("has at least one fixture per on-disk pack", () => {
+  it("has tier-1 fixture coverage baseline", () => {
     expect(fixtureFiles.length).toBeGreaterThanOrEqual(50);
   });
 
