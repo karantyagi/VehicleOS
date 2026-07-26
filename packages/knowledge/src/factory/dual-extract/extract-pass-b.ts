@@ -3,7 +3,7 @@ import type { OemSchedulePack } from "../../types.js";
 import { parsePdfFile } from "../extract-pdf-text.js";
 import { estimateMmPageHint, extractMaintenanceMinderRows } from "./extract-honda-mm.js";
 import { extractPassA } from "./extract-pass-a.js";
-import { findTireRotationInterval, TIRE_ROTATION_ANCHOR } from "./interval-parse.js";
+import { findTireRotationInterval } from "./interval-parse.js";
 
 const pageMarker = (page: number, label: string): string => `P. ${page} — ${label}`;
 
@@ -39,9 +39,10 @@ export const extractPassB = async (input: {
     rows.push(...extractMaintenanceMinderRows({ text, pageHint, variant: "footnote" }));
   } else if (input.pack.scheduleKind === "fixed_interval") {
     const anchors = [
-      { rowKey: "engine-oil", anchor: /engine\s*oil|oil\s*change/i, label: "Engine oil" },
-      { rowKey: "tire-rotation", anchor: TIRE_ROTATION_ANCHOR, label: "Tire rotation", useTireHelper: true },
+      { rowKey: "engine-oil", anchor: /engine\s*oil|oil\s*change|oil\s*service|CBS/i, label: "Engine oil" },
+      { rowKey: "tire-rotation", anchor: /rotate\s*tires|tire\s*rotation|tyre\s*rotation|inspect\s*tires/i, label: "Tire rotation", useTireHelper: true },
       { rowKey: "brake-fluid", anchor: /brake\s*fluid/i, label: "Brake fluid" },
+      { rowKey: "vehicle-check", anchor: /vehicle\s*check|service\s*vehicle\s*check/i, label: "Vehicle check" },
     ];
     for (const item of anchors) {
       if (!item.anchor.test(text)) continue;

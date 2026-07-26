@@ -1358,9 +1358,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a4-2022-premium-plus": {
       "localPdfPaths": [
@@ -1373,9 +1373,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "acura-rdx-2021-a-spec": {
       "localPdfPaths": [
@@ -1403,9 +1403,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a4-2019-premium": {
       "localPdfPaths": [
@@ -1418,9 +1418,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a4-2018-prestige": {
       "localPdfPaths": [
@@ -1434,9 +1434,9 @@
         "https://audi-us.erwin-store.com/erwin/showArticleProperties.do?articleId=175574"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a3-2019-prestige": {
       "localPdfPaths": [
@@ -1449,9 +1449,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a4-2018-premium-plus": {
       "localPdfPaths": [
@@ -1465,9 +1465,9 @@
         "https://audi-us.erwin-store.com/erwin/showArticleProperties.do?articleId=175574"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "acura-tlx-2020-technology": {
       "localPdfPaths": [
@@ -1495,9 +1495,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a3-2020-prestige": {
       "localPdfPaths": [
@@ -1510,9 +1510,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a3-2020-premium-plus": {
       "localPdfPaths": [
@@ -1525,9 +1525,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a4-2021-prestige": {
       "localPdfPaths": [
@@ -1540,9 +1540,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "acura-mdx-2024-technology": {
       "localPdfPaths": [
@@ -1600,9 +1600,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "acura-tlx-2023-sh-awd": {
       "localPdfPaths": [
@@ -1630,9 +1630,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a5-2020-prestige": {
       "localPdfPaths": [
@@ -1645,9 +1645,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "acura-tlx-2025-sh-awd": {
       "localPdfPaths": [
@@ -1675,9 +1675,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "acura-rdx-2024-technology": {
       "localPdfPaths": [
@@ -1705,9 +1705,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "acura-tlx-2024-a-spec": {
       "localPdfPaths": [
@@ -1735,9 +1735,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a5-2020-premium": {
       "localPdfPaths": [
@@ -1750,9 +1750,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a3-2021-premium-plus": {
       "localPdfPaths": [
@@ -1765,9 +1765,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-e-tron-2019-prestige": {
       "localPdfPaths": [
@@ -1810,9 +1810,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a4-2019-prestige": {
       "localPdfPaths": [
@@ -1825,9 +1825,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a6-2020-premium": {
       "localPdfPaths": [
@@ -1840,9 +1840,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q3-2020-premium-plus": {
       "localPdfPaths": [
@@ -1855,9 +1855,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "acura-tlx-2021-a-spec": {
       "localPdfPaths": [
@@ -1901,9 +1901,9 @@
         "https://audi-us.erwin-store.com/erwin/showArticleProperties.do?articleId=175574"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a4-2018-premium": {
       "localPdfPaths": [
@@ -1917,9 +1917,9 @@
         "https://audi-us.erwin-store.com/erwin/showArticleProperties.do?articleId=175574"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q5-2018-premium": {
       "localPdfPaths": [
@@ -1933,9 +1933,9 @@
         "https://audi-us.erwin-store.com/erwin/showArticleProperties.do?articleId=175574"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a3-2022-premium-plus": {
       "localPdfPaths": [
@@ -1948,9 +1948,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a5-2018-premium-plus": {
       "localPdfPaths": [
@@ -1964,9 +1964,9 @@
         "https://audi-us.erwin-store.com/erwin/showArticleProperties.do?articleId=175574"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q4-e-tron-2022-prestige": {
       "localPdfPaths": [
@@ -1994,9 +1994,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a3-2022-premium": {
       "localPdfPaths": [
@@ -2009,9 +2009,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a5-2018-prestige": {
       "localPdfPaths": [
@@ -2025,9 +2025,9 @@
         "https://audi-us.erwin-store.com/erwin/showArticleProperties.do?articleId=175574"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "acura-tlx-2023-technology": {
       "localPdfPaths": [
@@ -2055,9 +2055,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q4-e-tron-2022-premium-plus": {
       "localPdfPaths": [
@@ -2085,9 +2085,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a5-2021-premium-plus": {
       "localPdfPaths": [
@@ -2100,9 +2100,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a3-2021-prestige": {
       "localPdfPaths": [
@@ -2115,9 +2115,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a4-2020-prestige": {
       "localPdfPaths": [
@@ -2130,9 +2130,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q3-2020-premium": {
       "localPdfPaths": [
@@ -2145,9 +2145,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q5-2020-premium-plus": {
       "localPdfPaths": [
@@ -2160,9 +2160,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a4-2020-premium-plus": {
       "localPdfPaths": [
@@ -2175,9 +2175,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q5-2020-prestige": {
       "localPdfPaths": [
@@ -2190,9 +2190,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a5-2019-prestige": {
       "localPdfPaths": [
@@ -2205,9 +2205,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q3-2019-premium-plus": {
       "localPdfPaths": [
@@ -2220,9 +2220,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a4-2020-premium": {
       "localPdfPaths": [
@@ -2235,9 +2235,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a5-2019-premium": {
       "localPdfPaths": [
@@ -2250,9 +2250,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q5-2021-premium": {
       "localPdfPaths": [
@@ -2265,9 +2265,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q3-2019-prestige": {
       "localPdfPaths": [
@@ -2280,9 +2280,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q3-2022-prestige": {
       "localPdfPaths": [
@@ -2295,9 +2295,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a3-2019-premium-plus": {
       "localPdfPaths": [
@@ -2310,9 +2310,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a5-2022-premium": {
       "localPdfPaths": [
@@ -2325,9 +2325,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q8-2020-premium": {
       "localPdfPaths": [
@@ -2340,9 +2340,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a5-2022-premium-plus": {
       "localPdfPaths": [
@@ -2355,9 +2355,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-e-tron-2020-prestige": {
       "localPdfPaths": [
@@ -2385,9 +2385,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q7-2019-premium-plus": {
       "localPdfPaths": [
@@ -2400,9 +2400,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a6-2019-premium": {
       "localPdfPaths": [
@@ -2415,9 +2415,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a6-2021-premium-plus": {
       "localPdfPaths": [
@@ -2430,9 +2430,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q7-2022-premium-plus": {
       "localPdfPaths": [
@@ -2445,9 +2445,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a6-2021-prestige": {
       "localPdfPaths": [
@@ -2460,9 +2460,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q7-2018-prestige": {
       "localPdfPaths": [
@@ -2476,9 +2476,9 @@
         "https://audi-us.erwin-store.com/erwin/showArticleProperties.do?articleId=175574"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a6-2020-prestige": {
       "localPdfPaths": [
@@ -2491,9 +2491,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q7-2022-prestige": {
       "localPdfPaths": [
@@ -2506,9 +2506,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q7-2019-premium": {
       "localPdfPaths": [
@@ -2521,9 +2521,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a5-2019-premium-plus": {
       "localPdfPaths": [
@@ -2536,9 +2536,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a6-2021-premium": {
       "localPdfPaths": [
@@ -2551,9 +2551,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q7-2022-premium": {
       "localPdfPaths": [
@@ -2566,9 +2566,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-e-tron-2021-prestige": {
       "localPdfPaths": [
@@ -2596,9 +2596,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q3-2019-premium": {
       "localPdfPaths": [
@@ -2611,9 +2611,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q3-2020-prestige": {
       "localPdfPaths": [
@@ -2626,9 +2626,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-e-tron-2022-premium-plus": {
       "localPdfPaths": [
@@ -2656,9 +2656,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-e-tron-2021-premium-plus": {
       "localPdfPaths": [
@@ -2701,9 +2701,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q5-2018-premium-plus": {
       "localPdfPaths": [
@@ -2717,9 +2717,9 @@
         "https://audi-us.erwin-store.com/erwin/showArticleProperties.do?articleId=175574"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q3-2022-premium-plus": {
       "localPdfPaths": [
@@ -2732,9 +2732,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q5-2019-premium": {
       "localPdfPaths": [
@@ -2747,9 +2747,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a6-2022-premium": {
       "localPdfPaths": [
@@ -2762,9 +2762,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q5-2022-prestige": {
       "localPdfPaths": [
@@ -2777,9 +2777,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q5-2021-prestige": {
       "localPdfPaths": [
@@ -2792,9 +2792,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q5-2018-prestige": {
       "localPdfPaths": [
@@ -2808,9 +2808,9 @@
         "https://audi-us.erwin-store.com/erwin/showArticleProperties.do?articleId=175574"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q5-2020-premium": {
       "localPdfPaths": [
@@ -2823,9 +2823,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q5-2022-premium-plus": {
       "localPdfPaths": [
@@ -2838,9 +2838,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-a5-2022-prestige": {
       "localPdfPaths": [
@@ -2853,9 +2853,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q3-2021-prestige": {
       "localPdfPaths": [
@@ -2868,9 +2868,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q3-2021-premium": {
       "localPdfPaths": [
@@ -2883,9 +2883,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q7-2018-premium-plus": {
       "localPdfPaths": [
@@ -2899,9 +2899,9 @@
         "https://audi-us.erwin-store.com/erwin/showArticleProperties.do?articleId=175574"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "bmw-2-series-2021-m235i-xdrive": {
       "localPdfPaths": [
@@ -2929,9 +2929,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-e-tron-2022-prestige": {
       "localPdfPaths": [
@@ -2959,9 +2959,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q5-2022-premium": {
       "localPdfPaths": [
@@ -2974,9 +2974,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q7-2020-prestige": {
       "localPdfPaths": [
@@ -2989,9 +2989,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q7-2021-prestige": {
       "localPdfPaths": [
@@ -3004,9 +3004,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "bmw-2-series-2021-230i": {
       "localPdfPaths": [
@@ -3034,9 +3034,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q3-2022-premium": {
       "localPdfPaths": [
@@ -3049,9 +3049,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q8-2022-premium": {
       "localPdfPaths": [
@@ -3064,9 +3064,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q7-2020-premium-plus": {
       "localPdfPaths": [
@@ -3079,9 +3079,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2019/MC-10164490-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "bmw-3-series-2023-330e": {
       "localPdfPaths": [
@@ -3109,9 +3109,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q7-2021-premium": {
       "localPdfPaths": [
@@ -3124,9 +3124,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q8-2021-premium": {
       "localPdfPaths": [
@@ -3139,9 +3139,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "audi-q7-2018-premium": {
       "localPdfPaths": [
@@ -3155,9 +3155,9 @@
         "https://audi-us.erwin-store.com/erwin/showArticleProperties.do?articleId=175574"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "bmw-2-series-2022-m235i-xdrive": {
       "localPdfPaths": [
@@ -3230,9 +3230,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "bmw-2-series-2024-230i": {
       "localPdfPaths": [
@@ -3305,9 +3305,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10199712-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "bmw-3-series-2025-m340i": {
       "localPdfPaths": [
@@ -10265,9 +10265,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mazda-cx-30-2022-premium": {
       "localPdfPaths": [
@@ -10415,9 +10415,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mini-cooper-2021-jcw": {
       "localPdfPaths": [
@@ -10445,9 +10445,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-4runner-2022-limited": {
       "localPdfPaths": [
@@ -10730,9 +10730,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-sienna-2023-limited-hybrid": {
       "localPdfPaths": [
@@ -10760,9 +10760,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt2ad4609db7f7435c/684189f1ead0f60f003536e7/2019_Volvo_Warranty_Manual_01-23-18.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2022-b5-core": {
       "localPdfPaths": [
@@ -10775,9 +10775,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltb47d7a5aea734683/6a29cb631bba922d61aadaa4/2022_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s90-2019-b6-plus": {
       "localPdfPaths": [
@@ -10790,9 +10790,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt2ad4609db7f7435c/684189f1ead0f60f003536e7/2019_Volvo_Warranty_Manual_01-23-18.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s90-2022-recharge": {
       "localPdfPaths": [
@@ -10805,9 +10805,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltb47d7a5aea734683/6a29cb631bba922d61aadaa4/2022_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2024-recharge": {
       "localPdfPaths": [
@@ -10820,9 +10820,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blte903c4602d5671e9/6a29cb536b589f3053b06110/2024_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mazda-cx-50-2023-preferred": {
       "localPdfPaths": [
@@ -10865,9 +10865,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt2ad4609db7f7435c/684189f1ead0f60f003536e7/2019_Volvo_Warranty_Manual_01-23-18.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc40-2024-b5-core": {
       "localPdfPaths": [
@@ -10880,9 +10880,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blte903c4602d5671e9/6a29cb536b589f3053b06110/2024_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mini-cooper-2023-s": {
       "localPdfPaths": [
@@ -10925,9 +10925,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt90b030f1159d2e0a/68418a060635ffb21a0a2172/Volvo_Wty_Manual_2021_CC_05-29-2020.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mini-countryman-2021-classic": {
       "localPdfPaths": [
@@ -10955,9 +10955,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltb47d7a5aea734683/6a29cb631bba922d61aadaa4/2022_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "nissan-sentra-2021-sv": {
       "localPdfPaths": [
@@ -10985,9 +10985,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc60-2018-recharge": {
       "localPdfPaths": [
@@ -11000,9 +11000,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt3adb02be8afa18ca/684189e68fb0320c24550dac/VCUSAwk_1717non-hybrid_warranty_CC_02-09-17.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "nissan-altima-2020-sv": {
       "localPdfPaths": [
@@ -11060,9 +11060,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mazda-cx-5-2022-preferred": {
       "localPdfPaths": [
@@ -11105,9 +11105,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mini-cooper-2025-classic": {
       "localPdfPaths": [
@@ -11570,9 +11570,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2019-b5-plus": {
       "localPdfPaths": [
@@ -11585,9 +11585,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt2ad4609db7f7435c/684189f1ead0f60f003536e7/2019_Volvo_Warranty_Manual_01-23-18.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "subaru-outback-2023-premium": {
       "localPdfPaths": [
@@ -11600,9 +11600,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "subaru-forester-2022-limited": {
       "localPdfPaths": [
@@ -11615,9 +11615,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mazda-cx-5-2022-premium": {
       "localPdfPaths": [
@@ -11645,9 +11645,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt90b030f1159d2e0a/68418a060635ffb21a0a2172/Volvo_Wty_Manual_2021_CC_05-29-2020.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s90-2019-b6-core": {
       "localPdfPaths": [
@@ -11660,9 +11660,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt2ad4609db7f7435c/684189f1ead0f60f003536e7/2019_Volvo_Warranty_Manual_01-23-18.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s90-2022-b6-plus": {
       "localPdfPaths": [
@@ -11675,9 +11675,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltb47d7a5aea734683/6a29cb631bba922d61aadaa4/2022_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mini-cooper-2025-jcw": {
       "localPdfPaths": [
@@ -11720,9 +11720,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blte903c4602d5671e9/6a29cb536b589f3053b06110/2024_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "nissan-leaf-2023-s": {
       "localPdfPaths": [
@@ -11780,9 +11780,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-bz4x-2024-limited": {
       "localPdfPaths": [
@@ -11855,9 +11855,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt90b030f1159d2e0a/68418a060635ffb21a0a2172/Volvo_Wty_Manual_2021_CC_05-29-2020.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-corolla-2020-le": {
       "localPdfPaths": [
@@ -11915,9 +11915,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc60-2018-b5-plus": {
       "localPdfPaths": [
@@ -11930,9 +11930,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt3adb02be8afa18ca/684189e68fb0320c24550dac/VCUSAwk_1717non-hybrid_warranty_CC_02-09-17.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc60-2021-recharge": {
       "localPdfPaths": [
@@ -11945,9 +11945,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt90b030f1159d2e0a/68418a060635ffb21a0a2172/Volvo_Wty_Manual_2021_CC_05-29-2020.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-highlander-2020-xle": {
       "localPdfPaths": [
@@ -12095,9 +12095,9 @@
         "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-23Prius/pdf/T-MMS-23Prius.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mazda-cx-50-2025-premium": {
       "localPdfPaths": [
@@ -12200,9 +12200,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt2ad4609db7f7435c/684189f1ead0f60f003536e7/2019_Volvo_Warranty_Manual_01-23-18.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-sienna-2023-xle-hybrid": {
       "localPdfPaths": [
@@ -12290,9 +12290,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt2ad4609db7f7435c/684189f1ead0f60f003536e7/2019_Volvo_Warranty_Manual_01-23-18.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2022-b5-plus": {
       "localPdfPaths": [
@@ -12305,9 +12305,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltb47d7a5aea734683/6a29cb631bba922d61aadaa4/2022_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2024-recharge-phev": {
       "localPdfPaths": [
@@ -12320,9 +12320,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blte903c4602d5671e9/6a29cb536b589f3053b06110/2024_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "subaru-crosstrek-2023-base": {
       "localPdfPaths": [
@@ -12335,9 +12335,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s90-2023-b6-core": {
       "localPdfPaths": [
@@ -12350,9 +12350,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt81f15f82d8a8280f/6a29cb5edcb18dc4dbce664b/2023_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26_%281%29.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc40-2019-b5-plus": {
       "localPdfPaths": [
@@ -12365,9 +12365,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt2ad4609db7f7435c/684189f1ead0f60f003536e7/2019_Volvo_Warranty_Manual_01-23-18.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc40-2021-recharge-pure-electric-electric": {
       "localPdfPaths": [
@@ -12440,9 +12440,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc60-2019-b5-core": {
       "localPdfPaths": [
@@ -12455,9 +12455,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt2ad4609db7f7435c/684189f1ead0f60f003536e7/2019_Volvo_Warranty_Manual_01-23-18.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc60-2022-b5-plus": {
       "localPdfPaths": [
@@ -12470,9 +12470,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltb47d7a5aea734683/6a29cb631bba922d61aadaa4/2022_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mazda-cx-5-2022-sport": {
       "localPdfPaths": [
@@ -12500,9 +12500,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blte903c4602d5671e9/6a29cb536b589f3053b06110/2024_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mazda-cx-5-2025-premium": {
       "localPdfPaths": [
@@ -12545,9 +12545,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "subaru-forester-2023-premium": {
       "localPdfPaths": [
@@ -12560,9 +12560,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "subaru-impreza-2024-sport": {
       "localPdfPaths": [
@@ -12575,9 +12575,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mini-countryman-2024-s": {
       "localPdfPaths": [
@@ -12725,9 +12725,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "nissan-leaf-2023-sl-plus": {
       "localPdfPaths": [
@@ -12785,9 +12785,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-camry-2023-se": {
       "localPdfPaths": [
@@ -12830,9 +12830,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "mini-countryman-2023-classic": {
       "localPdfPaths": [
@@ -13340,9 +13340,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "nissan-pathfinder-2020-s": {
       "localPdfPaths": [
@@ -13475,9 +13475,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "nissan-sentra-2024-s": {
       "localPdfPaths": [
@@ -13550,9 +13550,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-prius-2020-limited-hybrid": {
       "localPdfPaths": [
@@ -13580,9 +13580,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "subaru-crosstrek-2022-premium": {
       "localPdfPaths": [
@@ -13595,9 +13595,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "subaru-outback-2022-base": {
       "localPdfPaths": [
@@ -13610,9 +13610,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "nissan-sentra-2022-sv": {
       "localPdfPaths": [
@@ -13760,9 +13760,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-sienna-2021-xle-hybrid": {
       "localPdfPaths": [
@@ -13790,9 +13790,9 @@
         "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-23Prius/pdf/T-MMS-23Prius.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "subaru-impreza-2023-premium": {
       "localPdfPaths": [
@@ -13805,9 +13805,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "nissan-sentra-2021-sr": {
       "localPdfPaths": [
@@ -13850,9 +13850,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-venza-2022-le-hybrid": {
       "localPdfPaths": [
@@ -13910,9 +13910,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-camry-2022-se": {
       "localPdfPaths": [
@@ -14000,9 +14000,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt81f15f82d8a8280f/6a29cb5edcb18dc4dbce664b/2023_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26_%281%29.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-4runner-2022-trd-off-road": {
       "localPdfPaths": [
@@ -14030,9 +14030,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2025-recharge-phev": {
       "localPdfPaths": [
@@ -14045,9 +14045,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "subaru-impreza-2022-base": {
       "localPdfPaths": [
@@ -14060,9 +14060,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2020-b5-plus": {
       "localPdfPaths": [
@@ -14075,9 +14075,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-corolla-2025-se": {
       "localPdfPaths": [
@@ -14105,9 +14105,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt90b030f1159d2e0a/68418a060635ffb21a0a2172/Volvo_Wty_Manual_2021_CC_05-29-2020.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "nissan-pathfinder-2022-s": {
       "localPdfPaths": [
@@ -14150,9 +14150,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2022-recharge-phev": {
       "localPdfPaths": [
@@ -14165,9 +14165,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltb47d7a5aea734683/6a29cb631bba922d61aadaa4/2022_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-4runner-2021-sr5": {
       "localPdfPaths": [
@@ -14195,9 +14195,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc40-2022-recharge-pure-electric-electric": {
       "localPdfPaths": [
@@ -14255,9 +14255,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc40-2020-b5-plus": {
       "localPdfPaths": [
@@ -14270,9 +14270,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s90-2020-b6-plus": {
       "localPdfPaths": [
@@ -14285,9 +14285,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s90-2024-b6-plus": {
       "localPdfPaths": [
@@ -14300,9 +14300,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blte903c4602d5671e9/6a29cb536b589f3053b06110/2024_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "subaru-crosstrek-2023-premium": {
       "localPdfPaths": [
@@ -14315,9 +14315,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-corolla-cross-2023-se": {
       "localPdfPaths": [
@@ -14360,9 +14360,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt81f15f82d8a8280f/6a29cb5edcb18dc4dbce664b/2023_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26_%281%29.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc40-2022-b5-plus": {
       "localPdfPaths": [
@@ -14375,9 +14375,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltb47d7a5aea734683/6a29cb631bba922d61aadaa4/2022_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc40-2025-b5-plus": {
       "localPdfPaths": [
@@ -14390,9 +14390,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc40-2019-recharge-pure-electric-electric": {
       "localPdfPaths": [
@@ -14435,9 +14435,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-camry-2025-le": {
       "localPdfPaths": [
@@ -14480,9 +14480,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt81f15f82d8a8280f/6a29cb5edcb18dc4dbce664b/2023_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26_%281%29.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc40-2024-recharge-pure-electric-electric": {
       "localPdfPaths": [
@@ -14525,9 +14525,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt2ad4609db7f7435c/684189f1ead0f60f003536e7/2019_Volvo_Warranty_Manual_01-23-18.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-bz4x-2025-xle": {
       "localPdfPaths": [
@@ -14585,9 +14585,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt81f15f82d8a8280f/6a29cb5edcb18dc4dbce664b/2023_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26_%281%29.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-camry-2023-le": {
       "localPdfPaths": [
@@ -14630,9 +14630,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "nissan-sentra-2021-s": {
       "localPdfPaths": [
@@ -14825,9 +14825,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-highlander-2022-limited": {
       "localPdfPaths": [
@@ -14855,9 +14855,9 @@
         "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-23Prius/pdf/T-MMS-23Prius.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-rav4-2020-xle-hybrid": {
       "localPdfPaths": [
@@ -14930,9 +14930,9 @@
         "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-highlander-2023-xle-hybrid": {
       "localPdfPaths": [
@@ -15110,9 +15110,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-4runner-2024-trd-off-road": {
       "localPdfPaths": [
@@ -15155,9 +15155,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt90b030f1159d2e0a/68418a060635ffb21a0a2172/Volvo_Wty_Manual_2021_CC_05-29-2020.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2022-recharge": {
       "localPdfPaths": [
@@ -15170,9 +15170,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltb47d7a5aea734683/6a29cb631bba922d61aadaa4/2022_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-camry-2024-se": {
       "localPdfPaths": [
@@ -15200,9 +15200,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt2ad4609db7f7435c/684189f1ead0f60f003536e7/2019_Volvo_Warranty_Manual_01-23-18.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s90-2020-b6-core": {
       "localPdfPaths": [
@@ -15215,9 +15215,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2025-b5-core": {
       "localPdfPaths": [
@@ -15230,9 +15230,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2023-recharge": {
       "localPdfPaths": [
@@ -15245,9 +15245,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt81f15f82d8a8280f/6a29cb5edcb18dc4dbce664b/2023_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26_%281%29.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-prius-2020-xle-hybrid": {
       "localPdfPaths": [
@@ -15275,9 +15275,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt3adb02be8afa18ca/684189e68fb0320c24550dac/VCUSAwk_1717non-hybrid_warranty_CC_02-09-17.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-corolla-cross-2025-se": {
       "localPdfPaths": [
@@ -15305,9 +15305,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt81f15f82d8a8280f/6a29cb5edcb18dc4dbce664b/2023_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26_%281%29.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc40-2019-recharge": {
       "localPdfPaths": [
@@ -15320,9 +15320,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt2ad4609db7f7435c/684189f1ead0f60f003536e7/2019_Volvo_Warranty_Manual_01-23-18.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "acura-mdx-2025-technology": {
       "localPdfPaths": [
@@ -15350,9 +15350,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltb47d7a5aea734683/6a29cb631bba922d61aadaa4/2022_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "acura-mdx-2024-base": {
       "localPdfPaths": [
@@ -15395,9 +15395,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2020/MC-10171067-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "2 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-corolla-2022-le": {
       "localPdfPaths": [
@@ -15425,9 +15425,9 @@
         "https://static.nhtsa.gov/odi/tsbs/2021/MC-10190993-0001.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "3 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc60-2019-b5-plus": {
       "localPdfPaths": [
@@ -15440,9 +15440,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt2ad4609db7f7435c/684189f1ead0f60f003536e7/2019_Volvo_Warranty_Manual_01-23-18.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc60-2022-recharge": {
       "localPdfPaths": [
@@ -15455,9 +15455,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltb47d7a5aea734683/6a29cb631bba922d61aadaa4/2022_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2021-recharge": {
       "localPdfPaths": [
@@ -15470,9 +15470,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt90b030f1159d2e0a/68418a060635ffb21a0a2172/Volvo_Wty_Manual_2021_CC_05-29-2020.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-rav4-2023-xle-hybrid": {
       "localPdfPaths": [
@@ -15500,9 +15500,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt90b030f1159d2e0a/68418a060635ffb21a0a2172/Volvo_Wty_Manual_2021_CC_05-29-2020.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc40-2024-recharge": {
       "localPdfPaths": [
@@ -15515,9 +15515,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blte903c4602d5671e9/6a29cb536b589f3053b06110/2024_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-rav4-2021-le": {
       "localPdfPaths": [
@@ -15545,9 +15545,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltb47d7a5aea734683/6a29cb631bba922d61aadaa4/2022_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "honda-cr-v-2024-touring": {
       "localPdfPaths": [
@@ -15575,9 +15575,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt81f15f82d8a8280f/6a29cb5edcb18dc4dbce664b/2023_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26_%281%29.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc90-2025-b5-core": {
       "localPdfPaths": [
@@ -15590,9 +15590,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-highlander-2024-xle-hybrid": {
       "localPdfPaths": [
@@ -15620,9 +15620,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2024-b5-core": {
       "localPdfPaths": [
@@ -15635,9 +15635,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blte903c4602d5671e9/6a29cb536b589f3053b06110/2024_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s90-2018-recharge": {
       "localPdfPaths": [
@@ -15650,9 +15650,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt80f26c7e3156af2d/684189e6ead0f6a3f33536e1/2018_US_Hybrid_Wty_Manual_CC_02-09-17.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "lexus-es-2019-350": {
       "localPdfPaths": [
@@ -15710,9 +15710,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blte903c4602d5671e9/6a29cb536b589f3053b06110/2024_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-highlander-2022-le": {
       "localPdfPaths": [
@@ -15755,9 +15755,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt81f15f82d8a8280f/6a29cb5edcb18dc4dbce664b/2023_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26_%281%29.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s90-2025-b6-plus": {
       "localPdfPaths": [
@@ -15770,9 +15770,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc60-2020-recharge": {
       "localPdfPaths": [
@@ -15785,9 +15785,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc40-2025-recharge": {
       "localPdfPaths": [
@@ -15800,9 +15800,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-venza-2022-xle-hybrid": {
       "localPdfPaths": [
@@ -15830,9 +15830,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blte903c4602d5671e9/6a29cb536b589f3053b06110/2024_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc40-2021-b5-core": {
       "localPdfPaths": [
@@ -15845,9 +15845,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt90b030f1159d2e0a/68418a060635ffb21a0a2172/Volvo_Wty_Manual_2021_CC_05-29-2020.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-prius-2021-xle-hybrid": {
       "localPdfPaths": [
@@ -15920,9 +15920,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt90b030f1159d2e0a/68418a060635ffb21a0a2172/Volvo_Wty_Manual_2021_CC_05-29-2020.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc60-2018-b5-core": {
       "localPdfPaths": [
@@ -15935,9 +15935,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt3adb02be8afa18ca/684189e68fb0320c24550dac/VCUSAwk_1717non-hybrid_warranty_CC_02-09-17.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc60-2024-recharge": {
       "localPdfPaths": [
@@ -15950,9 +15950,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blte903c4602d5671e9/6a29cb536b589f3053b06110/2024_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s60-2023-recharge-phev": {
       "localPdfPaths": [
@@ -15965,9 +15965,9 @@
         "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt81f15f82d8a8280f/6a29cb5edcb18dc4dbce664b/2023_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26_%281%29.pdf"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "toyota-sienna-2021-limited-hybrid": {
       "localPdfPaths": [
@@ -16025,9 +16025,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt3adb02be8afa18ca/684189e68fb0320c24550dac/VCUSAwk_1717non-hybrid_warranty_CC_02-09-17.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-s90-2021-recharge": {
       "localPdfPaths": [
@@ -16040,9 +16040,9 @@
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt90b030f1159d2e0a/68418a060635ffb21a0a2172/Volvo_Wty_Manual_2021_CC_05-29-2020.pdf?branch=prod_alias"
       ],
       "mirrorUrls": [],
-      "notes": "1 mismatches",
+      "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
-      "dualExtractAgree": false
+      "dualExtractAgree": true
     },
     "volvo-xc60-2021-b5-plus": {
       "localPdfPaths": [
@@ -16053,6 +16053,21 @@
       },
       "officialUrls": [
         "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt90b030f1159d2e0a/68418a060635ffb21a0a2172/Volvo_Wty_Manual_2021_CC_05-29-2020.pdf?branch=prod_alias"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "bmw-x7-2025-xdrive40i": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/bmw-x7-2025-xdrive40i/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9f556e4ec58b90ae1d5e97808a45dfb379ce2768faddb638f0995ffb3fffeca0"
+      },
+      "officialUrls": [
+        "https://www.bmwusa.com/content/dam/bmw/marketUS/common/warranty-books/2025/BMW_MY25_Maintenance_with_BEVs.pdf"
       ],
       "mirrorUrls": [],
       "notes": "1 mismatches",

@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2018 Volvo S90 B6 Plus — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
-  "qaStatus": "creator_review_required",
-  "qaNotes": "Phase A+B complete — dual-extract mismatch. Creator review required (Phase C).",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#volvo-s90-2018-b6-plus",
   "vehicle": {
     "make": "Volvo",
@@ -20,7 +20,7 @@
       "serviceName": "Engine oil and filter change",
       "intervalMiles": 10000,
       "intervalMonths": 12,
-      "sourcePage": "Service schedule — Engine oil",
+      "sourcePage": "P. 1 — Engine oil",
       "ruleId": "knowledge.policy.engine-oil.v1",
       "confidence": 0.92
     },
