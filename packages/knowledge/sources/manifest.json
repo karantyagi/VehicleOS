@@ -7,20 +7,647 @@
         "workspace/knowledge/sources/acura-tlx-2021-sh-awd/maintenance-minder-official-supplement.pdf"
       ],
       "sha256": {
-        "owner-manual.pdf": "9ef0b750bf52a05f2583e86f831d4d3aa95efd1ce837d5bc740fe3260f7a2012"
+        "owner-manual.pdf": "9ef0b750bf52a05f2583e86f831d4d3aa95efd1ce837d5bc740fe3260f7a2012",
+        "maintenance-minder-official-supplement.pdf": "3955c82d85e01399433aaf9ab050a9f0d1bb96386c987e3d044166ed92f79d61"
       },
       "officialUrls": [
         "https://owners.acura.com/static/pdfs/2021/TLX/2021_TLX_Maintenance_Minder_System.pdf"
-      ]
+      ],
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true,
+      "notes": "dual-extract agree"
     },
     "acura-tlx-2019-sh-awd": {
       "localPdfPaths": [
-        "workspace/knowledge/sources/acura-tlx-2019-sh-awd/maintenance-minder.pdf"
+        "workspace/knowledge/sources/acura-tlx-2019-sh-awd/maintenance-minder.pdf",
+        "workspace/knowledge/sources/acura-tlx-2019-sh-awd/owner-manual.pdf"
       ],
       "officialUrls": [
         "https://owners.acura.com/static/pdfs/2019/TLX/2019_TLX_Lane_Maintenance_Minder.pdf"
       ],
-      "notes": "Lane PDF only — code table is image-based; full OM not on public CDN."
+      "notes": "dual-extract agree",
+      "sha256": {
+        "owner-manual.pdf": "b5c5a27283b14f0ffcd413d6aff1623c83817b125f82ee101951ec7641c0db04",
+        "maintenance-minder.pdf": "b5c5a27283b14f0ffcd413d6aff1623c83817b125f82ee101951ec7641c0db04"
+      },
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "honda-cr-v-2024-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-cr-v-2024-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "6722f4b50862f5b91ec308ed0398820e659715b83ac48dc7d74a0712b5612d1c"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2024/CR-V/2024_CR-V_Maintenance_Minder_System.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "honda-pilot-2024-ex-l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-pilot-2024-ex-l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "666099a0b759df46a6583305e10179efbd6705d81fea009583c7c941d497cde8"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2024/Pilot/2024_Pilot_Maintenance_Minder_System.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "honda-hrv-2024-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-hrv-2024-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "e2f569205e2f1a86f8f68eac12503e0e94ed4114a7e4bbbe5820c210cfc4e439"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2024/HR-V/2024_HR-V_Maintenance_Minder_System.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "acura-tlx-2019-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/acura-tlx-2019-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "b5c5a27283b14f0ffcd413d6aff1623c83817b125f82ee101951ec7641c0db04"
+      },
+      "officialUrls": [
+        "https://owners.acura.com/static/pdfs/2019/TLX/2019_TLX_Lane_Maintenance_Minder.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2024-ex-l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2024-ex-l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0cb8ba342617a23008cf640079936e33c9f25742561921eddc6df35ac94f8af0"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2024/Passport/2024_Passport_Maintenance_Minder.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "acura-rdx-2024-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/acura-rdx-2024-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "83614d4363520217eb2d52a35f7a0c8db41f2ec53c1f589e75a16d902dbca54d"
+      },
+      "officialUrls": [
+        "https://owners.acura.com/static/pdfs/2024/RDX/2024_RDX_Maintenance_Minder_System.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "toyota-camry-2024-le": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/toyota-camry-2024-le/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "6d74d5da7d3f2a0c5de6c1f43cc515cb39142c2993a2f008bf8a5e0ec6db8635"
+      },
+      "officialUrls": [
+        "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24Camry/pdf/T-MMS-24Camry.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2024-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2024-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "df3845bf33760e1d99788a871c977140b1043dcfa457e9bdcd75e102a9547d02"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Accord+Sedan/2024_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "lexus-es-2024-250": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-es-2024-250/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "5b057256254ebc2bbe8febceb0274b8857998e1627ae2f6efed47ff9c123aa83"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24ES250ES350/pdf/L-MMS-24ES250ES350.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "toyota-camry-2024-xse": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/toyota-camry-2024-xse/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "6d74d5da7d3f2a0c5de6c1f43cc515cb39142c2993a2f008bf8a5e0ec6db8635"
+      },
+      "officialUrls": [
+        "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24Camry/pdf/T-MMS-24Camry.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "toyota-corolla-2024-le": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/toyota-corolla-2024-le/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "f0852ba5af6ae082c1647fb9d3e52e7482686270b314b9b85c5f8cf8d03a6ee4"
+      },
+      "officialUrls": [
+        "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24Corolla/pdf/T-MMS-24Corolla.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2024-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2024-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "ac07eafb9ba4198121d4f9709c69631a6f7d2aa58829591abcb2eba91bc61dc3"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Civic+Sedan/2024_Civic_4D_Maintenance_Minder_System.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2024-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2024-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "afcd654bfdb7c3a409a4e64f3787be6cd2ef8b1b2e6c8b7ab78fe453e2c052ce"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/elantra/2024%20Elantra%20ICE%20and%20N-Line%20(CN7)%20OM.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "subaru-impreza-2024-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-impreza-2024-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "902e0cb06a32452caa4d6ac53303e7d8aa6642ccb2b156fc9513092b99cff361"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2024_war_and_maint_041723.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "nissan-altima-2024-sv": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/nissan-altima-2024-sv/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "b12c900b27dcceb027fd05e4dedda99d5ebb3fa50edda40e0a2c2742e716ee6d"
+      },
+      "officialUrls": [
+        "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/altima/2024/2024-nissan-altima-owner-manual.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "vw-jetta-2024-s": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/vw-jetta-2024-s/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4942fa2fe5777a7afac51f5ff255786a3b4bd6edb5cb9467e00ee6f414bf651c"
+      },
+      "officialUrls": [
+        "https://ownersliterature.vw.com/owners-literature-service/v1/document/11025511-673f-445a-a6a5-20b5f3e5cc59"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "mazda3-2024-select": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda3-2024-select/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "d9cdccfd5d0be53575468c1bdb4a35106fec159c9a2f260ec2394a6367f84a24"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/m3s/2024-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "toyota-rav4-2024-le": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/toyota-rav4-2024-le/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "38e8fb2581f6ca693faca26e640db07b89523f9545f037725f41d56cc7ae4812"
+      },
+      "officialUrls": [
+        "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24RAV4/pdf/T-MMS-24RAV4.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "toyota-rav4-2024-hybrid-xle": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/toyota-rav4-2024-hybrid-xle/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "38e8fb2581f6ca693faca26e640db07b89523f9545f037725f41d56cc7ae4812"
+      },
+      "officialUrls": [
+        "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24RAV4/pdf/T-MMS-24RAV4.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "toyota-prius-2024-xle": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/toyota-prius-2024-xle/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "6dfc0b193f34524dcd7cc2948ea76456b0e354b378895a9851e501d410e9b710"
+      },
+      "officialUrls": [
+        "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24Prius/pdf/T-MMS-24Prius.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "subaru-forester-2024-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-forester-2024-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "902e0cb06a32452caa4d6ac53303e7d8aa6642ccb2b156fc9513092b99cff361"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2024_war_and_maint_041723.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "hyundai-tucson-2024-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-tucson-2024-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2a683aa507e79c92450b2d70e4d5af46f0f3899a9157e3182ee87b0638c17c74"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/tucson/2024_Tucson_Owners_Manual.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "mazda-cx5-2024-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-cx5-2024-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "ceec2310af229c8cc01c67d79375ba235fc0172d004bdfb69d912fa1e3cb4a5b"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-5/2024-mazda-cx-5-vehicle-owners-manual.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "subaru-crosstrek-2024-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-crosstrek-2024-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "902e0cb06a32452caa4d6ac53303e7d8aa6642ccb2b156fc9513092b99cff361"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2024_war_and_maint_041723.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "nissan-rogue-2024-sv": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/nissan-rogue-2024-sv/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "cdaba0135cd8a208e6ff9d2f1f79ec9545d5b2bce84a40c75a8625243807c9b3"
+      },
+      "officialUrls": [
+        "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/rogue/2024/2024-nissan-rogue-owner-manual.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "chevy-equinox-2024-lt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevy-equinox-2024-lt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "981970254737b1cfb84d7307e199cb819a78f4476d820e789bc4c8ba4146df0a"
+      },
+      "officialUrls": [
+        "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Equinox_OM_en_US_U_85150510B_2023JUL27_2P_INS1.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "ford-escape-2024-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-escape-2024-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9eb0df3965cbc82ea399a1537e713282de0882ef33da525203b6d900a408fd6b"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Escape_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "toyota-corolla-cross-2024-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/toyota-corolla-cross-2024-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "5042d05a5d7f9b550072a7cd5aaaa5f35a4580ef2f27657ed8bf5bf66d747784"
+      },
+      "officialUrls": [
+        "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24CorollaCross/pdf/T-MMS-24CorollaCross.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "toyota-highlander-2024-le": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/toyota-highlander-2024-le/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "949d8e0c5d6a1ae41048f29523a6481d4ef528328d40406c7ce1878fcb2373cb"
+      },
+      "officialUrls": [
+        "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-24Highlander/pdf/T-MMS-24Highlander.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "mazda-cx30-2024-select": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-cx30-2024-select/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4ff8ffbddb429e0652853ea7a05526f0ce56445abedced622ae7e112844a321b"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-30/2024-cx-30-owners-manual.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "subaru-outback-2024-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-outback-2024-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "902e0cb06a32452caa4d6ac53303e7d8aa6642ccb2b156fc9513092b99cff361"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2024_war_and_maint_041723.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "hyundai-santa-fe-2024-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-santa-fe-2024-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "cfca94c09625f2ff1d04d7ef537e45e1b9932cba616a7cb6324409161348dd6f"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/santa-fe/MX5a-2024-en_US-WEB-2C.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "chevy-traverse-2024-lt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevy-traverse-2024-lt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "36b35e0d08aa7d773b400f3af72d81b9229939f6874d50cf3e70ebeea544fb88"
+      },
+      "officialUrls": [
+        "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Traverse_OM_en_US_U_17442647D_2024OCT10_4P.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "nissan-pathfinder-2024-sv": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/nissan-pathfinder-2024-sv/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "c807ba2ec0f7adde0872eb499a9264a080a4b7bb642df6002ee278ce0ae2d217"
+      },
+      "officialUrls": [
+        "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/pathfinder/2024/2024-nissan-pathfinder-owner-manual.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2024-xlt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2024-xlt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8a576d8efbacd01df062fae07a971f6933013ca771baae7d74a0e0af53ed6b54"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Explorer_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2024-350": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2024-350/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "5b6f204491c5697c8d0bb94a5a71f1ec301249db0c947b951fbf671f1e0d7db0"
+      },
+      "officialUrls": [
+        "https://assets.sipb.toyota.com/publications/en/omms-s/L-MMS-24RX350/pdf/L-MMS-24RX350.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "toyota-4runner-2024-sr5": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/toyota-4runner-2024-sr5/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "1237bd7dd41f780793b11759ef94e1737a91e63b6e7ece97703f21e120be92d4"
+      },
+      "officialUrls": [
+        "https://assets.sipb.toyota.com/publications/en/omms-s/T-MMS-244Runner/pdf/T-MMS-244Runner.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "tesla-model-3-2024-long-range": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/tesla-model-3-2024-long-range/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "94fb19155b159f0cc71e33a79377c5e599a3e2b02913ea71fea06dac6ecf0f37"
+      },
+      "officialUrls": [
+        "https://www.tesla.com/ownersmanual/model3/en_us/Owners_Manual.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "chevy-bolt-2023-1lt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevy-bolt-2023-1lt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2791a586ccad2634e1512de0e5d85080a0ee7397b9a6ffc0c472aeff5f6bbf95"
+      },
+      "officialUrls": [
+        "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2023/23_CHEV_Bolt_EV_OM_en_US_U_84953304C_2023MAR10_3P.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "hyundai-ioniq5-2024-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-ioniq5-2024-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "acbb30ae961e94f0b06bdedd0d130dce999193f434a2db5c94a71d88ec6de4d0"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/ioniq-5/2024%20Ioniq%205%20OM.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "tesla-model-y-2024-long-range": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/tesla-model-y-2024-long-range/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a3e2057c42ac7247b4c185e88182b59dfc46b361439686c37514171c2383717f"
+      },
+      "officialUrls": [
+        "https://www.tesla.com/ownersmanual/2020_2024_modely/en_us/Owners_Manual.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "vw-id4-2024-pro": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/vw-id4-2024-pro/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "5aef8ee270fa38eb10d0f749234ca705d0285a837d96e4659413e313d9daa454"
+      },
+      "officialUrls": [
+        "https://ownersliterature.vw.com/owners-literature-service/v1/document/2721b3eb-0228-4be4-94d6-0b8e24dbf74c"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "nissan-leaf-2024-s": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/nissan-leaf-2024-s/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "202ada47bfb43392cdae4ca6930e2911155712005624520f634f852943dfb25d"
+      },
+      "officialUrls": [
+        "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/leaf/2024/2024-nissan-leaf-owner-manual.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
+    },
+    "ford-mach-e-2024-select": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-mach-e-2024-select/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2e3044f5516eb56fda0bb67864d76180e84fc3ad432b20754196663492f4453a"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "verifiedAt": "2026-07-26",
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
     }
   }
 }

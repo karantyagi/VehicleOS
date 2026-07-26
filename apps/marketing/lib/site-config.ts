@@ -55,7 +55,7 @@ export const earlyAccessContent = {
     label: "Open the app",
     href: process.env.NEXT_PUBLIC_APP_URL ?? "https://app.vehicleos.app",
   },
-  ctaSecondary: { label: "Check if your car is supported", href: "#supported" },
+  ctaSecondary: { label: "Check compatibility first", href: "#supported" },
 } as const;
 
 export const setupSteps = [

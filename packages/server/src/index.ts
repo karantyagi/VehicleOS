@@ -24,5 +24,11 @@ export { updateVehicleService } from "./http/service-handlers.js";
 export { refreshNowQueue } from "./http/now-handlers.js";
 export { checkVehicleSupport, listSupportedVehicles, assertVehicleCreateAllowed } from "./http/catalog-handlers.js";
 export type { VehicleSupportQuery, ListSupportedVehiclesOptions } from "./http/catalog-handlers.js";
+export {
+  previewVehicleRequestContact,
+  resolveVehicleRequestContactEmail,
+  submitVehicleRequest,
+} from "./http/vehicle-request-handlers.js";
+export type { VehicleRequestContactPreview, VehicleRequestInput } from "./http/vehicle-request-handlers.js";
 export { InMemoryVehicleRepository } from "./repositories/in-memory-vehicle-repository.js";
 export type { VehicleRepositoryLike } from "./types/repositories.js";

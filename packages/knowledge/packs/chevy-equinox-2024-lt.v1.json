@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2024 Chevrolet Equinox LT — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
-  "qaStatus": "creator_review_required",
-  "qaNotes": "Tier-1 factory template — creator review required before big-bang auto_verified promotion.",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Phase C promoted — dual-extract agree, manifest + B5 fixtures pass.",
   "sourceManifestRef": "sources/manifest.json#chevy-equinox-2024-lt",
   "vehicle": {
     "make": "Chevrolet",
@@ -20,10 +20,10 @@
       "serviceName": "Engine oil and filter change (Oil Life Monitor)",
       "intervalMiles": 7500,
       "intervalMonths": 6,
-      "sourcePage": "Scheduled Maintenance — Engine oil",
+      "sourcePage": "P. 1 — engine oil",
       "ruleId": "knowledge.policy.engine-oil.v1",
       "projectionNote": "OEM trigger is oil life %; miles are assistant projection.",
-      "confidence": 0.91
+      "confidence": 0.92
     },
     {
       "entryId": "tire-rotation",
@@ -31,9 +31,9 @@
       "serviceName": "Rotate tires",
       "intervalMiles": 7500,
       "intervalMonths": 6,
-      "sourcePage": "Scheduled Maintenance — Tire rotation",
+      "sourcePage": "P. 1 — tire rotation",
       "ruleId": "knowledge.policy.tire-rotation.v1",
-      "confidence": 0.91
+      "confidence": 0.92
     }
   ]
 }

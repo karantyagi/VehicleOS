@@ -24,7 +24,7 @@ export type Tier1PackSpec = {
   scheduleKind: "maintenance_minder" | "fixed_interval" | "ev_simplified";
 };
 
-/** Tier-1 big-bang catalog — 50 pack keys from oem-knowledge-pack-factory.md */
+/** Tier-1 big-bang catalog — 49 pack keys from oem-knowledge-pack-factory.md */
 export const TIER1_PACK_SPECS: Tier1PackSpec[] = [
   { packId: "toyota-camry-2024-le", make: "Toyota", model: "Camry", year: 2024, trim: "LE", oemFamily: "toyota", scheduleKind: "fixed_interval" },
   { packId: "toyota-camry-2024-xse", make: "Toyota", model: "Camry", year: 2024, trim: "XSE", oemFamily: "toyota", scheduleKind: "fixed_interval" },
@@ -59,7 +59,6 @@ export const TIER1_PACK_SPECS: Tier1PackSpec[] = [
   { packId: "hyundai-santa-fe-2024-se", make: "Hyundai", model: "Santa Fe", year: 2024, trim: "SE", oemFamily: "hyundai", scheduleKind: "fixed_interval" },
   { packId: "ford-explorer-2024-xlt", make: "Ford", model: "Explorer", year: 2024, trim: "XLT", oemFamily: "ford", scheduleKind: "fixed_interval" },
   { packId: "chevy-traverse-2024-lt", make: "Chevrolet", model: "Traverse", year: 2024, trim: "LT", oemFamily: "chevy", scheduleKind: "fixed_interval" },
-  { packId: "jeep-grand-cherokee-2024-laredo", make: "Jeep", model: "Grand Cherokee", year: 2024, trim: "Laredo", oemFamily: "jeep", scheduleKind: "fixed_interval" },
   { packId: "nissan-pathfinder-2024-sv", make: "Nissan", model: "Pathfinder", year: 2024, trim: "SV", oemFamily: "nissan", scheduleKind: "fixed_interval" },
   { packId: "toyota-4runner-2024-sr5", make: "Toyota", model: "4Runner", year: 2024, trim: "SR5", oemFamily: "toyota", scheduleKind: "fixed_interval" },
   { packId: "lexus-rx-2024-350", make: "Lexus", model: "RX", year: 2024, trim: "350", oemFamily: "lexus", scheduleKind: "fixed_interval" },

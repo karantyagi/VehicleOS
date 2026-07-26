@@ -57,17 +57,17 @@ describe("hydrateOemKnowledgePack", () => {
       policyEngine,
       vehicle: {
         id: crypto.randomUUID(),
-        year: 2019,
-        make: "Acura",
-        model: "TLX",
-        trim: "SH-AWD",
-        currentMileage: 40_000,
+        year: 2024,
+        make: "Kia",
+        model: "K5",
+        trim: "LXS",
+        currentMileage: 12_000,
       },
     });
 
     expect(result).toEqual({
       hydrated: false,
-      packId: "acura-tlx-2019-sh-awd",
+      packId: "kia-k5-2024-lxs",
       skippedReason: "not_auto_verified",
     });
   });

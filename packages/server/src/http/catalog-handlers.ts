@@ -46,7 +46,7 @@ export const assertVehicleCreateAllowed = (input: {
       status: 422,
       body: {
         error:
-          "This vehicle is not in the early-access catalog yet. Join the waitlist on vehicleos.app — we are not creating accounts for unsupported models.",
+          "This vehicle is not in the early-access catalog yet. Request it in the app and we will email you when it is ready.",
         code: "waitlist_required",
         waitlistEligible: true,
         packId: null,
@@ -63,7 +63,7 @@ export const assertVehicleCreateAllowed = (input: {
       status: 422,
       body: {
         error:
-          "This vehicle pack is still in review. Pick a verified model from the catalog or join the waitlist on vehicleos.app.",
+          "This vehicle pack is still in review. Pick a verified model from the catalog or request your trim in the app.",
         code: "waitlist_required",
         waitlistEligible: true,
         packId,

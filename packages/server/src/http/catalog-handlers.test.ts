@@ -19,16 +19,16 @@ describe("assertVehicleCreateAllowed", () => {
   it("rejects creator_review_required catalog row", () => {
     const result = assertVehicleCreateAllowed({
       year: 2024,
-      make: "Hyundai",
-      model: "Elantra",
-      trim: "SE",
+      make: "Kia",
+      model: "K5",
+      trim: "LXS",
     });
 
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.status).toBe(422);
     expect(result.body.code).toBe("waitlist_required");
-    expect(result.body.packId).toBe("hyundai-elantra-2024-se");
+    expect(result.body.packId).toBe("kia-k5-2024-lxs");
   });
 
   it("rejects unknown vehicle", () => {

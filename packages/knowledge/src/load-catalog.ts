@@ -1,11 +1,21 @@
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { createRequire } from "node:module";
+import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { dirname } from "node:path";
 import type { OemSchedulePack, ServiceAliasBundle, SupportedVehicleCatalog } from "./types.js";
 import { validateOemSchedulePack, validateServiceAliasBundle } from "./validate-pack.js";
 
-const packageRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
+const require = createRequire(import.meta.url);
+
+const resolveKnowledgePackageRoot = (): string => {
+  try {
+    return dirname(require.resolve("@vehicleos/knowledge/package.json"));
+  } catch {
+    return join(dirname(fileURLToPath(import.meta.url)), "..");
+  }
+};
+
+const packageRoot = resolveKnowledgePackageRoot();
 
 export const loadOemSchedulePack = (packId: string): OemSchedulePack => {
   const path = join(packageRoot, "packs", `${packId}.v1.json`);

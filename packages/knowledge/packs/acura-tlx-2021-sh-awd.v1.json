@@ -87,5 +87,6 @@
       "ruleId": "knowledge.policy.mm-sub-7.v1",
       "subItemCode": "7"
     }
-  ]
+  ],
+  "qaNotes": "PDF-curated dogfood pack — dual-extract QA passed; CARFAX oil+filter maps to code B."
 }

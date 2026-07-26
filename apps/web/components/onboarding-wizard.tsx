@@ -24,6 +24,7 @@ import {
   type CatalogVehicleRow,
 } from "@/lib/supported-vehicle-catalog";
 import { cn } from "@/lib/utils";
+import { RequestVehiclePanel } from "@/components/request-vehicle-panel";
 
 export type OnboardingVehicle = {
   id: string;
@@ -98,6 +99,8 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const [form, setForm] = useState<VehicleForm>(emptyVehicleForm);
   const [catalog, setCatalog] = useState<CatalogVehicleRow[]>([]);
   const [catalogError, setCatalogError] = useState("");
+  const [requestPanelOpen, setRequestPanelOpen] = useState(false);
+  const [catalogLoadAttempt, setCatalogLoadAttempt] = useState(0);
   const [isCatalogLoading, setIsCatalogLoading] = useState(false);
   const [driverDraft, setDriverDraft] = useState<DriverHabitsDraft>({
     drivingStyle: "casual",
@@ -137,7 +140,13 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     return () => {
       cancelled = true;
     };
-  }, [apiBase, catalog.length, step]);
+  }, [apiBase, catalog.length, step, catalogLoadAttempt]);
+
+  const retryCatalogLoad = () => {
+    setCatalog([]);
+    setCatalogError("");
+    setCatalogLoadAttempt((attempt) => attempt + 1);
+  };
 
   const selectedVehicle = useMemo(
     () => catalog.find((row) => row.packId === form.packId) ?? null,
@@ -221,8 +230,9 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         if (body.code === "waitlist_required") {
           setError(
             body.error ??
-              "This vehicle is not available in early access yet. Check vehicleos.app for waitlist updates.",
+              "This vehicle is not available in early access yet. Send a quick request below and we will email you.",
           );
+          setRequestPanelOpen(true);
         } else {
           setError(body.error ?? "Could not create your vehicle.");
         }
@@ -293,7 +303,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           {step === "welcome"
             ? "Three quick steps — pick your supported vehicle, driving profile, and import history — then your assistant workspace unlocks."
             : step === "car"
-              ? "Early access supports verified OEM schedules only — pick your car from the catalog."
+              ? "Pick a verified vehicle from the catalog — check compatibility on vehicleos.app first if you're unsure."
               : step === "driver"
                 ? "Driving style and garage city shape preemptive nudges. Annual miles fine-tunes Schedule dates."
                 : "Hand off CARFAX or portal PDFs so reminders start from your actual service history."}
@@ -383,20 +393,28 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               />
             </FormField>
 
-            <p className="sm:col-span-2 text-sm text-muted-foreground">
-              Don&apos;t see your car?{" "}
-              <a
-                href="https://vehicleos.app/#supported"
-                className="font-medium text-primary underline underline-offset-2"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Check the catalog or join the waitlist
-              </a>{" "}
-              — unsupported models are not available in the app yet.
-            </p>
+            <RequestVehiclePanel
+              apiBase={apiBase}
+              source="onboarding"
+              variant="fallback"
+              open={requestPanelOpen}
+              onOpenChange={setRequestPanelOpen}
+              defaultValues={{
+                year: form.year || undefined,
+                make: form.make || undefined,
+                model: form.model || undefined,
+                trim: form.trim || undefined,
+              }}
+            />
 
-            {catalogError ? <p className="sm:col-span-2 text-sm text-destructive">{catalogError}</p> : null}
+            {catalogError ? (
+              <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
+                <p className="text-sm text-destructive">{catalogError}</p>
+                <Button type="button" variant="outline" size="sm" onClick={retryCatalogLoad}>
+                  Retry
+                </Button>
+              </div>
+            ) : null}
           </div>
         ) : null}
 
