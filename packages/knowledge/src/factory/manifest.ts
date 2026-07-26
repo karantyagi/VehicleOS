@@ -5,6 +5,7 @@ export type SourceManifestEntry = {
   localPdfPaths?: string[];
   sha256?: Record<string, string>;
   officialUrls?: string[];
+  mirrorUrls?: string[];
   notes?: string;
   verifiedAt?: string;
   dualExtractAgree?: boolean;
@@ -33,7 +34,8 @@ export const upsertManifestEntry = (input: {
   dualExtractAgree?: boolean;
 }): SourceManifest => {
   const manifest = loadSourceManifest();
-  const relativePath = input.localPdfPath.replace(/^.*workspace\/knowledge\//, "workspace/knowledge/");
+  const normalizedPath = input.localPdfPath.replaceAll("\\", "/");
+  const relativePath = normalizedPath.replace(/^.*workspace\/knowledge\//, "workspace/knowledge/");
   const filename = relativePath.split("/").pop() ?? "owner-manual.pdf";
 
   const existing = manifest.packs[input.packId] ?? {};
