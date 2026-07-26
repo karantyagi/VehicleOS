@@ -1,11 +1,16 @@
 import type { Tier1PackSpec } from "./tier1-manifest.js";
 import { TIER1_PACK_SPECS } from "./tier1-manifest.js";
+import { partitionUrls } from "./pdf-url-classify.js";
 
 export type PdfSourceSpec = {
   packId: string;
   candidateUrls: string[];
+  officialUrls?: string[];
+  mirrorUrls?: string[];
   notes?: string;
 };
+
+const KIA_OFFICIAL_PORTAL = "https://owners.kia.com/us/en/manuals.html";
 
 const modelFolder = (model: string): string => model.replace(/\s+/g, "-");
 
@@ -260,6 +265,21 @@ const PACK_URL_OVERRIDES: Record<string, string[]> = {
   ],
 };
 
+const withProvenance = (packId: string, candidateUrls: string[]): PdfSourceSpec => {
+  const { officialUrls, mirrorUrls } = partitionUrls(candidateUrls);
+  const isKiaPack = packId.startsWith("kia-") && mirrorUrls.length > 0;
+  return {
+    packId,
+    candidateUrls,
+    officialUrls: isKiaPack
+      ? Array.from(new Set([KIA_OFFICIAL_PORTAL, ...officialUrls]))
+      : officialUrls.length > 0
+        ? officialUrls
+        : candidateUrls,
+    mirrorUrls: mirrorUrls.length > 0 ? mirrorUrls : undefined,
+  };
+};
+
 export const resolvePdfSourceSpec = (input: {
   packId: string;
   make: string;
@@ -269,7 +289,7 @@ export const resolvePdfSourceSpec = (input: {
 }): PdfSourceSpec => {
   const override = PACK_URL_OVERRIDES[input.packId];
   if (override) {
-    return { packId: input.packId, candidateUrls: override };
+    return withProvenance(input.packId, override);
   }
 
   const { year, model, make, oemFamily, packId } = input;
@@ -323,7 +343,7 @@ export const resolvePdfSourceSpec = (input: {
       candidateUrls = [];
   }
 
-  return { packId, candidateUrls };
+  return withProvenance(packId, candidateUrls);
 };
 
 export const allPackPdfSources = (): PdfSourceSpec[] => {

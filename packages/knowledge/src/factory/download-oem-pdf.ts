@@ -1,73 +1,110 @@
 import { createHash } from "node:crypto";
-import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
+import { mkdirSync, writeFileSync, readFileSync, existsSync, unlinkSync } from "node:fs";
 import { ownerManualPdfPath, sourceDirForPack } from "./paths.js";
 import type { PdfSourceSpec } from "./pdf-source-registry.js";
+
+export type DownloadOemPdfInput = PdfSourceSpec & {
+  expectedSha256?: string;
+};
 
 export type DownloadOemPdfResult =
   | {
       ok: true;
       localPath: string;
       sha256: string;
-      officialUrl: string;
+      downloadUrl?: string;
       skippedDownload?: boolean;
+      redownloaded?: boolean;
+      sha256Verified?: boolean;
     }
   | {
       ok: false;
       reason: string;
       triedUrls: string[];
+      sha256Mismatch?: boolean;
     };
 
 const sha256File = (path: string): string =>
   createHash("sha256").update(readFileSync(path)).digest("hex");
 
-export const downloadOemPdf = async (spec: PdfSourceSpec): Promise<DownloadOemPdfResult> => {
+const fetchPdfToPath = async (url: string, dest: string): Promise<{ sha256: string } | null> => {
+  try {
+    const response = await fetch(url, {
+      headers: { "User-Agent": "VehicleOS-OEM-KB-Factory/1.0" },
+      redirect: "follow",
+    });
+    if (!response.ok) return null;
+
+    const contentType = response.headers.get("content-type") ?? "";
+    if (!contentType.includes("pdf") && !url.endsWith(".pdf")) return null;
+
+    const buffer = Buffer.from(await response.arrayBuffer());
+    if (buffer.length < 10_000) return null;
+    if (buffer.subarray(0, 4).toString() !== "%PDF") return null;
+
+    writeFileSync(dest, buffer);
+    return { sha256: createHash("sha256").update(buffer).digest("hex") };
+  } catch {
+    return null;
+  }
+};
+
+export const downloadOemPdf = async (spec: DownloadOemPdfInput): Promise<DownloadOemPdfResult> => {
   const dest = ownerManualPdfPath(spec.packId);
-  if (existsSync(dest)) {
-    return {
-      ok: true,
-      localPath: dest,
-      sha256: sha256File(dest),
-      officialUrl: spec.candidateUrls[0] ?? "local-existing",
-      skippedDownload: true,
-    };
+  const hadExistingFile = existsSync(dest);
+
+  if (hadExistingFile) {
+    const sha256 = sha256File(dest);
+    if (!spec.expectedSha256 || sha256 === spec.expectedSha256) {
+      return {
+        ok: true,
+        localPath: dest,
+        sha256,
+        skippedDownload: true,
+        sha256Verified: Boolean(spec.expectedSha256),
+      };
+    }
+    unlinkSync(dest);
   }
 
   if (spec.candidateUrls.length === 0) {
-    return { ok: false, reason: "No candidate URLs configured", triedUrls: [] };
+    return {
+      ok: false,
+      reason: hadExistingFile
+        ? "Local PDF SHA-256 mismatch and no candidate URLs configured"
+        : "No candidate URLs configured",
+      triedUrls: [],
+      sha256Mismatch: hadExistingFile,
+    };
   }
 
   mkdirSync(sourceDirForPack(spec.packId), { recursive: true });
 
   for (const url of spec.candidateUrls) {
-    try {
-      const response = await fetch(url, {
-        headers: { "User-Agent": "VehicleOS-OEM-KB-Factory/1.0" },
-        redirect: "follow",
-      });
-      if (!response.ok) continue;
+    const fetched = await fetchPdfToPath(url, dest);
+    if (!fetched) continue;
 
-      const contentType = response.headers.get("content-type") ?? "";
-      if (!contentType.includes("pdf") && !url.endsWith(".pdf")) continue;
-
-      const buffer = Buffer.from(await response.arrayBuffer());
-      if (buffer.length < 10_000) continue;
-      if (buffer.subarray(0, 4).toString() !== "%PDF") continue;
-
-      writeFileSync(dest, buffer);
-      return {
-        ok: true,
-        localPath: dest,
-        sha256: createHash("sha256").update(buffer).digest("hex"),
-        officialUrl: url,
-      };
-    } catch {
+    if (spec.expectedSha256 && fetched.sha256 !== spec.expectedSha256) {
+      unlinkSync(dest);
       continue;
     }
+
+    return {
+      ok: true,
+      localPath: dest,
+      sha256: fetched.sha256,
+      downloadUrl: url,
+      redownloaded: hadExistingFile,
+      sha256Verified: Boolean(spec.expectedSha256),
+    };
   }
 
   return {
     ok: false,
-    reason: "All candidate URLs failed (404 or non-PDF)",
+    reason: hadExistingFile
+      ? "Local PDF SHA-256 mismatch and all candidate URLs failed (404 or non-PDF)"
+      : "All candidate URLs failed (404 or non-PDF)",
     triedUrls: spec.candidateUrls,
+    sha256Mismatch: hadExistingFile,
   };
 };

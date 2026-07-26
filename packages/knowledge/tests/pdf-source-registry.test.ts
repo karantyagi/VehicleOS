@@ -26,13 +26,16 @@ const KIA_TIER1_SOURCES = [
 
 describe("Kia Tier-1 PDF sources", () => {
   it.each(KIA_TIER1_SOURCES)("resolves $packId to its verified 2024 U.S. manual", (source) => {
-    expect(
-      resolvePdfSourceSpec({
-        packId: source.packId,
-        make: "Kia",
-        model: source.model,
-        year: 2024,
-      }).candidateUrls,
-    ).toEqual([source.url]);
+    const spec = resolvePdfSourceSpec({
+      packId: source.packId,
+      make: "Kia",
+      model: source.model,
+      year: 2024,
+      oemFamily: "kia",
+    });
+
+    expect(spec.candidateUrls).toEqual([source.url]);
+    expect(spec.mirrorUrls).toEqual([source.url]);
+    expect(spec.officialUrls).toEqual(["https://owners.kia.com/us/en/manuals.html"]);
   });
 });
