@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
-import { sendVehicleRequestOpsEmail } from "./vehicle-request-notify.js";
+import { notifyVehicleRequest } from "./vehicle-request-notify.js";
 
 export type VehicleRequestInput = {
   year: number;
@@ -133,9 +133,9 @@ export const submitVehicleRequest = async (
   console.info("[vehicle-request]", JSON.stringify(payload));
 
   try {
-    await sendVehicleRequestOpsEmail(payload);
+    await notifyVehicleRequest(payload);
   } catch (error) {
-    console.error("[vehicle-request] ops email failed", error);
+    console.error("[vehicle-request] notification failed", error);
   }
 
   try {
