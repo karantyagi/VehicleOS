@@ -95,15 +95,32 @@ SHA-256:
 tier-2000-oem-manual-sources-v2.csv 58EB3F352E0BFBE95061ED34036D0275C2CCB9862A67462D5C4B37EFFCDAD0F3
 ```
 
-## Tier D source retry v3 (Codex — pending)
+## Tier D source retry v3
 
 `tier-2000-tier-d-retry.csv` lists **913** packs with `creator_review_required` and
 merged source tier D (after v2 Audi demotions). Codex prompt:
 `CODEX-PROMPT-tier-d-v3.md`.
 
-**Output:** `tier-2000-oem-manual-sources-v3.csv` — one row per tier-d-retry
-`pack_id`. v3 overrides v2/v1 on merge. Factory runs `pnpm verify:tier-d
+The July 26, 2026 retry produced:
+
+- `tier-2000-oem-manual-sources-v3.csv` with exactly one row for each of the
+  913 retry `pack_id` values: 219 Tier B, 101 Tier C, and 593 Tier D.
+- 320 sourced rows backed by 114 unique PDFs and 114 matching SHA-256 values.
+- Tier C limited to byte-validated StartMyCar/OpinAutos direct PDFs, with the
+  mirror host and SHA-256 recorded in every applicable row.
+- Explicit cross-trim and annual-booklet sharing provenance on all 206 reused
+  rows.
+- No NHTSA TSB/recall PDFs, erWin metadata pages, portal landing pages, or
+  hybrid-only mirror manuals applied to unconfirmed non-hybrid targets.
+
+The v3 registry overrides v2/v1 on merge. Factory can run `pnpm verify:tier-d
 --promote` after integration (Option A dual-extract only).
+
+SHA-256:
+
+```text
+tier-2000-oem-manual-sources-v3.csv 29804A47EAB5A787FA359F870B3FC6DF3C9C33FB55734BD4440ADAB4864B685E
+```
 
 Priority makes: Mercedes (148), Hyundai/Kia/Genesis (237), Audi (77), Ford (58),
 VW (51), Tesla (28 — expect Tier D).
