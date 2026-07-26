@@ -61,10 +61,33 @@ The July 26, 2026 retry produced:
   they had already produced dual-extract mismatches; those 102 rows remain
   explicitly blocked pending a different complete maintenance document.
 
-For future retries, an OEM-hosted PDF is preferred but not mandatory. A
-reputable mirror may be Tier C when the document itself proves the correct
-make, model, model year, market, edition, page completeness, and maintenance
-section. A mirror is transport provenance, not authority by itself.
+### Source acquisition policy
+
+An OEM-hosted PDF is preferred but not mandatory. The retry workflow may query
+reputable manual aggregators and collection portals after the OEM path fails.
+An aggregator is a discovery/transport provider; it is not authority by itself.
+
+- **Tier B:** OEM-hosted, applicable, complete, and byte-validated.
+- **Tier C:** non-OEM mirror with attributable OEM publisher identity; correct
+  US-market YMM/generation; complete maintenance section; byte-validated.
+- **Tier D:** applicability, completeness, maintenance content, provenance, or
+  retrieval could not be verified.
+
+Do not accept a document from its cover alone. Verify the actual maintenance
+section, model/generation and powertrain applicability, edition/document
+number, market, page completeness, HTTP 200, `application/pdf`, `%PDF`, size,
+and SHA-256. Preserve publisher, provider/host, original and mirror URLs,
+retrieval date, confidence, and manual-sharing provenance.
+
+Before integrating an aggregator, compare 2–3 candidates on retry-pack
+coverage, YMM/market correctness, maintenance-section presence, direct-PDF
+access, duplicate rate, URL stability, and terms/licensing risk. Provider
+ranking and portal-specific production heuristics belong in the private engine;
+the public repository retains the provider contract and validation method.
+
+Technical validation does not grant redistribution rights. Keep source PDFs
+local or in controlled evidence storage unless the applicable terms permit
+redistribution.
 
 SHA-256:
 

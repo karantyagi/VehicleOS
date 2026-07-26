@@ -1,6 +1,7 @@
 # ADR-010 — Deterministic service matching & curated OEM knowledge packs
 
 **Status:** Accepted (2026-07-25)  
+**Amended:** 2026-07-26 — verified aggregator and mirror fallback for manual discovery<br>
 **Deciders:** Product / architecture  
 **Related:** ADR-007 (manual upload) · ADR-009 (record import) · **ADR-011** (import enrichment + shop memory) · [`phase-1-intelligence-scope.md`](../../../workspace/strategy/phase-1-intelligence-scope.md) · [`record-import-data-pipeline.md`](../../../workspace/strategy/record-import-data-pipeline.md) · [`assistant-reminder-decision-engine.md`](../../../workspace/strategy/assistant-reminder-decision-engine.md)
 
@@ -26,6 +27,7 @@ This ADR locks **how schedule truth and service semantics scale** without nondet
 | **Service line → OEM row matching** | **Canonical service IDs + alias ontology** — deterministic lookup, tested fixtures |
 | **OEM interval data** | **Curated Schedule Packs** per supported YMM — creator-maintained, versioned |
 | **Manual PDF / LLM** | **Offline creator pipeline only** — proposes pack rows; human QA before publish |
+| **Manual source discovery** | **OEM first, verified aggregator/mirror fallback** — provider finds candidates; VehicleOS validates the document |
 | **Unsupported vehicle** | Explicit fallback — upload manual or generic intervals; no fake “supported” |
 | **Owner-specific learning** | **Verification + confirmed aliases** — optional; never silent auto-write to schedule truth |
 
@@ -164,7 +166,7 @@ A dropdown of 1000 YMMs where 900 were LLM-extracted without QA **is** a fragile
 │ OFFLINE — Creator / vehicleos-engine (not owner runtime)   │
 ├─────────────────────────────────────────────────────────────┤
 │ 1. Pick YMM from priority list (sales volume, your network) │
-│ 2. Acquire owner manual PDF (legal/source-of-truth)       │
+│ 2. Discover PDF: OEM first, then source-provider adapters │
 │ 3. Extract schedule rows (rules + LLM assist)               │
 │ 4. Map to canonicalServiceId + draft alias list             │
 │ 5. Human QA (you) — compare to manual pages                 │
@@ -186,6 +188,59 @@ Parallel Cursor sub-agents are **batch workers for step 3–4**, not autonomous 
 
 Priority list sources: US registration volume, your early-access signups, interview demo needs — not “every trim ever.”
 
+### Manual source discovery and trust policy
+
+VehicleOS does not need to build another global manual search engine.
+Reputable manual aggregators and collection portals are valid **discovery and
+transport providers**. They do not become authority merely because they host a
+file; the PDF itself must prove its identity and applicability.
+
+Discovery order:
+
+1. Query an official OEM owner, warranty, or service source.
+2. If the OEM source is missing, session-gated, or unstable, query replaceable
+   aggregator/mirror providers.
+3. Normalize candidates by document identity and SHA-256 so the same PDF on
+   multiple hosts is one evidence object.
+4. Validate the document before extraction or pack publication.
+
+| Source tier | Required evidence | Treatment |
+|-------------|-------------------|-----------|
+| **B — OEM** | OEM-hosted PDF; correct US-market YMM/generation; complete maintenance content; byte checks pass | Preferred source |
+| **C — verified mirror** | Reputable non-OEM host; publisher and document identity are attributable to the OEM; the same applicability, completeness, content, and byte checks pass | Valid fallback with mirror provenance |
+| **D — blocked** | Wrong or uncertain market/YMM, incomplete document, no applicable maintenance section, failed retrieval, or unverifiable provenance | Do not publish as supported |
+
+Every Tier B/C candidate must pass:
+
+- HTTP 200, `application/pdf`, `%PDF` magic, a meaningful size threshold, and
+  SHA-256 capture.
+- Cover/title, model year, make/model or generation, powertrain where relevant,
+  US-market applicability, edition/document number, and page completeness.
+- Inspection of the actual maintenance section. Matching only the cover or
+  first pages is insufficient.
+- Explicit `manual_share_policy`, `manual_share_applied`, and
+  `shared_from_pack_id` provenance when one document covers multiple trims.
+- Retrieval date, publisher, host/provider, original URL, mirror URL when
+  applicable, and the validation result.
+
+Copyright and site terms are separate from technical validity. A third-party
+host may be acceptable for creator-side evidence without granting VehicleOS
+permission to redistribute the PDF. Store or republish source bytes only when
+the applicable terms allow it; otherwise retain the registry metadata, hash,
+citations, and locally controlled QA evidence.
+
+The provider boundary is intentionally small: providers return candidate
+documents for a YMM query; the common validator assigns trust and applicability.
+Public `VehicleOS` owns the provider contract, provenance schema, validation
+methodology, and a representative integration. Private `vehicleos-engine` owns
+tuned provider ranking, portal-specific recovery heuristics, and production
+scoring weights.
+
+Before adopting an aggregator, run a small bake-off across retry packs and
+measure YMM/market correctness, maintenance-section presence, direct-PDF
+access, duplicate rate, URL stability, terms/licensing risk, and the percentage
+that clears Tier C without manual correction.
+
 ---
 
 ## Part 4 — Where data lives (storage architecture)
@@ -195,6 +250,7 @@ Priority list sources: US registration volume, your early-access signups, interv
 | Store | Contents | Why |
 |-------|----------|-----|
 | **Repo `packages/knowledge/`** | Versioned JSON packs, alias files, JSON Schema, Vitest fixtures | Reviewable PRs, reproducible CI, open-core boundary |
+| **Source registries** | Candidate URL, publisher/provider provenance, applicability, validation result, hash | Auditable discovery without making a host the authority |
 | **Postgres reference tables** | `supported_vehicles`, `oem_schedule_packs`, `oem_schedule_entries`, `service_aliases` | Fast onboarding dropdown, runtime lookup without redeploy |
 | **Supabase Storage** | Source manual PDFs (evidence) | ADR-007 pattern — cite pages in packs |
 | **Per-vehicle event store** | `knowledge.schedule.recorded` events (today) | Unchanged — vehicle-specific truth remains event-sourced |
@@ -323,6 +379,8 @@ Use this for every new function (matching, extract, reminders, copy):
 - Postgres seed tables + pack hydration on vehicle create.
 - Verification UI for ambiguous line items.
 - Creator batch extract pipeline (parallel agents → QA → JSON commit).
+- Bake off 2–3 manual-source providers, then add the winning provider behind a
+  replaceable discovery interface and the shared validator.
 
 ### Explicitly defer
 
@@ -345,6 +403,8 @@ Use this for every new function (matching, extract, reminders, copy):
 | Owner uploads manual for every car | High friction; wrong wedge for mass onboarding |
 | 1000 YMMs via unchecked parallel extract | Fragile intervals; liability on wrong oil change timing |
 | Single global regex file forever | Does not scale; no canonical IDs or OEM-specific codes |
+| OEM-hosted PDFs only | Needlessly fragile when OEM links expire or require sessions; a byte-identical, fully verified mirror can preserve valid evidence |
+| Accept aggregator results as truth | Host reputation alone does not prove YMM, market, completeness, or maintenance applicability |
 
 ---
 
