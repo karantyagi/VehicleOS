@@ -176,7 +176,7 @@ export const statusRows: StatusRow[] = [
   { item: "Receipt capture + mobile PWA handoff", status: "in-progress" },
   { item: "LLM-assisted PDF extraction (receipts + messy imports)", status: "in-progress" },
   { item: "Demo video (full walkthrough at v1 freeze)", status: "in-progress" },
-  { item: "OEM pack factory — Tier 1 passenger catalog (~50 packs)", status: "in-progress" },
+  { item: "OEM pack factory — Tier 1 passenger catalog (50 verified)", status: "shipped" },
   { item: "SMS / email / push proactive reminders", status: "planned" },
   { item: "Multi-vehicle garage switcher", status: "planned" },
   { item: "Vehicle OS Connect desktop (Owners)", status: "planned" },

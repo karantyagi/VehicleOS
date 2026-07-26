@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2024 Kia EV6 Light — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "ev_simplified",
-  "qaStatus": "creator_review_required",
-  "qaNotes": "Phase A+B complete — dual-extract agree. Awaiting Phase C promotion to auto_verified.",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Phase C promoted — intervals from kia-tier1-pdf-discovery.md, manifest + B5 fixtures pass.",
   "sourceManifestRef": "sources/manifest.json#kia-ev6-2024-light",
   "vehicle": {
     "make": "Kia",
@@ -18,11 +18,11 @@
       "entryId": "tire-rotation",
       "canonicalServiceId": "generic.tire_rotation",
       "serviceName": "Rotate tires",
-      "intervalMiles": 7500,
-      "intervalMonths": 6,
-      "sourcePage": "P. 1 — Tire rotation",
+      "intervalMiles": 8000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 494 — Tire rotation (8,000 mi / 12 mo; printed 9-8)",
       "ruleId": "knowledge.policy.tire-rotation.v1",
-      "confidence": 0.91
+      "confidence": 0.92
     },
     {
       "entryId": "cabin-air-filter",
@@ -30,19 +30,19 @@
       "serviceName": "Replace cabin air filter",
       "intervalMiles": 15000,
       "intervalMonths": 12,
-      "sourcePage": "EV maintenance schedule — Cabin air filter",
+      "sourcePage": "P. 494 — EV maintenance schedule — Cabin air filter (printed 9-8)",
       "ruleId": "knowledge.policy.cabin-filter.v1",
-      "confidence": 0.91
+      "confidence": 0.92
     },
     {
       "entryId": "brake-fluid",
       "canonicalServiceId": "generic.brake_fluid",
       "serviceName": "Replace brake fluid",
-      "intervalMiles": null,
-      "intervalMonths": 36,
-      "sourcePage": "EV maintenance schedule — Brake fluid",
+      "intervalMiles": 48000,
+      "intervalMonths": 48,
+      "sourcePage": "P. 494 — Brake fluid replacement (48,000 mi / 48 mo; printed 9-8)",
       "ruleId": "knowledge.policy.brake-fluid.v1",
-      "confidence": 0.9
+      "confidence": 0.92
     }
   ]
 }

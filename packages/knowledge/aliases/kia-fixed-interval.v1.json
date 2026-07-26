@@ -51,6 +51,13 @@
       "matchKind": "contains",
       "priority": 70,
       "source": "creator"
+    },
+    {
+      "canonicalServiceId": "generic.brake_fluid",
+      "phrase": "Brake fluid",
+      "matchKind": "contains",
+      "priority": 70,
+      "source": "creator"
     }
   ]
 }

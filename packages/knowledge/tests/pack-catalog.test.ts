@@ -49,6 +49,12 @@ describe("OEM schedule packs", () => {
         expect.objectContaining({ packId: "honda-cr-v-2024-ex" }),
       ]),
     );
-    expect(verified.length).toBeGreaterThanOrEqual(46);
+    expect(verified.length).toBeGreaterThanOrEqual(50);
+    expect(verified).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ packId: "kia-k5-2024-lxs" }),
+        expect.objectContaining({ packId: "kia-ev6-2024-light" }),
+      ]),
+    );
   });
 });

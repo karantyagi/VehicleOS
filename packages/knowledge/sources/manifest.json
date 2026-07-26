@@ -663,8 +663,8 @@
         "owner-manual.pdf": "08797ec50531ff57391d62694a6deaa1a776a988b390c2a614691b7154f1d834"
       },
       "verifiedAt": "2026-07-26",
-      "notes": "3 mismatches",
-      "dualExtractAgree": false
+      "notes": "Phase C promoted — intervals from kia-tier1-pdf-discovery.md",
+      "dualExtractAgree": true
     },
     "kia-sportage-2024-lx": {
       "officialUrls": [
@@ -680,8 +680,8 @@
         "owner-manual.pdf": "e7c68bfae6f4de2105a82e83cf4eebc21bae6c6a397baf9730e98c20a70bfd5e"
       },
       "verifiedAt": "2026-07-26",
-      "notes": "3 mismatches",
-      "dualExtractAgree": false
+      "notes": "Phase C promoted — intervals from kia-tier1-pdf-discovery.md",
+      "dualExtractAgree": true
     },
     "kia-telluride-2024-lx": {
       "officialUrls": [
@@ -697,8 +697,8 @@
         "owner-manual.pdf": "cbf0111a52380bc46c7bfcf7194602a7d2327965d227215cbf53561f1d511fcc"
       },
       "verifiedAt": "2026-07-26",
-      "notes": "3 mismatches",
-      "dualExtractAgree": false
+      "notes": "Phase C promoted — intervals from kia-tier1-pdf-discovery.md",
+      "dualExtractAgree": true
     },
     "kia-ev6-2024-light": {
       "officialUrls": [
@@ -714,7 +714,7 @@
         "owner-manual.pdf": "742fc94e383aa56b2d70c9d92b3e173c9abbf47d5d7f397b9c93d29411820c39"
       },
       "verifiedAt": "2026-07-26",
-      "notes": "dual-extract agree",
+      "notes": "Phase C promoted — intervals from kia-tier1-pdf-discovery.md",
       "dualExtractAgree": true
     }
   }

@@ -189,7 +189,7 @@
       "model": "EV6",
       "year": 2024,
       "trim": "Light",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -198,7 +198,7 @@
       "model": "K5",
       "year": 2024,
       "trim": "LXS",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -207,7 +207,7 @@
       "model": "Sportage",
       "year": 2024,
       "trim": "LX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -216,7 +216,7 @@
       "model": "Telluride",
       "year": 2024,
       "trim": "LX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {

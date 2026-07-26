@@ -48,7 +48,7 @@ describe("hydrateOemKnowledgePack", () => {
     });
   });
 
-  it("skips creator_review_required packs", async () => {
+  it("hydrates promoted Kia K5 pack after Phase C", async () => {
     const eventStore = new InMemoryEventStore();
     const policyEngine = new StubPolicyEngine();
 
@@ -66,9 +66,9 @@ describe("hydrateOemKnowledgePack", () => {
     });
 
     expect(result).toEqual({
-      hydrated: false,
+      hydrated: true,
       packId: "kia-k5-2024-lxs",
-      skippedReason: "not_auto_verified",
+      entriesRecorded: 4,
     });
   });
 
