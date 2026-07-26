@@ -651,7 +651,8 @@
     },
     "kia-k5-2024-lxs": {
       "officialUrls": [
-        "https://owners.kia.com/us/en/manuals.html"
+        "https://owners.kia.com/us/en/manuals.html",
+        "https://manuals.startmycar.com/published/Kia-K5_2024_EN_US_e6ae80d227.pdf"
       ],
       "mirrorUrls": [
         "https://manuals.startmycar.com/published/Kia-K5_2024_EN_US_e6ae80d227.pdf"
@@ -663,11 +664,13 @@
         "owner-manual.pdf": "08797ec50531ff57391d62694a6deaa1a776a988b390c2a614691b7154f1d834"
       },
       "verifiedAt": "2026-07-26",
-      "notes": "Public mirror is SHA-256-identical to the KGIS session download; creator review remains required because the current parser loses Kia schedule-table text."
+      "notes": "3 mismatches",
+      "dualExtractAgree": false
     },
     "kia-sportage-2024-lx": {
       "officialUrls": [
-        "https://owners.kia.com/us/en/manuals.html"
+        "https://owners.kia.com/us/en/manuals.html",
+        "https://manuals.startmycar.com/published/Kia-Sportage_2024_EN-US_US_979e9e6749.pdf"
       ],
       "mirrorUrls": [
         "https://manuals.startmycar.com/published/Kia-Sportage_2024_EN-US_US_979e9e6749.pdf"
@@ -679,11 +682,13 @@
         "owner-manual.pdf": "e7c68bfae6f4de2105a82e83cf4eebc21bae6c6a397baf9730e98c20a70bfd5e"
       },
       "verifiedAt": "2026-07-26",
-      "notes": "Public mirror is SHA-256-identical to the KGIS session download; creator review remains required because the current parser loses Kia schedule-table text."
+      "notes": "3 mismatches",
+      "dualExtractAgree": false
     },
     "kia-telluride-2024-lx": {
       "officialUrls": [
-        "https://owners.kia.com/us/en/manuals.html"
+        "https://owners.kia.com/us/en/manuals.html",
+        "https://manuals.startmycar.com/published/Kia-Telluride_2024_EN_US_60a621055c.pdf"
       ],
       "mirrorUrls": [
         "https://manuals.startmycar.com/published/Kia-Telluride_2024_EN_US_60a621055c.pdf"
@@ -695,11 +700,13 @@
         "owner-manual.pdf": "cbf0111a52380bc46c7bfcf7194602a7d2327965d227215cbf53561f1d511fcc"
       },
       "verifiedAt": "2026-07-26",
-      "notes": "Public mirror is SHA-256-identical to the KGIS session download; creator review remains required because the current parser loses Kia schedule-table text."
+      "notes": "3 mismatches",
+      "dualExtractAgree": false
     },
     "kia-ev6-2024-light": {
       "officialUrls": [
-        "https://owners.kia.com/us/en/manuals.html"
+        "https://owners.kia.com/us/en/manuals.html",
+        "https://manuals.opinautos.com/published/Kia-EV6_2024_EN-US_US_ef71c5ee49.pdf"
       ],
       "mirrorUrls": [
         "https://manuals.opinautos.com/published/Kia-EV6_2024_EN-US_US_ef71c5ee49.pdf"
@@ -711,7 +718,8 @@
         "owner-manual.pdf": "742fc94e383aa56b2d70c9d92b3e173c9abbf47d5d7f397b9c93d29411820c39"
       },
       "verifiedAt": "2026-07-26",
-      "notes": "Public mirror is SHA-256-identical to the KGIS session download; creator review remains required because the current parser loses Kia schedule-table text."
+      "notes": "dual-extract agree",
+      "dualExtractAgree": true
     }
   }
 }
