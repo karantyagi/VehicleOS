@@ -43,3 +43,31 @@ tier-2000-pack-targets.csv              C4E72146D9BDDD6450A19884AFD72ABE758FF9E0
 This registry contains public OEM document references and research
 provenance. It does not contain private engine prompts, tuned scoring logic,
 or golden fixtures.
+
+## In-review source retry v2
+
+`tier-2000-oem-manual-sources-v2.csv` is a targeted source result for the 469
+packs in `tier-2000-in-review-retry.csv`; it is not a replacement 2,000-row
+registry.
+
+The July 26, 2026 retry produced:
+
+- 347 Tier B rows, 20 Tier C rows, and 102 Tier D rows.
+- 367 sourced rows with HTTP 200, `application/pdf`, `%PDF`, size greater than
+  50 KB, and a current SHA-256 value.
+- Five Volvo delivery URLs refreshed to their direct official Contentstack
+  assets after the prior URLs returned HTTP 403.
+- No NHTSA-hosted PDFs. The existing Audi schedules were not recycled because
+  they had already produced dual-extract mismatches; those 102 rows remain
+  explicitly blocked pending a different complete maintenance document.
+
+For future retries, an OEM-hosted PDF is preferred but not mandatory. A
+reputable mirror may be Tier C when the document itself proves the correct
+make, model, model year, market, edition, page completeness, and maintenance
+section. A mirror is transport provenance, not authority by itself.
+
+SHA-256:
+
+```text
+tier-2000-oem-manual-sources-v2.csv 58EB3F352E0BFBE95061ED34036D0275C2CCB9862A67462D5C4B37EFFCDAD0F3
+```
