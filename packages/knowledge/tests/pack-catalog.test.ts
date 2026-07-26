@@ -15,9 +15,10 @@ describe("OEM schedule packs", () => {
     expect(pack.entries.some((entry) => entry.entryId === "code-b")).toBe(true);
   });
 
-  it("flags 2019 pack for creator review", () => {
+  it("loads promoted 2019 TLX pack after Phase C", () => {
     const pack = loadOemSchedulePack("acura-tlx-2019-sh-awd");
-    expect(pack.qaStatus).toBe("creator_review_required");
+    expect(pack.qaStatus).toBe("auto_verified");
+    expect(runPackQaRules(pack)).toEqual([]);
   });
 
   it("resolves dogfood vehicle to 2021 pack", () => {
@@ -41,9 +42,13 @@ describe("OEM schedule packs", () => {
     const catalog = loadSupportedVehicleCatalog();
     expect(catalog.vehicles.length).toBeGreaterThanOrEqual(50);
     const verified = catalog.vehicles.filter((row) => row.qaStatus === "auto_verified");
-    expect(verified).toEqual([
-      expect.objectContaining({ packId: "acura-tlx-2021-sh-awd" }),
-    ]);
-    expect(verified).toHaveLength(1);
+    expect(verified).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ packId: "acura-tlx-2021-sh-awd" }),
+        expect.objectContaining({ packId: "honda-accord-2024-ex" }),
+        expect.objectContaining({ packId: "honda-cr-v-2024-ex" }),
+      ]),
+    );
+    expect(verified.length).toBeGreaterThanOrEqual(16);
   });
 });

@@ -4,7 +4,7 @@
   "manualTitle": "2024 Nissan Altima SV — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
   "qaStatus": "creator_review_required",
-  "qaNotes": "Tier-1 factory template — creator review required before big-bang auto_verified promotion.",
+  "qaNotes": "Phase A+B complete — dual-extract mismatch. Creator review required (Phase C).",
   "sourceManifestRef": "sources/manifest.json#nissan-altima-2024-sv",
   "vehicle": {
     "make": "Nissan",

@@ -4,7 +4,7 @@
   "manualTitle": "2024 Jeep Grand Cherokee Laredo — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
   "qaStatus": "creator_review_required",
-  "qaNotes": "Tier-1 factory template — creator review required before big-bang auto_verified promotion.",
+  "qaNotes": "Phase A+B complete — dual-extract mismatch. Creator review required (Phase C).",
   "sourceManifestRef": "sources/manifest.json#jeep-grand-cherokee-2024-laredo",
   "vehicle": {
     "make": "Jeep",

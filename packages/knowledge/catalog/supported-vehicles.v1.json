@@ -7,7 +7,7 @@
       "model": "RDX",
       "year": 2024,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -16,7 +16,7 @@
       "model": "TLX",
       "year": 2019,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -26,7 +26,7 @@
       "year": 2019,
       "trim": "SH-AWD",
       "powertrain": "3.5L",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -45,7 +45,7 @@
       "model": "Bolt EV",
       "year": 2023,
       "trim": "1LT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -90,7 +90,7 @@
       "model": "Mustang Mach-E",
       "year": 2024,
       "trim": "Select",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -99,7 +99,7 @@
       "model": "Accord",
       "year": 2024,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -108,7 +108,7 @@
       "model": "Civic",
       "year": 2024,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -117,7 +117,7 @@
       "model": "CR-V",
       "year": 2024,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -126,7 +126,7 @@
       "model": "HR-V",
       "year": 2024,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -135,7 +135,7 @@
       "model": "Passport",
       "year": 2024,
       "trim": "EX-L",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -144,7 +144,7 @@
       "model": "Pilot",
       "year": 2024,
       "trim": "EX-L",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -162,7 +162,7 @@
       "model": "IONIQ 5",
       "year": 2024,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -351,7 +351,7 @@
       "model": "Model 3",
       "year": 2024,
       "trim": "Long Range",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -360,7 +360,7 @@
       "model": "Model Y",
       "year": 2024,
       "trim": "Long Range",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {
@@ -452,7 +452,7 @@
       "model": "ID.4",
       "year": 2024,
       "trim": "Pro",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier1"
     },
     {

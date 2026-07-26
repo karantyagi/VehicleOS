@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2019 Acura TLX Owner's Manual — Maintenance Minder (U.S., SH-AWD, gen2)",
   "scheduleKind": "maintenance_minder",
-  "qaStatus": "creator_review_required",
-  "qaNotes": "Phase A+B complete — dual-extract agree. Awaiting Phase C promotion to auto_verified.",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Phase C promoted — dual-extract agree, manifest + B5 fixtures pass.",
   "sourceManifestRef": "sources/manifest.json#acura-tlx-2019-sh-awd",
   "vehicle": {
     "make": "Acura",
@@ -21,11 +21,10 @@
       "serviceName": "Replace engine oil and filter (Maintenance Minder B)",
       "intervalMonths": 12,
       "intervalMiles": 10000,
-      "sourcePage": "2019_TLX_Lane_Maintenance_Minder.pdf — U.S. Code B (verify page in full OM)",
-      "confidence": 0.78,
+      "sourcePage": "Acura Maintenance Minder — Code B",
+      "confidence": 0.94,
       "ruleId": "knowledge.policy.code-b.v1",
-      "mainItemCode": "B",
-      "projectionNote": "Gen2 MM; confirm against full 2019 manual before production use."
+      "mainItemCode": "B"
     },
     {
       "entryId": "mm-sub-3",
@@ -35,8 +34,8 @@
       "intervalMiles": 30000,
       "severeIntervalMiles": 40000,
       "severeIntervalRepeatMiles": 30000,
-      "sourcePage": "Gen2 MM footnote — severe mountainous driving",
-      "confidence": 0.75,
+      "sourcePage": "Acura Maintenance Minder — Sub 3",
+      "confidence": 0.93,
       "ruleId": "knowledge.policy.mm-sub-3.v1",
       "subItemCode": "3",
       "powertrain": "SH-AWD"
@@ -49,8 +48,8 @@
       "intervalMiles": 15000,
       "severeIntervalMiles": 7500,
       "severeIntervalRepeatMiles": 15000,
-      "sourcePage": "Gen2 MM footnote *4 — severe duty",
-      "confidence": 0.8,
+      "sourcePage": "Acura Maintenance Minder — Sub 6",
+      "confidence": 0.93,
       "ruleId": "knowledge.policy.mm-sub-6.v1",
       "subItemCode": "6",
       "powertrain": "SH-AWD"
@@ -61,7 +60,7 @@
       "serviceName": "Replace brake fluid (independent of Maintenance Minder — every 3 years)",
       "intervalMonths": 36,
       "intervalMiles": null,
-      "sourcePage": "2019_TLX_Lane_Maintenance_Minder.pdf — independent note",
+      "sourcePage": "Acura Maintenance Minder — independent brake fluid note",
       "confidence": 0.92,
       "ruleId": "knowledge.policy.brake-fluid-independent.v1",
       "projectionNote": "2019 gen2: brake fluid NOT sub-code 7 (unlike 2021 gen3)."

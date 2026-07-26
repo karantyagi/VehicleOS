@@ -57,17 +57,17 @@ describe("hydrateOemKnowledgePack", () => {
       policyEngine,
       vehicle: {
         id: crypto.randomUUID(),
-        year: 2019,
-        make: "Acura",
-        model: "TLX",
-        trim: "SH-AWD",
-        currentMileage: 40_000,
+        year: 2024,
+        make: "Toyota",
+        model: "Camry",
+        trim: "LE",
+        currentMileage: 12_000,
       },
     });
 
     expect(result).toEqual({
       hydrated: false,
-      packId: "acura-tlx-2019-sh-awd",
+      packId: "toyota-camry-2024-le",
       skippedReason: "not_auto_verified",
     });
   });

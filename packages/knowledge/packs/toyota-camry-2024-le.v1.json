@@ -4,7 +4,7 @@
   "manualTitle": "2024 Toyota Camry LE — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
   "qaStatus": "creator_review_required",
-  "qaNotes": "Tier-1 factory template — demoted pending PDF dual-extract QA. Promote to auto_verified only after sources/manifest PDF and B1–B5 gates pass.",
+  "qaNotes": "Phase A+B complete — dual-extract mismatch. Creator review required (Phase C).",
   "sourceManifestRef": "sources/manifest.json#toyota-camry-2024-le",
   "vehicle": {
     "make": "Toyota",

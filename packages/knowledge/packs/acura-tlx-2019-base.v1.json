@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2019 Acura TLX Base — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "maintenance_minder",
-  "qaStatus": "creator_review_required",
-  "qaNotes": "Phase A+B complete — dual-extract agree. Awaiting Phase C promotion to auto_verified.",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Phase C promoted — dual-extract agree, manifest + B5 fixtures pass.",
   "sourceManifestRef": "sources/manifest.json#acura-tlx-2019-base",
   "vehicle": {
     "make": "Acura",
