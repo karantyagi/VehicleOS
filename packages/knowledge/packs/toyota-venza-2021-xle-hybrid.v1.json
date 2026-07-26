@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2021 Toyota Venza XLE — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
-  "qaStatus": "creator_review_required",
-  "qaNotes": "Scaffold auto_verified revoked — awaiting factory Phase A+B verify and dual-extract promotion.",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#toyota-venza-2021-xle-hybrid",
   "vehicle": {
     "make": "Toyota",
@@ -20,8 +20,8 @@
       "canonicalServiceId": "toyota.mr.10000.engine_oil",
       "serviceName": "Engine oil and filter change",
       "intervalMiles": 10000,
-      "intervalMonths": 6,
-      "sourcePage": "Maintenance Schedule — Normal driving",
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — Engine oil",
       "ruleId": "knowledge.policy.toyota-oil.v1",
       "projectionNote": "Toyota 10k/6mo normal; 5k severe driving per owner manual.",
       "confidence": 0.93
@@ -32,7 +32,7 @@
       "serviceName": "Rotate tires",
       "intervalMiles": 5000,
       "intervalMonths": 6,
-      "sourcePage": "Maintenance Schedule — Tire rotation",
+      "sourcePage": "P. 1 — Tire rotation",
       "ruleId": "knowledge.policy.tire-rotation.v1",
       "confidence": 0.94
     },
@@ -61,8 +61,8 @@
       "canonicalServiceId": "generic.brake_fluid",
       "serviceName": "Replace brake fluid",
       "intervalMiles": null,
-      "intervalMonths": 36,
-      "sourcePage": "Maintenance Schedule — Brake fluid",
+      "intervalMonths": 24,
+      "sourcePage": "P. 1 — Brake fluid",
       "ruleId": "knowledge.policy.brake-fluid.v1",
       "confidence": 0.92
     }

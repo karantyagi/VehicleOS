@@ -16073,6 +16073,261 @@
       "notes": "1 mismatches",
       "verifiedAt": "2026-07-26",
       "dualExtractAgree": false
+    },
+    "volvo-s60-2020-recharge": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-s60-2020-recharge/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "dbc3d74e60c80fa24c65e63f1b880beed4a441afe1d4a3908f57e2087af22f4a"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "toyota-venza-2021-xle-hybrid": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/toyota-venza-2021-xle-hybrid/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "415150f1df96af856b9f8c8481f9d0bb09f135023b2e24a697b67198feef81da"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-21VenzaHV/pdf/T-MMS-21VenzaHV.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-s60-2023-b5-core": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-s60-2023-b5-core/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7c365ce08df12fcbdabfd08a4c4a5e1269ca4a175be9aef33037d87828ba6e68"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt81f15f82d8a8280f/6a29cb5edcb18dc4dbce664b/2023_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26_%281%29.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-s60-2025-recharge": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-s60-2025-recharge/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "d9d35c7bfa6375f6952daf7399c4092a07d032faddd2d2e10964b3fc401e4b2b"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-s90-2024-b6-core": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-s90-2024-b6-core/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "c6995ca939bdf690e20fa30610859b59d4522f851125098b966d64909b2c5934"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blte903c4602d5671e9/6a29cb536b589f3053b06110/2024_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-s90-2020-recharge": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-s90-2020-recharge/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "dbc3d74e60c80fa24c65e63f1b880beed4a441afe1d4a3908f57e2087af22f4a"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-s90-2025-b6-core": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-s90-2025-b6-core/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "d9d35c7bfa6375f6952daf7399c4092a07d032faddd2d2e10964b3fc401e4b2b"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-xc40-2020-b5-core": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-xc40-2020-b5-core/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "dbc3d74e60c80fa24c65e63f1b880beed4a441afe1d4a3908f57e2087af22f4a"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-xc40-2022-recharge": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-xc40-2022-recharge/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "506f57ee1e889bd587d214b6aa1068e4db2502ce6d8ab5b6f79ff79384ab8418"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltb47d7a5aea734683/6a29cb631bba922d61aadaa4/2022_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-xc40-2020-recharge-pure-electric-electric": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-xc40-2020-recharge-pure-electric-electric/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "dbc3d74e60c80fa24c65e63f1b880beed4a441afe1d4a3908f57e2087af22f4a"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-xc40-2025-b5-core": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-xc40-2025-b5-core/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "d9d35c7bfa6375f6952daf7399c4092a07d032faddd2d2e10964b3fc401e4b2b"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt1f1676a16c88494e/6a29cb4fc1351a105b5ed89d/2025_FSM_Maintenance_Sheets_PHEV_MHEV_6.8.26.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-xc40-2023-b5-plus": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-xc40-2023-b5-plus/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7c365ce08df12fcbdabfd08a4c4a5e1269ca4a175be9aef33037d87828ba6e68"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt81f15f82d8a8280f/6a29cb5edcb18dc4dbce664b/2023_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26_%281%29.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-xc40-2025-recharge-pure-electric-electric": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-xc40-2025-recharge-pure-electric-electric/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "c2ec1d8c07683a76c36ad1f8824e26497b8d5708f337c9463291e3d4caa3e2ed"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt5f5eeaa792dafc9f/6a29cb51e3ad016c620efb4b/2025_FSM_Maintenance_Sheets_Fully_Electric_6.8.26.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-xc60-2020-b5-core": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-xc60-2020-b5-core/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "dbc3d74e60c80fa24c65e63f1b880beed4a441afe1d4a3908f57e2087af22f4a"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/bltc23eea22432e621d/684189fcbbad491c7df90f7e/Volvo_Wty_Manual_2020_CC_05-14-19.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-xc60-2023-b5-plus": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-xc60-2023-b5-plus/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7c365ce08df12fcbdabfd08a4c4a5e1269ca4a175be9aef33037d87828ba6e68"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt81f15f82d8a8280f/6a29cb5edcb18dc4dbce664b/2023_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26_%281%29.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-xc60-2021-b5-core": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-xc60-2021-b5-core/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2da99f1f40918e19f682174b8ef350a5cc72759415dec66b9a3fbf2b9a09d90e"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blt90b030f1159d2e0a/68418a060635ffb21a0a2172/Volvo_Wty_Manual_2021_CC_05-29-2020.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
+    },
+    "volvo-xc60-2024-b5-plus": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volvo-xc60-2024-b5-plus/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "c6995ca939bdf690e20fa30610859b59d4522f851125098b966d64909b2c5934"
+      },
+      "officialUrls": [
+        "https://azure-eu-assets.contentstack.com/v3/assets/bltccbab8edae0354cd/blte903c4602d5671e9/6a29cb536b589f3053b06110/2024_FSM_Maintenance_Sheets_ICE_PHEV_MHEV_6.8.26.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-26",
+      "dualExtractAgree": true
     }
   }
 }

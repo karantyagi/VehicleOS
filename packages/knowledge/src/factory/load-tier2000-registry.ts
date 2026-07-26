@@ -96,30 +96,47 @@ export const loadTier2000PackTargets = (): Tier2000PackSpec[] =>
     };
   });
 
-export const loadTier2000SourceRegistry = (): Tier2000SourceRow[] =>
-  readCsv("tier-2000-oem-manual-sources.csv").map((row) => {
-    const trim = row.trim;
-    const powertrain = row.powertrain || undefined;
-    const packId = normalizeTier2000PackId({
-      packId: row.pack_id,
-      trim,
-      powertrain,
-    });
-
-    return {
-      packId,
-      sourceTier: (row.source_tier || "") as Tier2000SourceRow["sourceTier"],
-      primaryPdfUrl: row.primary_pdf_url,
-      alternatePdfUrls: row.alternate_pdf_urls
-        ? row.alternate_pdf_urls.split("|").map((url) => url.trim()).filter(Boolean)
-        : [],
-      confidence: Number.parseFloat(row.confidence || "0"),
-      manualShareApplied: row.manual_share_applied?.toLowerCase() === "yes",
-      sharedFromPackId: row.shared_from_pack_id || "",
-      maintenanceSectionTitle: row.maintenance_section_title || "",
-      blockedReason: row.blocked_reason || "",
-    };
+const mapSourceCsvRow = (row: Record<string, string>): Tier2000SourceRow => {
+  const trim = row.trim;
+  const powertrain = row.powertrain || undefined;
+  const packId = normalizeTier2000PackId({
+    packId: row.pack_id,
+    trim,
+    powertrain,
   });
+
+  return {
+    packId,
+    sourceTier: (row.source_tier || "") as Tier2000SourceRow["sourceTier"],
+    primaryPdfUrl: row.primary_pdf_url,
+    alternatePdfUrls: row.alternate_pdf_urls
+      ? row.alternate_pdf_urls.split("|").map((url) => url.trim()).filter(Boolean)
+      : [],
+    confidence: Number.parseFloat(row.confidence || "0"),
+    manualShareApplied: row.manual_share_applied?.toLowerCase() === "yes",
+    sharedFromPackId: row.shared_from_pack_id || "",
+    maintenanceSectionTitle: row.maintenance_section_title || "",
+    blockedReason: row.blocked_reason || "",
+  };
+};
+
+export const loadTier2000SourceRegistryV1 = (): Tier2000SourceRow[] =>
+  readCsv("tier-2000-oem-manual-sources.csv").map(mapSourceCsvRow);
+
+/** Targeted in-review retry registry — v2 rows override v1 for the same pack_id. */
+export const loadTier2000SourceRegistryV2 = (): Tier2000SourceRow[] =>
+  readCsv("tier-2000-oem-manual-sources-v2.csv").map(mapSourceCsvRow);
+
+export const loadTier2000SourceRegistry = (): Tier2000SourceRow[] => {
+  const byPackId = new Map<string, Tier2000SourceRow>();
+  for (const row of loadTier2000SourceRegistryV1()) {
+    byPackId.set(row.packId, row);
+  }
+  for (const row of loadTier2000SourceRegistryV2()) {
+    byPackId.set(row.packId, row);
+  }
+  return [...byPackId.values()];
+};
 
 export const loadTier2000SourceByPackId = (): Map<string, Tier2000SourceRow> => {
   const map = new Map<string, Tier2000SourceRow>();
