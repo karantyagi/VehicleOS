@@ -22,6 +22,7 @@ type MaintenanceScheduleConsoleProps = {
   maintenancePatterns?: Record<string, { timing: "early" | "late"; reason: string; confirmedAt: string }>;
   observedMilesPerYear?: number | null;
   statedMilesPerYear?: number | null;
+  dueSoonDays?: number;
 };
 
 const emptyScheduleCopy = (hasKnowledgeSchedule: boolean) => {
@@ -89,6 +90,7 @@ export function MaintenanceScheduleConsole({
   maintenancePatterns,
   observedMilesPerYear,
   statedMilesPerYear,
+  dueSoonDays,
 }: MaintenanceScheduleConsoleProps) {
   const [horizon, setHorizon] = useState<ScheduleHorizonView>("near");
 
@@ -168,6 +170,7 @@ export function MaintenanceScheduleConsole({
             maintenancePatterns={maintenancePatterns}
             observedMilesPerYear={observedMilesPerYear}
             statedMilesPerYear={statedMilesPerYear}
+            dueSoonDays={dueSoonDays}
           />
         )}
       </div>

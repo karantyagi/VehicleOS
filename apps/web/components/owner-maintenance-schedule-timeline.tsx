@@ -5,6 +5,7 @@ import { CalendarClock, ChevronRight, ChevronUp } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AGGRESSIVE_DUE_SOON_DAYS, DEFAULT_DUE_SOON_DAYS } from "@vehicleos/domain";
 import type { ScheduleProjectionRow } from "@/lib/console-types";
 import { isoDateToLocalDate } from "@/lib/date-input";
 import { cn } from "@/lib/utils";
@@ -14,6 +15,7 @@ type OwnerMaintenanceScheduleTimelineProps = {
   effectiveMilesPerYear: number;
   observedMilesPerYear?: number | null;
   statedMilesPerYear?: number | null;
+  dueSoonDays?: number;
   hasKnowledgeSchedule?: boolean;
   today?: string;
   maintenancePatterns?: Record<string, { timing: "early" | "late"; reason: string; confirmedAt: string }>;
@@ -86,6 +88,7 @@ export function OwnerMaintenanceScheduleTimeline({
   effectiveMilesPerYear,
   observedMilesPerYear = null,
   statedMilesPerYear = null,
+  dueSoonDays = DEFAULT_DUE_SOON_DAYS,
   hasKnowledgeSchedule = false,
   today,
   maintenancePatterns = {},
@@ -157,6 +160,15 @@ export function OwnerMaintenanceScheduleTimeline({
                 </dd>
               ) : null}
             </div>
+            {dueSoonDays > DEFAULT_DUE_SOON_DAYS ? (
+              <div>
+                <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">Nudge window</dt>
+                <dd className="mt-0.5 font-semibold text-foreground">{dueSoonDays} days</dd>
+                <dd className="text-[10px] text-muted-foreground">
+                  {dueSoonDays >= AGGRESSIVE_DUE_SOON_DAYS ? "Sporty driving" : "Extended lead time"}
+                </dd>
+              </div>
+            ) : null}
           </dl>
         </div>
       </div>
