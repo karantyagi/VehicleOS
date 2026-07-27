@@ -1,13 +1,20 @@
 import { readFileSync, existsSync } from "node:fs";
-import { join } from "node:path";
+import { createRequire } from "node:module";
+import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { dirname } from "node:path";
 import type { Tier2000OemFamily, Tier2000PackSpec, Tier2000ScheduleKind, Tier2000SourceRow } from "./tier2000-types.js";
 
-const registryRoot = join(
-  dirname(fileURLToPath(import.meta.url)),
-  "../../sources/registries/tier-2000",
-);
+const require = createRequire(import.meta.url);
+
+const resolveKnowledgePackageRoot = (): string => {
+  try {
+    return dirname(require.resolve("@vehicleos/knowledge/package.json"));
+  } catch {
+    return join(dirname(fileURLToPath(import.meta.url)), "..");
+  }
+};
+
+const registryRoot = join(resolveKnowledgePackageRoot(), "sources/registries/tier-2000");
 
 const parseCsvLine = (line: string): string[] => {
   const values: string[] = [];
@@ -37,7 +44,9 @@ const parseCsvLine = (line: string): string[] => {
 };
 
 const readCsv = (filename: string): Record<string, string>[] => {
-  const raw = readFileSync(join(registryRoot, filename), "utf8").replace(/^\uFEFF/, "");
+  const path = join(registryRoot, filename);
+  if (!existsSync(path)) return [];
+  const raw = readFileSync(path, "utf8").replace(/^\uFEFF/, "");
   const lines = raw.split(/\r?\n/).filter((line) => line.trim().length > 0);
   const header = parseCsvLine(lines[0]).map((cell) => cell.trim());
   return lines.slice(1).map((line) => {
