@@ -1,18 +1,7 @@
 import { readFileSync, existsSync } from "node:fs";
-import { createRequire } from "node:module";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import type { Tier2000OemFamily, Tier2000PackSpec, Tier2000ScheduleKind, Tier2000SourceRow } from "./tier2000-types.js";
-
-const require = createRequire(import.meta.url);
-
-const resolveKnowledgePackageRoot = (): string => {
-  try {
-    return dirname(require.resolve("@vehicleos/knowledge/package.json"));
-  } catch {
-    return join(dirname(fileURLToPath(import.meta.url)), "..");
-  }
-};
+import { resolveKnowledgePackageRoot } from "../package-root.js";
 
 const registryRoot = join(resolveKnowledgePackageRoot(), "sources/registries/tier-2000");
 
