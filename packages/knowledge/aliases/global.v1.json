@@ -50,6 +50,41 @@
       "matchKind": "contains",
       "priority": 100,
       "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.2.cabin_filter",
+      "phrase": "Cabin air filter replaced/cleaned",
+      "matchKind": "contains",
+      "priority": 90,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.2.cabin_filter",
+      "phrase": "Cabin air filter replaced",
+      "matchKind": "contains",
+      "priority": 95,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.2.engine_air_filter",
+      "phrase": "Air filter replaced",
+      "matchKind": "contains",
+      "priority": 100,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.5.coolant",
+      "phrase": "Antifreeze/coolant flushed/changed",
+      "matchKind": "contains",
+      "priority": 100,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.3.transmission_transfer",
+      "phrase": "Transfer case",
+      "matchKind": "contains",
+      "priority": 110,
+      "source": "creator"
     }
   ]
 }
