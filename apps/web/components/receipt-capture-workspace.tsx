@@ -1,50 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { Smartphone } from "lucide-react";
 import { OwnerReceiptHandoff } from "@/components/owner-receipt-handoff";
 import { PageHeader } from "@/components/page-header";
 import { PanelCard } from "@/components/panel-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { VehicleGarageSwitcher } from "@/components/vehicle-garage-switcher";
 import { getApiBase } from "@/lib/api-base";
+import { useGarage } from "@/lib/garage/garage-context";
+import { formatGarageVehicleLabel } from "@/lib/garage/types";
 import { notify } from "@/lib/notify";
 import { useAppUiStore } from "@/lib/store/app-ui-store";
 import { useMediaQuery } from "@/lib/use-media-query";
 
-type Vehicle = {
-  id: string;
-  year: number;
-  make: string;
-  model: string;
-  currentMileage: number;
-};
-
 export function ReceiptCaptureWorkspace() {
   const apiBase = getApiBase();
+  const garage = useGarage();
   const isDeveloper = useAppUiStore((state) => state.consoleMode) === "developer";
   const isMobileViewport = useMediaQuery("(max-width: 768px)");
-  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const vehicle = garage.activeVehicle;
 
-  const loadVehicle = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${apiBase}/api/vehicles`);
-      if (!response.ok) return;
-      const body = (await response.json()) as { vehicles: Vehicle[] };
-      setVehicle(body.vehicles[0] ?? null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [apiBase]);
+  const reloadGarage = useCallback(async () => {
+    await garage.refreshGarage();
+  }, [garage]);
 
   useEffect(() => {
-    void loadVehicle();
-  }, [loadVehicle]);
+    if (!garage.isLoading && !vehicle && garage.vehicles.length > 0 && garage.activeVehicleId) {
+      void garage.refreshGarage();
+    }
+  }, [garage, vehicle]);
 
-  if (isLoading) {
+  if (garage.isLoading) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-48" />
@@ -63,7 +52,7 @@ export function ReceiptCaptureWorkspace() {
     );
   }
 
-  const vehicleLabel = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+  const vehicleLabel = formatGarageVehicleLabel(vehicle);
 
   if (!isDeveloper && !isMobileViewport) {
     return (
@@ -72,6 +61,7 @@ export function ReceiptCaptureWorkspace() {
           eyebrow="Mobile capture"
           title="Snap on your phone"
           description={`Receipt intake for ${vehicleLabel} — not on desktop owner view.`}
+          action={<VehicleGarageSwitcher compact />}
         />
         <PanelCard variant="inset">
           <div className="flex flex-col items-center gap-4 py-6 text-center">
@@ -81,7 +71,7 @@ export function ReceiptCaptureWorkspace() {
               <strong className="font-medium text-foreground">Upload receipt</strong> shortcut.
             </p>
             <p className="text-xs text-muted-foreground">
-              Verification and service history stay on this web workspace.
+              Verification and service history stay on this web workspace — scoped to the selected vehicle.
             </p>
             <Button asChild type="button" variant="outline" size="sm">
               <Link href="/">Back to assistant workspace</Link>
@@ -98,6 +88,7 @@ export function ReceiptCaptureWorkspace() {
         eyebrow="Mobile capture"
         title="Upload receipt"
         description={`Hand off a photo for ${vehicleLabel} — the assistant files it after ENG-2 extraction.`}
+        action={<VehicleGarageSwitcher compact />}
       />
       <PanelCard variant="inset">
         <OwnerReceiptHandoff
@@ -106,7 +97,7 @@ export function ReceiptCaptureWorkspace() {
           currentMileage={vehicle.currentMileage}
           onHandedOff={() => {
             notify("Receipt handed off — your assistant will file it.");
-            void loadVehicle();
+            void reloadGarage();
           }}
           onError={(message) => notify(message, "error")}
         />

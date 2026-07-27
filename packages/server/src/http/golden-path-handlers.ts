@@ -1,6 +1,20 @@
 import type { ApiServices } from "../services/index.js";
-import { normalizeOwnerContextMemory, type OwnerContextMemory } from "@vehicleos/domain";
+import {
+  classifyCaptureIntent,
+  mergeMaintenancePatternMemory,
+  normalizeOwnerContextMemory,
+  parseDeviationRuleEntryId,
+  projectMaintenanceDeviations,
+  projectMaintenanceSchedule,
+  resolveScheduleProjectionContext,
+  type MaintenanceDeviationReasonId,
+  type OwnerContextMemory,
+} from "@vehicleos/domain";
 import { assertVehicleCreateAllowed } from "./catalog-handlers.js";
+import {
+  buildGarageEntitlements,
+  vehicleLimitErrorBody,
+} from "../entitlements/garage-entitlements.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
 import { recommendationContextFromVehicle } from "./recommendation-context-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
@@ -32,10 +46,12 @@ type TaskDecisionBody = {
   vehicleId: string;
   decision: "approve" | "dismiss" | "snooze";
   snoozeDays?: number;
+  maintenancePatternReason?: MaintenanceDeviationReasonId;
 };
 
 type AuthContext = {
   userId: string;
+  email?: string | null;
 };
 
 const unauthorized = (): JsonResponse => jsonResponse(401, { error: "Unauthorized" });
@@ -81,6 +97,16 @@ export const createVehicle = async (
     });
   }
 
+  const existingVehicles = await services.vehicles.listByUserId(auth.userId);
+  const garage = buildGarageEntitlements({
+    userId: auth.userId,
+    email: auth.email,
+    vehicleCount: existingVehicles.length,
+  });
+  if (!garage.canAddVehicle) {
+    return jsonResponse(403, vehicleLimitErrorBody(garage));
+  }
+
   const vehicle = await services.vehicles.create({
     userId: auth.userId,
     vin: body.vin ?? "DEMO-VIN-001",
@@ -104,7 +130,11 @@ export const createVehicle = async (
     currentMileage: vehicle.currentMileage,
   });
 
-  return jsonResponse(201, { vehicle, oemPack, packId: allowed.packId });
+  return jsonResponse(201, { vehicle, oemPack, packId: allowed.packId, garage: buildGarageEntitlements({
+    userId: auth.userId,
+    email: auth.email,
+    vehicleCount: existingVehicles.length + 1,
+  }) });
 };
 
 export const listVehicles = async (
@@ -114,7 +144,12 @@ export const listVehicles = async (
   if (!auth?.userId) return unauthorized();
 
   const vehicles = await services.vehicles.listByUserId(auth.userId);
-  return jsonResponse(200, { vehicles });
+  const garage = buildGarageEntitlements({
+    userId: auth.userId,
+    email: auth.email,
+    vehicleCount: vehicles.length,
+  });
+  return jsonResponse(200, { vehicles, garage });
 };
 
 export const getVehicle = async (
@@ -179,6 +214,10 @@ export const getVehicleState = async (
 
   const snapshot = await services.goldenPath.getVehicleState(vehicleId, {
     vehicleCreatedAt: owned.vehicle.createdAt,
+    ownerContextMemory: owned.vehicle.ownerContextMemory,
+    ownedSince: owned.vehicle.ownedSince,
+    drivingStyle: owned.vehicle.drivingStyle,
+    statedMilesPerYear: owned.vehicle.statedMilesPerYear,
   });
   return jsonResponse(200, {
     vehicle: owned.vehicle,
@@ -265,6 +304,102 @@ export const submitReceipt = async (
   });
 };
 
+export const queueReceiptExtract = async (
+  services: ApiServices,
+  vehicleId: string,
+  body: Partial<ReceiptBody> & {
+    storageKey?: string;
+    hintText?: string | null;
+    filename?: string | null;
+  },
+  auth?: AuthContext,
+): Promise<JsonResponse> => {
+  if (!auth?.userId) return unauthorized();
+  const owned = await assertVehicleOwner(services, vehicleId, auth.userId);
+  if (!owned.ok) return owned.response;
+
+  if (!body.storageKey) {
+    return jsonResponse(400, { error: "storageKey is required — upload a receipt photo or PDF first" });
+  }
+
+  const channel = body.channel ?? "receipt_upload";
+  const captureIntent = classifyCaptureIntent({
+    filename: body.filename ?? body.storageKey,
+    channel,
+    hintText: body.hintText ?? null,
+  });
+
+  if (captureIntent.route === "ownership") {
+    return jsonResponse(409, {
+      error: captureIntent.reason,
+      captureIntent,
+      redirect: "ownership_import",
+    });
+  }
+
+  if (captureIntent.route === "preferences") {
+    return jsonResponse(409, {
+      error: captureIntent.reason,
+      captureIntent,
+      redirect: "owner_preferences",
+    });
+  }
+
+  const extractResult = await services.goldenPath.queueReceiptExtract({
+    vehicleId,
+    storageKey: body.storageKey,
+    channel,
+    hintText: body.hintText ?? null,
+    shop: body.shop,
+    serviceDate: body.serviceDate,
+    mileage: body.mileage,
+    lineItems: body.lineItems,
+    total: body.total,
+  });
+
+  if (extractResult.queued) {
+    return jsonResponse(202, {
+      documentId: extractResult.documentId,
+      queued: true,
+      captureIntent,
+      message: "Receipt queued for assistant extraction (ENG-2 worker).",
+    });
+  }
+
+  const result = await services.goldenPath.confirmService({
+    vehicleId,
+    shop: extractResult.extracted.shop,
+    serviceDate: extractResult.extracted.serviceDate,
+    mileage: extractResult.extracted.mileage,
+    lineItems: extractResult.extracted.lineItems,
+    total: extractResult.extracted.total,
+    evidenceIds: [extractResult.documentId],
+    documentId: extractResult.documentId,
+    correlationId: extractResult.correlationId,
+    source: "receipt",
+    ...recommendationContextFromVehicle(owned.vehicle),
+  });
+
+  if (result.conflict) {
+    return jsonResponse(409, {
+      conflict: true,
+      documentId: extractResult.documentId,
+      captureIntent,
+      extracted: extractResult.extracted,
+    });
+  }
+
+  const view = buildVehicleStateView(result.result.state, owned.vehicle);
+  return jsonResponse(201, {
+    documentId: extractResult.documentId,
+    queued: false,
+    captureIntent,
+    extracted: extractResult.extracted,
+    timeline: view.timeline,
+    nowQueue: view.nowQueue,
+  });
+};
+
 export const decideOnTask = async (
   services: ApiServices,
   taskId: string,
@@ -281,14 +416,104 @@ export const decideOnTask = async (
   const owned = await assertVehicleOwner(services, vehicleId, auth.userId);
   if (!owned.ok) return owned.response;
 
-  const snapshot = await services.goldenPath.decideOnTask({
+  const snapshot = await services.goldenPath.getVehicleState(vehicleId, {
+    vehicleCreatedAt: owned.vehicle.createdAt,
+    ownerContextMemory: owned.vehicle.ownerContextMemory,
+    ownedSince: owned.vehicle.ownedSince,
+    drivingStyle: owned.vehicle.drivingStyle,
+    statedMilesPerYear: owned.vehicle.statedMilesPerYear,
+  });
+  const task = snapshot.state.nowQueue.find((item) => item.taskId === taskId);
+
+  if (
+    decision === "approve" &&
+    body.maintenancePatternReason &&
+    task?.verificationCode === "VERIFY_MAINTENANCE_TIMING"
+  ) {
+    const entryId = parseDeviationRuleEntryId(task.ruleId);
+    if (!entryId) {
+      return jsonResponse(400, { error: "Could not resolve maintenance item for this verification." });
+    }
+
+    const scheduleContext = resolveScheduleProjectionContext({
+      ownedSince: owned.vehicle.ownedSince ?? null,
+      drivingStyle: owned.vehicle.drivingStyle ?? null,
+      statedMilesPerYear: owned.vehicle.statedMilesPerYear ?? null,
+      timeline: snapshot.state.timeline,
+    });
+    const schedule = projectMaintenanceSchedule({
+      knowledgeSchedule: snapshot.state.knowledgeSchedule,
+      timeline: snapshot.state.timeline,
+      currentMileage: snapshot.state.currentMileage,
+      effectiveMilesPerYear: scheduleContext.effectiveMilesPerYear,
+      ownedSince: scheduleContext.ownedSince,
+      horizonMode: "extended",
+    });
+    const deviation = projectMaintenanceDeviations({
+      scheduleRows: schedule.rows,
+      ownerContextMemory: owned.vehicle.ownerContextMemory,
+    }).find((item) => item.entryId === entryId);
+
+    if (!deviation || (deviation.oemTiming !== "early" && deviation.oemTiming !== "late")) {
+      return jsonResponse(400, { error: "No active deviation found for this verification." });
+    }
+
+    const nextMemory = mergeMaintenancePatternMemory({
+      memory: owned.vehicle.ownerContextMemory,
+      entryId,
+      timing: deviation.oemTiming,
+      reasonId: body.maintenancePatternReason,
+    });
+
+    const refreshedVehicle = await services.vehicles.update(vehicleId, auth.userId, {
+      ownerContextMemory: nextMemory,
+    });
+    if (!refreshedVehicle) {
+      return jsonResponse(404, { error: "Vehicle not found" });
+    }
+
+    await services.goldenPath.decideOnTask({
+      vehicleId,
+      taskId,
+      decision,
+      snoozeDays,
+    });
+
+    await services.goldenPath.refreshMaintenanceRecommendation({
+      vehicleId,
+      ownerContextMemory: nextMemory,
+      drivingStyle: owned.vehicle.drivingStyle ?? null,
+    });
+
+    const refreshed = await services.goldenPath.getVehicleState(vehicleId, {
+      vehicleCreatedAt: owned.vehicle.createdAt,
+      ownerContextMemory: nextMemory,
+      ownedSince: owned.vehicle.ownedSince,
+      drivingStyle: owned.vehicle.drivingStyle,
+      statedMilesPerYear: owned.vehicle.statedMilesPerYear,
+    });
+    const view = buildVehicleStateView(refreshed.state, refreshedVehicle, refreshed.events);
+
+    return jsonResponse(200, {
+      taskId,
+      decision,
+      nowQueue: view.nowQueue,
+      reminders: view.reminders,
+      verifications: view.verifications,
+      pendingReminderCount: view.pendingReminderCount,
+      pendingVerificationCount: view.pendingVerificationCount,
+      maintenanceDeviations: view.maintenanceDeviations,
+    });
+  }
+
+  const nextSnapshot = await services.goldenPath.decideOnTask({
     vehicleId,
     taskId,
     decision,
     snoozeDays,
   });
 
-  const view = buildVehicleStateView(snapshot.state, owned.vehicle, snapshot.events);
+  const view = buildVehicleStateView(nextSnapshot.state, owned.vehicle, nextSnapshot.events);
 
   return jsonResponse(200, {
     taskId,

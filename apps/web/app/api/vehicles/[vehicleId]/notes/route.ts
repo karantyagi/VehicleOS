@@ -12,6 +12,7 @@ export async function POST(request: Request, context: RouteContext) {
   const user = await getSessionUser();
   const body = (await request.json()) as {
     shop?: string;
+    shopLocation?: string;
     serviceDate: string;
     mileage: number;
     lineItems?: string[];

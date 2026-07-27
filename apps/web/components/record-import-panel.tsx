@@ -1,19 +1,18 @@
 "use client";
 
 import { FileJson, FileUp, Loader2, Upload } from "lucide-react";
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ExtractionStatusBanner } from "@/components/extraction-status-banner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CarfaxImportReview, type CarfaxReviewRow } from "@/components/carfax-import-review";
+import { RmvImportReview, type RmvReviewRow } from "@/components/rmv-import-review";
 import {
   parseVehicleOsImportJson,
   parseVehicleOsRmvImportJson,
   RECORD_IMPORT_CATEGORIES,
-  RMV_EVENT_LABELS,
   type RecordImportCategoryId,
   type VehicleOsImportV1,
   type VehicleOsImportService,
@@ -28,9 +27,10 @@ import {
   normalizeShopKey,
   tierImportRows,
   type ShopLocationHint,
+  ownershipRecordFingerprint,
 } from "@vehicleos/domain";
 import { DOGFOOD_FIXTURES, fetchDogfoodJson } from "@/lib/extraction-status";
-import type { TimelineEntry } from "@/lib/console-types";
+import type { OwnershipRecordEntry, TimelineEntry } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
 type RecordImportPanelProps = {
@@ -38,7 +38,10 @@ type RecordImportPanelProps = {
   apiBase: string;
   ownerShopLocations?: Record<string, string>;
   existingTimeline?: TimelineEntry[];
+  existingOwnershipRecords?: OwnershipRecordEntry[];
   disabled?: boolean;
+  variant?: "default" | "onboarding";
+  onActivityChange?: (active: boolean) => void;
   onError: (message: string) => void;
   onCarfaxImported: (body: {
     importedCount: number;
@@ -62,14 +65,29 @@ type RecordImportPanelProps = {
   }) => void;
 };
 
-type RmvReviewRow = VehicleOsRmvRecord & { id: string; included: boolean };
+type RmvReviewRowState = RmvReviewRow;
 
-const FLOW_STEPS = [
-  "Log in to the portal and open the relevant vehicle page.",
-  "Print the page → Save as PDF (Ctrl+P / Cmd+P).",
-  "Upload PDF — assistant extracts and cleans rows.",
-  "Review new rows only — matches already on file are skipped.",
-] as const;
+const initRmvReviewRows = (
+  records: VehicleOsRmvRecord[],
+  existingOwnershipRecords: OwnershipRecordEntry[] = [],
+): RmvReviewRowState[] =>
+  records.map((record) => {
+    const alreadyOnFile = existingOwnershipRecords.some(
+      (existing) =>
+        ownershipRecordFingerprint({
+          recordDate: existing.recordDate,
+          eventType: existing.eventType,
+          agency: existing.agency,
+          description: existing.description,
+        }) === ownershipRecordFingerprint(record),
+    );
+    return {
+      ...record,
+      id: createRowId(),
+      included: !alreadyOnFile,
+      alreadyOnFile,
+    };
+  });
 
 const createRowId = (): string =>
   typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -136,37 +154,48 @@ const reTierCarfaxRows = (rows: CarfaxReviewRow[]): CarfaxReviewRow[] => {
   });
 };
 
-const initRmvReviewRows = (records: VehicleOsRmvRecord[]): RmvReviewRow[] =>
-  records.map((record) => ({ ...record, id: createRowId(), included: true }));
+const FLOW_STEPS = [
+  "Log in to the portal and open the relevant vehicle page.",
+  "Print the page → Save as PDF (Ctrl+P / Cmd+P).",
+  "Upload PDF — assistant extracts and cleans rows.",
+  "Review new rows only — matches already on file are skipped.",
+] as const;
 
-const parseDetailsField = (raw: string): string[] =>
-  raw
-    .split(/[·;]/)
-    .map((line) => line.trim())
-    .filter(Boolean);
+const ONBOARDING_CATEGORY_BLURBS: Record<RecordImportCategoryId, string> = {
+  carfax: "Service visits → your timeline.",
+  rmv: "Registration & title events.",
+};
 
 export function RecordImportPanel({
   vehicleId,
   apiBase,
   ownerShopLocations,
   existingTimeline = [],
+  existingOwnershipRecords = [],
   disabled = false,
+  variant = "default",
+  onActivityChange,
   onError,
   onCarfaxImported,
   onRmvImported,
 }: RecordImportPanelProps) {
+  const isOnboarding = variant === "onboarding";
   const [activeCategory, setActiveCategory] = useState<RecordImportCategoryId>("carfax");
   const [jsonDraft, setJsonDraft] = useState("");
   const [carfaxPreview, setCarfaxPreview] = useState<VehicleOsImportV1 | null>(null);
   const [rmvPreview, setRmvPreview] = useState<VehicleOsRmvImportV1 | null>(null);
   const [carfaxReviewRows, setCarfaxReviewRows] = useState<CarfaxReviewRow[]>([]);
-  const [rmvReviewRows, setRmvReviewRows] = useState<RmvReviewRow[]>([]);
+  const [rmvReviewRows, setRmvReviewRows] = useState<RmvReviewRowState[]>([]);
   const [parseError, setParseError] = useState("");
   const [extractWarnings, setExtractWarnings] = useState<string[]>([]);
   const [isImporting, setIsImporting] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
   const [isLoadingDogfood, setIsLoadingDogfood] = useState(false);
   const [pdfFileName, setPdfFileName] = useState<string | null>(null);
+
+  useEffect(() => {
+    onActivityChange?.(isImporting || isExtracting || isLoadingDogfood);
+  }, [isExtracting, isImporting, isLoadingDogfood, onActivityChange]);
 
   const category = useMemo(
     () => RECORD_IMPORT_CATEGORIES.find((entry) => entry.id === activeCategory) ?? RECORD_IMPORT_CATEGORIES[0],
@@ -227,7 +256,7 @@ export function RecordImportPanel({
     setRmvPreview(draft);
     setCarfaxPreview(null);
     setCarfaxReviewRows([]);
-    setRmvReviewRows(initRmvReviewRows(draft.records));
+    setRmvReviewRows(initRmvReviewRows(draft.records, existingOwnershipRecords));
     setJsonDraft(JSON.stringify(draft, null, 2));
     setParseError("");
     setExtractWarnings(warnings);
@@ -534,7 +563,7 @@ export function RecordImportPanel({
     );
   };
 
-  const updateRmvRow = (id: string, patch: Partial<RmvReviewRow>) => {
+  const updateRmvRow = (id: string, patch: Partial<RmvReviewRowState>) => {
     setRmvReviewRows((rows) => rows.map((row) => (row.id === id ? { ...row, ...patch } : row)));
   };
 
@@ -563,7 +592,15 @@ export function RecordImportPanel({
   };
 
   const setAllRmvIncluded = (included: boolean) => {
-    setRmvReviewRows((rows) => rows.map((row) => ({ ...row, included })));
+    setRmvReviewRows((rows) =>
+      rows.map((row) => ({ ...row, included: row.alreadyOnFile ? false : included })),
+    );
+  };
+
+  const includeAllReadyRmv = () => {
+    setRmvReviewRows((rows) =>
+      rows.map((row) => ({ ...row, included: row.alreadyOnFile ? false : true })),
+    );
   };
 
   return (
@@ -586,51 +623,65 @@ export function RecordImportPanel({
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="text-sm font-semibold">{entry.label}</p>
-                <Badge variant="outline" className="shrink-0 text-[10px] uppercase tracking-wide">
-                  PDF + JSON
-                </Badge>
+                {!isOnboarding ? (
+                  <Badge variant="outline" className="shrink-0 text-[10px] uppercase tracking-wide">
+                    PDF + JSON
+                  </Badge>
+                ) : null}
               </div>
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{entry.description}</p>
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                {isOnboarding ? ONBOARDING_CATEGORY_BLURBS[entry.id] : entry.description}
+              </p>
             </button>
           );
         })}
       </div>
 
-      <div className="rounded-lg border border-border/80 bg-[hsl(var(--surface-inset))] p-4">
-        <p className="text-[13px] font-medium text-foreground">How to get your PDF</p>
-        <ol className="mt-3 list-decimal space-y-2 pl-5 text-xs leading-relaxed text-muted-foreground">
-          {category.pdfInstructions.map((step) => (
-            <li key={step}>{step}</li>
-          ))}
-        </ol>
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="text-sm font-medium">Import funnel</p>
-          <Badge variant="secondary">Extract → review → confirm</Badge>
+      {!isOnboarding ? (
+        <div className="rounded-lg border border-border/80 bg-[hsl(var(--surface-inset))] p-4">
+          <p className="text-[13px] font-medium text-foreground">How to get your PDF</p>
+          <ol className="mt-3 list-decimal space-y-2 pl-5 text-xs leading-relaxed text-muted-foreground">
+            {category.pdfInstructions.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
         </div>
-        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {FLOW_STEPS.map((step, index) => (
-            <li
-              key={step}
-              className="rounded-md border border-border/70 bg-card p-3 text-xs leading-relaxed text-muted-foreground"
-            >
-              <span className="mb-1 block font-semibold tabular-nums text-foreground">Step {index + 1}</span>
-              {step}
-            </li>
-          ))}
-        </ol>
-      </div>
+      ) : (
+        <p className="text-xs text-muted-foreground">
+          Portal → Print → Save as PDF → upload below. Skip if you&apos;ll add records later.
+        </p>
+      )}
 
-      <ExtractionStatusBanner variant="llm-not-ready-pdf" />
+      {!isOnboarding ? (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-sm font-medium">Import funnel</p>
+            <Badge variant="secondary">Extract → review → confirm</Badge>
+          </div>
+          <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {FLOW_STEPS.map((step, index) => (
+              <li
+                key={step}
+                className="rounded-md border border-border/70 bg-card p-3 text-xs leading-relaxed text-muted-foreground"
+              >
+                <span className="mb-1 block font-semibold tabular-nums text-foreground">Step {index + 1}</span>
+                {step}
+              </li>
+            ))}
+          </ol>
+        </div>
+      ) : null}
+
+      {!isOnboarding ? <ExtractionStatusBanner variant="llm-not-ready-pdf" /> : null}
 
       <div className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Label htmlFor="record-import-pdf" className="text-sm font-medium">
             Upload PDF
           </Label>
-          <Badge className="text-[10px] uppercase tracking-wide">LLM upcoming</Badge>
+          {!isOnboarding ? (
+            <Badge className="text-[10px] uppercase tracking-wide">LLM upcoming</Badge>
+          ) : null}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button type="button" variant="outline" size="sm" disabled={disabled || isExtracting} asChild>
@@ -661,69 +712,71 @@ export function RecordImportPanel({
         </div>
       </div>
 
-      <div className="space-y-3 border-t border-border/70 pt-6">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <Label htmlFor="record-import-json" className="text-sm font-medium">
-            Import JSON (dogfood / testing)
-          </Label>
-          <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
-            Recommended for dogfood
-          </Badge>
+      {!isOnboarding ? (
+        <div className="space-y-3 border-t border-border/70 pt-6">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <Label htmlFor="record-import-json" className="text-sm font-medium">
+              Import JSON (dogfood / testing)
+            </Label>
+            <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
+              Recommended for dogfood
+            </Badge>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              disabled={disabled || isLoadingDogfood}
+              onClick={() => void loadDogfoodFixture()}
+            >
+              {isLoadingDogfood
+                ? "Loading…"
+                : activeCategory === "carfax"
+                  ? "Load dogfood CARFAX JSON"
+                  : "Load dogfood RMV JSON"}
+            </Button>
+            <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
+              <label className="cursor-pointer">
+                <FileUp className="mr-2 h-4 w-4" aria-hidden />
+                Choose JSON file
+                <input
+                  type="file"
+                  accept="application/json,.json"
+                  className="sr-only"
+                  disabled={disabled}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) void handleJsonFile(file);
+                    event.target.value = "";
+                  }}
+                />
+              </label>
+            </Button>
+          </div>
+          <Textarea
+            id="record-import-json"
+            value={jsonDraft}
+            onChange={(event) => loadJsonText(event.target.value)}
+            placeholder={
+              activeCategory === "carfax"
+                ? '{"version":"1","source":"carfax-pdf-manual",...}'
+                : '{"version":"1","source":"rmv-pdf-manual",...}'
+            }
+            rows={5}
+            disabled={disabled}
+            className="font-mono text-xs"
+          />
+          {parseError ? <p className="text-sm text-destructive">{parseError}</p> : null}
+          {extractWarnings.length > 0 ? (
+            <ul className="space-y-1 text-xs text-amber-700 dark:text-amber-400">
+              {extractWarnings.map((warning) => (
+                <li key={warning}>{warning}</li>
+              ))}
+            </ul>
+          ) : null}
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            disabled={disabled || isLoadingDogfood}
-            onClick={() => void loadDogfoodFixture()}
-          >
-            {isLoadingDogfood
-              ? "Loading…"
-              : activeCategory === "carfax"
-                ? "Load dogfood CARFAX JSON"
-                : "Load dogfood RMV JSON"}
-          </Button>
-          <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
-            <label className="cursor-pointer">
-              <FileUp className="mr-2 h-4 w-4" aria-hidden />
-              Choose JSON file
-              <input
-                type="file"
-                accept="application/json,.json"
-                className="sr-only"
-                disabled={disabled}
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file) void handleJsonFile(file);
-                  event.target.value = "";
-                }}
-              />
-            </label>
-          </Button>
-        </div>
-        <Textarea
-          id="record-import-json"
-          value={jsonDraft}
-          onChange={(event) => loadJsonText(event.target.value)}
-          placeholder={
-            activeCategory === "carfax"
-              ? '{"version":"1","source":"carfax-pdf-manual",...}'
-              : '{"version":"1","source":"rmv-pdf-manual",...}'
-          }
-          rows={5}
-          disabled={disabled}
-          className="font-mono text-xs"
-        />
-        {parseError ? <p className="text-sm text-destructive">{parseError}</p> : null}
-        {extractWarnings.length > 0 ? (
-          <ul className="space-y-1 text-xs text-amber-700 dark:text-amber-400">
-            {extractWarnings.map((warning) => (
-              <li key={warning}>{warning}</li>
-            ))}
-          </ul>
-        ) : null}
-      </div>
+      ) : null}
 
       {activeCategory === "carfax" && carfaxPreview && carfaxReviewRows.length > 0 ? (
         <CarfaxImportReview
@@ -742,155 +795,24 @@ export function RecordImportPanel({
       ) : null}
 
       {activeCategory === "rmv" && rmvPreview && rmvReviewRows.length > 0 ? (
-        <ImportReviewTable
-          title={`Review ownership records · ${rmvReviewRows.length} row${rmvReviewRows.length === 1 ? "" : "s"}`}
-          subtitle="Uncheck rows to exclude. Edits apply before commit. Ownership records do not appear on the maintenance timeline."
-          selectedCount={selectedRmvRows.length}
-          totalCount={rmvReviewRows.length}
-          disabled={disabled || isImporting}
-          confirmLabel={
-            isImporting
-              ? "Importing…"
-              : `Confirm import (${selectedRmvRows.length} of ${rmvReviewRows.length} records)`
-          }
-          onConfirm={() => void commitImport()}
-          onIncludeAll={() => setAllRmvIncluded(true)}
+        <RmvImportReview
+          vehicleLabel={`${rmvPreview.vehicle.year} ${rmvPreview.vehicle.make} ${rmvPreview.vehicle.model}${
+            rmvPreview.vehicle.currentMileage
+              ? ` · ${rmvPreview.vehicle.currentMileage.toLocaleString()} mi`
+              : ""
+          }`}
+          rows={rmvReviewRows}
+          disabled={disabled}
+          isImporting={isImporting}
+          onRowChange={updateRmvRow}
+          onIncludeAllReady={includeAllReadyRmv}
           onExcludeAll={() => setAllRmvIncluded(false)}
-        >
-          <table className="w-full text-left text-xs">
-            <thead className="sticky top-0 bg-muted/80 backdrop-blur">
-              <tr>
-                <th className="w-10 px-2 py-2 font-medium">
-                  <span className="sr-only">Include</span>
-                </th>
-                <th className="px-2 py-2 font-medium">Date</th>
-                <th className="px-2 py-2 font-medium">Type</th>
-                <th className="px-2 py-2 font-medium">Agency</th>
-                <th className="px-2 py-2 font-medium">Description</th>
-                <th className="px-2 py-2 font-medium">Details</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...rmvReviewRows]
-                .sort((a, b) => b.recordDate.localeCompare(a.recordDate))
-                .map((row) => (
-                  <tr
-                    key={row.id}
-                    className={cn(
-                      "border-t border-border/60",
-                      !row.included && "bg-muted/40 opacity-60",
-                    )}
-                  >
-                    <td className="px-2 py-2 align-top">
-                      <input
-                        type="checkbox"
-                        checked={row.included}
-                        disabled={disabled || isImporting}
-                        aria-label={`Include ${RMV_EVENT_LABELS[row.eventType]} on ${row.recordDate}`}
-                        className="h-4 w-4 rounded border-border"
-                        onChange={(event) => updateRmvRow(row.id, { included: event.target.checked })}
-                      />
-                    </td>
-                    <td className="px-2 py-2 align-top">
-                      <Input
-                        value={row.recordDate}
-                        disabled={disabled || isImporting || !row.included}
-                        className="h-8 min-w-[7rem] text-xs"
-                        onChange={(event) => updateRmvRow(row.id, { recordDate: event.target.value })}
-                      />
-                    </td>
-                    <td className="px-2 py-2 align-top text-muted-foreground">
-                      {RMV_EVENT_LABELS[row.eventType]}
-                    </td>
-                    <td className="px-2 py-2 align-top">
-                      <Input
-                        value={row.agency}
-                        disabled={disabled || isImporting || !row.included}
-                        className="h-8 min-w-[8rem] text-xs"
-                        onChange={(event) => updateRmvRow(row.id, { agency: event.target.value })}
-                      />
-                    </td>
-                    <td className="px-2 py-2 align-top">
-                      <Input
-                        value={row.description}
-                        disabled={disabled || isImporting || !row.included}
-                        className="h-8 min-w-[10rem] text-xs"
-                        onChange={(event) => updateRmvRow(row.id, { description: event.target.value })}
-                      />
-                    </td>
-                    <td className="px-2 py-2 align-top">
-                      <Input
-                        value={row.details.join(" · ")}
-                        disabled={disabled || isImporting || !row.included}
-                        className="h-8 min-w-[12rem] text-xs"
-                        onChange={(event) =>
-                          updateRmvRow(row.id, { details: parseDetailsField(event.target.value) })
-                        }
-                      />
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </ImportReviewTable>
+          onConfirm={() => void commitImport()}
+        />
       ) : null}
 
       {rowCount === 0 && pdfFileName && !isExtracting && !parseError ? (
         <p className="text-sm text-muted-foreground">No rows extracted yet — try a different PDF export.</p>
-      ) : null}
-    </div>
-  );
-}
-
-function ImportReviewTable({
-  title,
-  subtitle,
-  selectedCount,
-  totalCount,
-  disabled,
-  confirmLabel,
-  onConfirm,
-  onIncludeAll,
-  onExcludeAll,
-  children,
-}: {
-  title: string;
-  subtitle: string;
-  selectedCount: number;
-  totalCount: number;
-  disabled: boolean;
-  confirmLabel: string;
-  onConfirm: () => void;
-  onIncludeAll: () => void;
-  onExcludeAll: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <div className="space-y-3">
-      <div className="space-y-1">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-sm font-medium">{title}</p>
-          <div className="flex items-center gap-2">
-            <Badge variant={selectedCount === 0 ? "warning" : "secondary"}>
-              {selectedCount} selected
-            </Badge>
-            <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" disabled={disabled} onClick={onIncludeAll}>
-              Include all
-            </Button>
-            <Button type="button" variant="ghost" size="sm" className="h-7 text-xs" disabled={disabled} onClick={onExcludeAll}>
-              Exclude all
-            </Button>
-          </div>
-        </div>
-        <p className="text-xs text-muted-foreground">{subtitle}</p>
-      </div>
-      <div className="max-h-96 overflow-auto rounded-md border border-border">{children}</div>
-      <Button type="button" disabled={disabled || selectedCount === 0} onClick={onConfirm}>
-        <FileJson className="mr-2 h-4 w-4" aria-hidden />
-        {confirmLabel}
-      </Button>
-      {selectedCount === 0 && totalCount > 0 ? (
-        <p className="text-xs text-destructive">Select at least one row to import.</p>
       ) : null}
     </div>
   );

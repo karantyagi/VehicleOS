@@ -5,12 +5,13 @@ import { MaintenanceScheduleConsole } from "@/components/maintenance-schedule-co
 import { MaintenanceTimelineConsole } from "@/components/maintenance-timeline-console";
 import { OwnershipRecordsConsole } from "@/components/ownership-records-console";
 import { Button } from "@/components/ui/button";
-import type { OwnershipRecordEntry, ScheduleProjectionRow, ServiceHistoryTab, TimelineEntry } from "@/lib/console-types";
+import type { OwnershipRecordEntry, OwnershipRenewalProjection, ScheduleProjectionRow, ServiceHistoryTab, TimelineEntry } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
 type MaintenanceTimelineSectionProps = {
   timeline: TimelineEntry[];
   ownershipRecords: OwnershipRecordEntry[];
+  ownershipRenewals?: OwnershipRenewalProjection[];
   scheduleNear: ScheduleProjectionRow[];
   scheduleExtended: ScheduleProjectionRow[];
   scheduleFull: ScheduleProjectionRow[];
@@ -19,23 +20,29 @@ type MaintenanceTimelineSectionProps = {
   activeTab?: ServiceHistoryTab;
   onTabChange?: (tab: ServiceHistoryTab) => void;
   disabled?: boolean;
+  defaultMileage?: number;
   onOpenEvidence?: (documentId: string) => void;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onAddService?: (draft: import("@/components/maintenance-record-fields").MaintenanceRecordDraft) => Promise<void>;
   requireEditConfirmation?: boolean;
   onGoToImport?: () => void;
   historyOnly?: boolean;
   ownerSimple?: boolean;
+  maintenancePatterns?: Record<string, { timing: "early" | "late"; reason: string; confirmedAt: string }>;
+  observedMilesPerYear?: number | null;
+  statedMilesPerYear?: number | null;
 };
 
 const TAB_ITEMS = [
-  { id: "history" as const, label: "History" },
   { id: "schedule" as const, label: "Schedule" },
+  { id: "history" as const, label: "History" },
   { id: "ownership" as const, label: "Ownership" },
 ] as const;
 
 export function MaintenanceTimelineSection({
   timeline,
   ownershipRecords,
+  ownershipRenewals = [],
   scheduleNear,
   scheduleExtended,
   scheduleFull,
@@ -44,14 +51,19 @@ export function MaintenanceTimelineSection({
   activeTab,
   onTabChange,
   disabled = false,
+  defaultMileage = 0,
   onOpenEvidence,
   onUpdateService,
+  onAddService,
   requireEditConfirmation = false,
   onGoToImport,
   historyOnly = false,
   ownerSimple = false,
+  maintenancePatterns,
+  observedMilesPerYear,
+  statedMilesPerYear,
 }: MaintenanceTimelineSectionProps) {
-  const [internalTab, setInternalTab] = useState<ServiceHistoryTab>("history");
+  const [internalTab, setInternalTab] = useState<ServiceHistoryTab>("schedule");
   const tab = activeTab ?? internalTab;
 
   const setTab = (next: ServiceHistoryTab) => {
@@ -68,8 +80,10 @@ export function MaintenanceTimelineSection({
         <MaintenanceTimelineConsole
           entries={timeline}
           disabled={disabled}
+          defaultMileage={defaultMileage}
           onOpenEvidence={onOpenEvidence}
           onUpdateService={onUpdateService}
+          onAddService={onAddService}
           requireEditConfirmation={requireEditConfirmation}
           ownerSimple={ownerSimple}
         />
@@ -78,7 +92,7 @@ export function MaintenanceTimelineSection({
           <div
             className="grid w-full grid-cols-3 rounded-lg border border-border bg-muted/40 p-0.5 sm:inline-flex sm:w-auto"
             role="tablist"
-            aria-label="Service history views"
+            aria-label="Maintenance views"
           >
             {TAB_ITEMS.map((item) => (
               <Button
@@ -108,8 +122,10 @@ export function MaintenanceTimelineSection({
             <MaintenanceTimelineConsole
               entries={timeline}
               disabled={disabled}
+              defaultMileage={defaultMileage}
               onOpenEvidence={onOpenEvidence}
               onUpdateService={onUpdateService}
+              onAddService={onAddService}
               requireEditConfirmation={requireEditConfirmation}
               ownerSimple={ownerSimple}
             />
@@ -122,12 +138,17 @@ export function MaintenanceTimelineSection({
               fullRows={scheduleFull}
               effectiveMilesPerYear={effectiveMilesPerYear}
               hasKnowledgeSchedule={hasKnowledgeSchedule}
+              ownerSimple={ownerSimple}
+              maintenancePatterns={maintenancePatterns}
+              observedMilesPerYear={observedMilesPerYear}
+              statedMilesPerYear={statedMilesPerYear}
             />
           ) : null}
 
           {tab === "ownership" ? (
             <OwnershipRecordsConsole
               entries={ownershipRecords}
+              renewals={ownershipRenewals}
               disabled={disabled}
               onGoToImport={onGoToImport}
             />

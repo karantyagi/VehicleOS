@@ -1,19 +1,21 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { DriverHabitsPanel } from "@/components/driver-habits-panel";
 import { OwnerContextPanel } from "@/components/owner-context-panel";
 import { PageHeader } from "@/components/page-header";
 import { VehicleSettingsPanel } from "@/components/vehicle-settings-panel";
 import { CAR_IDENTITY_NAV } from "@/lib/car-identity-nav";
+import { useGarage } from "@/lib/garage/garage-context";
 import { useAppUiStore } from "@/lib/store/app-ui-store";
 
 function GarageWorkspaceContent() {
   const searchParams = useSearchParams();
   const consoleMode = useAppUiStore((state) => state.consoleMode);
   const isDeveloper = consoleMode === "developer";
-  const [vehicleId, setVehicleId] = useState<string | null>(null);
+  const garage = useGarage();
+  const vehicleId = garage.activeVehicleId;
 
   const activeTab = searchParams.get("tab") === "driver" ? "driver" : "car";
   const pageMeta = CAR_IDENTITY_NAV.find((item) => item.id === activeTab) ?? CAR_IDENTITY_NAV[0];
@@ -21,18 +23,6 @@ function GarageWorkspaceContent() {
   useEffect(() => {
     document.title = `${pageMeta.label} · VehicleOS`;
   }, [pageMeta.label]);
-
-  useEffect(() => {
-    void (async () => {
-      try {
-        const response = await fetch("/api/vehicles");
-        const body = (await response.json()) as { vehicles?: { id: string }[] };
-        setVehicleId(body.vehicles?.[0]?.id ?? null);
-      } catch {
-        setVehicleId(null);
-      }
-    })();
-  }, []);
 
   return (
     <>
@@ -44,7 +34,7 @@ function GarageWorkspaceContent() {
 
       {activeTab === "car" ? (
         <div>
-          <VehicleSettingsPanel minimal={!isDeveloper} />
+          <VehicleSettingsPanel vehicleId={vehicleId} minimal={!isDeveloper} />
         </div>
       ) : null}
 

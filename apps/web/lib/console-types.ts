@@ -17,10 +17,17 @@ export type QueueItem = {
   status: string;
   taskKind?: "recommendation" | "verification";
   ruleId?: string;
-  verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE" | "VERIFY_VEHICLE_PROFILE" | "VERIFY_IMPORT_ROW";
+  verificationCode?:
+    | "VERIFY_ODOMETER"
+    | "VERIFY_DATE"
+    | "VERIFY_VEHICLE_PROFILE"
+    | "VERIFY_IMPORT_ROW"
+    | "VERIFY_MAINTENANCE_TIMING";
   dueBy?: string | null;
   snoozeUntil?: string | null;
   snoozeCount?: number;
+  suggestedReasonId?: "winter_salt" | "noise_symptom" | "dealer_recommended" | "aggressive_driving" | "deferred_intentionally" | "other";
+  draftReasonSource?: "heuristic" | "llm";
 };
 
 export type OwnerReminderItem = {
@@ -69,6 +76,25 @@ export type ScheduleProjectionRow = {
   oemSource: { manualTitle: string; page: string | null; ruleId: string };
   dueDateConfidence: "oem_calendar" | "mileage_converted" | "needs_baseline";
   isStubSchedule: boolean;
+  oemTiming?: "early" | "on_time" | "late" | "unknown" | null;
+  overdueWithoutHistory?: boolean;
+  usesOwnerOverlay?: boolean;
+  overlayLabel?: string | null;
+};
+
+export type MaintenanceDeviationRecord = {
+  entryId: string;
+  serviceName: string;
+  oemTiming: "early" | "late";
+  performedDate: string | null;
+  dueDate: string | null;
+  baselineSource: ScheduleProjectionRow["serviceBaseline"]["baselineSource"];
+  hasConfirmedPattern: boolean;
+  confirmedPattern?: {
+    timing: "early" | "late";
+    reason: string;
+    confirmedAt: string;
+  };
 };
 
 export type MaintenanceScheduleView = {
@@ -107,6 +133,16 @@ export type OwnershipRecordEntry = {
   description: string;
   details: string[];
   source: "rmv_import" | "carfax_import";
+};
+
+export type OwnershipRenewalProjection = {
+  recordId: string;
+  eventType: OwnershipRecordEntry["eventType"];
+  title: string;
+  expirationDate: string;
+  status: "overdue" | "due_soon";
+  agency: string;
+  description: string;
 };
 
 export type ServiceHistoryTab = "history" | "schedule" | "ownership";

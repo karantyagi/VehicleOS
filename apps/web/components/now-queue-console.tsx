@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ListChecks } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
+import { DeviationPatternForm } from "@/components/deviation-pattern-form";
 import { OdometerInlineForm } from "@/components/odometer-inline-form";
 import { ConsoleDetailPanel, ConsoleDetailPlaceholder, ConsoleSplit } from "@/components/console-split";
 import { DataGridToolbar } from "@/components/data-grid-toolbar";
@@ -23,6 +24,7 @@ type NowQueueConsoleProps = {
   currentMileage?: number;
   onDecide: (taskId: string, decision: "approve" | "dismiss" | "snooze") => void;
   onOdometerSaved?: () => void;
+  onVerificationResolved?: () => void;
   onError?: (message: string) => void;
   ownerSimple?: boolean;
 };
@@ -35,6 +37,7 @@ export function NowQueueConsole({
   currentMileage,
   onDecide,
   onOdometerSaved,
+  onVerificationResolved,
   onError,
   ownerSimple = false,
 }: NowQueueConsoleProps) {
@@ -76,6 +79,8 @@ export function NowQueueConsole({
         {pending.map((item) => {
           const showOdometerForm =
             item.verificationCode === "VERIFY_ODOMETER" && vehicleId && apiBase && currentMileage !== undefined;
+          const showDeviationForm =
+            item.verificationCode === "VERIFY_MAINTENANCE_TIMING" && vehicleId && apiBase;
 
           return (
             <li key={item.taskId} className="rounded-xl border border-border bg-card p-4 shadow-sm">
@@ -84,6 +89,18 @@ export function NowQueueConsole({
                   <h3 className="font-semibold leading-tight">{item.title}</h3>
                   <p className="text-sm text-muted-foreground">{item.reason}</p>
                 </div>
+                {showDeviationForm ? (
+                  <DeviationPatternForm
+                    vehicleId={vehicleId}
+                    taskId={item.taskId}
+                    apiBase={apiBase}
+                    disabled={disabled}
+                    suggestedReasonId={item.suggestedReasonId ?? null}
+                    draftReasonSource={item.draftReasonSource ?? null}
+                    onConfirmed={() => onVerificationResolved?.()}
+                    onError={(message) => onError?.(message)}
+                  />
+                ) : null}
                 {showOdometerForm ? (
                   <OdometerInlineForm
                     vehicleId={vehicleId}
@@ -97,6 +114,7 @@ export function NowQueueConsole({
                     onError={(message) => onError?.(message)}
                   />
                 ) : null}
+                {!showDeviationForm ? (
                 <div className="flex flex-wrap gap-2">
                   <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
                     Confirm
@@ -111,6 +129,19 @@ export function NowQueueConsole({
                     Dismiss
                   </Button>
                 </div>
+                ) : (
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    disabled={disabled}
+                    onClick={() => onDecide(item.taskId, "dismiss")}
+                  >
+                    Dismiss
+                  </Button>
+                </div>
+                )}
               </div>
             </li>
           );

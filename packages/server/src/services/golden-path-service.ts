@@ -4,14 +4,18 @@ import {
   StubPolicyEngine,
   confirmServiceWithConflictCheck,
   decideTask,
+  ensureDeviationVerificationPrompts,
   ensureStaleOdometerPrompt,
   foldEvents,
+  heuristicReceiptExtract,
   recordVehicleOsImport,
   recordVehicleOsRmvImport,
   refreshMaintenanceRecommendation,
   type EventStore,
   type ExtractedServiceFields,
   type IngestChannel,
+  type JobPublisher,
+  type OwnerContextMemory,
   type PolicyEngine,
   type RecordServiceInput,
   type TaskDecision,
@@ -26,13 +30,23 @@ import {
 export type GoldenPathDeps = {
   eventStore: EventStore;
   policyEngine?: PolicyEngine;
+  jobPublisher?: JobPublisher;
+};
+
+export type VehicleStateOptions = {
+  vehicleCreatedAt?: string;
+  ownerContextMemory?: OwnerContextMemory | null;
+  ownedSince?: string | null;
+  drivingStyle?: import("@vehicleos/domain").DrivingStyle | null;
+  statedMilesPerYear?: number | null;
 };
 
 export const createGoldenPathService = (deps: GoldenPathDeps) => {
   const eventStore = deps.eventStore;
   const policyEngine = deps.policyEngine ?? new StubPolicyEngine();
+  const jobPublisher = deps.jobPublisher;
 
-  const getVehicleState = async (vehicleId: string, options?: { vehicleCreatedAt?: string }) => {
+  const getVehicleState = async (vehicleId: string, options?: VehicleStateOptions) => {
     if (options?.vehicleCreatedAt) {
       await ensureStaleOdometerPrompt({
         eventStore,
@@ -40,6 +54,15 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
         vehicleCreatedAt: options.vehicleCreatedAt,
       });
     }
+
+    await ensureDeviationVerificationPrompts({
+      eventStore,
+      vehicleId,
+      ownerContextMemory: options?.ownerContextMemory,
+      ownedSince: options?.ownedSince,
+      drivingStyle: options?.drivingStyle,
+      statedMilesPerYear: options?.statedMilesPerYear,
+    });
 
     const events = await loadVehicleEvents(eventStore, vehicleId);
     return {
@@ -73,6 +96,75 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
       });
 
       return { documentId, correlationId };
+    },
+
+    async queueReceiptExtract(input: {
+      vehicleId: string;
+      storageKey: string;
+      channel?: IngestChannel;
+      hintText?: string | null;
+      shop?: string;
+      serviceDate?: string;
+      mileage?: number;
+      lineItems?: string[];
+      total?: string;
+    }) {
+      const documentId = crypto.randomUUID();
+      const correlationId = crypto.randomUUID();
+
+      await eventStore.append({
+        aggregateType: "document",
+        aggregateId: documentId,
+        eventType: EVENT_TYPES.DOCUMENT_INGESTED,
+        eventVersion: EVENT_VERSIONS[EVENT_TYPES.DOCUMENT_INGESTED],
+        payload: {
+          vehicleId: input.vehicleId,
+          documentId,
+          channel: input.channel ?? "receipt_upload",
+          storageKey: input.storageKey,
+        },
+        correlationId,
+      });
+
+      if (jobPublisher && process.env.ENABLE_ASYNC_RECEIPT_EXTRACT === "true") {
+        await jobPublisher.publish("extract", {
+          vehicleId: input.vehicleId,
+          documentId,
+          storageKey: input.storageKey,
+          channel: input.channel ?? "receipt_upload",
+          hintText: input.hintText ?? null,
+        });
+        return { documentId, correlationId, queued: true as const };
+      }
+
+      const extracted = await heuristicReceiptExtract({
+        storageKey: input.storageKey,
+        channel:
+          input.channel === "receipt_upload" || input.channel === "photo" || input.channel === "manual"
+            ? input.channel
+            : "receipt_upload",
+        hintText: input.hintText,
+        shop: input.shop,
+        serviceDate: input.serviceDate,
+        mileage: input.mileage,
+        lineItems: input.lineItems,
+        total: input.total,
+      });
+
+      await eventStore.append({
+        aggregateType: "document",
+        aggregateId: documentId,
+        eventType: EVENT_TYPES.DOCUMENT_EXTRACTION_COMPLETED,
+        eventVersion: EVENT_VERSIONS[EVENT_TYPES.DOCUMENT_EXTRACTION_COMPLETED],
+        payload: {
+          vehicleId: input.vehicleId,
+          documentId,
+          extracted,
+        },
+        correlationId,
+      });
+
+      return { documentId, correlationId, queued: false as const, extracted };
     },
 
     async completeExtraction(input: {
@@ -136,14 +228,25 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
       vehicleId: string;
       importSource: string;
       services: VehicleOsImportService[];
+      ownerContextMemory?: OwnerContextMemory | null;
+      ownedSince?: string | null;
+      drivingStyle?: import("@vehicleos/domain").DrivingStyle | null;
+      statedMilesPerYear?: number | null;
     }) {
       const importResult = await recordVehicleOsImport({ eventStore, input });
       await refreshMaintenanceRecommendation({
         eventStore,
         policyEngine,
         vehicleId: input.vehicleId,
+        ownerContextMemory: input.ownerContextMemory,
+        drivingStyle: input.drivingStyle,
       });
-      const snapshot = await getVehicleState(input.vehicleId);
+      const snapshot = await getVehicleState(input.vehicleId, {
+        ownerContextMemory: input.ownerContextMemory,
+        ownedSince: input.ownedSince,
+        drivingStyle: input.drivingStyle,
+        statedMilesPerYear: input.statedMilesPerYear,
+      });
       return {
         ...importResult,
         state: snapshot.state,
@@ -155,7 +258,17 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
       importSource: string;
       records: VehicleOsRmvRecord[];
     }) {
-      return recordVehicleOsRmvImport({ eventStore, input });
+      const importResult = await recordVehicleOsRmvImport({ eventStore, input });
+      await refreshMaintenanceRecommendation({
+        eventStore,
+        policyEngine,
+        vehicleId: input.vehicleId,
+      });
+      const snapshot = await getVehicleState(input.vehicleId);
+      return {
+        ...importResult,
+        state: snapshot.state,
+      };
     },
 
     async hydrateOemKnowledgePack(input: {

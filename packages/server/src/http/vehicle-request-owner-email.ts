@@ -17,7 +17,6 @@ export const formatVehicleRequestOwnerConfirmationEmail = (
   payload: VehicleRequestOpsPayload,
 ): { subject: string; text: string; html: string } => {
   const vehicle = formatVehicleLabel(payload);
-  const email = payload.contactEmail.trim();
   const subject = `Working on your request — ${vehicle}`;
 
   const text = [
@@ -27,13 +26,12 @@ export const formatVehicleRequestOwnerConfirmationEmail = (
     "",
     vehicle,
     "",
-    `We'll email ${email} when VehicleOS is ready for your car.`,
+    `We'll email you when VehicleOS is ready with your car's official OEM maintenance schedule.`,
     "",
     "— VehicleOS",
   ].join("\n");
 
   const safeVehicle = escapeHtml(vehicle);
-  const safeEmail = escapeHtml(email);
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -46,7 +44,7 @@ export const formatVehicleRequestOwnerConfirmationEmail = (
 </head>
 <body style="margin:0;padding:0;background-color:#f4f4f5;color:#18181b;">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
-    Got it — we're prioritizing your ${safeVehicle}. We'll email ${safeEmail} when VehicleOS is ready for your car.
+    Got it — we're prioritizing your ${safeVehicle}. We'll email you when VehicleOS is ready with your car's official OEM maintenance schedule.
   </div>
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color:#f4f4f5;margin:0;padding:24px 20px;">
     <tr>
@@ -76,7 +74,7 @@ export const formatVehicleRequestOwnerConfirmationEmail = (
                 </tr>
               </table>
               <p style="margin:0;font-size:16px;line-height:1.65;color:#3f3f46;text-align:left;">
-                We'll email <a href="mailto:${safeEmail}" style="color:#16a34a;font-weight:600;text-decoration:none;">${safeEmail}</a> when VehicleOS is ready for your car.
+                We'll email you when VehicleOS is ready with your car's official OEM maintenance schedule.
               </p>
             </td>
           </tr>
@@ -84,7 +82,7 @@ export const formatVehicleRequestOwnerConfirmationEmail = (
             <td style="padding:0 32px 28px;border-top:1px solid #f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;text-align:left;">
               <p style="margin:20px 0 0;font-size:13px;line-height:1.5;color:#71717a;text-align:left;">
                 <a href="${escapeHtml(MARKETING_URL)}" style="color:#71717a;text-decoration:underline;">vehicleos.app</a>
-                · Your car's reminding assistant
+                · Your car's maintenance assistant
               </p>
             </td>
           </tr>

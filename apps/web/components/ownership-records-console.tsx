@@ -8,7 +8,7 @@ import { DataGridToolbar } from "@/components/data-grid-toolbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { OwnershipRecordEntry } from "@/lib/console-types";
+import type { OwnershipRecordEntry, OwnershipRenewalProjection } from "@/lib/console-types";
 import { downloadCsv, filterByQuery, sortRows } from "@/lib/data-grid-utils";
 import { RMV_EVENT_LABELS } from "@/lib/record-import-types";
 import { useConsoleListKeyboard } from "@/lib/use-console-list-keyboard";
@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 
 type OwnershipRecordsConsoleProps = {
   entries: OwnershipRecordEntry[];
+  renewals?: OwnershipRenewalProjection[];
   disabled?: boolean;
   onGoToImport?: () => void;
 };
@@ -26,6 +27,7 @@ const sourceLabel = (source: OwnershipRecordEntry["source"]): string =>
 
 export function OwnershipRecordsConsole({
   entries,
+  renewals = [],
   disabled = false,
   onGoToImport,
 }: OwnershipRecordsConsoleProps) {
@@ -144,6 +146,13 @@ export function OwnershipRecordsConsole({
 
   const detail = selected ? (
     <ConsoleDetailPanel title={RMV_EVENT_LABELS[selected.eventType]}>
+      {renewals.some((renewal) => renewal.recordId === selected.recordId) ? (
+        <p className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm text-foreground">
+          {renewals.find((renewal) => renewal.recordId === selected.recordId)?.status === "overdue"
+            ? "Registration expired — renewal reminder is in your queue."
+            : "Registration expiring soon — renewal reminder is in your queue."}
+        </p>
+      ) : null}
       <p className="text-muted-foreground">{selected.recordDate}</p>
       <p className="font-medium">{selected.description}</p>
       <p className="text-sm text-muted-foreground">{selected.agency}</p>

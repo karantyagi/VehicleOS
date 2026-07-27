@@ -7,6 +7,8 @@ export type MaintenanceRecommendation = {
   confidence: number;
   evidenceIds: string[];
   ruleId: string;
+  /** Explicit calendar deadline — used for RMV renewals and other non-OEM rows. */
+  dueBy?: string | null;
 };
 
 export type PolicyEvaluationInput = {

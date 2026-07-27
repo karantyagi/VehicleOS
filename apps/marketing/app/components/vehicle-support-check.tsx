@@ -209,14 +209,13 @@ export function VehicleSupportCheck() {
   );
 
   if (requestSuccess) {
-    const { vehicle, email } = requestSuccess;
+    const { vehicle } = requestSuccess;
     return (
       <div className="support-check" id="supported">
         <div className="support-request support-request-success" role="status">
           <strong>Got it — we&apos;re prioritizing your car.</strong>
           <p>
-            We&apos;ll email <span className="support-request-email">{email}</span> when your{" "}
-            {vehicle.year} {vehicle.make} {vehicle.model} {vehicle.trim} is ready.
+            We&apos;ll email you when your car is ready.
           </p>
           <button type="button" className="btn btn-secondary support-request-back" onClick={() => {
             setRequestSuccess(null);

@@ -12,7 +12,13 @@ import type { VehicleOwnerProfile } from "@/lib/driver-habits";
 import { todayIsoDate } from "@/lib/date-input";
 import { notify } from "@/lib/notify";
 
-export function VehicleSettingsPanel({ minimal = false }: { minimal?: boolean }) {
+export function VehicleSettingsPanel({
+  vehicleId,
+  minimal = false,
+}: {
+  vehicleId: string | null;
+  minimal?: boolean;
+}) {
   const router = useRouter();
   const [vehicle, setVehicle] = useState<VehicleOwnerProfile | null>(null);
   const [form, setForm] = useState({
@@ -29,8 +35,15 @@ export function VehicleSettingsPanel({ minimal = false }: { minimal?: boolean })
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!vehicleId) {
+      setVehicle(null);
+      setIsLoading(false);
+      return;
+    }
+
     void (async () => {
       try {
+        setIsLoading(true);
         const response = await fetch("/api/vehicles");
         const body = (await response.json()) as {
           vehicles?: (VehicleOwnerProfile & {
@@ -44,17 +57,17 @@ export function VehicleSettingsPanel({ minimal = false }: { minimal?: boolean })
           error?: string;
         };
         if (!response.ok) throw new Error(body.error ?? "Could not load vehicle");
-        const first = body.vehicles?.[0] ?? null;
-        setVehicle(first);
-        if (first) {
+        const match = body.vehicles?.find((entry) => entry.id === vehicleId) ?? null;
+        setVehicle(match);
+        if (match) {
           setForm({
-            year: String(first.year),
-            make: first.make,
-            model: first.model,
-            trim: first.trim ?? "",
-            mileage: String(first.currentMileage),
-            vin: first.vin,
-            ownedSince: first.ownedSince ?? "",
+            year: String(match.year),
+            make: match.make,
+            model: match.model,
+            trim: match.trim ?? "",
+            mileage: String(match.currentMileage),
+            vin: match.vin,
+            ownedSince: match.ownedSince ?? "",
           });
         }
       } catch (loadError) {
@@ -63,7 +76,7 @@ export function VehicleSettingsPanel({ minimal = false }: { minimal?: boolean })
         setIsLoading(false);
       }
     })();
-  }, []);
+  }, [vehicleId]);
 
   const saveVehicle = async () => {
     if (!vehicle) return;

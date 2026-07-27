@@ -90,7 +90,7 @@ export function OwnerContextPanel({ vehicleId }: OwnerContextPanelProps) {
             label="Primary city"
             htmlFor="owner-context-city"
             optional
-            hint="Owner-facing source of truth: Garage → Driver profile (required at setup)"
+            hint="Owner-facing source of truth: Owner → Driving profile (required at setup)"
           >
             <Input
               id="owner-context-city"

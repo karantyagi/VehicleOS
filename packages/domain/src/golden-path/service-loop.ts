@@ -19,6 +19,7 @@ export type RecordServiceInput = {
   vehicleId: string;
   serviceId?: string;
   shop: string;
+  shopLocation?: string;
   serviceDate: string;
   mileage: number;
   lineItems: string[];
@@ -95,6 +96,7 @@ export const recordServiceAndRecommend = async (deps: {
       vehicleId: input.vehicleId,
       serviceId,
       shop: input.shop,
+      shopLocation: input.shopLocation?.trim() || undefined,
       serviceDate: input.serviceDate,
       mileage: input.mileage,
       lineItems: input.lineItems,

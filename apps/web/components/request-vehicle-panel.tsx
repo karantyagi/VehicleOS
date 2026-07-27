@@ -17,6 +17,7 @@ type RequestVehiclePanelProps = {
   apiBase: string;
   source?: "onboarding" | "settings" | "marketing";
   variant?: "primary" | "fallback";
+  compact?: boolean;
   defaultValues?: RequestVehicleDefaults;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -42,6 +43,7 @@ export function RequestVehiclePanel({
   apiBase,
   source = "onboarding",
   variant = "primary",
+  compact = false,
   defaultValues,
   open,
   onOpenChange,
@@ -226,11 +228,17 @@ export function RequestVehiclePanel({
             <span className="block text-sm font-medium text-foreground">
               {variant === "fallback" ? "Already signed up?" : "Don't see your car?"}
             </span>
-            <span className="mt-0.5 block text-sm text-muted-foreground">
-              {variant === "fallback"
-                ? "Request your car here — we'll email you when it's ready. Check vehicleos.app first if you haven't."
-                : "Tell us what you drive — one tap, no waitlist site."}
-            </span>
+            {!compact ? (
+              <span className="mt-0.5 block text-sm text-muted-foreground">
+                {variant === "fallback"
+                  ? "Request your car here — we'll email you when it's ready. Check vehicleos.app first if you haven't."
+                  : "Tell us what you drive — one tap, no waitlist site."}
+              </span>
+            ) : (
+              <span className="mt-0.5 block text-xs text-muted-foreground">
+                Request it — we&apos;ll email when it&apos;s ready.
+              </span>
+            )}
           </span>
           <span className="text-sm font-medium text-history-highlight" aria-hidden>
             →

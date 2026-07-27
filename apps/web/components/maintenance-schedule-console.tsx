@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { CalendarClock } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
+import { OwnerMaintenanceScheduleTimeline } from "@/components/owner-maintenance-schedule-timeline";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -17,6 +18,10 @@ type MaintenanceScheduleConsoleProps = {
   fullRows: ScheduleProjectionRow[];
   effectiveMilesPerYear: number;
   hasKnowledgeSchedule?: boolean;
+  ownerSimple?: boolean;
+  maintenancePatterns?: Record<string, { timing: "early" | "late"; reason: string; confirmedAt: string }>;
+  observedMilesPerYear?: number | null;
+  statedMilesPerYear?: number | null;
 };
 
 const emptyScheduleCopy = (hasKnowledgeSchedule: boolean) => {
@@ -40,6 +45,13 @@ const statusLabel: Record<ScheduleProjectionRow["status"], string> = {
   due_soon: "Due soon",
   upcoming: "Upcoming",
   needs_baseline: "Needs baseline",
+};
+
+const timingLabel: Record<NonNullable<ScheduleProjectionRow["oemTiming"]>, string> = {
+  early: "Early",
+  on_time: "On time",
+  late: "Late",
+  unknown: "Unknown",
 };
 
 const baselineLabel: Record<ScheduleProjectionRow["serviceBaseline"]["baselineSource"], string> = {
@@ -73,6 +85,10 @@ export function MaintenanceScheduleConsole({
   fullRows,
   effectiveMilesPerYear,
   hasKnowledgeSchedule = false,
+  ownerSimple = false,
+  maintenancePatterns,
+  observedMilesPerYear,
+  statedMilesPerYear,
 }: MaintenanceScheduleConsoleProps) {
   const [horizon, setHorizon] = useState<ScheduleHorizonView>("near");
 
@@ -95,6 +111,30 @@ export function MaintenanceScheduleConsole({
     return [...map.entries()];
   }, [rows]);
 
+  const horizonPicker = (
+    <div
+      className="inline-flex rounded-lg border border-border bg-muted/40 p-0.5"
+      role="group"
+      aria-label="Schedule horizon"
+    >
+      {horizonOptions.map((option) => (
+        <Button
+          key={option.id}
+          type="button"
+          variant="ghost"
+          size="sm"
+          className={cn(
+            "h-8 rounded-md px-2.5 text-xs sm:px-3 sm:text-sm",
+            horizon === option.id && "bg-background text-foreground shadow-sm",
+          )}
+          onClick={() => setHorizon(option.id)}
+        >
+          {option.label}
+        </Button>
+      ))}
+    </div>
+  );
+
   if (nearRows.length === 0 && extendedRows.length === 0 && fullRows.length === 0) {
     const emptyCopy = emptyScheduleCopy(hasKnowledgeSchedule);
     return (
@@ -106,6 +146,34 @@ export function MaintenanceScheduleConsole({
     );
   }
 
+  if (ownerSimple) {
+    return (
+      <div className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">
+            Verified OEM intervals · calendar-first due dates
+          </p>
+          {horizonPicker}
+        </div>
+        {rows.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
+            Nothing due in the next {activeHorizon.emptyHint}
+            {horizon === "full" ? " window" : " months"}. Expand horizon or import history to improve baselines.
+          </p>
+        ) : (
+          <OwnerMaintenanceScheduleTimeline
+            rows={rows}
+            effectiveMilesPerYear={effectiveMilesPerYear}
+            hasKnowledgeSchedule={hasKnowledgeSchedule}
+            maintenancePatterns={maintenancePatterns}
+            observedMilesPerYear={observedMilesPerYear}
+            statedMilesPerYear={statedMilesPerYear}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -114,27 +182,7 @@ export function MaintenanceScheduleConsole({
           <span className="font-medium text-foreground">{effectiveMilesPerYear.toLocaleString()} mi/year</span> for
           mileage-only rows
         </p>
-        <div
-          className="inline-flex rounded-lg border border-border bg-muted/40 p-0.5"
-          role="group"
-          aria-label="Schedule horizon"
-        >
-          {horizonOptions.map((option) => (
-            <Button
-              key={option.id}
-              type="button"
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "h-8 rounded-md px-2.5 text-xs sm:px-3 sm:text-sm",
-                horizon === option.id && "bg-background text-foreground shadow-sm",
-              )}
-              onClick={() => setHorizon(option.id)}
-            >
-              {option.label}
-            </Button>
-          ))}
-        </div>
+        {horizonPicker}
       </div>
 
       {rows.length === 0 ? (
@@ -175,6 +223,16 @@ export function MaintenanceScheduleConsole({
                           {row.serviceBaseline.baselineSource === "carfax" ? (
                             <Badge variant="outline" className="text-[10px]">
                               {baselineLabel.carfax}
+                            </Badge>
+                          ) : null}
+                          {row.oemTiming && row.oemTiming !== "unknown" ? (
+                            <Badge variant="outline" className="text-[10px]">
+                              {timingLabel[row.oemTiming]}
+                            </Badge>
+                          ) : null}
+                          {row.overdueWithoutHistory ? (
+                            <Badge variant="outline" className="text-[10px]">
+                              No history
                             </Badge>
                           ) : null}
                         </div>

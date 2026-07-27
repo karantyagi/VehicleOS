@@ -6,6 +6,7 @@ import { FormActions } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
+  buildOwnerContextWithPrimaryCity,
   parseStatedMilesPerYear,
   patchVehicleProfile,
   type DriverHabitsDraft,
@@ -30,7 +31,7 @@ export function SetupDriverGate({ vehicleId, vehicleLabel, onComplete }: SetupDr
   const saveAndContinue = async () => {
     const parsedMiles = parseStatedMilesPerYear(milesInput);
     if (parsedMiles === "invalid") {
-      notify("Enter annual mileage between 1,000 and 80,000.", "error");
+      notify("Annual miles: 1,000–80,000.", "error");
       return;
     }
 
@@ -39,6 +40,7 @@ export function SetupDriverGate({ vehicleId, vehicleLabel, onComplete }: SetupDr
       await patchVehicleProfile(vehicleId, {
         drivingStyle: draft.drivingStyle,
         statedMilesPerYear: parsedMiles,
+        ownerContextMemory: buildOwnerContextWithPrimaryCity(null, draft.primaryCity),
       });
       onComplete();
     } catch (saveError) {
@@ -51,26 +53,26 @@ export function SetupDriverGate({ vehicleId, vehicleLabel, onComplete }: SetupDr
   return (
     <Card className="overflow-hidden border-border/80 shadow-md">
       <div className="h-1 bg-muted">
-        <div className="h-full w-2/3 bg-primary transition-all duration-300" />
+        <div className="h-full w-full bg-primary transition-all duration-300" />
       </div>
       <CardHeader>
-        <p className="text-xs font-medium uppercase tracking-wide text-primary">Setup · Step 2 of 2</p>
-        <CardTitle>Driving profile</CardTitle>
+        <p className="text-xs font-medium uppercase tracking-wide text-primary">Finish setup</p>
+        <CardTitle>Your driving profile</CardTitle>
         <CardDescription>
-          One more step before the assistant workspace unlocks. Your {vehicleLabel} is on file — add the Owner&apos;s
-          driving profile so Schedule and reminders can pace recommendations.
+          {vehicleLabel} is saved — home city unlocks calendar reminders.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <DrivingStyleFields
+          variant="onboarding"
           draft={draft}
           milesInput={milesInput}
           onDraftChange={setDraft}
           onMilesInputChange={setMilesInput}
         />
         <FormActions>
-          <Button type="button" disabled={isSaving} onClick={() => void saveAndContinue()}>
-            {isSaving ? "Saving…" : "Finish setup"}
+          <Button type="button" disabled={isSaving || !draft.primaryCity.trim()} onClick={() => void saveAndContinue()}>
+            {isSaving ? "Saving…" : "Unlock reminders"}
           </Button>
         </FormActions>
       </CardContent>

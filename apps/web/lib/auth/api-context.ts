@@ -2,11 +2,12 @@ import type { SessionUser } from "./types";
 
 export type AuthContext = {
   userId: string;
+  email?: string | null;
 };
 
 export const toAuthContext = (user: SessionUser | null): AuthContext | undefined => {
   if (!user) return undefined;
-  return { userId: user.id };
+  return { userId: user.id, email: user.email };
 };
 
 export const authFromHeader = (request: { headers: Record<string, unknown> }): AuthContext | undefined => {

@@ -10,6 +10,7 @@ export {
   getVehicleState,
   listVehicles,
   submitReceipt,
+  queueReceiptExtract,
   updateVehicle,
 } from "./http/golden-path-handlers.js";
 export { analyzeQuote } from "./http/quote-handlers.js";

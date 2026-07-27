@@ -1,4 +1,4 @@
-import type { OwnerContextMemory } from "./types.js";
+import type { IntervalOverlayMemory, MaintenancePatternMemory, OwnerContextMemory } from "./types.js";
 
 const normalizeString = (value: unknown): string | undefined => {
   if (typeof value !== "string") return undefined;
@@ -12,6 +12,56 @@ const normalizeStringList = (value: unknown): string[] | undefined => {
     .map((entry) => (typeof entry === "string" ? entry.trim() : ""))
     .filter(Boolean);
   return items.length > 0 ? items : undefined;
+};
+
+const normalizeMaintenancePatterns = (
+  value: unknown,
+): Record<string, MaintenancePatternMemory> | undefined => {
+  if (!value || typeof value !== "object") return undefined;
+
+  const entries = Object.entries(value as Record<string, unknown>)
+    .map(([entryId, patternValue]) => {
+      if (!entryId.trim() || !patternValue || typeof patternValue !== "object") return null;
+      const pattern = patternValue as Record<string, unknown>;
+      const timing = pattern.timing;
+      const reason = normalizeString(pattern.reason);
+      const confirmedAt = normalizeString(pattern.confirmedAt);
+      if ((timing !== "early" && timing !== "late") || !reason || !confirmedAt) return null;
+      return [entryId.trim(), { timing, reason, confirmedAt }] as const;
+    })
+    .filter((entry): entry is readonly [string, MaintenancePatternMemory] => entry !== null);
+
+  if (entries.length === 0) return undefined;
+  return Object.fromEntries(entries);
+};
+
+const normalizeIntervalOverlays = (
+  value: unknown,
+): Record<string, IntervalOverlayMemory> | undefined => {
+  if (!value || typeof value !== "object") return undefined;
+
+  const normalized: Record<string, IntervalOverlayMemory> = {};
+
+  for (const [entryId, overlayValue] of Object.entries(value as Record<string, unknown>)) {
+    if (!entryId.trim() || !overlayValue || typeof overlayValue !== "object") continue;
+    const overlay = overlayValue as Record<string, unknown>;
+    const label = normalizeString(overlay.label);
+    const confirmedAt = normalizeString(overlay.confirmedAt);
+    if (!label || !confirmedAt) continue;
+    const intervalMonths =
+      typeof overlay.intervalMonths === "number" ? overlay.intervalMonths : undefined;
+    const intervalMiles =
+      typeof overlay.intervalMiles === "number" ? overlay.intervalMiles : undefined;
+    if (intervalMonths === undefined && intervalMiles === undefined) continue;
+    normalized[entryId.trim()] = {
+      intervalMonths: intervalMonths ?? null,
+      intervalMiles: intervalMiles ?? null,
+      label,
+      confirmedAt,
+    };
+  }
+
+  return Object.keys(normalized).length > 0 ? normalized : undefined;
 };
 
 const normalizeShopLocations = (value: unknown): Record<string, string> | undefined => {
@@ -41,6 +91,8 @@ export const normalizeOwnerContextMemory = (value: unknown): OwnerContextMemory 
     lastTireProduct: normalizeString(record.lastTireProduct),
     ownerStatedPriorities: normalizeStringList(record.ownerStatedPriorities),
     shopLocations: normalizeShopLocations(record.shopLocations),
+    maintenancePatterns: normalizeMaintenancePatterns(record.maintenancePatterns),
+    intervalOverlays: normalizeIntervalOverlays(record.intervalOverlays),
   };
 };
 
@@ -51,6 +103,8 @@ export const hasOwnerContextMemory = (value: OwnerContextMemory | null | undefin
       (value.climateNotes?.length ?? 0) > 0 ||
       value.lastTireProduct ||
       (value.ownerStatedPriorities?.length ?? 0) > 0 ||
-      Object.keys(value.shopLocations ?? {}).length > 0,
+      Object.keys(value.shopLocations ?? {}).length > 0 ||
+      Object.keys(value.maintenancePatterns ?? {}).length > 0 ||
+      Object.keys(value.intervalOverlays ?? {}).length > 0,
   );
 };

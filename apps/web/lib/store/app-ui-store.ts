@@ -28,13 +28,13 @@ export const APP_SECTIONS: { id: AppSection; label: string; description: string 
   },
   {
     id: "timeline",
-    label: "Service history",
-    description: "Past services from records and events",
+    label: "Maintenance",
+    description: "OEM schedule projection, past maintenance, and ownership records",
   },
   {
     id: "imports",
     label: "Import history",
-    description: "CARFAX, RMV, and portal PDFs — hand off past records for review",
+    description: "Optional — CARFAX and RMV PDFs to sharpen baselines and memory",
   },
   {
     id: "receipts",
@@ -87,6 +87,7 @@ type AppUiState = {
   selectedEvidenceId: string | null;
   selectedNowTaskId: string | null;
   selectedOwnershipRecordId: string | null;
+  setupFlowActive: boolean;
   setConsoleMode: (mode: ConsoleMode) => void;
   hydrateConsoleMode: (mode: ConsoleMode) => void;
   setActiveSection: (section: AppSection) => void;
@@ -98,6 +99,8 @@ type AppUiState = {
   setSelectedEvidenceId: (id: string | null) => void;
   setSelectedNowTaskId: (id: string | null) => void;
   setSelectedOwnershipRecordId: (id: string | null) => void;
+  clearVehicleSelections: () => void;
+  setSetupFlowActive: (active: boolean) => void;
 };
 
 const clearSelections = {
@@ -117,6 +120,7 @@ export const useAppUiStore = create<AppUiState>((set, get) => ({
   selectedEvidenceId: null,
   selectedNowTaskId: null,
   selectedOwnershipRecordId: null,
+  setupFlowActive: false,
   setConsoleMode: (consoleMode) => {
     persistConsoleMode(consoleMode);
     set({
@@ -180,4 +184,6 @@ export const useAppUiStore = create<AppUiState>((set, get) => ({
       selectedEvidenceId: null,
       selectedNowTaskId: null,
     }),
+  clearVehicleSelections: () => set(clearSelections),
+  setSetupFlowActive: (setupFlowActive) => set({ setupFlowActive, mobileNavOpen: false }),
 }));

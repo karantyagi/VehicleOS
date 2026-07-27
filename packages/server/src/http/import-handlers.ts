@@ -109,7 +109,12 @@ export const submitVehicleOsImport = async (
     ownerShopLocations,
   });
 
-  const snapshot = await services.goldenPath.getVehicleState(vehicleId);
+  const snapshot = await services.goldenPath.getVehicleState(vehicleId, {
+    ownerContextMemory: vehicle.ownerContextMemory,
+    ownedSince: vehicle.ownedSince,
+    drivingStyle: vehicle.drivingStyle,
+    statedMilesPerYear: vehicle.statedMilesPerYear,
+  });
   const { newRows } = filterNewImportServices(snapshot.state.timeline, enrichedServices);
   const newRowTierSummary = tierNewImportRows(snapshot.state.timeline, newRows);
 
@@ -117,6 +122,10 @@ export const submitVehicleOsImport = async (
     vehicleId,
     importSource: body.source?.trim() || "vehicleos-import",
     services: enrichedServices,
+    ownerContextMemory: vehicle.ownerContextMemory,
+    ownedSince: vehicle.ownedSince,
+    drivingStyle: vehicle.drivingStyle,
+    statedMilesPerYear: vehicle.statedMilesPerYear,
   });
 
   const mergedShopLocations = mergeShopLocationsFromImport(ownerShopLocations, enrichedServices);
