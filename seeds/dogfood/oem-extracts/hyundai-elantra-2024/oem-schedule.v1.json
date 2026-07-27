@@ -1,0 +1,103 @@
+{
+  "version": "1",
+  "source": "hyundai-elantra-2020-owners-manual-ch7",
+  "exportedAt": "2026-07-27T19:39:47.548Z",
+  "manualTitle": "2024 Hyundai Elantra SE/SEL — Normal maintenance schedule (U.S., 2.0 MPI proxy)",
+  "storageKey": "dogfood/oem-extracts/hyundai-elantra-2024/oem-schedule.v1.json",
+  "documentRef": {
+    "fileName": "hyundai-elantra-2020-om.pdf",
+    "pages": "P. 7-8, 7-9, 7-10 (Normal Maintenance Schedule 2.0 MPI); 2024 Elantra OM unavailable — 2020 schedule used as verified proxy for 2.0L IVT trims",
+    "vehicleContext": {
+      "engine": "2.0L MPI / Smartstream 2.0",
+      "drivetrain": "FWD IVT",
+      "market": "US"
+    },
+    "coverage": {
+      "included": "Normal schedule replace/inspect rows for 2.0 MPI; severe table P. 7-11.",
+      "excluded": "1.6 T-GDI schedule (P. 7-13); N-Line / hybrid variants."
+    },
+    "note": "Fixed-interval schedule. IVT fluid: no check/service under normal usage (P. 7-9)."
+  },
+  "entries": [
+    {
+      "serviceName": "Engine oil and engine oil filter replacement",
+      "itemType": "replace",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 7-8 — Engine oil and filter (severe: 3,750 mi / 6 mo)"
+    },
+    {
+      "serviceName": "Fuel additives (if non-TOP TIER gasoline)",
+      "itemType": "replace",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 7-8 — Fuel additives *1"
+    },
+    {
+      "serviceName": "Rotate tires",
+      "itemType": "replace",
+      "intervalMiles": 7500,
+      "sourcePage": "P. 7-8 — Rotate tires every 7,500 miles"
+    },
+    {
+      "serviceName": "Replace climate control air filter",
+      "itemType": "replace",
+      "intervalMonths": 12,
+      "sourcePage": "P. 7-8 — Climate control air filter every 12 months"
+    },
+    {
+      "serviceName": "Replace air cleaner filter",
+      "itemType": "replace",
+      "intervalMiles": 30000,
+      "intervalMonths": 36,
+      "sourcePage": "P. 7-8 — Air cleaner filter (R at 30, 60, 90… mo)"
+    },
+    {
+      "serviceName": "Inspect air cleaner filter",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 7-8 — Air cleaner filter (I between replacements)"
+    },
+    {
+      "serviceName": "Replace spark plugs",
+      "itemType": "replace",
+      "intervalMiles": 97500,
+      "sourcePage": "P. 7-8 — Spark plugs every 97,500 miles"
+    },
+    {
+      "serviceName": "Inspect drive belts",
+      "itemType": "inspect",
+      "intervalMiles": 60000,
+      "intervalMonths": 72,
+      "sourcePage": "P. 7-8 — Drive belts *2 (first at 60,000 mi / 72 mo, then every 15,000 mi / 24 mo)"
+    },
+    {
+      "serviceName": "Replace engine coolant (first interval)",
+      "itemType": "replace",
+      "intervalMiles": 120000,
+      "intervalMonths": 120,
+      "sourcePage": "P. 7-8 — Engine coolant first at 120,000 mi / 10 years"
+    },
+    {
+      "serviceName": "Replace engine coolant (subsequent)",
+      "itemType": "replace",
+      "intervalMiles": 30000,
+      "intervalMonths": 24,
+      "sourcePage": "P. 7-8 — Engine coolant thereafter every 30,000 mi / 24 mo"
+    },
+    {
+      "serviceName": "Inspect brake/clutch fluid",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 7-10 — Brake/clutch fluid (inspect under normal schedule)"
+    },
+    {
+      "serviceName": "Intelligent Variable Transmission (IVT) fluid — severe only",
+      "itemType": "replace",
+      "intervalMiles": 60000,
+      "sourcePage": "P. 7-11 — IVT fluid severe usage every 60,000 mi"
+    }
+  ]
+}

@@ -1,37 +1,115 @@
 {
   "packId": "mazda-cx-30-2024-select",
-  "version": 1,
-  "manualTitle": "2024 Mazda CX-30 Select — Owner's Manual maintenance schedule (U.S.)",
+  "version": 3,
+  "manualTitle": "2024 Mazda CX-30 Select — Normal driving scheduled maintenance (U.S.)",
   "scheduleKind": "fixed_interval",
   "qaStatus": "auto_verified",
-  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
+  "qaNotes": "PDF-mined from 2024 CX-30 scheduled maintenance P. 9-6–9-8; dogfood extract seeds/dogfood/oem-extracts/mazda-cx-30-2024/.",
   "sourceManifestRef": "sources/manifest.json#mazda-cx-30-2024-select",
   "vehicle": {
+    "market": "US",
     "make": "Mazda",
     "model": "CX-30",
     "year": 2024,
-    "trim": "Select",
-    "market": "US"
+    "powertrain": "AWD",
+    "trim": "Select"
   },
   "entries": [
     {
       "entryId": "engine-oil",
-      "canonicalServiceId": "mazda.fixed.7500.engine_oil",
+      "canonicalServiceId": "mazda.fixed.10000.engine_oil",
       "serviceName": "Engine oil and filter change",
-      "intervalMiles": 5000,
-      "intervalMonths": 6,
-      "sourcePage": "P. 1 — engine oil",
+      "intervalMiles": 10000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 9-6 — Engine oil & filter *1",
       "ruleId": "knowledge.policy.engine-oil.v1",
-      "confidence": 0.92
+      "confidence": 0.97,
+      "projectionNote": "Flexible monitor; max 10,000 mi / 12 mo. Severe: 5,000 mi / 6 mo."
     },
     {
       "entryId": "tire-rotation",
       "canonicalServiceId": "generic.tire_rotation",
       "serviceName": "Rotate tires",
       "intervalMiles": 10000,
-      "intervalMonths": 6,
-      "sourcePage": "P. 1 — tire rotation",
+      "sourcePage": "P. 9-7 — Tire rotation",
       "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.96
+    },
+    {
+      "entryId": "engine-air-filter",
+      "canonicalServiceId": "generic.engine_air_filter",
+      "serviceName": "Replace engine air filter",
+      "intervalMiles": 20000,
+      "sourcePage": "P. 9-6 — Air filter (cycles 1–2)",
+      "ruleId": "knowledge.policy.engine-air-filter.v1",
+      "confidence": 0.94
+    },
+    {
+      "entryId": "cabin-air-filter",
+      "canonicalServiceId": "generic.cabin_air_filter",
+      "serviceName": "Replace cabin air filter",
+      "intervalMiles": 30000,
+      "intervalMonths": 24,
+      "sourcePage": "P. 9-7 — Cabin air filter",
+      "ruleId": "knowledge.policy.cabin-filter.v1",
+      "confidence": 0.95
+    },
+    {
+      "entryId": "spark-plugs",
+      "canonicalServiceId": "generic.spark_plugs",
+      "serviceName": "Replace spark plugs (SKYACTIV-G 2.5)",
+      "intervalMiles": 75000,
+      "sourcePage": "P. 9-6 — Spark plugs 2.5",
+      "ruleId": "knowledge.policy.spark-plugs.v1",
+      "confidence": 0.95
+    },
+    {
+      "entryId": "coolant-first",
+      "canonicalServiceId": "generic.coolant",
+      "serviceName": "Replace engine coolant (first interval)",
+      "intervalMiles": 120000,
+      "intervalMonths": 120,
+      "sourcePage": "P. 9-6 — Coolant *3",
+      "ruleId": "knowledge.policy.coolant.v1",
+      "confidence": 0.94,
+      "projectionNote": "First: 120,000 mi / 120 mo; thereafter every 60,000 mi / 60 mo."
+    },
+    {
+      "entryId": "drive-belt-inspect",
+      "canonicalServiceId": "mazda.fixed.drive_belt",
+      "serviceName": "Inspect drive belts",
+      "intervalMiles": 10000,
+      "sourcePage": "P. 9-6 — Drive belts",
+      "ruleId": "knowledge.policy.drive-belt.v1",
+      "confidence": 0.93,
+      "projectionNote": "Inspect each maintenance cycle."
+    },
+    {
+      "entryId": "brake-fluid-inspect",
+      "canonicalServiceId": "mazda.fixed.brake_fluid_inspect",
+      "serviceName": "Inspect brake and clutch fluid level",
+      "intervalMiles": 10000,
+      "sourcePage": "P. 9-7 — Brake and clutch fluid level",
+      "ruleId": "knowledge.policy.brake-fluid-inspect.v1",
+      "confidence": 0.93,
+      "projectionNote": "Inspect only — replace if necessary."
+    },
+    {
+      "entryId": "disc-brakes-inspect",
+      "canonicalServiceId": "mazda.fixed.disc_brakes",
+      "serviceName": "Inspect disc brakes",
+      "intervalMiles": 10000,
+      "sourcePage": "P. 9-7 — Disc brakes",
+      "ruleId": "knowledge.policy.disc-brakes.v1",
+      "confidence": 0.93
+    },
+    {
+      "entryId": "coolant-level-inspect",
+      "canonicalServiceId": "mazda.fixed.coolant_level",
+      "serviceName": "Inspect coolant level",
+      "intervalMiles": 10000,
+      "sourcePage": "P. 9-6 — Coolant level",
+      "ruleId": "knowledge.policy.coolant-inspect.v1",
       "confidence": 0.92
     }
   ]

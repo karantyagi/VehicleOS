@@ -1,10 +1,10 @@
 {
   "packId": "acura-tlx-2021-sh-awd",
-  "version": 2,
+  "version": 3,
   "manualTitle": "2021 Acura TLX Technology SH-AWD — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "maintenance_minder",
   "qaStatus": "auto_verified",
-  "qaNotes": "Full MM subs 1–7 from 2021 TLX owner manual P. 527 — dogfood verified against CARFAX fixture.",
+  "qaNotes": "Full MM subs 1–7 from 2021 TLX owner manual P. 527 — dogfood verified (seeds/dogfood/karan-tlx/oem-schedule.v1.json).",
   "sourceManifestRef": "sources/manifest.json#acura-tlx-2021-sh-awd",
   "vehicle": {
     "make": "Acura",
