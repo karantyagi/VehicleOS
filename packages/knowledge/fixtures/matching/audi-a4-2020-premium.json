@@ -1,0 +1,18 @@
+{
+  "packId": "audi-a4-2020-premium",
+  "version": 1,
+  "cases": [
+    {
+      "description": "CARFAX line maps to tire-rotation",
+      "carfaxLine": "Tires rotated",
+      "expectedCanonicalServiceId": "generic.tire_rotation",
+      "expectedEntryId": "tire-rotation"
+    },
+    {
+      "description": "CARFAX line maps to cabin-air-filter",
+      "carfaxLine": "Cabin air filter",
+      "expectedCanonicalServiceId": "generic.cabin_air_filter",
+      "expectedEntryId": "cabin-air-filter"
+    }
+  ]
+}

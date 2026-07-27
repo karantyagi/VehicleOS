@@ -1,0 +1,70 @@
+{
+  "packId": "toyota-prius-2020-xle-hybrid",
+  "version": 1,
+  "manualTitle": "2020 Toyota Prius XLE — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
+  "sourceManifestRef": "sources/manifest.json#toyota-prius-2020-xle-hybrid",
+  "vehicle": {
+    "make": "Toyota",
+    "model": "Prius",
+    "year": 2020,
+    "trim": "XLE",
+    "powertrain": "Hybrid",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "toyota.mr.10000.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 10000,
+      "intervalMonths": 6,
+      "sourcePage": "P. 1 — engine oil",
+      "ruleId": "knowledge.policy.toyota-oil.v1",
+      "projectionNote": "Toyota 10k/6mo normal; 5k severe driving per owner manual.",
+      "confidence": 0.93
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 5000,
+      "intervalMonths": 6,
+      "sourcePage": "P. 1 — tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.94
+    },
+    {
+      "entryId": "cabin-air-filter",
+      "canonicalServiceId": "generic.cabin_air_filter",
+      "serviceName": "Replace cabin air filter",
+      "intervalMiles": 20000,
+      "intervalMonths": 24,
+      "sourcePage": "Maintenance Schedule — Cabin filter",
+      "ruleId": "knowledge.policy.cabin-filter.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "engine-air-filter",
+      "canonicalServiceId": "generic.engine_air_filter",
+      "serviceName": "Replace engine air filter",
+      "intervalMiles": 30000,
+      "intervalMonths": 36,
+      "sourcePage": "Maintenance Schedule — Engine air filter",
+      "ruleId": "knowledge.policy.engine-air-filter.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "brake-fluid",
+      "canonicalServiceId": "generic.brake_fluid",
+      "serviceName": "Replace brake fluid",
+      "intervalMiles": null,
+      "intervalMonths": 36,
+      "sourcePage": "P. 1 — brake fluid",
+      "ruleId": "knowledge.policy.brake-fluid.v1",
+      "confidence": 0.92
+    }
+  ]
+}

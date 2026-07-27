@@ -5,7 +5,7 @@ import { LOGIN_SPOTLIGHT_MS, LOGIN_VALUE_CARDS } from "@/lib/login-value-cards";
 import { cn } from "@/lib/utils";
 
 /** Locks list height so the eyebrow header never shifts when rows expand. */
-const LIST_MIN_HEIGHT = "20.5rem";
+const LIST_MIN_HEIGHT = "24rem";
 
 export function LoginValueSpotlight() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -158,7 +158,7 @@ export function LoginValueSpotlight() {
       </div>
 
       <figcaption className="sr-only">
-        Five reasons owners use VehicleOS. Arrow keys move the spotlight.
+        Six reasons owners use VehicleOS. Arrow keys move the spotlight.
       </figcaption>
     </figure>
   );

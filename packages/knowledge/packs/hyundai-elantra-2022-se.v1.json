@@ -1,0 +1,48 @@
+{
+  "packId": "hyundai-elantra-2022-se",
+  "version": 1,
+  "manualTitle": "2022 Hyundai Elantra SE — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
+  "sourceManifestRef": "sources/manifest.json#hyundai-elantra-2022-se",
+  "vehicle": {
+    "make": "Hyundai",
+    "model": "Elantra",
+    "year": 2022,
+    "trim": "SE",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "hyundai.fixed.8000.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 8000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 16000,
+      "intervalMonths": 6,
+      "sourcePage": "P. 1 — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "cabin-air-filter",
+      "canonicalServiceId": "generic.cabin_air_filter",
+      "serviceName": "Replace cabin air filter",
+      "intervalMiles": 15000,
+      "intervalMonths": 12,
+      "sourcePage": "Normal maintenance schedule — Cabin air filter",
+      "ruleId": "knowledge.policy.cabin-filter.v1",
+      "confidence": 0.92
+    }
+  ]
+}

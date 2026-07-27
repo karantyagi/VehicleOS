@@ -1,0 +1,48 @@
+{
+  "packId": "kia-telluride-2025-ex",
+  "version": 1,
+  "manualTitle": "2025 Kia Telluride EX — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "creator_review_required",
+  "qaNotes": "Tier-2 catalog pack — no verified OEM PDF yet. Creator review required before auto_verified promotion.",
+  "sourceManifestRef": "sources/manifest.json#kia-telluride-2025-ex",
+  "vehicle": {
+    "make": "Kia",
+    "model": "Telluride",
+    "year": 2025,
+    "trim": "EX",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "kia.fixed.8000.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 8000,
+      "intervalMonths": 6,
+      "sourcePage": "Normal maintenance schedule — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "Normal maintenance schedule — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "cabin-air-filter",
+      "canonicalServiceId": "generic.cabin_air_filter",
+      "serviceName": "Replace cabin air filter",
+      "intervalMiles": 15000,
+      "intervalMonths": 12,
+      "sourcePage": "Normal maintenance schedule — Cabin air filter",
+      "ruleId": "knowledge.policy.cabin-filter.v1",
+      "confidence": 0.92
+    }
+  ]
+}

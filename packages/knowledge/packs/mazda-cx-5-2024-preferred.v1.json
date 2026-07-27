@@ -1,0 +1,38 @@
+{
+  "packId": "mazda-cx-5-2024-preferred",
+  "version": 1,
+  "manualTitle": "2024 Mazda CX-5 Preferred — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
+  "sourceManifestRef": "sources/manifest.json#mazda-cx-5-2024-preferred",
+  "vehicle": {
+    "make": "Mazda",
+    "model": "CX-5",
+    "year": 2024,
+    "trim": "Preferred",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "mazda.fixed.7500.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "P. 1 — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    }
+  ]
+}

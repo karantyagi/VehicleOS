@@ -1,0 +1,39 @@
+{
+  "packId": "volvo-xc40-2022-recharge-pure-electric-electric",
+  "version": 1,
+  "manualTitle": "2022 Volvo XC40 Recharge Pure Electric — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "ev_simplified",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
+  "sourceManifestRef": "sources/manifest.json#volvo-xc40-2022-recharge-pure-electric-electric",
+  "vehicle": {
+    "make": "Volvo",
+    "model": "XC40",
+    "year": 2022,
+    "trim": "Recharge Pure Electric",
+    "powertrain": "Electric",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "volvo.fixed.10000.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 10000,
+      "intervalMonths": 12,
+      "sourcePage": "Service schedule — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "P. 1 — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    }
+  ]
+}

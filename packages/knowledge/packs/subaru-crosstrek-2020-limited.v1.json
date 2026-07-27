@@ -1,0 +1,38 @@
+{
+  "packId": "subaru-crosstrek-2020-limited",
+  "version": 1,
+  "manualTitle": "2020 Subaru Crosstrek Limited — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
+  "sourceManifestRef": "sources/manifest.json#subaru-crosstrek-2020-limited",
+  "vehicle": {
+    "make": "Subaru",
+    "model": "Crosstrek",
+    "year": 2020,
+    "trim": "Limited",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "subaru.fixed.6000.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 6000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 6000,
+      "intervalMonths": 6,
+      "sourcePage": "P. 1 — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    }
+  ]
+}

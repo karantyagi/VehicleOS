@@ -11,6 +11,7 @@ import { loadOemSchedulePack } from "../load-catalog.js";
 import { runPackQaRules, validateOemSchedulePack } from "../validate-pack.js";
 import type { OemSchedulePack, OemSchedulePackEntry } from "../types.js";
 import type { Tier1PackSpec } from "./tier1-manifest.js";
+import { inferOemFamilyFromMake } from "./oem-family-infer.js";
 
 export type VerifyPackResult = {
   packId: string;
@@ -60,22 +61,13 @@ const mergeExtractIntoPack = (
   return { ...pack, entries };
 };
 
-const inferOemFamily = (make: string): Tier1PackSpec["oemFamily"] => {
-  const normalized = make.toLowerCase();
-  if (normalized === "acura") return "acura";
-  if (normalized === "honda") return "honda";
-  if (normalized === "toyota") return "toyota";
-  if (normalized === "lexus") return "lexus";
-  if (normalized === "chevrolet") return "chevy";
-  if (normalized === "volkswagen") return "vw";
-  if (normalized.includes("tesla")) return "tesla";
-  return "ev-generic";
-};
+const inferOemFamily = inferOemFamilyFromMake;
 
 export const verifyOemPack = async (input: {
   packId: string;
   spec?: Tier1PackSpec;
   dryRun?: boolean;
+  promote?: boolean;
 }): Promise<VerifyPackResult> => {
   const notes: string[] = [];
   let pack = loadOemSchedulePack(input.packId);
@@ -168,12 +160,33 @@ export const verifyOemPack = async (input: {
   }
 
   if (!input.dryRun) {
+    const qaIssuesBeforeWrite = runPackQaRules(pack);
+    const canPromote = input.promote && agree && qaIssuesBeforeWrite.length === 0;
+
+    if (pdfPath && sha256) {
+      upsertManifestEntry({
+        packId: pack.packId,
+        localPdfPath: pdfPath,
+        sha256,
+        officialUrls: pdfSource.officialUrls,
+        mirrorUrls: pdfSource.mirrorUrls,
+        downloadUrl: downloaded.downloadUrl,
+        dualExtractAgree: agree,
+        notes: agree ? "dual-extract agree" : `${mismatches.length} mismatches`,
+      });
+    }
+
     const nextPack: OemSchedulePack = {
       ...pack,
       sourceManifestRef: `sources/manifest.json#${pack.packId}`,
     };
 
-    if (pack.qaStatus !== "auto_verified") {
+    if (canPromote) {
+      nextPack.qaStatus = "auto_verified";
+      nextPack.qaNotes =
+        "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).";
+      notes.push("Promoted to auto_verified (dual-extract agree + QA pass)");
+    } else if (pack.qaStatus !== "auto_verified") {
       nextPack.qaNotes = agree
         ? "Phase A+B complete — dual-extract agree. Awaiting Phase C promotion to auto_verified."
         : "Phase A+B complete — dual-extract mismatch. Creator review required (Phase C).";
@@ -188,7 +201,7 @@ export const verifyOemPack = async (input: {
   const qaIssues = runPackQaRules(pack);
   const fixture = generateMatchingFixture(pack);
 
-  if (!input.dryRun && pdfPath && sha256) {
+  if (!input.dryRun && pdfPath && sha256 && !agree) {
     upsertManifestEntry({
       packId: pack.packId,
       localPdfPath: pdfPath,
@@ -197,7 +210,7 @@ export const verifyOemPack = async (input: {
       mirrorUrls: pdfSource.mirrorUrls,
       downloadUrl: downloaded.downloadUrl,
       dualExtractAgree: agree,
-      notes: agree ? "dual-extract agree" : `${mismatches.length} mismatches`,
+      notes: `${mismatches.length} mismatches`,
     });
   }
 

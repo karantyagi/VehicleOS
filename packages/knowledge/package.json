@@ -12,8 +12,19 @@
     "validate": "node --import tsx/esm src/cli/validate-catalog.ts",
     "generate:tier1": "node --import tsx/esm src/cli/generate-tier1-packs.ts",
     "generate:tier1:missing": "node --import tsx/esm src/cli/generate-tier1-packs.ts --skip-existing",
+    "build:tier2000:pdf-overrides": "node --import tsx/esm src/cli/build-tier2000-pdf-overrides.ts",
+    "generate:tier2000": "node --import tsx/esm src/cli/build-tier2000-pdf-overrides.ts && node --import tsx/esm src/cli/generate-tier2000-packs.ts",
+    "generate:tier2000:missing": "node --import tsx/esm src/cli/generate-tier2000-packs.ts --skip-existing",
     "verify:oem": "node --import tsx/esm src/cli/verify-oem-packs.ts --all",
-    "verify:oem:pack": "node --import tsx/esm src/cli/verify-oem-packs.ts"
+    "verify:oem:pack": "node --import tsx/esm src/cli/verify-oem-packs.ts",
+    "verify:tier2000": "node --import tsx/esm src/cli/verify-tier2000-batch.ts --tier2-bc --skip-verified --promote --concurrency=4",
+    "verify:tier2000:retry-blocked": "node --import tsx/esm src/cli/verify-tier2000-batch.ts --skip-verified --promote --concurrency=4 --pack-list=/tmp/tier2000-blocked-pack-ids.txt",
+    "verify:in-review": "node --import tsx/esm src/cli/verify-in-review-rerun.ts --promote --concurrency=4",
+    "verify:tier-d": "node --import tsx/esm src/cli/verify-tier-d-rerun.ts --promote --concurrency=4",
+    "export:tier-d-retry": "node --import tsx/esm src/cli/export-tier-d-retry.ts",
+    "export:in-review-retry": "node --import tsx/esm src/cli/export-in-review-retry.ts",
+    "demote:scaffolds": "node --import tsx/esm src/cli/demote-scaffold-auto-verified.ts",
+    "sync:catalog": "node --import tsx/esm src/cli/sync-catalog-qa.ts"
   },
   "dependencies": {
     "@vehicleos/domain": "workspace:*",

@@ -1,0 +1,39 @@
+{
+  "packId": "buick-encore-gx-2021-essence",
+  "version": 1,
+  "manualTitle": "2021 Buick Encore GX Essence — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
+  "sourceManifestRef": "sources/manifest.json#buick-encore-gx-2021-essence",
+  "vehicle": {
+    "make": "Buick",
+    "model": "Encore GX",
+    "year": 2021,
+    "trim": "Essence",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "buick.olm.engine_oil",
+      "serviceName": "Engine oil and filter change (Oil Life Monitor)",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "projectionNote": "OEM trigger is oil life %; miles are assistant projection.",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "P. 1 — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    }
+  ]
+}

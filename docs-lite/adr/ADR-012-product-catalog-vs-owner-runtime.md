@@ -1,6 +1,7 @@
 # ADR-012 — Product catalog (Plane A) vs owner runtime (Plane B)
 
 **Status:** Accepted (2026-07-25)  
+**Amended:** 2026-07-26 — creator-side manual source providers and provenance<br>
 **Deciders:** Product / architecture  
 **Related:** ADR-010 (service matching) · ADR-011 (import enrichment) · [`product-data-vs-owner-intelligence.md`](../../../workspace/strategy/product-data-vs-owner-intelligence.md) · [`oem-knowledge-pack-factory.md`](../../../workspace/strategy/oem-knowledge-pack-factory.md)
 
@@ -27,7 +28,7 @@ PLANE A — Product catalog          PLANE B — Owner runtime
 
 | Plane | Examples | Writes | Cross-owner? | Survives account delete? |
 |-------|----------|--------|--------------|--------------------------|
-| **A** | OEM Schedule Packs, alias ontology, supported-vehicle catalog, creator playbook | Creator factory | Yes | Yes |
+| **A** | OEM Schedule Packs, source registry/provenance, alias ontology, supported-vehicle catalog, creator playbook | Creator factory | Yes | Yes |
 | **B** | Timeline, Now queue, OwnerContextMemory, evidence vault | Owner + deterministic policy | No | No — purged |
 
 **Rules:**
@@ -36,6 +37,8 @@ PLANE A — Product catalog          PLANE B — Owner runtime
 2. Plane B never trains across tenants.
 3. Due dates use Plane B timeline baselines matched via Plane A aliases — deterministic only at runtime.
 4. LLM allowed at ingest/enrichment edges; **never** on domain commit or schedule projection.
+5. OEM sites and manual aggregators are creator-factory discovery inputs only;
+   the owner runtime never depends on a provider being reachable.
 
 ---
 
@@ -71,6 +74,7 @@ Owner-facing intelligence: **Reminders · Import history · Verification · Memo
 | Data | Location |
 |------|----------|
 | Packs, aliases, catalog | `packages/knowledge/` (git; runtime load) |
+| Source registry + validation provenance | `packages/knowledge/sources/registries/` (git; creator evidence) |
 | Creator manual PDFs (QA) | Local `workspace/knowledge/sources/` — not in product |
 | Per-vehicle schedule copy | `knowledge.schedule.recorded` events |
 | Owner timeline / memory | Event store + Postgres vehicle rows |
@@ -82,6 +86,8 @@ Postgres reference tables for catalog are optional; JSON catalog is valid until 
 ## Consequences
 
 - PROC-KB is **product work**, not owner intelligence — see [`oem-knowledge-pack-factory.md`](../../../workspace/strategy/oem-knowledge-pack-factory.md).
+- Manual-source providers populate Plane A candidates offline; only
+  versioned, validated Schedule Packs cross the hydrate bridge.
 - Early access ships with **verified packs only**; marketing catalog lists in-review rows as waitlist.
 - New features must pass the five-question classifier in strategy SoT before merge.
 

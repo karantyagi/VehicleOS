@@ -1,0 +1,18 @@
+{
+  "packId": "bmw-x3-2018-sdrive30i",
+  "version": 1,
+  "cases": [
+    {
+      "description": "CARFAX line maps to tire-rotation",
+      "carfaxLine": "Tires rotated",
+      "expectedCanonicalServiceId": "generic.tire_rotation",
+      "expectedEntryId": "tire-rotation"
+    },
+    {
+      "description": "CARFAX line maps to brake-fluid",
+      "carfaxLine": "Brake fluid",
+      "expectedCanonicalServiceId": "generic.brake_fluid",
+      "expectedEntryId": "brake-fluid"
+    }
+  ]
+}

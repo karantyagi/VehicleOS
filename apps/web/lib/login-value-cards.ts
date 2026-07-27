@@ -1,4 +1,4 @@
-/** Login spotlight stack — sync with assistant-product-model.md § Login page */
+/** Login spotlight stack — sync with assistant-product-model.md § Login page · owner-value-arc.md */
 export type LoginValueCard = {
   id: string;
   title: string;
@@ -7,29 +7,34 @@ export type LoginValueCard = {
 
 export const LOGIN_VALUE_CARDS: LoginValueCard[] = [
   {
-    id: "planner",
-    title: "Stop being the planner",
-    body: "Hand off records once — your assistant owns the schedule.",
+    id: "pain",
+    title: "Stop scheduling maintenance manually",
+    body: "Intervals and receipts — off your plate.",
   },
   {
-    id: "missed",
-    title: "Nothing gets missed",
-    body: "Reminders with plain-English why, before things go overdue.",
+    id: "handoff",
+    title: "Hand off your history once",
+    body: "CARFAX, RMV, or receipts — your assistant keeps the story.",
   },
   {
-    id: "background",
-    title: "Works in the background",
-    body: "Light nudges when it matters — no daily app habit.",
-  },
-  {
-    id: "verify",
-    title: "Gets smarter over time",
-    body: "Early verification, then it gets quieter every week.",
+    id: "reminders",
+    title: "Reminded before it's overdue",
+    body: "Oil, tires, inspection — with a plain-English why.",
   },
   {
     id: "execute",
-    title: "You just show up",
-    body: "Book, pay, drive — zero planning overhead.",
+    title: "You execute, it remembers",
+    body: "You book and show up — it updates from your next receipt.",
+  },
+  {
+    id: "alerts",
+    title: "Alerts, not another dashboard",
+    body: "Light nudges when it matters — peek only when you want.",
+  },
+  {
+    id: "schedule",
+    title: "Official maintenance schedule built in",
+    body: "Verified maintenance intervals load automatically.",
   },
 ];
 

@@ -8,7 +8,7 @@ import { RecordImportPanel } from "@/components/record-import-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { VehicleYmmPicker } from "@/components/vehicle-ymm-picker";
 import { LogoMark } from "../lib/logo-mark";
 import { getApiBase } from "../lib/api-base";
 import {
@@ -153,15 +153,25 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     [catalog, form.packId],
   );
 
-  const selectVehicle = (packId: string) => {
-    const row = catalog.find((entry) => entry.packId === packId);
-    if (!row) return;
+  const selectVehicle = (row: CatalogVehicleRow | null) => {
+    if (!row) {
+      setForm((current) => ({
+        ...current,
+        packId: "",
+        year: 0,
+        make: "",
+        model: "",
+        trim: "",
+      }));
+      return;
+    }
+
     setForm((current) => ({
       ...vehicleFormFromCatalog(row),
       vin: current.vin,
       ownedSince: current.ownedSince,
       currentMileage:
-        current.packId === packId && current.currentMileage > 0
+        current.packId === row.packId && current.currentMileage > 0
           ? current.currentMileage
           : vehicleFormFromCatalog(row).currentMileage,
     }));
@@ -303,7 +313,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           {step === "welcome"
             ? "Three quick steps — pick your supported vehicle, driving profile, and import history — then your assistant workspace unlocks."
             : step === "car"
-              ? "Pick a verified vehicle from the catalog — check compatibility on vehicleos.app first if you're unsure."
+              ? "Select make, model, year, and trim — verified vehicles only. Check compatibility on vehicleos.app if you're unsure."
               : step === "driver"
                 ? "Driving style and garage city shape preemptive nudges. Annual miles fine-tunes Schedule dates."
                 : "Hand off CARFAX or portal PDFs so reminders start from your actual service history."}
@@ -334,33 +344,29 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         {step === "car" ? (
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField
-              label="Supported vehicle"
-              htmlFor="ob-vehicle"
-              hint={`${catalog.length || "…"} verified models in early access`}
+              label="Your vehicle"
+              htmlFor="ob-vehicle-make"
+              hint={`${catalog.length || "…"} verified configurations — pick make, model, year, and trim`}
               className="sm:col-span-2"
             >
-              <Select
-                id="ob-vehicle"
+              <VehicleYmmPicker
+                vehicles={catalog}
                 value={form.packId}
                 disabled={isCatalogLoading || catalog.length === 0}
-                onChange={(event) => selectVehicle(event.target.value)}
-              >
-                <option value="" disabled>
-                  {isCatalogLoading ? "Loading catalog…" : "Select your vehicle"}
-                </option>
-                {catalog.map((row) => (
-                  <option key={row.packId} value={row.packId}>
-                    {formatCatalogVehicleLabel(row)}
-                  </option>
-                ))}
-              </Select>
+                onSelect={selectVehicle}
+              />
             </FormField>
 
             {selectedVehicle ? (
-              <p className="sm:col-span-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
-                Verified OEM maintenance schedule loads automatically for{" "}
-                <span className="font-medium">{formatCatalogVehicleLabel(selectedVehicle)}</span>.
-              </p>
+              <div className="sm:col-span-2 space-y-1 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
+                <p>
+                  Verified OEM maintenance schedule loads automatically for{" "}
+                  <span className="font-medium">{formatCatalogVehicleLabel(selectedVehicle)}</span>.
+                </p>
+                {selectedVehicle.scheduleSourceLine ? (
+                  <p className="text-muted-foreground">{selectedVehicle.scheduleSourceLine}</p>
+                ) : null}
+              </div>
             ) : null}
 
             <FormField label="Current mileage" htmlFor="ob-mileage">

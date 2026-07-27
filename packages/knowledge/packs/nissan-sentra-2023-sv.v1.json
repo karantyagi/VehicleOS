@@ -1,0 +1,38 @@
+{
+  "packId": "nissan-sentra-2023-sv",
+  "version": 1,
+  "manualTitle": "2023 Nissan Sentra SV — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
+  "sourceManifestRef": "sources/manifest.json#nissan-sentra-2023-sv",
+  "vehicle": {
+    "make": "Nissan",
+    "model": "Sentra",
+    "year": 2023,
+    "trim": "SV",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "nissan.fixed.5000.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 5000,
+      "intervalMonths": 6,
+      "sourcePage": "P. 1 — engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 30000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    }
+  ]
+}

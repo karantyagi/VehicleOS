@@ -38,11 +38,17 @@ export function VehicleSupportCheck() {
   const [requestSuccess, setRequestSuccess] = useState<{ email: string } | null>(null);
 
   useEffect(() => {
-    void fetch("/api/catalog/vehicles")
+    void fetch("/api/catalog/vehicles?verifiedOnly=true&limit=1")
       .then((response) => (response.ok ? response.json() : null))
-      .then((body: { vehicles?: { supported?: boolean }[] } | null) => {
-        if (!body?.vehicles) return;
-        setVerifiedCount(body.vehicles.filter((row) => row.supported).length);
+      .then((body: { total?: number; vehicles?: { supported?: boolean }[] } | null) => {
+        if (!body) return;
+        if (typeof body.total === "number") {
+          setVerifiedCount(body.total);
+          return;
+        }
+        if (body.vehicles) {
+          setVerifiedCount(body.vehicles.filter((row) => row.supported).length);
+        }
       })
       .catch(() => undefined);
   }, []);
@@ -201,8 +207,8 @@ export function VehicleSupportCheck() {
           <>
             <strong>Not in catalog yet</strong>
             <p>
-              Tier 1 passenger packs are rolling out through late 2026. Request your trim below —
-              we&apos;ll prioritize from owner demand.
+              Tier 1 and Tier 2 passenger packs are rolling out through late 2026. Request your trim
+              below — we&apos;ll prioritize from owner demand.
             </p>
           </>
         ) : (

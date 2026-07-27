@@ -1,8 +1,19 @@
 import {
   loadSupportedVehicleCatalog,
+  loadTier2000SourceByPackId,
   resolvePackIdForVehicle,
+  resolveScheduleSourceLineForPack,
 } from "@vehicleos/knowledge";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
+
+let tier2000SourceByPackId: ReturnType<typeof loadTier2000SourceByPackId> | null = null;
+
+const getTier2000SourceByPackId = () => {
+  if (!tier2000SourceByPackId) {
+    tier2000SourceByPackId = loadTier2000SourceByPackId();
+  }
+  return tier2000SourceByPackId;
+};
 
 export type VehicleSupportQuery = {
   year?: string | number;
@@ -13,6 +24,60 @@ export type VehicleSupportQuery = {
 
 export type ListSupportedVehiclesOptions = {
   verifiedOnly?: boolean;
+  make?: string;
+  model?: string;
+  year?: number;
+  q?: string;
+  limit?: number;
+  offset?: number;
+};
+
+const normalizeSearch = (value: string): string => value.trim().toLowerCase();
+
+export const filterSupportedVehicleRows = <
+  T extends {
+    make: string;
+    model: string;
+    year: number;
+    trim: string;
+    powertrain?: string | null;
+    packId: string;
+    qaStatus: string;
+  },
+>(
+  rows: T[],
+  options: ListSupportedVehiclesOptions = {},
+): T[] => {
+  const make = options.make ? normalizeSearch(options.make) : "";
+  const model = options.model ? normalizeSearch(options.model) : "";
+  const year = options.year;
+  const q = options.q ? normalizeSearch(options.q) : "";
+
+  let filtered = rows.filter((row) => !options.verifiedOnly || row.qaStatus === "auto_verified");
+
+  if (make) filtered = filtered.filter((row) => normalizeSearch(row.make) === make);
+  if (model) filtered = filtered.filter((row) => normalizeSearch(row.model) === model);
+  if (year && Number.isFinite(year)) filtered = filtered.filter((row) => row.year === year);
+  if (q) {
+    filtered = filtered.filter((row) => {
+      const haystack = [
+        row.make,
+        row.model,
+        String(row.year),
+        row.trim,
+        row.powertrain ?? "",
+        row.packId,
+      ]
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(q);
+    });
+  }
+
+  const offset = Math.max(0, options.offset ?? 0);
+  const limit = options.limit && options.limit > 0 ? options.limit : undefined;
+  if (limit) return filtered.slice(offset, offset + limit);
+  return filtered.slice(offset);
 };
 
 export const assertVehicleCreateAllowed = (input: {
@@ -115,9 +180,8 @@ export const listSupportedVehicles = (
   options: ListSupportedVehiclesOptions = {},
 ): JsonResponse => {
   const catalog = loadSupportedVehicleCatalog();
-  const rows = catalog.vehicles.filter(
-    (row) => !options.verifiedOnly || row.qaStatus === "auto_verified",
-  );
+  const rows = filterSupportedVehicleRows(catalog.vehicles, options);
+  const registryByPackId = getTier2000SourceByPackId();
 
   return jsonResponse(200, {
     vehicles: rows.map((row) => ({
@@ -130,6 +194,16 @@ export const listSupportedVehicles = (
       supported: row.qaStatus === "auto_verified",
       qaStatus: row.qaStatus,
       supportTier: row.supportTier,
+      scheduleSourceLine: resolveScheduleSourceLineForPack(
+        row.packId,
+        catalog.vehicles,
+        registryByPackId,
+      ),
     })),
+    total: filterSupportedVehicleRows(catalog.vehicles, {
+      ...options,
+      limit: undefined,
+      offset: undefined,
+    }).length,
   });
 };

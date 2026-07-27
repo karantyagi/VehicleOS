@@ -1,0 +1,18 @@
+{
+  "packId": "mazda-cx-50-2023-preferred",
+  "version": 1,
+  "cases": [
+    {
+      "description": "CARFAX line maps to tire-rotation",
+      "carfaxLine": "Tires rotated",
+      "expectedCanonicalServiceId": "generic.tire_rotation",
+      "expectedEntryId": "tire-rotation"
+    },
+    {
+      "description": "CARFAX line maps to engine-oil",
+      "carfaxLine": "Oil and filter changed",
+      "expectedCanonicalServiceId": "mazda.fixed.7500.engine_oil",
+      "expectedEntryId": "engine-oil"
+    }
+  ]
+}

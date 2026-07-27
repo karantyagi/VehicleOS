@@ -38,9 +38,9 @@ describe("OEM schedule packs", () => {
     expect(phrases).toContain("Oil and filter changed");
   });
 
-  it("catalog lists Tier-1 plus dogfood packs", () => {
+  it("catalog lists Tier-1 plus Tier-2 packs", () => {
     const catalog = loadSupportedVehicleCatalog();
-    expect(catalog.vehicles.length).toBeGreaterThanOrEqual(50);
+    expect(catalog.vehicles.length).toBeGreaterThanOrEqual(2000);
     const verified = catalog.vehicles.filter((row) => row.qaStatus === "auto_verified");
     expect(verified).toEqual(
       expect.arrayContaining([

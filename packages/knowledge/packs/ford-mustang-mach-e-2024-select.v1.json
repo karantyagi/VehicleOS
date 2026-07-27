@@ -1,0 +1,48 @@
+{
+  "packId": "ford-mustang-mach-e-2024-select",
+  "version": 1,
+  "manualTitle": "2024 Ford Mustang Mach-E Select — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "ev_simplified",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
+  "sourceManifestRef": "sources/manifest.json#ford-mustang-mach-e-2024-select",
+  "vehicle": {
+    "make": "Ford",
+    "model": "Mustang Mach-E",
+    "year": 2024,
+    "trim": "Select",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "P. 1 — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "cabin-air-filter",
+      "canonicalServiceId": "ev.cabin_filter",
+      "serviceName": "Replace cabin air filter",
+      "intervalMiles": 15000,
+      "intervalMonths": 12,
+      "sourcePage": "EV maintenance schedule — Cabin air filter",
+      "ruleId": "knowledge.policy.cabin-filter.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "brake-fluid",
+      "canonicalServiceId": "generic.brake_fluid",
+      "serviceName": "Replace brake fluid",
+      "intervalMiles": null,
+      "intervalMonths": 36,
+      "sourcePage": "EV maintenance schedule — Brake fluid",
+      "ruleId": "knowledge.policy.brake-fluid.v1",
+      "confidence": 0.92
+    }
+  ]
+}

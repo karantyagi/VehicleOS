@@ -1,0 +1,38 @@
+{
+  "packId": "volvo-s90-2025-b6-plus",
+  "version": 1,
+  "manualTitle": "2025 Volvo S90 B6 Plus — Owner's Manual maintenance schedule (U.S.)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
+  "sourceManifestRef": "sources/manifest.json#volvo-s90-2025-b6-plus",
+  "vehicle": {
+    "make": "Volvo",
+    "model": "S90",
+    "year": 2025,
+    "trim": "B6 Plus",
+    "market": "US"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "volvo.fixed.10000.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 10000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — Engine oil",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "confidence": 0.92
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 7500,
+      "intervalMonths": 6,
+      "sourcePage": "Service schedule — Tire rotation",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.92
+    }
+  ]
+}
