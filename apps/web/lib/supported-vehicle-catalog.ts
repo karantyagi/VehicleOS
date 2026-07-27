@@ -66,7 +66,9 @@ export const filterCatalogVehicles = (
 };
 
 export const fetchVerifiedCatalogVehicles = async (apiBase = ""): Promise<CatalogVehicleRow[]> => {
-  const response = await fetch(`${apiBase}/api/catalog/vehicles?verifiedOnly=true`);
+  const response = await fetch(`${apiBase}/api/catalog/vehicles?verifiedOnly=true`, {
+    credentials: "include",
+  });
   if (!response.ok) {
     throw new Error("Could not load supported vehicle catalog.");
   }

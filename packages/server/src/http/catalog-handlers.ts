@@ -7,12 +7,20 @@ import {
 import { jsonResponse, type JsonResponse } from "./json-response.js";
 
 let tier2000SourceByPackId: ReturnType<typeof loadTier2000SourceByPackId> | null = null;
+let tier2000SourceLoadFailed = false;
 
-const getTier2000SourceByPackId = () => {
-  if (!tier2000SourceByPackId) {
+const getTier2000SourceByPackId = (): ReturnType<typeof loadTier2000SourceByPackId> => {
+  if (tier2000SourceLoadFailed) return new Map();
+  if (tier2000SourceByPackId) return tier2000SourceByPackId;
+
+  try {
     tier2000SourceByPackId = loadTier2000SourceByPackId();
+    return tier2000SourceByPackId;
+  } catch (error) {
+    tier2000SourceLoadFailed = true;
+    console.error("tier2000 registry load failed — scheduleSourceLine disabled", error);
+    return new Map();
   }
-  return tier2000SourceByPackId;
 };
 
 export type VehicleSupportQuery = {
@@ -206,4 +214,10 @@ export const listSupportedVehicles = (
       offset: undefined,
     }).length,
   });
+};
+
+/** Test-only — reset tier-2000 singleton between vitest cases. */
+export const __resetCatalogHandlerCachesForTests = (): void => {
+  tier2000SourceByPackId = null;
+  tier2000SourceLoadFailed = false;
 };

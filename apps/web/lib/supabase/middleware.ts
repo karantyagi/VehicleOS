@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isPublicAppRoute } from "../public-route-policy";
 import { getSupabaseAnonKey, getSupabaseUrl, isAuthEnabled } from "./env";
 
 export const updateSession = async (request: NextRequest): Promise<NextResponse> => {
@@ -35,11 +36,7 @@ export const updateSession = async (request: NextRequest): Promise<NextResponse>
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
-  const isPublic =
-    pathname === "/login" ||
-    pathname.startsWith("/auth/") ||
-    pathname === "/api/health" ||
-    pathname.startsWith("/design-preview");
+  const isPublic = isPublicAppRoute(pathname);
 
   if (
     !user &&

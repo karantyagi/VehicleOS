@@ -1,5 +1,23 @@
 import { describe, expect, it } from "vitest";
-import { assertVehicleCreateAllowed } from "../http/catalog-handlers.js";
+import { assertVehicleCreateAllowed, listSupportedVehicles } from "../http/catalog-handlers.js";
+
+describe("listSupportedVehicles", () => {
+  it("returns auto_verified vehicles without throwing", () => {
+    const result = listSupportedVehicles({ verifiedOnly: true, limit: 5 });
+
+    expect(result.status).toBe(200);
+    expect(result.body.total).toBeGreaterThan(0);
+    expect(result.body.vehicles?.length).toBeLessThanOrEqual(5);
+    expect(result.body.vehicles?.every((row) => row.supported)).toBe(true);
+  });
+
+  it("returns full verified catalog count for onboarding YMM picker", () => {
+    const result = listSupportedVehicles({ verifiedOnly: true, limit: 1 });
+
+    expect(result.status).toBe(200);
+    expect(result.body.total).toBeGreaterThanOrEqual(50);
+  });
+});
 
 describe("assertVehicleCreateAllowed", () => {
   it("allows auto_verified dogfood vehicle", () => {
