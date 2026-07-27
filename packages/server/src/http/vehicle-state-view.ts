@@ -2,6 +2,7 @@ import { getServiceAliasRegistry } from "../adapters/service-alias-registry.js";
 import type { CatalogDomainEvent, VehicleProjectionState } from "@vehicleos/domain";
 import {
   buildOwnerReminderViews,
+  buildOwnerServiceScheduleBoard,
   computeVerificationMaturity,
   enrichTimelineForDisplay,
   projectMaintenanceDeviations,
@@ -58,6 +59,11 @@ export const buildVehicleStateView = (
   });
 
   const today = new Date().toISOString().slice(0, 10);
+
+  const serviceScheduleBoard = buildOwnerServiceScheduleBoard({
+    ...scheduleProjectionBase,
+    today,
+  });
   const scheduleRowsForReminders = [...scheduleNear.rows, ...scheduleExtended.rows];
   const reminders = buildOwnerReminderViews({
     items: state.nowQueue,
@@ -95,6 +101,7 @@ export const buildVehicleStateView = (
         full: scheduleFull.horizonEnd,
       },
     },
+    serviceScheduleBoard,
     ownershipRenewals: projectOwnershipRenewals({
       ownershipRecords: state.ownershipRecords,
       today,

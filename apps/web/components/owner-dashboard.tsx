@@ -41,6 +41,7 @@ import { VerificationMaturityPanel } from "./verification-maturity-panel";
 import { draftLineItems, type MaintenanceRecordDraft } from "@/components/maintenance-record-fields";
 import type {
   MaintenanceScheduleView,
+  OwnerServiceScheduleBoard,
   OwnershipRecordEntry,
   OwnershipRenewalProjection,
   PipelinePhase,
@@ -98,6 +99,7 @@ export function OwnerDashboard() {
     full: [],
     effectiveMilesPerYear: 10_000,
   });
+  const [serviceScheduleBoard, setServiceScheduleBoard] = useState<OwnerServiceScheduleBoard | null>(null);
   const [verificationMaturity, setVerificationMaturity] = useState<VerificationMaturityView | null>(null);
   const [pipelinePhase, setPipelinePhase] = useState<PipelinePhase>("idle");
   const [ownerSetupComplete, setOwnerSetupComplete] = useState(false);
@@ -191,6 +193,7 @@ export function OwnerDashboard() {
         evidenceVault?: EvidenceVaultItem[];
         knowledgeSchedule?: { serviceName: string; intervalMiles?: number; manualTitle: string }[];
         maintenanceSchedule?: MaintenanceScheduleView;
+        serviceScheduleBoard?: OwnerServiceScheduleBoard | null;
         verificationMaturity?: VerificationMaturityView | null;
         currentMileage?: number;
       };
@@ -210,6 +213,7 @@ export function OwnerDashboard() {
           effectiveMilesPerYear: 10_000,
         },
       );
+      setServiceScheduleBoard(body.serviceScheduleBoard ?? null);
       setVerificationMaturity(body.verificationMaturity ?? null);
       if (body.currentMileage && body.currentMileage > nextVehicle.currentMileage) {
         setVehicle({ ...nextVehicle, currentMileage: body.currentMileage });
@@ -230,6 +234,7 @@ export function OwnerDashboard() {
     setEvidenceVault([]);
     setKnowledgeSchedule([]);
     setMaintenanceSchedule({ near: [], extended: [], full: [], effectiveMilesPerYear: 10_000 });
+    setServiceScheduleBoard(null);
     setVerificationMaturity(null);
     setForm(emptyReceiptForm);
     setUploadedReceipt(null);
@@ -672,6 +677,8 @@ export function OwnerDashboard() {
             scheduleNear={maintenanceSchedule.near}
             scheduleExtended={maintenanceSchedule.extended}
             scheduleFull={maintenanceSchedule.full}
+            serviceScheduleBoard={serviceScheduleBoard}
+            currentMileage={vehicle.currentMileage}
             effectiveMilesPerYear={maintenanceSchedule.effectiveMilesPerYear}
             hasKnowledgeSchedule={knowledgeSchedule.length > 0}
             activeTab={serviceHistoryTab}
@@ -711,6 +718,11 @@ export function OwnerDashboard() {
               setTimeline(body.timeline as TimelineEntry[]);
               if (body.maintenanceSchedule) {
                 setMaintenanceSchedule(body.maintenanceSchedule as MaintenanceScheduleView);
+              }
+              const importedBoard = (body as { serviceScheduleBoard?: OwnerServiceScheduleBoard })
+                .serviceScheduleBoard;
+              if (importedBoard) {
+                setServiceScheduleBoard(importedBoard);
               }
               const skipped = body.skippedCount ?? 0;
               if (body.importedCount === 0 && skipped > 0) {
