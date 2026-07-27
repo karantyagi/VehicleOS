@@ -2,14 +2,37 @@ import { afterAll, describe, expect, it } from "vitest";
 import { InMemoryEventStore } from "@vehicleos/domain";
 import { InMemoryVehicleRepository } from "@vehicleos/server";
 import { buildApp } from "./app.js";
-import { TEST_USER_ID } from "./auth-context.js";
 
 type TestApp = Awaited<ReturnType<typeof buildApp>>;
+
+type AuthClient = {
+  userId: string;
+  inject: TestApp["inject"];
+};
 
 type DogfoodVehicleOverrides = {
   vin?: string;
   currentMileage?: number;
 };
+
+let testUserCounter = 0;
+
+const nextTestUserId = (): string => {
+  testUserCounter += 1;
+  return `00000000-0000-4000-8000-${String(testUserCounter).padStart(12, "0")}`;
+};
+
+const createAuthClient = (app: TestApp, userId = nextTestUserId()): AuthClient => ({
+  userId,
+  inject: (options) =>
+    app.inject({
+      ...options,
+      headers: {
+        ...(options.headers ?? {}),
+        "x-user-id": userId,
+      },
+    }),
+});
 
 const dogfoodVehiclePayload = (overrides: DogfoodVehicleOverrides = {}) => ({
   vin: overrides.vin ?? "TEST-VIN-DOGFOOD",
@@ -20,8 +43,8 @@ const dogfoodVehiclePayload = (overrides: DogfoodVehicleOverrides = {}) => ({
   currentMileage: overrides.currentMileage ?? 58_819,
 });
 
-const createTestVehicle = async (app: TestApp, overrides: DogfoodVehicleOverrides = {}) => {
-  const createResponse = await app.inject({
+const createTestVehicle = async (client: AuthClient, overrides: DogfoodVehicleOverrides = {}) => {
+  const createResponse = await client.inject({
     method: "POST",
     url: "/api/vehicles",
     payload: dogfoodVehiclePayload(overrides),
@@ -66,10 +89,11 @@ describe("golden path API", () => {
 
   it("runs receipt → service.recorded → recommendation → task", async () => {
     const app = await appPromise;
+    const client = createAuthClient(app);
 
-    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN", currentMileage: 30_000 });
+    const { vehicle } = await createTestVehicle(client, { vin: "TEST-VIN", currentMileage: 30_000 });
 
-    const receiptResponse = await app.inject({
+    const receiptResponse = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/receipts`,
       payload: {
@@ -95,7 +119,7 @@ describe("golden path API", () => {
     const pendingTask = receiptBody.nowQueue.find((item) => item.status === "pending");
     expect(pendingTask).toBeDefined();
 
-    const decideResponse = await app.inject({
+    const decideResponse = await client.inject({
       method: "POST",
       url: `/api/tasks/${pendingTask!.taskId}/decide`,
       payload: { vehicleId: vehicle.id, decision: "approve" },
@@ -113,10 +137,11 @@ describe("golden path API", () => {
 
   it("creates a verification task when receipt mileage regresses", async () => {
     const app = await appPromise;
+    const client = createAuthClient(app);
 
-    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-2", currentMileage: 50_000 });
+    const { vehicle } = await createTestVehicle(client, { vin: "TEST-VIN-2", currentMileage: 50_000 });
 
-    const firstReceipt = await app.inject({
+    const firstReceipt = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/receipts`,
       payload: {
@@ -132,7 +157,7 @@ describe("golden path API", () => {
 
     expect(firstReceipt.statusCode).toBe(201);
 
-    const conflictReceipt = await app.inject({
+    const conflictReceipt = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/receipts`,
       payload: {
@@ -164,10 +189,11 @@ describe("golden path API", () => {
 
   it("analyzes a pasted dealer quote", async () => {
     const app = await appPromise;
+    const client = createAuthClient(app);
 
-    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-QUOTE", currentMileage: 40_000 });
+    const { vehicle } = await createTestVehicle(client, { vin: "TEST-VIN-QUOTE", currentMileage: 40_000 });
 
-    const quoteResponse = await app.inject({
+    const quoteResponse = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/quotes/analyze`,
       payload: {
@@ -184,7 +210,7 @@ Cabin air filter $59.00`,
     expect(body.analysis.lines.length).toBeGreaterThan(0);
     expect(body.analysis.summary.length).toBeGreaterThan(0);
 
-    const stateResponse = await app.inject({
+    const stateResponse = await client.inject({
       method: "GET",
       url: `/api/vehicles/${vehicle.id}/state`,
     });
@@ -195,10 +221,11 @@ Cabin air filter $59.00`,
 
   it("records evidence vault entries and serves access metadata", async () => {
     const app = await appPromise;
+    const client = createAuthClient(app);
 
-    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-VAULT", currentMileage: 55_000 });
+    const { vehicle } = await createTestVehicle(client, { vin: "TEST-VIN-VAULT", currentMileage: 55_000 });
 
-    const receiptResponse = await app.inject({
+    const receiptResponse = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/receipts`,
       payload: {
@@ -207,7 +234,7 @@ Cabin air filter $59.00`,
         mileage: 55_500,
         lineItems: ["Oil change"],
         total: "$49.00",
-        storageKey: `${TEST_USER_ID}/${vehicle.id}/receipt.pdf`,
+        storageKey: `${client.userId}/${vehicle.id}/receipt.pdf`,
         channel: "receipt_upload",
       },
     });
@@ -215,7 +242,7 @@ Cabin air filter $59.00`,
     expect(receiptResponse.statusCode).toBe(201);
     const receiptBody = receiptResponse.json() as { documentId: string };
 
-    const stateResponse = await app.inject({
+    const stateResponse = await client.inject({
       method: "GET",
       url: `/api/vehicles/${vehicle.id}/state`,
     });
@@ -233,7 +260,7 @@ Cabin air filter $59.00`,
     expect(stateBody.evidenceVault.some((entry) => entry.channel === "manual")).toBe(true);
     expect(stateBody.timeline[0]?.evidenceIds).toContain(receiptBody.documentId);
 
-    const accessResponse = await app.inject({
+    const accessResponse = await client.inject({
       method: "GET",
       url: `/api/vehicles/${vehicle.id}/evidence/${receiptBody.documentId}/url`,
     });
@@ -246,10 +273,11 @@ Cabin air filter $59.00`,
 
   it("exports a structured resale report with timeline and vault", async () => {
     const app = await appPromise;
+    const client = createAuthClient(app);
 
-    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-EXPORT", currentMileage: 72_000 });
+    const { vehicle } = await createTestVehicle(client, { vin: "TEST-VIN-EXPORT", currentMileage: 72_000 });
 
-    const receiptResponse = await app.inject({
+    const receiptResponse = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/receipts`,
       payload: {
@@ -258,14 +286,14 @@ Cabin air filter $59.00`,
         mileage: 72_500,
         lineItems: ["Oil change", "Tire rotation"],
         total: "$129.00",
-        storageKey: `${TEST_USER_ID}/${vehicle.id}/service.pdf`,
+        storageKey: `${client.userId}/${vehicle.id}/service.pdf`,
         channel: "receipt_upload",
       },
     });
 
     expect(receiptResponse.statusCode).toBe(201);
 
-    const jsonExport = await app.inject({
+    const jsonExport = await client.inject({
       method: "GET",
       url: `/api/vehicles/${vehicle.id}/export?format=json`,
     });
@@ -287,7 +315,7 @@ Cabin air filter $59.00`,
     expect(report.summary.serviceCount).toBe(1);
     expect(report.summary.evidenceCount).toBe(2);
 
-    const markdownExport = await app.inject({
+    const markdownExport = await client.inject({
       method: "GET",
       url: `/api/vehicles/${vehicle.id}/export?format=markdown`,
     });
@@ -300,15 +328,16 @@ Cabin air filter $59.00`,
 
   it("records a parsed voice note on the timeline and vault", async () => {
     const app = await appPromise;
+    const client = createAuthClient(app);
 
-    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-VOICE", currentMileage: 38_000 });
+    const { vehicle } = await createTestVehicle(client, { vin: "TEST-VIN-VOICE", currentMileage: 38_000 });
 
-    const voiceResponse = await app.inject({
+    const voiceResponse = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/voice`,
       payload: {
         transcript: "Changed oil at dealer, 38,500 miles, $89",
-        storageKey: `${TEST_USER_ID}/${vehicle.id}/voice-note.txt`,
+        storageKey: `${client.userId}/${vehicle.id}/voice-note.txt`,
       },
     });
 
@@ -324,7 +353,7 @@ Cabin air filter $59.00`,
     expect(voiceBody.timeline).toHaveLength(1);
     expect(voiceBody.timeline[0]?.shop).toBe("dealer");
 
-    const stateResponse = await app.inject({
+    const stateResponse = await client.inject({
       method: "GET",
       url: `/api/vehicles/${vehicle.id}/state`,
     });
@@ -340,10 +369,11 @@ Cabin air filter $59.00`,
 
   it("creates rules-driven seasonal prompts for the selected climate context", async () => {
     const app = await appPromise;
+    const client = createAuthClient(app);
 
-    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-SEASONAL", currentMileage: 72_000 });
+    const { vehicle } = await createTestVehicle(client, { vin: "TEST-VIN-SEASONAL", currentMileage: 72_000 });
 
-    const refreshResponse = await app.inject({
+    const refreshResponse = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/seasonal/refresh`,
       payload: { climateZone: "cold", referenceDate: "2026-01-15T12:00:00.000Z" },
@@ -362,7 +392,7 @@ Cabin air filter $59.00`,
       ),
     ).toBe(true);
 
-    const duplicateRefresh = await app.inject({
+    const duplicateRefresh = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/seasonal/refresh`,
       payload: { climateZone: "cold", referenceDate: "2026-01-15T12:00:00.000Z" },
@@ -374,10 +404,11 @@ Cabin air filter $59.00`,
 
   it("records OEM manual schedule into knowledge base and opens a due task", async () => {
     const app = await appPromise;
+    const client = createAuthClient(app);
 
-    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-MANUAL", currentMileage: 12_000 });
+    const { vehicle } = await createTestVehicle(client, { vin: "TEST-VIN-MANUAL", currentMileage: 12_000 });
 
-    const previewResponse = await app.inject({
+    const previewResponse = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/manuals/preview`,
       payload: {},
@@ -389,11 +420,11 @@ Cabin air filter $59.00`,
     };
     expect(previewBody.draft.entries.length).toBeGreaterThan(0);
 
-    const confirmResponse = await app.inject({
+    const confirmResponse = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/manuals/confirm`,
       payload: {
-        storageKey: `${TEST_USER_ID}/${vehicle.id}/oem-manual.pdf`,
+        storageKey: `${client.userId}/${vehicle.id}/oem-manual.pdf`,
         manualTitle: previewBody.draft.manualTitle,
         entries: previewBody.draft.entries,
       },
@@ -414,7 +445,7 @@ Cabin air filter $59.00`,
       ),
     ).toBe(true);
 
-    const stateResponse = await app.inject({
+    const stateResponse = await client.inject({
       method: "GET",
       url: `/api/vehicles/${vehicle.id}/state`,
     });
@@ -430,10 +461,11 @@ Cabin air filter $59.00`,
 
   it("records an owner note on the timeline with source metadata", async () => {
     const app = await appPromise;
+    const client = createAuthClient(app);
 
-    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-NOTE", currentMileage: 22_000 });
+    const { vehicle } = await createTestVehicle(client, { vin: "TEST-VIN-NOTE", currentMileage: 22_000 });
 
-    const noteResponse = await app.inject({
+    const noteResponse = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/notes`,
       payload: {
@@ -453,7 +485,7 @@ Cabin air filter $59.00`,
     expect(noteBody.timeline[0]?.source).toBe("owner_note");
     expect(noteBody.timeline[0]?.lineItems[0]).toContain("Skipped cabin filter");
 
-    const stateResponse = await app.inject({
+    const stateResponse = await client.inject({
       method: "GET",
       url: `/api/vehicles/${vehicle.id}/state`,
     });
@@ -467,10 +499,11 @@ Cabin air filter $59.00`,
 
   it("refreshes maintenance recommendations into Owner verification", async () => {
     const app = await appPromise;
+    const client = createAuthClient(app);
 
-    const { vehicle } = await createTestVehicle(app, { vin: "TEST-VIN-REFRESH", currentMileage: 21_000 });
+    const { vehicle } = await createTestVehicle(client, { vin: "TEST-VIN-REFRESH", currentMileage: 21_000 });
 
-    const receiptResponse = await app.inject({
+    const receiptResponse = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/receipts`,
       payload: {
@@ -495,14 +528,14 @@ Cabin air filter $59.00`,
     expect(knowledgeTasks.length).toBeGreaterThan(0);
 
     for (const task of knowledgeTasks) {
-      await app.inject({
+      await client.inject({
         method: "POST",
         url: `/api/tasks/${task.taskId}/decide`,
         payload: { vehicleId: vehicle.id, decision: "dismiss" },
       });
     }
 
-    const refreshResponse = await app.inject({
+    const refreshResponse = await client.inject({
       method: "POST",
       url: `/api/vehicles/${vehicle.id}/now/refresh`,
     });
