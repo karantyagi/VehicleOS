@@ -1,6 +1,6 @@
 import { foldEvents } from "@vehicleos/domain";
 import type { EventStore, PolicyEngine } from "@vehicleos/domain";
-import { recordKnowledgeSchedule } from "@vehicleos/domain";
+import { dedupeKnowledgeScheduleEntries, recordKnowledgeSchedule, VERIFIED_PACK_MIN_ENTRIES } from "@vehicleos/domain";
 import {
   loadOemSchedulePack,
   loadSupportedVehicleCatalog,
@@ -26,6 +26,7 @@ export type HydrateOemKnowledgePackResult = {
   packId?: string;
   entriesRecorded?: number;
   skippedReason?: "unsupported" | "not_auto_verified" | "already_hydrated";
+  upgradedFromStub?: boolean;
 };
 
 const loadVehicleEvents = async (eventStore: EventStore, vehicleId: string) => {
@@ -60,12 +61,16 @@ export const hydrateOemKnowledgePack = async (
 
   const events = await loadVehicleEvents(input.eventStore, input.vehicle.id);
   const state = foldEvents(input.vehicle.id, events);
-  if (state.knowledgeSchedule.length > 0) {
-    return { hydrated: false, packId, skippedReason: "already_hydrated" };
-  }
+  const effectiveSchedule = dedupeKnowledgeScheduleEntries(state.knowledgeSchedule);
 
   const pack = loadOemSchedulePack(packId);
   const entries = packToKnowledgeScheduleDraft(pack);
+
+  if (effectiveSchedule.length >= VERIFIED_PACK_MIN_ENTRIES) {
+    return { hydrated: false, packId, skippedReason: "already_hydrated" };
+  }
+
+  const upgradedFromStub = effectiveSchedule.length > 0;
 
   const result = await recordKnowledgeSchedule({
     eventStore: input.eventStore,
@@ -82,5 +87,6 @@ export const hydrateOemKnowledgePack = async (
     hydrated: true,
     packId,
     entriesRecorded: result.entriesRecorded,
+    upgradedFromStub,
   };
 };

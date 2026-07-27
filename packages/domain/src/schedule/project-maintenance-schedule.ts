@@ -32,7 +32,10 @@ export type ScheduleProjectionRow = {
   overlayLabel?: string | null;
 };
 
-export type ScheduleHorizonMode = "near" | "extended" | "full";
+export type ScheduleHorizonMode = "near" | "extended" | "full" | "complete";
+
+/** Minimum OEM rows for a non-stub owner schedule (full Maintenance Minder pack). */
+export const VERIFIED_PACK_MIN_ENTRIES = 8;
 
 export type ProjectMaintenanceScheduleInput = {
   knowledgeSchedule: KnowledgeScheduleEntry[];
@@ -93,12 +96,23 @@ export const resolveScheduleHorizonEnd = (input: {
   horizonMonths?: number;
 }): { horizonMode: ScheduleHorizonMode; horizonMonths: number; horizonEnd: string } => {
   const horizonMode = input.horizonMode ?? "near";
-  if (horizonMode === "full") {
-    const anchor = input.ownedSince ?? input.today;
+  if (horizonMode === "complete") {
     return {
       horizonMode,
       horizonMonths: FULL_OEM_LIFE_CAP_YEARS * 12,
-      horizonEnd: addYears(anchor, FULL_OEM_LIFE_CAP_YEARS),
+      horizonEnd: addYears(input.today, FULL_OEM_LIFE_CAP_YEARS),
+    };
+  }
+
+  if (horizonMode === "full") {
+    const ownedAnchor = input.ownedSince ?? input.today;
+    const forwardEnd = addYears(input.today, FULL_OEM_LIFE_CAP_YEARS);
+    const ownedEnd = addYears(ownedAnchor, FULL_OEM_LIFE_CAP_YEARS);
+    const horizonEnd = forwardEnd > ownedEnd ? forwardEnd : ownedEnd;
+    return {
+      horizonMode,
+      horizonMonths: FULL_OEM_LIFE_CAP_YEARS * 12,
+      horizonEnd,
     };
   }
 
@@ -175,6 +189,7 @@ const buildRow = (input: {
   dueSoonDays: number;
   ownerContextMemory?: OwnerContextMemory | null;
   serviceAliasRegistry?: ServiceAliasRegistry | null;
+  isVerifiedPack: boolean;
 }): ScheduleProjectionRow => {
   const matchOptions = {
     canonicalServiceId: input.entry.canonicalServiceId ?? null,
@@ -189,7 +204,8 @@ const buildRow = (input: {
     ownedSince: input.ownedSince,
   });
 
-  const baselineDate = performedDate ?? input.ownedSince ?? null;
+  const hasTimelineHistory = input.timeline.length > 0;
+  const baselineDate = performedDate ?? (hasTimelineHistory ? input.ownedSince : null) ?? null;
   const baselineMileage = performedMileage ?? 0;
   const resolvedInterval = resolveIntervalForEntry({
     entryId: input.entry.entryId,
@@ -205,16 +221,20 @@ const buildRow = (input: {
   let dueDateConfidence: ScheduleProjectionRow["dueDateConfidence"] = "needs_baseline";
   let needsBaseline = false;
 
-  if (intervalMonths !== null && baselineDate) {
+  if (!lastMatch && !hasTimelineHistory) {
+    needsBaseline = true;
+  } else if (intervalMonths !== null && baselineDate) {
     dueDate = addMonths(baselineDate, intervalMonths);
     dueDateConfidence = "oem_calendar";
-  } else if (intervalMonths !== null) {
+  } else if (intervalMonths !== null && !baselineDate) {
     needsBaseline = true;
-  } else if (intervalMiles !== null) {
+  } else if (intervalMiles !== null && baselineDate) {
     const milesRemaining = baselineMileage + intervalMiles - input.currentMileage;
     const daysUntil = (milesRemaining / input.effectiveMilesPerYear) * 365;
     dueDate = addDays(input.today, Math.round(daysUntil));
     dueDateConfidence = "mileage_converted";
+  } else if (intervalMiles !== null && !baselineDate) {
+    needsBaseline = true;
   }
 
   const status = resolveStatus({
@@ -260,7 +280,7 @@ const buildRow = (input: {
       ruleId: `knowledge.policy.${input.entry.entryId}.v1`,
     },
     dueDateConfidence,
-    isStubSchedule: true,
+    isStubSchedule: !input.isVerifiedPack,
     oemTiming,
     overdueWithoutHistory,
     usesOwnerOverlay: resolvedInterval.usesOwnerOverlay,
@@ -272,9 +292,11 @@ const isWithinHorizon = (input: {
   row: ScheduleProjectionRow;
   today: string;
   horizonEnd: string;
+  horizonMode: ScheduleHorizonMode;
 }): boolean => {
+  if (input.horizonMode === "complete") return true;
   if (input.row.status === "overdue" || input.row.status === "needs_baseline") return true;
-  if (!input.row.dueDate) return false;
+  if (!input.row.dueDate) return input.row.status !== "upcoming";
   return input.row.dueDate <= input.horizonEnd;
 };
 
@@ -310,6 +332,8 @@ export const projectMaintenanceSchedule = (
     horizonMonths: input.horizonMonths,
   });
 
+  const isVerifiedPack = input.knowledgeSchedule.length >= VERIFIED_PACK_MIN_ENTRIES;
+
   const rows = input.knowledgeSchedule
     .map((entry) =>
       buildRow({
@@ -322,9 +346,10 @@ export const projectMaintenanceSchedule = (
         dueSoonDays,
         ownerContextMemory: input.ownerContextMemory,
         serviceAliasRegistry: input.serviceAliasRegistry,
+        isVerifiedPack,
       }),
     )
-    .filter((row) => isWithinHorizon({ row, today, horizonEnd }));
+    .filter((row) => isWithinHorizon({ row, today, horizonEnd, horizonMode }));
 
   return {
     rows: sortRows(rows),

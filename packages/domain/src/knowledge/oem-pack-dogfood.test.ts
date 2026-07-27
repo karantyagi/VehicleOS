@@ -61,9 +61,9 @@ describe("OEM pack dogfood — 2021 TLX SH-AWD", () => {
     const scheduleRows = projectMaintenanceSchedule({
       knowledgeSchedule,
       timeline: [carfaxOilRow()],
-      currentMileage: 58_819,
-      today: "2026-07-25",
-      horizonMode: "extended",
+      currentMileage: 59_000,
+      today: "2026-07-27",
+      horizonMode: "complete",
     }).rows;
 
     const codeBRow = scheduleRows.find((row) => row.entryId === "code-b");

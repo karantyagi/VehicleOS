@@ -1,18 +1,12 @@
 {
   "packId": "acura-tlx-2021-technology",
-  "version": 1,
+  "version": 2,
   "cases": [
     {
       "description": "CARFAX line maps to code-b",
-      "carfaxLine": "Maintenance Minder B",
+      "carfaxLine": "Oil and filter changed",
       "expectedCanonicalServiceId": "acura.mm.b.oil_filter",
       "expectedEntryId": "code-b"
-    },
-    {
-      "description": "CARFAX line maps to code-a",
-      "carfaxLine": "Maintenance Minder A",
-      "expectedCanonicalServiceId": "acura.mm.a.engine_oil",
-      "expectedEntryId": "code-a"
     },
     {
       "description": "CARFAX line maps to mm-sub-1",
@@ -21,8 +15,38 @@
       "expectedEntryId": "mm-sub-1"
     },
     {
+      "description": "CARFAX line maps to mm-sub-2-engine-air",
+      "carfaxLine": "Air filter replaced",
+      "expectedCanonicalServiceId": "acura.mm.2.engine_air_filter",
+      "expectedEntryId": "mm-sub-2-engine-air"
+    },
+    {
+      "description": "CARFAX line maps to mm-sub-2-cabin",
+      "carfaxLine": "Cabin air filter replaced/cleaned",
+      "expectedCanonicalServiceId": "acura.mm.2.cabin_filter",
+      "expectedEntryId": "mm-sub-2-cabin"
+    },
+    {
+      "description": "CARFAX line maps to mm-sub-3",
+      "carfaxLine": "Transmission fluid changed",
+      "expectedCanonicalServiceId": "acura.mm.3.transmission_transfer",
+      "expectedEntryId": "mm-sub-3"
+    },
+    {
+      "description": "CARFAX line maps to mm-sub-5",
+      "carfaxLine": "Antifreeze/coolant flushed/changed",
+      "expectedCanonicalServiceId": "acura.mm.5.coolant",
+      "expectedEntryId": "mm-sub-5"
+    },
+    {
+      "description": "CARFAX line maps to mm-sub-6",
+      "carfaxLine": "Rear differential fluid flushed/changed",
+      "expectedCanonicalServiceId": "acura.mm.6.rear_differential",
+      "expectedEntryId": "mm-sub-6"
+    },
+    {
       "description": "CARFAX line maps to mm-sub-7",
-      "carfaxLine": "Brake fluid",
+      "carfaxLine": "Brake fluid flushed/changed",
       "expectedCanonicalServiceId": "generic.brake_fluid",
       "expectedEntryId": "mm-sub-7"
     }

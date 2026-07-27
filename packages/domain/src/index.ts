@@ -157,6 +157,7 @@ export {
   DEFAULT_DUE_SOON_DAYS,
   EXTENDED_SCHEDULE_HORIZON_MONTHS,
   FULL_OEM_LIFE_CAP_YEARS,
+  VERIFIED_PACK_MIN_ENTRIES,
   resolveScheduleHorizonEnd,
   type ProjectMaintenanceScheduleInput,
   type ProjectMaintenanceScheduleResult,
@@ -164,6 +165,14 @@ export {
   type ScheduleProjectionRow,
   type ScheduleProjectionStatus,
 } from "./schedule/project-maintenance-schedule.js";
+export {
+  buildOwnerServiceScheduleBoard,
+  type BuildOwnerServiceScheduleBoardInput,
+  type OwnerServiceHistoryEvent,
+  type OwnerServiceScheduleBoard,
+  type OwnerServiceScheduleRow,
+  type OwnerServiceVerdict,
+} from "./schedule/build-owner-service-schedule-board.js";
 export {
   computeOemServiceTiming,
   DEFAULT_OEM_TIMING_TOLERANCE_DAYS,
@@ -219,6 +228,7 @@ export {
   type ServiceMatchOptions,
 } from "./knowledge/match-service-name.js";
 export { enrichKnowledgeScheduleCanonicalIds } from "./knowledge/enrich-knowledge-schedule-canonical-ids.js";
+export { dedupeKnowledgeScheduleEntries } from "./knowledge/dedupe-knowledge-schedule.js";
 export {
   compileServiceAliasRegistry,
   lineMatchesCanonicalService,

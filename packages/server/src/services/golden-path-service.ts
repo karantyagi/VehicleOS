@@ -6,6 +6,7 @@ import {
   StubPolicyEngine,
   confirmServiceWithConflictCheck,
   decideTask,
+  dedupeKnowledgeScheduleEntries,
   ensureDeviationVerificationPrompts,
   ensureIntervalVerificationPrompts,
   ensureStaleOdometerPrompt,
@@ -14,6 +15,7 @@ import {
   recordVehicleOsImport,
   recordVehicleOsRmvImport,
   refreshMaintenanceRecommendation,
+  VERIFIED_PACK_MIN_ENTRIES,
   type EventStore,
   type ExtractedServiceFields,
   type IngestChannel,
@@ -72,9 +74,8 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
         events,
         state: {
           ...folded,
-          knowledgeSchedule: enrichKnowledgeScheduleForVehicle(
-            folded.knowledgeSchedule,
-            options?.packProfile,
+          knowledgeSchedule: dedupeKnowledgeScheduleEntries(
+            enrichKnowledgeScheduleForVehicle(folded.knowledgeSchedule, options?.packProfile),
           ),
         },
       };
@@ -89,6 +90,28 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
     }
 
     let { events, state } = await loadState();
+
+    if (
+      options?.packProfile &&
+      state.knowledgeSchedule.length < VERIFIED_PACK_MIN_ENTRIES
+    ) {
+      const hydrateResult = await hydrateOemKnowledgePack({
+        eventStore,
+        policyEngine,
+        vehicle: {
+          id: vehicleId,
+          year: options.packProfile.year,
+          make: options.packProfile.make,
+          model: options.packProfile.model,
+          trim: options.packProfile.trim ?? "",
+          currentMileage: state.currentMileage,
+        },
+      });
+
+      if (hydrateResult.hydrated) {
+        ({ events, state } = await loadState());
+      }
+    }
 
     await ensureDeviationVerificationPrompts({
       eventStore,

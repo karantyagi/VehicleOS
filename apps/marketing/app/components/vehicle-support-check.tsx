@@ -396,7 +396,7 @@ export function VehicleSupportCheck() {
                 <strong>Yes — you&apos;re good to go</strong>
                 <p>Sign in and set up your car. Your maintenance schedule is ready.</p>
                 <div className="support-result-actions">
-                  <a className="btn btn-primary support-result-cta" href={siteConfig.appUrl}>
+                  <a className="btn btn-primary support-result-cta" href={siteConfig.appUrl} target="_blank" rel="noopener noreferrer">
                     Get early access
                   </a>
                 </div>
