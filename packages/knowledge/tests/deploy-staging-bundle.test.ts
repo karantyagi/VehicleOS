@@ -47,6 +47,6 @@ describe("Vercel knowledge-data staging bundle", () => {
 
     const pack = loadOemSchedulePack("acura-tlx-2021-technology");
     expect(pack.packId).toBe("acura-tlx-2021-technology");
-    expect(pack.entries.length).toBeGreaterThan(0);
+    expect(pack.entries.length).toBeGreaterThanOrEqual(10);
   });
 });

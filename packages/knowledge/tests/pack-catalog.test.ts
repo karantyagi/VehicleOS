@@ -31,6 +31,16 @@ describe("OEM schedule packs", () => {
     expect(packId).toBe("acura-tlx-2021-sh-awd");
   });
 
+  it("resolves compound Technology SH-AWD trim to SH-AWD pack", () => {
+    const packId = resolvePackIdForVehicle({
+      make: "Acura",
+      model: "TLX",
+      year: 2021,
+      trim: "Technology SH-AWD",
+    });
+    expect(packId).toBe("acura-tlx-2021-sh-awd");
+  });
+
   it("loads alias bundles", () => {
     const bundles = loadServiceAliasBundles();
     expect(bundles.length).toBeGreaterThan(0);
