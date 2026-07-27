@@ -39,11 +39,13 @@ describe("formatVehicleRequestOwnerConfirmationEmail", () => {
     expect(result.subject).toBe("Working on your request — 2025 Acura Integra A-Spec");
     expect(result.text).toContain("Got it — we're prioritizing your car.");
     expect(result.text).toContain("You asked — we're on it.");
-    expect(result.text).toContain("We'll email abc@gmail.com when VehicleOS is ready for your car.");
+    expect(result.text).toContain(
+      "We'll email you when VehicleOS is ready with your car's official OEM maintenance schedule.",
+    );
     expect(result.text).not.toContain("Request ID");
     expect(result.html).toContain("Got it — we're prioritizing your car.");
     expect(result.html).toContain("You asked — we're on it.");
-    expect(result.html).toContain("when VehicleOS is ready for your car.");
+    expect(result.html).toContain("when VehicleOS is ready with your car's official OEM maintenance schedule.");
     expect(result.html).not.toContain("Open VehicleOS");
   });
 });
