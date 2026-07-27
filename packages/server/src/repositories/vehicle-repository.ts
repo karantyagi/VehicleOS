@@ -179,7 +179,7 @@ export class VehicleRepository {
       await client.query(
         `delete from domain_events
          where aggregate_id = $1::uuid
-            or payload_json->>'vehicleId' = $1`,
+            or payload_json->>'vehicleId' = $1::text`,
         [vehicleId],
       );
       await client.query(`delete from vehicles where id = $1 and user_id = $2`, [vehicleId, userId]);
