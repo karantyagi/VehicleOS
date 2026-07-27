@@ -403,12 +403,54 @@ export function OwnerDashboard() {
     if (!vehicle) return;
     const lineItems = draftLineItems(draft);
     if (lineItems.length === 0) {
-      feedback("Add at least one line item.");
+      feedback("Add at least one line item or decision note.");
+      return;
+    }
+
+    const mileage = Number(draft.mileage);
+    if (!Number.isFinite(mileage)) {
+      feedback("Enter a valid mileage.");
       return;
     }
 
     setIsBusy(true);
     try {
+      const useVoice = Boolean(draft.voiceStorageKey && draft.voiceTranscript.trim());
+      const useReceiptEvidence = Boolean(draft.evidenceStorageKey);
+
+      if (useVoice) {
+        const response = await fetch(`${apiBase}/api/vehicles/${vehicle.id}/voice`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            transcript: draft.voiceTranscript.trim(),
+            storageKey: draft.voiceStorageKey,
+            shop: draft.shop.trim() || undefined,
+            shopLocation: draft.shopLocation.trim() || undefined,
+            serviceDate: draft.serviceDate,
+            mileage,
+            lineItems,
+            total: draft.total.trim() || undefined,
+          }),
+        });
+        const body = (await response.json()) as {
+          timeline?: TimelineEntry[];
+          currentMileage?: number;
+          error?: string;
+          conflict?: boolean;
+        };
+        if (!response.ok && response.status !== 409) {
+          throw new Error(body.error ?? "Could not save voice maintenance record.");
+        }
+        if (body.timeline) setTimeline(body.timeline);
+        if (typeof body.currentMileage === "number") {
+          setVehicle((current) => (current ? { ...current, currentMileage: body.currentMileage! } : current));
+        }
+        feedback(body.conflict ? "Saved — assistant flagged a conflict for review." : "Maintenance record saved.");
+        void loadVehicleState(vehicle);
+        return;
+      }
+
       const response = await fetch(`${apiBase}/api/vehicles/${vehicle.id}/notes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -416,10 +458,14 @@ export function OwnerDashboard() {
           shop: draft.shop.trim() || undefined,
           shopLocation: draft.shopLocation.trim() || undefined,
           serviceDate: draft.serviceDate,
-          mileage: Number(draft.mileage),
+          mileage,
           lineItems,
           total: draft.total.trim() || undefined,
-          source: "owner_note",
+          note: draft.ownerNote.trim() || undefined,
+          voiceTranscript: draft.voiceTranscript.trim() || undefined,
+          source: useReceiptEvidence ? "receipt" : "owner_note",
+          storageKey: draft.evidenceStorageKey,
+          channel: useReceiptEvidence ? "receipt_upload" : "manual",
         }),
       });
       const body = (await response.json()) as {
@@ -668,7 +714,7 @@ export function OwnerDashboard() {
         <PanelCard
           hideHeader={!isDeveloper}
           title="Maintenance"
-          description="Forward OEM schedule, past maintenance, and RMV/DMV ownership records."
+          description="Forward OEM schedule and full vehicle history — maintenance, RMV, and registration."
         >
           <MaintenanceTimelineSection
             timeline={timeline}
@@ -686,6 +732,9 @@ export function OwnerDashboard() {
             ownerSimple={!isDeveloper}
             disabled={isBusy}
             defaultMileage={vehicle.currentMileage}
+            vehicleId={vehicle.id}
+            apiBase={apiBase}
+            onCaptureError={(message) => feedback(message)}
             onOpenEvidence={openEvidence}
             onUpdateService={updateServiceRecord}
             onAddService={addMaintenanceRecord}
@@ -744,18 +793,18 @@ export function OwnerDashboard() {
               const skipped = body.skippedCount ?? 0;
               if (body.importedCount === 0 && skipped > 0) {
                 feedback(`All ${skipped} ownership record(s) already on file — nothing new imported.`);
-                setServiceHistoryTab("ownership");
+                setServiceHistoryTab("history");
                 setActiveSection("timeline");
               } else if (skipped > 0) {
-                setServiceHistoryTab("ownership");
+                setServiceHistoryTab("history");
                 setActiveSection("timeline");
                 feedback(
-                  `${body.importedCount} new ownership record(s) imported (${skipped} duplicate(s) skipped).`,
+                  `${body.importedCount} new ownership record(s) imported (${skipped} duplicate(s) skipped). Check History.`,
                 );
               } else if (body.importedCount > 0) {
-                setServiceHistoryTab("ownership");
+                setServiceHistoryTab("history");
                 setActiveSection("timeline");
-                feedback(`${body.importedCount} ownership record(s) imported — see Ownership tab.`);
+                feedback(`${body.importedCount} ownership record(s) imported — see History tab.`);
               }
               if (body.profilePatch?.vin) {
                 feedback(`VIN ${body.profilePatch.vin} saved from your RMV PDF.`);

@@ -150,4 +150,4 @@ export type OwnershipRenewalProjection = {
   description: string;
 };
 
-export type ServiceHistoryTab = "history" | "schedule" | "ownership";
+export type ServiceHistoryTab = "history" | "schedule";
