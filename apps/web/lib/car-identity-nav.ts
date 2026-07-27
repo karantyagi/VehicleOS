@@ -4,7 +4,7 @@ export const CAR_IDENTITY_GROUP_LABEL = "Owner";
 export const CAR_IDENTITY_NAV = [
   {
     id: "car" as const,
-    label: "Vehicle record",
+    label: "Vehicles",
     href: "/garage?tab=car",
     description: "Year, make, model, mileage, VIN",
   },

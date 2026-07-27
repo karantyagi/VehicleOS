@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { ExtractionStatusBanner } from "@/components/extraction-status-banner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import type { ImportTrustTier, ImportVerifyGuidance, TierImportSummary } from "@vehicleos/domain";
 import { isoDateToLocalDate } from "@/lib/date-input";
@@ -106,13 +107,12 @@ function ReviewCard({
       )}
     >
       <div className="flex items-start gap-3 p-3">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={row.included}
           disabled={disabled || isImporting || row.tier === "block"}
           aria-label={`Include service on ${row.serviceDate}`}
-          className="mt-1 h-4 w-4 rounded border-border"
-          onChange={(event) => onRowChange(row.id, { included: event.target.checked })}
+          className="mt-1"
+          onCheckedChange={(checked) => onRowChange(row.id, { included: checked === true })}
         />
         <div className="min-w-0 flex-1 space-y-1">
           <div className="flex flex-wrap items-center gap-2">

@@ -1,3 +1,5 @@
+import { searchCatalogVehicles } from "./catalog-vehicle-search";
+
 export type CatalogVehicleRow = {
   packId: string;
   make: string;
@@ -41,28 +43,21 @@ export const filterCatalogVehicles = (
   rows: CatalogVehicleRow[],
   filter: CatalogVehicleFilter = {},
 ): CatalogVehicleRow[] => {
-  const q = filter.q ? normalize(filter.q) : "";
   const make = filter.make ? normalize(filter.make) : "";
   const model = filter.model ? normalize(filter.model) : "";
   const year = filter.year;
 
-  return sortCatalogVehicles(rows).filter((row) => {
+  const filtered = rows.filter((row) => {
     if (make && normalize(row.make) !== make) return false;
     if (model && normalize(row.model) !== model) return false;
     if (year && row.year !== year) return false;
-    if (!q) return true;
-    const haystack = [
-      row.make,
-      row.model,
-      String(row.year),
-      row.trim,
-      row.powertrain ?? "",
-      row.packId,
-    ]
-      .join(" ")
-      .toLowerCase();
-    return haystack.includes(q);
+    return true;
   });
+
+  const q = filter.q?.trim() ?? "";
+  if (!q) return sortCatalogVehicles(filtered);
+
+  return searchCatalogVehicles(filtered, q, { limit: filtered.length });
 };
 
 export const fetchVerifiedCatalogVehicles = async (apiBase = ""): Promise<CatalogVehicleRow[]> => {

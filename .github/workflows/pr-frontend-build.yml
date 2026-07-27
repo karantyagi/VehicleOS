@@ -59,6 +59,8 @@ jobs:
       - run: pnpm --filter @vehicleos/api test
       - run: pnpm --filter @vehicleos/worker test
       - run: pnpm --filter @vehicleos/carfax-connect-cli test
+      - run: pnpm --filter @vehicleos/web test
+      - run: pnpm --filter @vehicleos/marketing test
 
   build-marketing:
     needs: changes

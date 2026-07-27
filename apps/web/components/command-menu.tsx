@@ -1,6 +1,5 @@
 "use client";
 
-import { Command } from "cmdk";
 import {
   CarFront,
   Archive,
@@ -24,8 +23,16 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { APP_SECTIONS, SECTION_SHORTCUTS, useAppUiStore } from "@/lib/store/app-ui-store";
 import { isSectionVisibleInMode } from "@/lib/console-mode";
@@ -73,12 +80,12 @@ export function CommandMenu() {
           <DialogTitle>Command menu</DialogTitle>
         </DialogHeader>
         <Command className="rounded-xl [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.12em] [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-1.5 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-2 [&_[cmdk-item]_svg]:h-4 [&_[cmdk-item]_svg]:w-4">
-          <div className="flex items-center gap-2 border-b border-border px-3">
-            <Search className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
-            <Command.Input
+          <div className="flex items-center gap-2 border-b border-border pr-3">
+            <CommandInput
               placeholder="Search…"
               autoFocus
-              className="flex h-11 min-w-0 flex-1 bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-0"
+              wrapperClassName="flex-1 border-0 px-3"
+              className="h-11 py-3 focus-visible:ring-0"
             />
             <Button
               type="button"
@@ -91,90 +98,90 @@ export function CommandMenu() {
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <Command.List className="max-h-[min(60vh,280px)] overflow-y-auto p-1.5">
-            <Command.Empty className="py-8 text-center text-sm text-muted-foreground">No results</Command.Empty>
-            <Command.Group heading="Go">
+          <CommandList className="max-h-[min(60vh,280px)] overflow-y-auto p-1.5">
+            <CommandEmpty className="py-8 text-center text-sm text-muted-foreground">No results</CommandEmpty>
+            <CommandGroup heading="Go">
               {visibleSections.map((section) => {
                 const Icon = SECTION_ICONS[section.id];
                 return (
-                  <Command.Item
+                  <CommandItem
                     key={section.id}
                     value={`${section.label} ${section.id} ${section.description}`}
                     onSelect={() => {
                       goToSection(section.id);
                       setCommandOpen(false);
                     }}
-                    className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
+                    className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm"
                   >
                     <Icon className="text-muted-foreground" aria-hidden />
                     <span className="font-medium">{section.label}</span>
-                  </Command.Item>
+                  </CommandItem>
                 );
               })}
-            </Command.Group>
-            <Command.Group heading="Actions">
-              <Command.Item
+            </CommandGroup>
+            <CommandGroup heading="Actions">
+              <CommandItem
                 value="Owner verification vehicle record driving profile"
                 onSelect={() => {
                   setCommandOpen(false);
                   router.push("/garage?tab=car");
                 }}
-                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
+                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm"
               >
                 <CarFront className="text-muted-foreground" aria-hidden />
                 <span className="font-medium">Owner</span>
-              </Command.Item>
-              <Command.Item
+              </CommandItem>
+              <CommandItem
                 value="Account login identity"
                 onSelect={() => {
                   setCommandOpen(false);
                   router.push("/settings");
                 }}
-                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
+                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm"
               >
                 <Settings className="text-muted-foreground" aria-hidden />
                 <span className="font-medium">Account</span>
-              </Command.Item>
-              <Command.Item
+              </CommandItem>
+              <CommandItem
                 value="Light"
                 onSelect={() => {
                   setTheme("light");
                   setCommandOpen(false);
                 }}
-                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
+                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm"
               >
                 <Sun className="text-muted-foreground" aria-hidden />
                 <span className="font-medium">Light</span>
-              </Command.Item>
-              <Command.Item
+              </CommandItem>
+              <CommandItem
                 value="Dark"
                 onSelect={() => {
                   setTheme("dark");
                   setCommandOpen(false);
                 }}
-                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
+                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm"
               >
                 <Moon className="text-muted-foreground" aria-hidden />
                 <span className="font-medium">Dark</span>
-              </Command.Item>
-              <Command.Item
+              </CommandItem>
+              <CommandItem
                 value="System appearance"
                 onSelect={() => {
                   setTheme("system");
                   setCommandOpen(false);
                 }}
-                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
+                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm"
               >
                 <Monitor className="text-muted-foreground" aria-hidden />
                 <span className="font-medium">System</span>
-              </Command.Item>
-              <Command.Item
+              </CommandItem>
+              <CommandItem
                 value="Toggle owner developer view mode"
                 onSelect={() => {
                   setConsoleMode(consoleMode === "developer" ? "owner" : "developer");
                   setCommandOpen(false);
                 }}
-                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
+                className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm"
               >
                 {consoleMode === "developer" ? (
                   <Eye className="text-muted-foreground" aria-hidden />
@@ -184,22 +191,22 @@ export function CommandMenu() {
                 <span className="font-medium">
                   {consoleMode === "developer" ? "Switch to Owner view" : "Switch to Developer view"}
                 </span>
-              </Command.Item>
+              </CommandItem>
               {consoleMode === "developer" ? (
-                <Command.Item
+                <CommandItem
                   value="Toggle density compact comfortable"
                   onSelect={() => {
                     toggleDensity();
                     setCommandOpen(false);
                   }}
-                  className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm aria-selected:bg-muted"
+                  className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm"
                 >
                   <Rows3 className="text-muted-foreground" aria-hidden />
                   <span className="font-medium">Toggle density</span>
-                </Command.Item>
+                </CommandItem>
               ) : null}
-            </Command.Group>
-          </Command.List>
+            </CommandGroup>
+          </CommandList>
           <div className="border-t border-border px-3 py-2 text-[10px] leading-relaxed text-muted-foreground">
             <span className="mr-2">
               <kbd className="rounded border border-border px-1 font-mono">⌘K</kbd>

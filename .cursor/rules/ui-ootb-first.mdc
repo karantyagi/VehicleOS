@@ -1,0 +1,46 @@
+---
+description: Prefer OOTB UI/UX libraries and shadcn components before building custom widgets
+globs: apps/**/**.{tsx,jsx}
+alwaysApply: false
+---
+
+# UI — out-of-the-box first
+
+Default strategy for any UX/UI work: **use existing, battle-tested components**. Custom UI increases a11y, keyboard, and cross-browser testing load. Build from scratch only when no suitable free library exists.
+
+## Before writing UI
+
+1. Check `apps/web/components/ui/` or `apps/marketing/components/ui/` (shadcn/Radix wrappers).
+2. Check installed deps: Radix, cmdk, match-sorter, sonner, react-day-picker, lucide-react.
+3. Search [shadcn/ui](https://ui.shadcn.com) for the pattern (Combobox, Select, Command, etc.).
+4. Prefer adding a shadcn component via its standard Radix wrapper over hand-rolling HTML.
+
+## Use these (already in stack)
+
+| Need | Use |
+|------|-----|
+| Buttons, cards, inputs | `@/components/ui/*` |
+| Dialogs, popovers, dropdowns | Radix via `@/components/ui/dialog`, `popover`, `dropdown-menu` |
+| Select / combobox | `@/components/ui/select`, `command` + `popover` |
+| Search / filter lists | `match-sorter` + cmdk `shouldFilter={false}` |
+| Checkboxes, radios | `@/components/ui/checkbox`, `radio-group` |
+| Dates | `date-field` → `calendar` (react-day-picker) |
+| Toasts | `sonner` via `@/components/ui/sonner` |
+| Icons | `lucide-react` |
+| Client state | `zustand` (not custom event buses) |
+
+## Do not
+
+- Raw `<select>`, `<input type="checkbox">`, `<input type="radio">` when Radix/shadcn equivalents exist.
+- Import `cmdk` directly — use `@/components/ui/command`.
+- Custom fuzzy search / Levenshtein — use `match-sorter` or cmdk filtering.
+- Custom modal/focus-trap/dropdown logic — use Radix primitives.
+
+## Custom UI is OK for
+
+- Product-specific layouts (timelines, wizards, dashboards).
+- Domain components that **compose** OOTB primitives (`vehicle-ymm-picker`, `onboarding-wizard`).
+
+## When no OOTB fit exists
+
+Document in the PR why (e.g. "no Radix equivalent for X") and add focused tests for the custom behavior.

@@ -3,7 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { FormActions, FormField } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export type ClimateZone = "cold" | "moderate" | "hot";
 
@@ -72,16 +78,20 @@ export function SeasonalPromptsPanel({
 
       <FormField label="Driving context" htmlFor="climate-zone">
         <Select
-          id="climate-zone"
           value={climateZone}
           disabled={disabled || isRefreshing}
-          onChange={(event) => setClimateZone(event.target.value as ClimateZone)}
+          onValueChange={(value) => setClimateZone(value as ClimateZone)}
         >
-          {CLIMATE_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
+          <SelectTrigger id="climate-zone">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {CLIMATE_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
         </Select>
       </FormField>
 

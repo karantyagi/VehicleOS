@@ -126,7 +126,7 @@ export function VehicleSettingsPanel({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Vehicle record</CardTitle>
+          <CardTitle>Vehicles</CardTitle>
           <CardDescription>Loading…</CardDescription>
         </CardHeader>
       </Card>
@@ -137,7 +137,7 @@ export function VehicleSettingsPanel({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Vehicle record</CardTitle>
+          <CardTitle>Vehicles</CardTitle>
           <CardDescription>No vehicle on file — complete onboarding from the assistant workspace.</CardDescription>
         </CardHeader>
       </Card>
@@ -149,11 +149,11 @@ export function VehicleSettingsPanel({
       <CardHeader>
         {!minimal ? (
           <>
-            <CardTitle>Vehicle record</CardTitle>
+            <CardTitle>Vehicles</CardTitle>
             <CardDescription>Update mileage or details when your situation changes.</CardDescription>
           </>
         ) : (
-          <CardTitle className="sr-only">Vehicle record</CardTitle>
+          <CardTitle className="sr-only">Vehicles</CardTitle>
         )}
       </CardHeader>
       <CardContent className="space-y-4">
