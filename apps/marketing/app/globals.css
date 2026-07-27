@@ -1400,7 +1400,8 @@ a {
   color: var(--ink-tertiary);
 }
 
-.support-field input {
+.support-field input,
+.support-field select {
   padding: 10px 12px;
   border-radius: 8px;
   border: 1px solid var(--panel-edge);
@@ -1410,9 +1411,30 @@ a {
   font-family: var(--font-sans);
 }
 
-.support-field input:focus {
+.support-field select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a1a1aa' d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.support-field input:focus,
+.support-field select:focus {
   outline: 2px solid var(--owners-accent);
   outline-offset: 1px;
+}
+
+.support-field select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.support-check-error {
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+  color: #f87171;
 }
 
 .support-result {
@@ -1428,6 +1450,11 @@ a {
   color: var(--ink-secondary);
   font-size: 0.875rem;
   line-height: 1.55;
+}
+
+.support-result-source {
+  color: var(--ink-tertiary) !important;
+  font-size: 0.8125rem !important;
 }
 
 .support-result-yes {
@@ -1459,6 +1486,13 @@ a {
   border-radius: 10px;
   border: 1px solid rgba(251, 191, 36, 0.25);
   background: rgba(255, 255, 255, 0.02);
+}
+
+.support-request-inline {
+  margin-top: 14px;
+  padding: 16px;
+  border-color: rgba(251, 191, 36, 0.2);
+  background: rgba(0, 0, 0, 0.18);
 }
 
 .support-request-success {
