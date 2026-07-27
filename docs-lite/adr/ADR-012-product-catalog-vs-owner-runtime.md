@@ -54,17 +54,17 @@ Owner-facing intelligence: **Reminders · Import history · Verification · Memo
 
 ---
 
-## Implementation status (2026-07-25)
+## Implementation status (2026-07-27)
 
 | Item | Status |
 |------|--------|
-| `packages/knowledge/` packs + catalog JSON | ✅ |
+| `packages/knowledge/` packs + catalog JSON | ✅ **2,013** packs · **1,190** `auto_verified` |
 | `hydrateOemKnowledgePack` on vehicle create | ✅ |
 | `assertVehicleCreateAllowed` (`auto_verified` only) | ✅ |
 | Marketing `#supported` + onboarding catalog | ✅ |
 | Owner manual upload removed | ✅ (dev Context panel retained) |
-| Tier-1 QA — 50 packs `auto_verified` | ⬜ **1/50** |
-| Runtime alias resolver (replace regex-only path) | ⬜ Partial |
+| Tier-2000 catalog QA | 🟡 **1,190 / 2,013** `auto_verified` · **823** `creator_review_required` |
+| Runtime alias resolver (ALIAS-1) | ✅ registry + `canonicalServiceId` backfill |
 | Postgres catalog seed tables | ⬜ Deferred |
 
 ---

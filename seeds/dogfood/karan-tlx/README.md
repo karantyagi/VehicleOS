@@ -54,6 +54,14 @@ pnpm install
 pnpm exec vehicleos-connect validate ../examples/tlx-carfax-history.v1.json
 ```
 
+## Full schedule pack (v2, Jul 2026)
+
+The dogfood TLX now hydrates **11 OEM rows** (MM subs 1–7 + oil/filter) from `acura-tlx-2021-sh-awd` / `acura-tlx-2021-technology` v2 packs.
+
+**If you onboarded before this branch:** open the vehicle once — stub schedules (< 8 OEM rows) auto-upgrade to the v2 pack on load. No delete/re-onboard required unless hydration already recorded a full pack from an older catalog version.
+
+**Schedule tab:** shows per-service drill-down (mileage timeline, CARFAX evidence, verdict) — not the old 3-month empty projection table.
+
 ## Seed facts (quick reference)
 
 - **VIN:** 19UUB6F47MA008400 · **Mileage:** 58,819 (Jul 15, 2026)
