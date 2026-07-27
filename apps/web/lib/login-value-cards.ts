@@ -5,36 +5,32 @@ export type LoginValueCard = {
   body: string;
 };
 
+/** OEM-first arc: pain → schedule wedge → reminders → quiet background → you execute */
 export const LOGIN_VALUE_CARDS: LoginValueCard[] = [
   {
     id: "pain",
-    title: "Stop scheduling maintenance manually",
-    body: "Intervals and receipts — off your plate.",
+    title: "Stop being the planner",
+    body: "Intervals, receipts, and “when was that?” — off your plate.",
   },
   {
     id: "schedule",
-    title: "Official maintenance schedule built in",
-    body: "Verified OEM intervals load when you pick your car — no PDF hunt.",
+    title: "Verified OEM schedule built in",
+    body: "Pick your car — factory intervals load, no manual upload.",
   },
   {
     id: "reminders",
-    title: "Reminded before it's overdue",
-    body: "Oil, tires, inspection — with a plain-English why.",
+    title: "Nudged before it's late",
+    body: "Oil, tires, inspection — calendar reminders with a plain-English why.",
+  },
+  {
+    id: "quiet",
+    title: "Quiet unless you need it",
+    body: "No daily logbook. Snooze when life gets busy.",
   },
   {
     id: "execute",
     title: "You execute, it remembers",
-    body: "You book and show up — it updates from your next receipt.",
-  },
-  {
-    id: "alerts",
-    title: "Alerts, not another dashboard",
-    body: "Light nudges when it matters — peek only when you want.",
-  },
-  {
-    id: "handoff",
-    title: "Hand off history when you want",
-    body: "CARFAX or RMV — optional; makes the assistant smarter for you.",
+    body: "You book and show up — add CARFAX anytime to sharpen dates.",
   },
 ];
 

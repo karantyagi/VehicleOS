@@ -444,7 +444,7 @@ export function OnboardingWizard({
               <p className="text-muted-foreground">Reminders will use your OEM schedule.</p>
             )}
             <p className="text-xs text-muted-foreground">
-              PDF import is coming soon — use Import history in the sidebar when ready.
+              Optional: Import history in the sidebar sharpens dates when you&apos;re ready.
             </p>
           </div>
         ) : null}
