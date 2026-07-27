@@ -1,6 +1,6 @@
 {
   "bundleId": "acura-maintenance-minder",
-  "version": 1,
+  "version": 2,
   "oemFamily": "acura",
   "aliases": [
     {
@@ -23,6 +23,90 @@
       "matchKind": "contains",
       "priority": 50,
       "source": "creator"
+    },
+    {
+      "canonicalServiceId": "acura.mm.2.cabin_filter",
+      "phrase": "Cabin air filter replaced/cleaned",
+      "matchKind": "contains",
+      "priority": 45,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.2.cabin_filter",
+      "phrase": "Cabin air filter",
+      "matchKind": "contains",
+      "priority": 50,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.2.cabin_filter",
+      "phrase": "Cabin filter",
+      "matchKind": "contains",
+      "priority": 55,
+      "source": "creator"
+    },
+    {
+      "canonicalServiceId": "acura.mm.2.engine_air_filter",
+      "phrase": "Air filter replaced",
+      "matchKind": "contains",
+      "priority": 60,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.2.engine_air_filter",
+      "phrase": "Engine air filter",
+      "matchKind": "contains",
+      "priority": 65,
+      "source": "creator"
+    },
+    {
+      "canonicalServiceId": "acura.mm.2.drive_belt",
+      "phrase": "Drive belts checked",
+      "matchKind": "contains",
+      "priority": 55,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.2.drive_belt",
+      "phrase": "Drive belt",
+      "matchKind": "contains",
+      "priority": 65,
+      "source": "creator"
+    },
+    {
+      "canonicalServiceId": "acura.mm.5.coolant",
+      "phrase": "Antifreeze/coolant",
+      "matchKind": "contains",
+      "priority": 55,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.5.coolant",
+      "phrase": "Coolant flushed",
+      "matchKind": "contains",
+      "priority": 60,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.6.rear_differential",
+      "phrase": "Rear differential fluid",
+      "matchKind": "contains",
+      "priority": 50,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.6.rear_differential",
+      "phrase": "Differential serviced",
+      "matchKind": "contains",
+      "priority": 55,
+      "source": "dogfood"
+    },
+    {
+      "canonicalServiceId": "acura.mm.6.rear_differential",
+      "phrase": "Rear diff",
+      "matchKind": "contains",
+      "priority": 60,
+      "source": "dogfood"
     }
   ]
 }

@@ -1,0 +1,100 @@
+{
+  "version": "1",
+  "source": "mazda-cx30-2024-scheduled-maintenance",
+  "exportedAt": "2026-07-27T20:43:18.197Z",
+  "manualTitle": "2024 Mazda CX-30 — Normal driving scheduled maintenance (U.S.)",
+  "storageKey": "dogfood/oem-extracts/mazda-cx-30-2024/oem-schedule.v1.json",
+  "documentRef": {
+    "fileName": "mazda-cx30-2024-sched.pdf",
+    "pages": "P. 9-6–9-8 (Normal + severe driving scheduled maintenance)",
+    "vehicleContext": {
+      "engine": "SKYACTIV-G 2.5",
+      "drivetrain": "AWD",
+      "market": "US"
+    },
+    "coverage": {
+      "included": "Normal schedule replace/inspect rows; vehicle status monitor max 10,000 mi / 12 mo oil interval.",
+      "excluded": "SKYACTIV-G 2.5T spark plug interval (40,000 mi); severe-only oil 5,000 mi table."
+    },
+    "note": "Flexible maintenance monitor — oil/filter replaced when wrench indicator appears (max 10,000 mi / 12 mo)."
+  },
+  "entries": [
+    {
+      "serviceName": "Engine oil and filter replacement",
+      "itemType": "replace",
+      "intervalMiles": 10000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 9-6 — Engine oil & filter *1 (max 10,000 mi / 12 mo normal)"
+    },
+    {
+      "serviceName": "Rotate tires",
+      "itemType": "replace",
+      "intervalMiles": 10000,
+      "sourcePage": "P. 9-7 — Tire rotation every 16,000 km (10,000 mi)"
+    },
+    {
+      "serviceName": "Replace engine air filter",
+      "itemType": "replace",
+      "intervalMiles": 20000,
+      "sourcePage": "P. 9-6 — Air filter (R at maintenance cycles 1–2)"
+    },
+    {
+      "serviceName": "Replace cabin air filter",
+      "itemType": "replace",
+      "intervalMiles": 30000,
+      "intervalMonths": 24,
+      "sourcePage": "P. 9-7 — Cabin air filter every 48,000 km (30,000 mi) or 24 months"
+    },
+    {
+      "serviceName": "Replace spark plugs (SKYACTIV-G 2.5)",
+      "itemType": "replace",
+      "intervalMiles": 75000,
+      "sourcePage": "P. 9-6 — Spark plugs 2.5: every 120,000 km (75,000 mi)"
+    },
+    {
+      "serviceName": "Replace engine coolant (first interval)",
+      "itemType": "replace",
+      "intervalMiles": 120000,
+      "intervalMonths": 120,
+      "sourcePage": "P. 9-6 — Coolant *3 first 192,000 km (120,000 mi) or 120 months"
+    },
+    {
+      "serviceName": "Replace engine coolant (subsequent)",
+      "itemType": "replace",
+      "intervalMiles": 60000,
+      "intervalMonths": 60,
+      "sourcePage": "P. 9-6 — Coolant thereafter every 96,000 km (60,000 mi) or 60 months"
+    },
+    {
+      "serviceName": "Inspect drive belts",
+      "itemType": "inspect",
+      "intervalMiles": 10000,
+      "sourcePage": "P. 9-6 — Drive belts (I each normal maintenance cycle)"
+    },
+    {
+      "serviceName": "Inspect brake and clutch fluid level",
+      "itemType": "inspect",
+      "intervalMiles": 10000,
+      "sourcePage": "P. 9-7 — Brake and clutch fluid level (I; replace if necessary)"
+    },
+    {
+      "serviceName": "Inspect disc brakes",
+      "itemType": "inspect",
+      "intervalMiles": 10000,
+      "sourcePage": "P. 9-7 — Disc brakes (I each cycle)"
+    },
+    {
+      "serviceName": "Inspect coolant level",
+      "itemType": "inspect",
+      "intervalMiles": 10000,
+      "sourcePage": "P. 9-6 — Coolant level (I each cycle)"
+    },
+    {
+      "serviceName": "Engine oil and filter — severe driving",
+      "itemType": "replace",
+      "intervalMiles": 5000,
+      "intervalMonths": 6,
+      "sourcePage": "P. 9-8 — Severe schedule every 8,000 km (5,000 mi) or 6 months"
+    }
+  ]
+}

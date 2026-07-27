@@ -1,22 +1,19 @@
 {
   "packId": "hyundai-elantra-2024-se",
-  "version": 1,
+  "version": 3,
   "cases": [
     {
-      "description": "CARFAX line maps to tire-rotation",
-      "carfaxLine": "Tires rotated",
-      "expectedCanonicalServiceId": "generic.tire_rotation",
-      "expectedEntryId": "tire-rotation"
-    },
-    {
-      "description": "CARFAX line maps to engine-oil",
       "carfaxLine": "Oil and filter changed",
       "expectedCanonicalServiceId": "hyundai.fixed.8000.engine_oil",
       "expectedEntryId": "engine-oil"
     },
     {
-      "description": "CARFAX line maps to cabin-air-filter",
-      "carfaxLine": "Cabin air filter",
+      "carfaxLine": "Tires rotated",
+      "expectedCanonicalServiceId": "generic.tire_rotation",
+      "expectedEntryId": "tire-rotation"
+    },
+    {
+      "carfaxLine": "Cabin air filter replaced/cleaned",
       "expectedCanonicalServiceId": "generic.cabin_air_filter",
       "expectedEntryId": "cabin-air-filter"
     }

@@ -1,0 +1,176 @@
+{
+  "version": "1",
+  "source": "honda-accord-2024-maintenance-minder-supplement",
+  "exportedAt": "2026-07-27T20:43:18.197Z",
+  "manualTitle": "2024 Honda Accord — Maintenance Minder schedule (U.S.)",
+  "storageKey": "dogfood/oem-extracts/honda-accord-2024/oem-schedule.v1.json",
+  "documentRef": {
+    "fileName": "honda-accord-2024-mm.pdf",
+    "pages": "P. 6–7 (U.S. Maintenance Minder main/sub items)",
+    "vehicleContext": {
+      "engine": "1.5L turbo / 2.0L hybrid",
+      "drivetrain": "FWD",
+      "market": "US"
+    },
+    "coverage": {
+      "included": "All U.S. Maintenance Minder main codes A/B and sub items 1–7; footnotes *1–*5.",
+      "excluded": "Canadian code 0/9 variants; Code A-only oil changes (projection uses Code B baseline)."
+    },
+    "note": "MM-adaptive scheduling. Miles/months are projection baselines from OEM footnotes."
+  },
+  "entries": [
+    {
+      "serviceName": "Replace engine oil (Maintenance Minder A)",
+      "maintenanceMinderCode": "A",
+      "itemType": "replace",
+      "intervalMonths": 12,
+      "sourcePage": "P. 6 — Code A (*1 annual if no MM alert within 12 mo)"
+    },
+    {
+      "serviceName": "Replace engine oil and filter (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "replace",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 6 — Code B"
+    },
+    {
+      "serviceName": "Inspect front and rear brakes (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 6 — Code B"
+    },
+    {
+      "serviceName": "Inspect tie rod ends, steering gearbox, and boots (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 6 — Code B"
+    },
+    {
+      "serviceName": "Inspect suspension components (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 6 — Code B"
+    },
+    {
+      "serviceName": "Inspect driveshaft boots (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 6 — Code B"
+    },
+    {
+      "serviceName": "Inspect brake hoses and lines including ABS/VSA (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 6 — Code B"
+    },
+    {
+      "serviceName": "Inspect all fluid levels and condition (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 6 — Code B"
+    },
+    {
+      "serviceName": "Inspect exhaust system (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 6 — Code B"
+    },
+    {
+      "serviceName": "Inspect fuel lines and connections (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 6 — Code B"
+    },
+    {
+      "serviceName": "Adjust valves if noisy (Maintenance Minder B)",
+      "maintenanceMinderCode": "B",
+      "itemType": "inspect",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 6 — Code B"
+    },
+    {
+      "serviceName": "Rotate tires (Maintenance Minder sub 1)",
+      "maintenanceMinderCode": "1",
+      "itemType": "replace",
+      "intervalMiles": 7500,
+      "intervalMonths": 12,
+      "sourcePage": "P. 6 — Sub 1"
+    },
+    {
+      "serviceName": "Replace air cleaner element (Maintenance Minder sub 2)",
+      "maintenanceMinderCode": "2",
+      "itemType": "replace",
+      "intervalMiles": 15000,
+      "sourcePage": "P. 6 — Sub 2 (*2 dusty conditions)"
+    },
+    {
+      "serviceName": "Replace dust and pollen filter (Maintenance Minder sub 2)",
+      "maintenanceMinderCode": "2",
+      "itemType": "replace",
+      "intervalMiles": 15000,
+      "sourcePage": "P. 6 — Sub 2 (*3 urban soot)"
+    },
+    {
+      "serviceName": "Inspect drive belt (Maintenance Minder sub 2)",
+      "maintenanceMinderCode": "2",
+      "itemType": "inspect",
+      "intervalMiles": 15000,
+      "sourcePage": "P. 6 — Sub 2"
+    },
+    {
+      "serviceName": "Replace transmission fluid (Maintenance Minder sub 3)",
+      "maintenanceMinderCode": "3",
+      "itemType": "replace",
+      "intervalMiles": 30000,
+      "intervalMonths": 36,
+      "sourcePage": "P. 6 — Sub 3 (*4 mountain driving: 25,000 mi)"
+    },
+    {
+      "serviceName": "Replace spark plugs (Maintenance Minder sub 4)",
+      "maintenanceMinderCode": "4",
+      "itemType": "replace",
+      "intervalMiles": 105000,
+      "sourcePage": "P. 6 — Sub 4"
+    },
+    {
+      "serviceName": "Inspect valve clearance (Maintenance Minder sub 4)",
+      "maintenanceMinderCode": "4",
+      "itemType": "inspect",
+      "intervalMiles": 105000,
+      "sourcePage": "P. 6 — Sub 4"
+    },
+    {
+      "serviceName": "Replace engine coolant (Maintenance Minder sub 5)",
+      "maintenanceMinderCode": "5",
+      "itemType": "replace",
+      "intervalMiles": 100000,
+      "intervalMonths": 60,
+      "sourcePage": "P. 6 — Sub 5"
+    },
+    {
+      "serviceName": "Replace brake fluid (Maintenance Minder sub 7)",
+      "maintenanceMinderCode": "7",
+      "itemType": "replace",
+      "intervalMonths": 36,
+      "sourcePage": "P. 6 — Sub 7 (*5 every 3 years if no MM alert)"
+    }
+  ]
+}

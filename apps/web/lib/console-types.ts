@@ -115,6 +115,8 @@ export type MaintenanceScheduleView = {
   };
 };
 
+export type { OwnerServiceScheduleBoard } from "@vehicleos/domain";
+
 export type VerificationMaturityView = {
   thisWeekCount: number;
   lastWeekCount: number;

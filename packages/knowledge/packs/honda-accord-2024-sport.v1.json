@@ -1,40 +1,30 @@
 {
   "packId": "honda-accord-2024-sport",
-  "version": 1,
-  "manualTitle": "2024 Honda Accord Sport — Owner's Manual maintenance schedule (U.S.)",
+  "version": 3,
+  "manualTitle": "2024 Honda Accord Sport — Maintenance Minder schedule (U.S.)",
   "scheduleKind": "maintenance_minder",
   "qaStatus": "auto_verified",
-  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
-  "sourceManifestRef": "sources/manifest.json#honda-accord-2024-sport",
+  "qaNotes": "Same 2024 Accord MM schedule as EX trim; PDF-mined P. 6–7.",
+  "sourceManifestRef": "sources/manifest.json#honda-accord-2024-ex",
   "vehicle": {
+    "market": "US",
     "make": "Honda",
     "model": "Accord",
     "year": 2024,
-    "trim": "Sport",
-    "market": "US"
+    "trim": "Sport"
   },
   "entries": [
-    {
-      "entryId": "code-a",
-      "canonicalServiceId": "honda.mm.a.engine_oil",
-      "serviceName": "Replace engine oil (Maintenance Minder A)",
-      "intervalMiles": 10000,
-      "intervalMonths": 12,
-      "sourcePage": "P. 4 — Code A",
-      "ruleId": "knowledge.policy.code-a.v1",
-      "mainItemCode": "A",
-      "confidence": 0.94
-    },
     {
       "entryId": "code-b",
       "canonicalServiceId": "honda.mm.b.oil_filter",
       "serviceName": "Replace engine oil and filter (Maintenance Minder B)",
-      "intervalMiles": 10000,
+      "intervalMiles": 7500,
       "intervalMonths": 12,
-      "sourcePage": "P. 4 — Code B",
+      "sourcePage": "P. 6 — Code B",
       "ruleId": "knowledge.policy.code-b.v1",
       "mainItemCode": "B",
-      "confidence": 0.94
+      "confidence": 0.97,
+      "projectionNote": "MM-adaptive; minimum 12 months if no alert."
     },
     {
       "entryId": "mm-sub-1",
@@ -42,10 +32,92 @@
       "serviceName": "Rotate tires (Maintenance Minder sub 1)",
       "intervalMiles": 7500,
       "intervalMonths": 12,
-      "sourcePage": "P. 4 — Sub 1",
+      "sourcePage": "P. 6 — Sub 1",
       "ruleId": "knowledge.policy.mm-sub-1.v1",
       "subItemCode": "1",
-      "confidence": 0.93
+      "confidence": 0.96
+    },
+    {
+      "entryId": "mm-sub-2-engine-air",
+      "canonicalServiceId": "generic.engine_air_filter",
+      "serviceName": "Replace engine air cleaner element (Maintenance Minder sub 2)",
+      "intervalMiles": 15000,
+      "intervalMonths": null,
+      "sourcePage": "P. 6 — Sub 2 (*2 dusty conditions)",
+      "ruleId": "knowledge.policy.mm-sub-2-engine-air.v1",
+      "subItemCode": "2",
+      "confidence": 0.95,
+      "projectionNote": "MM-adaptive; 15,000 mi max in dusty conditions."
+    },
+    {
+      "entryId": "mm-sub-2-cabin",
+      "canonicalServiceId": "generic.cabin_air_filter",
+      "serviceName": "Replace dust and pollen (cabin) filter (Maintenance Minder sub 2)",
+      "intervalMiles": 15000,
+      "intervalMonths": null,
+      "sourcePage": "P. 6 — Sub 2 (*3 urban soot)",
+      "ruleId": "knowledge.policy.mm-sub-2-cabin.v1",
+      "subItemCode": "2",
+      "confidence": 0.95,
+      "projectionNote": "MM-adaptive; 15,000 mi max in urban soot / heavy pollution."
+    },
+    {
+      "entryId": "mm-sub-2-drive-belt",
+      "canonicalServiceId": "honda.mm.2.drive_belt",
+      "serviceName": "Inspect drive belt (Maintenance Minder sub 2)",
+      "intervalMiles": 15000,
+      "intervalMonths": null,
+      "sourcePage": "P. 6 — Sub 2",
+      "ruleId": "knowledge.policy.mm-sub-2-drive-belt.v1",
+      "subItemCode": "2",
+      "confidence": 0.94,
+      "projectionNote": "Inspect only — replace if worn."
+    },
+    {
+      "entryId": "mm-sub-3",
+      "canonicalServiceId": "honda.mm.3.transmission",
+      "serviceName": "Replace transmission fluid (Maintenance Minder sub 3)",
+      "intervalMiles": 30000,
+      "intervalMonths": 36,
+      "sourcePage": "P. 6 — Sub 3 (*4 mountain: 25,000 mi)",
+      "ruleId": "knowledge.policy.mm-sub-3.v1",
+      "subItemCode": "3",
+      "confidence": 0.95,
+      "projectionNote": "MM-adaptive; mountain/low-speed: every 25,000 mi."
+    },
+    {
+      "entryId": "mm-sub-4-spark",
+      "canonicalServiceId": "generic.spark_plugs",
+      "serviceName": "Replace spark plugs (Maintenance Minder sub 4)",
+      "intervalMiles": 105000,
+      "intervalMonths": null,
+      "sourcePage": "P. 6 — Sub 4",
+      "ruleId": "knowledge.policy.mm-sub-4-spark.v1",
+      "subItemCode": "4",
+      "confidence": 0.96
+    },
+    {
+      "entryId": "mm-sub-4-valve",
+      "canonicalServiceId": "honda.mm.4.valve_clearance",
+      "serviceName": "Inspect valve clearance (Maintenance Minder sub 4)",
+      "intervalMiles": 105000,
+      "intervalMonths": null,
+      "sourcePage": "P. 6 — Sub 4",
+      "ruleId": "knowledge.policy.mm-sub-4-valve.v1",
+      "subItemCode": "4",
+      "confidence": 0.94,
+      "projectionNote": "Inspect only — adjust if noisy."
+    },
+    {
+      "entryId": "mm-sub-5",
+      "canonicalServiceId": "generic.coolant",
+      "serviceName": "Replace engine coolant (Maintenance Minder sub 5)",
+      "intervalMiles": 100000,
+      "intervalMonths": 60,
+      "sourcePage": "P. 6 — Sub 5",
+      "ruleId": "knowledge.policy.mm-sub-5.v1",
+      "subItemCode": "5",
+      "confidence": 0.94
     },
     {
       "entryId": "mm-sub-7",
@@ -53,10 +125,10 @@
       "serviceName": "Replace brake fluid (Maintenance Minder sub 7)",
       "intervalMiles": null,
       "intervalMonths": 36,
-      "sourcePage": "P. 4 — Sub 7; footnote *5",
+      "sourcePage": "P. 6 — Sub 7 (*5 every 3 years)",
       "ruleId": "knowledge.policy.mm-sub-7.v1",
       "subItemCode": "7",
-      "confidence": 0.92
+      "confidence": 0.96
     }
   ]
 }

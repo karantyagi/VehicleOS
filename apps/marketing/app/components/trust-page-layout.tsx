@@ -21,7 +21,7 @@ export function TrustPageLayout({ title, updated, children }: TrustPageLayoutPro
             <Link href="/privacy">Privacy</Link>
             <Link href="/terms">Terms</Link>
             <Link href="/security">Security</Link>
-            <a className="nav-cta" href={siteConfig.appUrl}>
+            <a className="nav-cta" href={siteConfig.appUrl} target="_blank" rel="noopener noreferrer">
               Open app
             </a>
           </nav>
@@ -70,7 +70,9 @@ export function TrustPageLayout({ title, updated, children }: TrustPageLayoutPro
             <h3>Product</h3>
             <ul>
               <li>
-                <a href={siteConfig.appUrl}>Open app</a>
+                <a href={siteConfig.appUrl} target="_blank" rel="noopener noreferrer">
+                  Open app
+                </a>
               </li>
               <li>
                 <Link href="/#demo">Demo</Link>

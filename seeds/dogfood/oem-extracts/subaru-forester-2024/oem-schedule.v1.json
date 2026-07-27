@@ -1,0 +1,113 @@
+{
+  "version": "1",
+  "source": "subaru-2024-warranty-and-maintenance-booklet",
+  "exportedAt": "2026-07-27T20:43:18.197Z",
+  "manualTitle": "2024 Subaru Forester — Warranty & Maintenance schedule (U.S.)",
+  "storageKey": "dogfood/oem-extracts/subaru-forester-2024/oem-schedule.v1.json",
+  "documentRef": {
+    "fileName": "subaru-2024-war-and-maint.pdf",
+    "pages": "P. 28–29 (2024 MY Federal/California schedule + notes)",
+    "vehicleContext": {
+      "engine": "2.5L FB25",
+      "drivetrain": "AWD CVT",
+      "market": "US"
+    },
+    "coverage": {
+      "included": "Normal schedule replace/inspect/perform rows for Forester (non-BRZ); severe notes 1–10.",
+      "excluded": "BRZ-specific rows; safety inspection checklist (P. 26); dealer record blanks."
+    },
+    "note": "Fixed-interval schedule. Continue beyond 120 mo by adding 120 mo to column headings."
+  },
+  "entries": [
+    {
+      "serviceName": "Engine oil change",
+      "itemType": "replace",
+      "intervalMiles": 6000,
+      "intervalMonths": 6,
+      "sourcePage": "P. 28 — Item 1 (Note 1: severe every 3,000 mi / 3 mo)"
+    },
+    {
+      "serviceName": "Engine oil filter replacement",
+      "itemType": "replace",
+      "intervalMiles": 6000,
+      "intervalMonths": 6,
+      "sourcePage": "P. 28 — Item 2"
+    },
+    {
+      "serviceName": "Rotate and inspect tires",
+      "itemType": "replace",
+      "intervalMiles": 6000,
+      "intervalMonths": 6,
+      "sourcePage": "P. 28 — Item 19"
+    },
+    {
+      "serviceName": "Replace HVAC system A/C filter (cabin)",
+      "itemType": "replace",
+      "intervalMiles": 12000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 28 — Item 20 (Note 8: inspect more often if dusty)"
+    },
+    {
+      "serviceName": "Replace air cleaner element",
+      "itemType": "replace",
+      "intervalMiles": 30000,
+      "intervalMonths": 30,
+      "sourcePage": "P. 28 — Item 7"
+    },
+    {
+      "serviceName": "Inspect drive belt(s)",
+      "itemType": "inspect",
+      "intervalMonths": 12,
+      "sourcePage": "P. 28 — Item 4 (inspect at 30, 42, 54, 66 mo)"
+    },
+    {
+      "serviceName": "Replace brake fluid",
+      "itemType": "replace",
+      "intervalMiles": 30000,
+      "intervalMonths": 30,
+      "sourcePage": "P. 28 — Item 15 (Note 5: humid/mountain — 15,000 mi / 15 mo)"
+    },
+    {
+      "serviceName": "Inspect CVT fluid",
+      "itemType": "inspect",
+      "intervalMiles": 30000,
+      "intervalMonths": 30,
+      "sourcePage": "P. 28 — Item 12 (Note 4: severe replace every 40,000 km)"
+    },
+    {
+      "serviceName": "Inspect front and rear differential gear oil",
+      "itemType": "inspect",
+      "intervalMiles": 30000,
+      "intervalMonths": 30,
+      "sourcePage": "P. 28 — Item 13 (Note 3: severe replace every 15,000 mi)"
+    },
+    {
+      "serviceName": "Replace spark plugs",
+      "itemType": "replace",
+      "intervalMiles": 60000,
+      "intervalMonths": 60,
+      "sourcePage": "P. 28 — Item 3"
+    },
+    {
+      "serviceName": "Replace engine coolant (first interval)",
+      "itemType": "replace",
+      "intervalMiles": 137500,
+      "intervalMonths": 132,
+      "sourcePage": "P. 28 — Item 9 (first 11 years / 137,500 mi)"
+    },
+    {
+      "serviceName": "Replace engine coolant (subsequent)",
+      "itemType": "replace",
+      "intervalMiles": 75000,
+      "intervalMonths": 72,
+      "sourcePage": "P. 28 — Item 9 (every 6 years / 75,000 mi thereafter)"
+    },
+    {
+      "serviceName": "Inspect cooling system hoses and connections",
+      "itemType": "inspect",
+      "intervalMiles": 30000,
+      "intervalMonths": 30,
+      "sourcePage": "P. 28 — Item 8"
+    }
+  ]
+}

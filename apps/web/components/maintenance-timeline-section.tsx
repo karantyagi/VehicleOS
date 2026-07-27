@@ -3,9 +3,17 @@
 import { useState } from "react";
 import { MaintenanceScheduleConsole } from "@/components/maintenance-schedule-console";
 import { MaintenanceTimelineConsole } from "@/components/maintenance-timeline-console";
+import { OwnerServiceScheduleBoardView } from "@/components/owner-service-schedule-board";
 import { OwnershipRecordsConsole } from "@/components/ownership-records-console";
 import { Button } from "@/components/ui/button";
-import type { OwnershipRecordEntry, OwnershipRenewalProjection, ScheduleProjectionRow, ServiceHistoryTab, TimelineEntry } from "@/lib/console-types";
+import type {
+  OwnerServiceScheduleBoard,
+  OwnershipRecordEntry,
+  OwnershipRenewalProjection,
+  ScheduleProjectionRow,
+  ServiceHistoryTab,
+  TimelineEntry,
+} from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
 type MaintenanceTimelineSectionProps = {
@@ -15,6 +23,8 @@ type MaintenanceTimelineSectionProps = {
   scheduleNear: ScheduleProjectionRow[];
   scheduleExtended: ScheduleProjectionRow[];
   scheduleFull: ScheduleProjectionRow[];
+  serviceScheduleBoard?: OwnerServiceScheduleBoard | null;
+  currentMileage?: number;
   effectiveMilesPerYear: number;
   hasKnowledgeSchedule?: boolean;
   activeTab?: ServiceHistoryTab;
@@ -47,6 +57,8 @@ export function MaintenanceTimelineSection({
   scheduleNear,
   scheduleExtended,
   scheduleFull,
+  serviceScheduleBoard = null,
+  currentMileage = 0,
   effectiveMilesPerYear,
   hasKnowledgeSchedule = false,
   activeTab,
@@ -134,18 +146,26 @@ export function MaintenanceTimelineSection({
           ) : null}
 
           {tab === "schedule" ? (
-            <MaintenanceScheduleConsole
-              nearRows={scheduleNear}
-              extendedRows={scheduleExtended}
-              fullRows={scheduleFull}
-              effectiveMilesPerYear={effectiveMilesPerYear}
-              hasKnowledgeSchedule={hasKnowledgeSchedule}
-              ownerSimple={ownerSimple}
-              maintenancePatterns={maintenancePatterns}
-              observedMilesPerYear={observedMilesPerYear}
-              statedMilesPerYear={statedMilesPerYear}
-              dueSoonDays={dueSoonDays}
-            />
+            serviceScheduleBoard ? (
+              <OwnerServiceScheduleBoardView
+                board={serviceScheduleBoard}
+                currentMileage={currentMileage}
+                hasKnowledgeSchedule={hasKnowledgeSchedule}
+              />
+            ) : (
+              <MaintenanceScheduleConsole
+                nearRows={scheduleNear}
+                extendedRows={scheduleExtended}
+                fullRows={scheduleFull}
+                effectiveMilesPerYear={effectiveMilesPerYear}
+                hasKnowledgeSchedule={hasKnowledgeSchedule}
+                ownerSimple={ownerSimple}
+                maintenancePatterns={maintenancePatterns}
+                observedMilesPerYear={observedMilesPerYear}
+                statedMilesPerYear={statedMilesPerYear}
+                dueSoonDays={dueSoonDays}
+              />
+            )
           ) : null}
 
           {tab === "ownership" ? (

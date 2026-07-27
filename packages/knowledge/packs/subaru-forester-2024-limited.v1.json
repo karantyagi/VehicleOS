@@ -1,17 +1,18 @@
 {
   "packId": "subaru-forester-2024-limited",
-  "version": 1,
-  "manualTitle": "2024 Subaru Forester Limited — Owner's Manual maintenance schedule (U.S.)",
+  "version": 3,
+  "manualTitle": "2024 Subaru Forester Limited — Warranty & Maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
   "qaStatus": "auto_verified",
-  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
+  "qaNotes": "Full fixed-interval schedule from 2024 Subaru Warranty & Maintenance booklet P. 28–29; dogfood extract seeds/dogfood/oem-extracts/subaru-forester-2024/.",
   "sourceManifestRef": "sources/manifest.json#subaru-forester-2024-limited",
   "vehicle": {
+    "market": "US",
     "make": "Subaru",
     "model": "Forester",
     "year": 2024,
-    "trim": "Limited",
-    "market": "US"
+    "powertrain": "AWD",
+    "trim": "Limited"
   },
   "entries": [
     {
@@ -19,20 +20,108 @@
       "canonicalServiceId": "subaru.fixed.6000.engine_oil",
       "serviceName": "Engine oil and filter change",
       "intervalMiles": 6000,
-      "intervalMonths": 12,
-      "sourcePage": "P. 1 — Engine oil",
+      "intervalMonths": 6,
+      "sourcePage": "P. 28 — Items 1–2",
       "ruleId": "knowledge.policy.engine-oil.v1",
-      "confidence": 0.92
+      "confidence": 0.97,
+      "projectionNote": "Severe: every 3,000 mi / 3 months (Note 1)."
     },
     {
       "entryId": "tire-rotation",
       "canonicalServiceId": "generic.tire_rotation",
-      "serviceName": "Rotate tires",
+      "serviceName": "Rotate and inspect tires",
       "intervalMiles": 6000,
       "intervalMonths": 6,
-      "sourcePage": "P. 1 — Tire rotation",
+      "sourcePage": "P. 28 — Item 19",
       "ruleId": "knowledge.policy.tire-rotation.v1",
-      "confidence": 0.92
+      "confidence": 0.96
+    },
+    {
+      "entryId": "cabin-air-filter",
+      "canonicalServiceId": "generic.cabin_air_filter",
+      "serviceName": "Replace HVAC system A/C filter (cabin)",
+      "intervalMiles": 12000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 28 — Item 20",
+      "ruleId": "knowledge.policy.cabin-filter.v1",
+      "confidence": 0.95
+    },
+    {
+      "entryId": "engine-air-filter",
+      "canonicalServiceId": "generic.engine_air_filter",
+      "serviceName": "Replace air cleaner element",
+      "intervalMiles": 30000,
+      "intervalMonths": 30,
+      "sourcePage": "P. 28 — Item 7",
+      "ruleId": "knowledge.policy.engine-air-filter.v1",
+      "confidence": 0.95
+    },
+    {
+      "entryId": "drive-belt-inspect",
+      "canonicalServiceId": "subaru.fixed.drive_belt",
+      "serviceName": "Inspect drive belt(s)",
+      "intervalMiles": null,
+      "intervalMonths": 12,
+      "sourcePage": "P. 28 — Item 4",
+      "ruleId": "knowledge.policy.drive-belt.v1",
+      "confidence": 0.93,
+      "projectionNote": "Inspect at 30, 42, 54, 66 months; replace if worn."
+    },
+    {
+      "entryId": "brake-fluid",
+      "canonicalServiceId": "generic.brake_fluid",
+      "serviceName": "Replace brake fluid",
+      "intervalMiles": 30000,
+      "intervalMonths": 30,
+      "sourcePage": "P. 28 — Item 15",
+      "ruleId": "knowledge.policy.brake-fluid.v1",
+      "confidence": 0.95,
+      "projectionNote": "Humid/mountain: every 15,000 mi / 15 mo (Note 5)."
+    },
+    {
+      "entryId": "cvt-fluid-inspect",
+      "canonicalServiceId": "subaru.fixed.cvt_fluid",
+      "serviceName": "Inspect CVT fluid",
+      "intervalMiles": 30000,
+      "intervalMonths": 30,
+      "sourcePage": "P. 28 — Item 12",
+      "ruleId": "knowledge.policy.cvt-fluid.v1",
+      "powertrain": "AWD",
+      "confidence": 0.93,
+      "projectionNote": "Severe: replace every 24,855 mi (Note 4)."
+    },
+    {
+      "entryId": "diff-inspect",
+      "canonicalServiceId": "subaru.fixed.diff.awd",
+      "serviceName": "Inspect front and rear differential gear oil",
+      "intervalMiles": 30000,
+      "intervalMonths": 30,
+      "sourcePage": "P. 28 — Item 13",
+      "ruleId": "knowledge.policy.diff-inspect.v1",
+      "powertrain": "AWD",
+      "confidence": 0.93,
+      "projectionNote": "Severe: replace every 15,000 mi (Note 3)."
+    },
+    {
+      "entryId": "spark-plugs",
+      "canonicalServiceId": "generic.spark_plugs",
+      "serviceName": "Replace spark plugs",
+      "intervalMiles": 60000,
+      "intervalMonths": 60,
+      "sourcePage": "P. 28 — Item 3",
+      "ruleId": "knowledge.policy.spark-plugs.v1",
+      "confidence": 0.95
+    },
+    {
+      "entryId": "coolant-first",
+      "canonicalServiceId": "generic.coolant",
+      "serviceName": "Replace engine coolant (first interval)",
+      "intervalMiles": 137500,
+      "intervalMonths": 132,
+      "sourcePage": "P. 28 — Item 9",
+      "ruleId": "knowledge.policy.coolant.v1",
+      "confidence": 0.94,
+      "projectionNote": "First: 11 years / 137,500 mi; thereafter every 6 years / 75,000 mi."
     }
   ]
 }

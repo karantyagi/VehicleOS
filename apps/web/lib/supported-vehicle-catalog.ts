@@ -11,6 +11,7 @@ export type CatalogVehicleRow = {
   qaStatus: string;
   supportTier: string | null;
   scheduleSourceLine?: string | null;
+  scheduleDepth?: "verified" | "preview";
 };
 
 export type CatalogVehicleFilter = {

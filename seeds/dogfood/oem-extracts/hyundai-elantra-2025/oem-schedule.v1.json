@@ -1,0 +1,104 @@
+{
+  "version": "1",
+  "source": "hyundai-elantra-2023-owners-manual-ch9",
+  "exportedAt": "2026-07-27T20:43:18.197Z",
+  "manualTitle": "2025 Hyundai Elantra SE/SEL — Normal maintenance schedule (U.S., Smartstream G2.0)",
+  "storageKey": "dogfood/oem-extracts/hyundai-elantra-2025/oem-schedule.v1.json",
+  "documentRef": {
+    "fileName": "hyundai-elantra-2023-om.pdf",
+    "pages": "P. 9-9–9-11 (Normal Maintenance Schedule, Smartstream G2.0 Atkinson)",
+    "vehicleContext": {
+      "engine": "Smartstream G2.0 Atkinson",
+      "drivetrain": "FWD IVT",
+      "market": "US"
+    },
+    "coverage": {
+      "included": "Normal schedule replace/inspect rows for G2.0 Atkinson (SE/SEL); severe table P. 9-12.",
+      "excluded": "G1.6 T-GDi schedule; N-Line / hybrid / DCT variants."
+    },
+    "note": "Fixed-interval schedule. IVT fluid: no check/service under normal usage (P. 9-10)."
+  },
+  "entries": [
+    {
+      "serviceName": "Engine oil and engine oil filter replacement",
+      "itemType": "replace",
+      "intervalMiles": 8000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 9-9 — Smartstream G2.0 Atkinson (severe: 5,000 mi / 6 mo)"
+    },
+    {
+      "serviceName": "Fuel additives (if non-TOP TIER gasoline)",
+      "itemType": "replace",
+      "intervalMiles": 8000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 9-9 — Fuel additives *2"
+    },
+    {
+      "serviceName": "Rotate tires",
+      "itemType": "replace",
+      "intervalMiles": 8000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 9-9 — Rotate tires every 8,000 miles or 12 months"
+    },
+    {
+      "serviceName": "Replace cabin air filter",
+      "itemType": "replace",
+      "intervalMonths": 12,
+      "sourcePage": "P. 9-9 — Cabin air filter every 12 months"
+    },
+    {
+      "serviceName": "Replace air cleaner filter",
+      "itemType": "replace",
+      "intervalMiles": 24000,
+      "intervalMonths": 24,
+      "sourcePage": "P. 9-9 — Air cleaner filter (R at 24, 48, 72… mo)"
+    },
+    {
+      "serviceName": "Inspect air cleaner filter",
+      "itemType": "inspect",
+      "intervalMiles": 8000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 9-9 — Air cleaner filter (I between replacements)"
+    },
+    {
+      "serviceName": "Replace spark plugs (Smartstream G2.0 Atkinson)",
+      "itemType": "replace",
+      "intervalMiles": 96000,
+      "sourcePage": "P. 9-9 — Spark plugs G2.0: every 96,000 miles"
+    },
+    {
+      "serviceName": "Inspect drive belts",
+      "itemType": "inspect",
+      "intervalMiles": 48000,
+      "intervalMonths": 72,
+      "sourcePage": "P. 9-9 — Drive belts *3 (first at 48,000 mi / 72 mo, then every 8,000 mi / 12 mo)"
+    },
+    {
+      "serviceName": "Replace engine coolant (first interval)",
+      "itemType": "replace",
+      "intervalMiles": 120000,
+      "intervalMonths": 120,
+      "sourcePage": "P. 9-10 — Engine coolant first at 120,000 mi / 120 months"
+    },
+    {
+      "serviceName": "Replace engine coolant (subsequent)",
+      "itemType": "replace",
+      "intervalMiles": 24000,
+      "intervalMonths": 24,
+      "sourcePage": "P. 9-10 — Engine coolant thereafter every 24,000 mi / 24 months"
+    },
+    {
+      "serviceName": "Replace brake fluid",
+      "itemType": "replace",
+      "intervalMiles": 48000,
+      "intervalMonths": 48,
+      "sourcePage": "P. 9-11 — Brake fluid (inspect every 8,000 mi / 12 mo)"
+    },
+    {
+      "serviceName": "Intelligent Variable Transmission (IVT) fluid",
+      "itemType": "inspect",
+      "intervalMiles": null,
+      "sourcePage": "P. 9-10 — IVT fluid *2: no check, no service required (normal)"
+    }
+  ]
+}

@@ -5,6 +5,7 @@ import { DrivingStyleFields } from "@/components/driving-style-fields";
 import { DateField } from "@/components/date-field";
 import { FormActions, FormField } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { VehicleYmmPicker } from "@/components/vehicle-ymm-picker";
@@ -363,8 +364,19 @@ export function OnboardingWizard({
               </FormField>
 
               {selectedVehicle ? (
-                <p className="sm:col-span-2 text-xs text-muted-foreground">
-                  OEM schedule loads for {formatCatalogVehicleLabel(selectedVehicle)}.
+                <p className="sm:col-span-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  <span>
+                    OEM schedule loads for {formatCatalogVehicleLabel(selectedVehicle)}.
+                  </span>
+                  {selectedVehicle.scheduleDepth === "verified" ? (
+                    <Badge variant="oem" className="text-[10px]">
+                      Verified OEM schedule
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-[10px]">
+                      Schedule preview
+                    </Badge>
+                  )}
                 </p>
               ) : null}
 

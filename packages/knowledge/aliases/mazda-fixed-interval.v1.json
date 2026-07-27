@@ -4,28 +4,28 @@
   "oemFamily": "mazda",
   "aliases": [
     {
-      "canonicalServiceId": "mazda.fixed.7500.engine_oil",
+      "canonicalServiceId": "mazda.fixed.10000.engine_oil",
       "phrase": "Oil and filter changed",
       "matchKind": "contains",
       "priority": 50,
       "source": "creator"
     },
     {
-      "canonicalServiceId": "mazda.fixed.7500.engine_oil",
+      "canonicalServiceId": "mazda.fixed.10000.engine_oil",
       "phrase": "Oil & filter",
       "matchKind": "contains",
       "priority": 55,
       "source": "creator"
     },
     {
-      "canonicalServiceId": "mazda.fixed.7500.engine_oil",
+      "canonicalServiceId": "mazda.fixed.10000.engine_oil",
       "phrase": "Engine oil changed",
       "matchKind": "contains",
       "priority": 60,
       "source": "creator"
     },
     {
-      "canonicalServiceId": "mazda.fixed.7500.engine_oil",
+      "canonicalServiceId": "mazda.fixed.10000.engine_oil",
       "phrase": "Engine oil and filter",
       "matchKind": "contains",
       "priority": 65,
@@ -53,7 +53,7 @@
       "source": "creator"
     },
     {
-      "canonicalServiceId": "generic.brake_fluid",
+      "canonicalServiceId": "mazda.fixed.brake_fluid_inspect",
       "phrase": "Brake fluid",
       "matchKind": "contains",
       "priority": 70,

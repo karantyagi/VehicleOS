@@ -1,18 +1,21 @@
 {
   "packId": "mazda-cx-30-2024-select",
-  "version": 1,
+  "version": 3,
   "cases": [
     {
-      "description": "CARFAX line maps to tire-rotation",
+      "carfaxLine": "Oil and filter changed",
+      "expectedCanonicalServiceId": "mazda.fixed.10000.engine_oil",
+      "expectedEntryId": "engine-oil"
+    },
+    {
       "carfaxLine": "Tires rotated",
       "expectedCanonicalServiceId": "generic.tire_rotation",
       "expectedEntryId": "tire-rotation"
     },
     {
-      "description": "CARFAX line maps to engine-oil",
-      "carfaxLine": "Oil and filter changed",
-      "expectedCanonicalServiceId": "mazda.fixed.7500.engine_oil",
-      "expectedEntryId": "engine-oil"
+      "carfaxLine": "Brake fluid flushed/changed",
+      "expectedCanonicalServiceId": "mazda.fixed.brake_fluid_inspect",
+      "expectedEntryId": "brake-fluid-inspect"
     }
   ]
 }
