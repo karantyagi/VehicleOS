@@ -15,14 +15,15 @@
   --secondary-foreground: 0 0% 98%;
   --muted: 240 4% 14%;
   --muted-foreground: 240 5% 65%;
-  --accent: 240 4% 18%;
-  --accent-foreground: 0 0% 98%;
-  --border: 240 4% 18%;
-  --input: 240 4% 18%;
+  /* Prefixed so shadcn does not overwrite marketing --accent / --border / --radius from tokens.css */
+  --shadcn-accent: 240 4% 18%;
+  --shadcn-accent-foreground: 0 0% 98%;
+  --shadcn-border: 240 4% 18%;
+  --shadcn-input: 240 4% 18%;
   --ring: 142 71% 45%;
   --popover: 240 6% 10%;
   --popover-foreground: 0 0% 98%;
-  --radius: 0.5rem;
+  --shadcn-radius: 0.5rem;
 
   --owners-accent: var(--vos-owners-accent);
   --owners-soft: var(--vos-owners-soft);
@@ -269,20 +270,21 @@ a {
 
 .hero h1 .highlight,
 .highlight-animated {
+  color: var(--vos-accent);
   background: linear-gradient(
     105deg,
-    var(--accent) 0%,
+    var(--vos-accent) 0%,
     #7ddea8 22%,
-    var(--accent-strong) 44%,
+    var(--vos-accent-strong) 44%,
     #a7f3c8 66%,
-    var(--accent) 88%,
+    var(--vos-accent) 88%,
     #7ddea8 100%
   );
   background-size: 220% 100%;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: highlight-sweep 7s ease-in-out infinite;
+  -webkit-text-fill-color: transparent;
+  animation: highlight-sweep 5s ease-in-out infinite;
 }
 
 @keyframes highlight-sweep {
@@ -502,7 +504,9 @@ a {
 
   .highlight-animated {
     animation: none;
-    background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+    -webkit-text-fill-color: currentColor;
+    background: none;
+    color: var(--vos-accent-strong);
   }
 }
 
