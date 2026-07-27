@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2023 Lexus NX 250 — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
-  "qaStatus": "creator_review_required",
-  "qaNotes": "Tier-2 catalog pack — no verified OEM PDF yet. Creator review required before auto_verified promotion.",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#lexus-nx-2023-250",
   "vehicle": {
     "make": "Lexus",
@@ -19,8 +19,8 @@
       "canonicalServiceId": "lexus.mr.10000.engine_oil",
       "serviceName": "Engine oil and filter change",
       "intervalMiles": 10000,
-      "intervalMonths": 6,
-      "sourcePage": "Lexus maintenance schedule — Normal driving",
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — Engine oil",
       "ruleId": "knowledge.policy.toyota-oil.v1",
       "projectionNote": "Toyota 10k/6mo normal; 5k severe driving per owner manual.",
       "confidence": 0.93
@@ -29,9 +29,9 @@
       "entryId": "tire-rotation",
       "canonicalServiceId": "generic.tire_rotation",
       "serviceName": "Rotate tires",
-      "intervalMiles": 5000,
-      "intervalMonths": 6,
-      "sourcePage": "Lexus maintenance schedule — Tire rotation",
+      "intervalMiles": 10000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — Tire rotation",
       "ruleId": "knowledge.policy.tire-rotation.v1",
       "confidence": 0.94
     },
@@ -60,8 +60,8 @@
       "canonicalServiceId": "generic.brake_fluid",
       "serviceName": "Replace brake fluid",
       "intervalMiles": null,
-      "intervalMonths": 36,
-      "sourcePage": "Lexus maintenance schedule — Brake fluid",
+      "intervalMonths": 24,
+      "sourcePage": "P. 1 — Brake fluid",
       "ruleId": "knowledge.policy.brake-fluid.v1",
       "confidence": 0.92
     }

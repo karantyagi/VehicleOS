@@ -698,16 +698,25 @@
   "lexus-is-2021-350": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-21IS300/pdf/L-MMS-21IS300.pdf"
   ],
+  "lexus-is-2021-500-f-sport": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-21IS300/pdf/L-MMS-21IS300.pdf"
+  ],
   "lexus-is-2020-300": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20IS300/pdf/L-MMS-20IS300.pdf"
   ],
   "lexus-is-2020-350": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20IS300/pdf/L-MMS-20IS300.pdf"
   ],
+  "lexus-is-2020-500-f-sport": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20IS300/pdf/L-MMS-20IS300.pdf"
+  ],
   "lexus-is-2019-300": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19IS300/pdf/L-MMS-19IS300.pdf"
   ],
   "lexus-is-2019-350": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19IS300/pdf/L-MMS-19IS300.pdf"
+  ],
+  "lexus-is-2019-500-f-sport": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19IS300/pdf/L-MMS-19IS300.pdf"
   ],
   "lexus-es-2025-250": [
@@ -770,6 +779,9 @@
   "lexus-es-2021-300h-hybrid": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-21ES300h/pdf/L-MMS-21ES300h.pdf"
   ],
+  "lexus-es-2020-250": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20ES350/pdf/L-MMS-20ES350.pdf"
+  ],
   "lexus-es-2020-350": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20ES350/pdf/L-MMS-20ES350.pdf"
   ],
@@ -778,6 +790,9 @@
   ],
   "lexus-es-2020-300h-hybrid": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20ES300h/pdf/L-MMS-20ES300h.pdf"
+  ],
+  "lexus-es-2019-250": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19ES300H/pdf/L-MMS-19ES300H.pdf"
   ],
   "lexus-es-2019-350": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19ES350/pdf/L-MMS-19ES350.pdf"
@@ -791,25 +806,46 @@
   "lexus-rx-2025-350": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-25RX350/pdf/L-MMS-25RX350.pdf"
   ],
+  "lexus-rx-2025-350l": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-25RX350/pdf/L-MMS-25RX350.pdf"
+  ],
   "lexus-rx-2025-500h": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-25RX500H/pdf/L-MMS-25RX500H.pdf"
+  ],
+  "lexus-rx-2025-450h-hybrid": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-25RX350/pdf/L-MMS-25RX350.pdf"
   ],
   "lexus-rx-2024-350": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24RX350/pdf/L-MMS-24RX350.pdf"
   ],
+  "lexus-rx-2024-350l": [
+    "https://assets.sipb.toyota.com/publications/en/omms-s/L-MMS-24RX350/pdf/L-MMS-24RX350.pdf"
+  ],
   "lexus-rx-2024-500h": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24RX500H/pdf/L-MMS-24RX500H.pdf"
   ],
+  "lexus-rx-2024-450h-hybrid": [
+    "https://assets.sipb.toyota.com/publications/en/omms-s/L-MMS-24RX350/pdf/L-MMS-24RX350.pdf"
+  ],
   "lexus-rx-2023-350": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23RX350/pdf/L-MMS-23RX350.pdf"
+  ],
+  "lexus-rx-2023-350l": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23RX350/pdf/L-MMS-23RX350.pdf"
   ],
   "lexus-rx-2023-500h": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23RX500H/pdf/L-MMS-23RX500H.pdf"
   ],
+  "lexus-rx-2023-450h-hybrid": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23RX350/pdf/L-MMS-23RX350.pdf"
+  ],
   "lexus-rx-2022-350": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-22RX350/pdf/L-MMS-22RX350.pdf"
   ],
   "lexus-rx-2022-350l": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-22RX350/pdf/L-MMS-22RX350.pdf"
+  ],
+  "lexus-rx-2022-500h": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-22RX350/pdf/L-MMS-22RX350.pdf"
   ],
   "lexus-rx-2022-450h-hybrid": [
@@ -821,6 +857,9 @@
   "lexus-rx-2021-350l": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-21RX350/pdf/L-MMS-21RX350.pdf"
   ],
+  "lexus-rx-2021-500h": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-21RX450H/pdf/L-MMS-21RX450H.pdf"
+  ],
   "lexus-rx-2021-450h-hybrid": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-21RX450H/pdf/L-MMS-21RX450H.pdf"
   ],
@@ -829,6 +868,9 @@
   ],
   "lexus-rx-2020-350l": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20RX350/pdf/L-MMS-20RX350.pdf"
+  ],
+  "lexus-rx-2020-500h": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20RX450h/pdf/L-MMS-20RX450h.pdf"
   ],
   "lexus-rx-2020-450h-hybrid": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20RX450h/pdf/L-MMS-20RX450h.pdf"
@@ -839,10 +881,22 @@
   "lexus-rx-2019-350l": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19RX350/pdf/L-MMS-19RX350.pdf"
   ],
+  "lexus-rx-2019-500h": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19RX350/pdf/L-MMS-19RX350.pdf"
+  ],
+  "lexus-rx-2019-450h-hybrid": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19RX350/pdf/L-MMS-19RX350.pdf"
+  ],
   "lexus-rx-2018-350": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-18RX350/pdf/L-MMS-18RX350.pdf"
   ],
   "lexus-rx-2018-350l": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-18RX350/pdf/L-MMS-18RX350.pdf"
+  ],
+  "lexus-rx-2018-500h": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-18RX350/pdf/L-MMS-18RX350.pdf"
+  ],
+  "lexus-rx-2018-450h-hybrid": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-18RX350/pdf/L-MMS-18RX350.pdf"
   ],
   "lexus-nx-2025-250": [
@@ -851,11 +905,29 @@
   "lexus-nx-2025-350": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-25NX250NX350/pdf/L-MMS-25NX250NX350.pdf"
   ],
+  "lexus-nx-2025-350h": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-25NX250NX350/pdf/L-MMS-25NX250NX350.pdf"
+  ],
+  "lexus-nx-2025-450h-phev": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-25NX250NX350/pdf/L-MMS-25NX250NX350.pdf"
+  ],
   "lexus-nx-2024-250": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24NX250NX350/pdf/L-MMS-24NX250NX350.pdf"
   ],
   "lexus-nx-2024-350": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24NX250NX350/pdf/L-MMS-24NX250NX350.pdf"
+  ],
+  "lexus-nx-2024-350h": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24NX250NX350/pdf/L-MMS-24NX250NX350.pdf"
+  ],
+  "lexus-nx-2024-450h-phev": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24NX250NX350/pdf/L-MMS-24NX250NX350.pdf"
+  ],
+  "lexus-nx-2023-250": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23NX450H/pdf/L-MMS-23NX450H.pdf"
+  ],
+  "lexus-nx-2023-350": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23NX450H/pdf/L-MMS-23NX450H.pdf"
   ],
   "lexus-nx-2023-350h": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23NX350H/pdf/L-MMS-23NX350H.pdf"
@@ -881,8 +953,14 @@
   "lexus-tx-2024-550h": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24TX550h/pdf/L-MMS-24TX550h.pdf"
   ],
+  "lexus-ux-2024-200": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24UX250H/pdf/L-MMS-24UX250H.pdf"
+  ],
   "lexus-ux-2024-250h": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24UX250H/pdf/L-MMS-24UX250H.pdf"
+  ],
+  "lexus-ux-2023-200": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23UX250H/pdf/L-MMS-23UX250H.pdf"
   ],
   "lexus-ux-2023-250h": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23UX250H/pdf/L-MMS-23UX250H.pdf"
@@ -896,10 +974,19 @@
   "lexus-ux-2021-200": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-21UX200/pdf/L-MMS-21UX200.pdf"
   ],
+  "lexus-ux-2021-250h": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-21UX200/pdf/L-MMS-21UX200.pdf"
+  ],
   "lexus-ux-2020-200": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20UX200/pdf/L-MMS-20UX200.pdf"
   ],
+  "lexus-ux-2020-250h": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20UX200/pdf/L-MMS-20UX200.pdf"
+  ],
   "lexus-ux-2019-200": [
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19UX200/pdf/L-MMS-19UX200.pdf"
+  ],
+  "lexus-ux-2019-250h": [
     "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19UX200/pdf/L-MMS-19UX200.pdf"
   ],
   "acura-tlx-2025-base": [
@@ -1112,6 +1199,15 @@
   "genesis-g70-2023-sport": [
     "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2023/g70/2023-G70-Owner%27s-Manual.pdf"
   ],
+  "genesis-g70-2019-2-0t": [
+    "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2019/g70/2019-G70-Owner%27s-Manual.pdf"
+  ],
+  "genesis-g70-2019-3-3t": [
+    "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2019/g70/2019-G70-Owner%27s-Manual.pdf"
+  ],
+  "genesis-g70-2019-sport": [
+    "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2019/g70/2019-G70-Owner%27s-Manual.pdf"
+  ],
   "genesis-g80-2025-2-5t": [
     "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2024/g80/2024%20G80%20OM.pdf"
   ],
@@ -1122,6 +1218,9 @@
     "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2024/g80/2024%20G80%20OM.pdf"
   ],
   "genesis-g80-2024-3-5t": [
+    "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2024/g80/2024%20G80%20OM.pdf"
+  ],
+  "genesis-g80-2024-electrified": [
     "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2024/g80/2024%20G80%20OM.pdf"
   ],
   "genesis-g80-2023-2-5t": [
@@ -1136,10 +1235,16 @@
   "genesis-g80-2022-3-5t": [
     "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2022/g80/2022-G80-Owners-Manual.pdf"
   ],
+  "genesis-g80-2022-electrified": [
+    "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2022/g80/2022-G80-Owners-Manual.pdf"
+  ],
   "genesis-g80-2021-2-5t": [
     "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2021/g80/2021-G80-Owners-Manual.pdf"
   ],
   "genesis-g80-2021-3-5t": [
+    "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2021/g80/2021-G80-Owners-Manual.pdf"
+  ],
+  "genesis-g80-2021-electrified": [
     "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2021/g80/2021-G80-Owners-Manual.pdf"
   ],
   "genesis-gv70-2024-2-5t": [
@@ -1154,10 +1259,16 @@
   "genesis-gv70-2023-3-5t": [
     "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2023/gv70/2023-GV70-Owners-Manual.pdf"
   ],
+  "genesis-gv70-2023-electrified": [
+    "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2023/gv70/2023-GV70-Owners-Manual.pdf"
+  ],
   "genesis-gv70-2022-2-5t": [
     "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2022/GV70/2022-GV70-Owners-Manual.pdf"
   ],
   "genesis-gv70-2022-3-5t": [
+    "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2022/GV70/2022-GV70-Owners-Manual.pdf"
+  ],
+  "genesis-gv70-2022-electrified": [
     "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2022/GV70/2022-GV70-Owners-Manual.pdf"
   ],
   "genesis-gv80-2025-2-5t": [
@@ -1628,6 +1739,33 @@
   "honda-cr-v-2020-touring": [
     "https://owners.honda.com/utility/download?path=%2Fstatic%2Fpdfs%2F2020%2FCR-V%2F2020_CR-V_Maintenance_Minder_System.PDF"
   ],
+  "chevrolet-equinox-2025-lt": [
+    "https://manuals.startmycar.com/published/Chevrolet-Equinox_2025_EN_US_cf023b58a4.pdf"
+  ],
+  "chevrolet-equinox-2025-rs": [
+    "https://manuals.startmycar.com/published/Chevrolet-Equinox_2025_EN_US_cf023b58a4.pdf"
+  ],
+  "chevrolet-equinox-2025-activ": [
+    "https://manuals.startmycar.com/published/Chevrolet-Equinox_2025_EN_US_cf023b58a4.pdf"
+  ],
+  "chevrolet-equinox-2024-lt": [
+    "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Equinox_OM_en_US_U_85150510B_2023JUL27_2P_INS1.pdf"
+  ],
+  "chevrolet-equinox-2024-rs": [
+    "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Equinox_OM_en_US_U_85150510B_2023JUL27_2P_INS1.pdf"
+  ],
+  "chevrolet-equinox-2024-activ": [
+    "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Equinox_OM_en_US_U_85150510B_2023JUL27_2P_INS1.pdf"
+  ],
+  "chevrolet-equinox-2023-lt": [
+    "https://manuals.startmycar.com/published/Chevrolet-Equinox_2023_EN_US_2c9a1e1767.pdf"
+  ],
+  "chevrolet-equinox-2023-rs": [
+    "https://manuals.startmycar.com/published/Chevrolet-Equinox_2023_EN_US_2c9a1e1767.pdf"
+  ],
+  "chevrolet-equinox-2023-activ": [
+    "https://manuals.startmycar.com/published/Chevrolet-Equinox_2023_EN_US_2c9a1e1767.pdf"
+  ],
   "chevrolet-equinox-2022-lt": [
     "https://experience.gm.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2022/chevrolet/equinox/2022-chevrolet-equinox-owners-manual.pdf"
   ],
@@ -1708,6 +1846,48 @@
   ],
   "toyota-camry-2020-xse": [
     "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-20Camry/pdf/T-MMS-20Camry.pdf"
+  ],
+  "honda-civic-2025-sport": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Civic+Sedan/2025_Civic_4D_Maintenance_Minder_System.pdf"
+  ],
+  "honda-civic-2025-ex": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Civic+Sedan/2025_Civic_4D_Maintenance_Minder_System.pdf"
+  ],
+  "honda-civic-2025-touring": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Civic+Sedan/2025_Civic_4D_Maintenance_Minder_System.pdf"
+  ],
+  "honda-civic-2024-ex": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Civic+Sedan/2024_Civic_4D_Maintenance_Minder_System.pdf"
+  ],
+  "honda-civic-2024-touring": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Civic+Sedan/2024_Civic_4D_Maintenance_Minder_System.pdf"
+  ],
+  "honda-civic-2023-sport": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Civic+Sedan/2023_Civic_4D_Maintenance_Minder_System.pdf"
+  ],
+  "honda-civic-2023-ex": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Civic+Sedan/2023_Civic_4D_Maintenance_Minder_System.pdf"
+  ],
+  "honda-civic-2023-touring": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Civic+Sedan/2023_Civic_4D_Maintenance_Minder_System.pdf"
+  ],
+  "honda-civic-2022-sport": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Civic+Hatchback/2022_Civic_5D_Maintenance_Minder.pdf"
+  ],
+  "honda-civic-2022-ex": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Civic+Hatchback/2022_Civic_5D_Maintenance_Minder.pdf"
+  ],
+  "honda-civic-2022-touring": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Civic+Hatchback/2022_Civic_5D_Maintenance_Minder.pdf"
+  ],
+  "honda-civic-2021-sport": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Civic+Sedan/2021_Civic_4D_Maintenance_Minder_System.pdf"
+  ],
+  "honda-civic-2021-ex": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Civic+Sedan/2021_Civic_4D_Maintenance_Minder_System.pdf"
+  ],
+  "honda-civic-2021-touring": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Civic+Sedan/2021_Civic_4D_Maintenance_Minder_System.pdf"
   ],
   "toyota-corolla-2025-le": [
     "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-25Corolla/pdf/T-MMS-25Corolla.pdf"
@@ -1835,6 +2015,63 @@
   "toyota-highlander-2020-xle-hybrid": [
     "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-20HighlanderHV/pdf/T-MMS-20HighlanderHV.pdf"
   ],
+  "honda-accord-2025-ex": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Accord+Sedan/2025_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2025-sport": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Accord+Sedan/2025_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2025-touring": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Accord+Sedan/2025_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2025-ex-hybrid": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Accord+Sedan/2025_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2024-sport": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Accord+Sedan/2024_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2024-touring": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Accord+Sedan/2024_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2024-ex-hybrid": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Accord+Sedan/2024_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2023-ex": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Accord+Sedan/2023_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2023-sport": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Accord+Sedan/2023_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2023-touring": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Accord+Sedan/2023_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2023-ex-hybrid": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Accord+Sedan/2023_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2022-ex": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Accord+Sedan/2022_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2022-sport": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Accord+Sedan/2022_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2022-touring": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Accord+Sedan/2022_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2022-ex-hybrid": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Accord+Sedan/2022_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2021-ex": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Accord+Sedan/2021_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2021-sport": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Accord+Sedan/2021_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2021-touring": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Accord+Sedan/2021_Accord_4D_Maintenance_Minder.pdf"
+  ],
+  "honda-accord-2021-ex-hybrid": [
+    "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Accord+Sedan/2021_Accord_4D_Maintenance_Minder.pdf"
+  ],
   "nissan-rogue-2025-s": [
     "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/rogue/2025/2025-nissan-rogue-owner-manual.pdf"
   ],
@@ -1889,6 +2126,15 @@
   "nissan-rogue-2020-sl": [
     "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/rogue/2020/2020-nissan-rogue-owner-manual.pdf"
   ],
+  "subaru-outback-2025-base": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+  ],
+  "subaru-outback-2025-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+  ],
+  "subaru-outback-2025-limited": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+  ],
   "subaru-outback-2024-base": [
     "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
   ],
@@ -1916,6 +2162,57 @@
   "subaru-outback-2022-limited": [
     "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
   ],
+  "subaru-outback-2021-base": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+  ],
+  "subaru-outback-2021-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+  ],
+  "subaru-outback-2021-limited": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+  ],
+  "subaru-outback-2020-base": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+  ],
+  "subaru-outback-2020-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+  ],
+  "subaru-outback-2020-limited": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+  ],
+  "hyundai-tucson-2024-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/tucson/2024_Tucson_Owners_Manual.pdf"
+  ],
+  "hyundai-tucson-2024-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/tucson/2024_Tucson_Owners_Manual.pdf"
+  ],
+  "hyundai-tucson-2021-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/tucson/2021-Tucson-Owners-Manual.pdf"
+  ],
+  "hyundai-tucson-2021-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/tucson/2021-Tucson-Owners-Manual.pdf"
+  ],
+  "hyundai-tucson-2021-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/tucson/2021-Tucson-Owners-Manual.pdf"
+  ],
+  "hyundai-tucson-2020-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2020/tucson/2020-Tucson-Owners-Manual.pdf"
+  ],
+  "hyundai-tucson-2020-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2020/tucson/2020-Tucson-Owners-Manual.pdf"
+  ],
+  "hyundai-tucson-2020-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2020/tucson/2020-Tucson-Owners-Manual.pdf"
+  ],
+  "kia-sportage-2022-lx": [
+    "https://manuals.startmycar.com/published/Kia-Sportage_2022_EN__b495da1af5.pdf"
+  ],
+  "kia-sportage-2022-ex": [
+    "https://manuals.startmycar.com/published/Kia-Sportage_2022_EN__b495da1af5.pdf"
+  ],
+  "kia-sportage-2022-sx": [
+    "https://manuals.startmycar.com/published/Kia-Sportage_2022_EN__b495da1af5.pdf"
+  ],
   "mazda-cx-5-2025-sport": [
     "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/cx-5/2025-cx-5-owners-manual.pdf"
   ],
@@ -1924,6 +2221,15 @@
   ],
   "mazda-cx-5-2025-premium": [
     "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/cx-5/2025-cx-5-owners-manual.pdf"
+  ],
+  "mazda-cx-5-2024-sport": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-5/2024-mazda-cx-5-vehicle-owners-manual.pdf"
+  ],
+  "mazda-cx-5-2024-preferred": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-5/2024-mazda-cx-5-vehicle-owners-manual.pdf"
+  ],
+  "mazda-cx-5-2024-premium": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-5/2024-mazda-cx-5-vehicle-owners-manual.pdf"
   ],
   "mazda-cx-5-2023-sport": [
     "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2023/cx-5/2023-cx-5-owners-manual.pdf"
@@ -1942,6 +2248,48 @@
   ],
   "mazda-cx-5-2022-premium": [
     "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2022/cx-5/2022-cx-5-owners-manual.pdf"
+  ],
+  "ford-explorer-2024-limited": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Explorer_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-explorer-2024-st": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Explorer_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-explorer-2023-xlt": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2023_Ford_Explorer_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-explorer-2023-limited": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2023_Ford_Explorer_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-explorer-2023-st": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2023_Ford_Explorer_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-explorer-2022-xlt": [
+    "https://manuals.startmycar.com/published/Ford-Explorer_2022_EN__0ae82bc3ae.pdf"
+  ],
+  "ford-explorer-2022-limited": [
+    "https://manuals.startmycar.com/published/Ford-Explorer_2022_EN__0ae82bc3ae.pdf"
+  ],
+  "ford-explorer-2022-st": [
+    "https://manuals.startmycar.com/published/Ford-Explorer_2022_EN__0ae82bc3ae.pdf"
+  ],
+  "ford-explorer-2021-xlt": [
+    "https://manuals.startmycar.com/published/Ford-Explorer_2021_EN-US_US_500f02e07a.pdf"
+  ],
+  "ford-explorer-2021-limited": [
+    "https://manuals.startmycar.com/published/Ford-Explorer_2021_EN-US_US_500f02e07a.pdf"
+  ],
+  "ford-explorer-2021-st": [
+    "https://manuals.startmycar.com/published/Ford-Explorer_2021_EN-US_US_500f02e07a.pdf"
+  ],
+  "ford-explorer-2020-xlt": [
+    "https://manuals.startmycar.com/published/Ford-Explorer_2020_EN-US_US_c370b3862d.pdf"
+  ],
+  "ford-explorer-2020-limited": [
+    "https://manuals.startmycar.com/published/Ford-Explorer_2020_EN-US_US_c370b3862d.pdf"
+  ],
+  "ford-explorer-2020-st": [
+    "https://manuals.startmycar.com/published/Ford-Explorer_2020_EN-US_US_c370b3862d.pdf"
   ],
   "honda-pilot-2025-ex-l": [
     "https://owners.honda.com/utility/download?path=%2Fstatic%2Fpdfs%2F2025%2FPilot%2F2025_Pilot_Maintenance_Minder_System.pdf"
@@ -1997,6 +2345,15 @@
   "honda-pilot-2020-elite": [
     "https://owners.honda.com/utility/download?path=%2Fstatic%2Fpdfs%2F2020%2FPilot%2F2020_Pilot_Maintenance_Minder_System.pdf"
   ],
+  "subaru-forester-2025-base": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+  ],
+  "subaru-forester-2025-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+  ],
+  "subaru-forester-2025-limited": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+  ],
   "subaru-forester-2024-base": [
     "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
   ],
@@ -2023,6 +2380,57 @@
   ],
   "subaru-forester-2022-limited": [
     "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
+  ],
+  "subaru-forester-2021-base": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+  ],
+  "subaru-forester-2021-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+  ],
+  "subaru-forester-2021-limited": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+  ],
+  "subaru-forester-2020-base": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+  ],
+  "subaru-forester-2020-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+  ],
+  "subaru-forester-2020-limited": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+  ],
+  "hyundai-santa-fe-2025-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2025/santa-fe/MX5a-2025-en_US-WEB-2C.pdf"
+  ],
+  "hyundai-santa-fe-2025-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2025/santa-fe/MX5a-2025-en_US-WEB-2C.pdf"
+  ],
+  "hyundai-santa-fe-2025-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2025/santa-fe/MX5a-2025-en_US-WEB-2C.pdf"
+  ],
+  "hyundai-santa-fe-2024-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/santa-fe/MX5a-2024-en_US-WEB-2C.pdf"
+  ],
+  "hyundai-santa-fe-2024-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/santa-fe/MX5a-2024-en_US-WEB-2C.pdf"
+  ],
+  "hyundai-santa-fe-2023-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/santa-fe/2023-Santa-Fe-Owners-Manual.pdf"
+  ],
+  "hyundai-santa-fe-2023-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/santa-fe/2023-Santa-Fe-Owners-Manual.pdf"
+  ],
+  "hyundai-santa-fe-2023-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/santa-fe/2023-Santa-Fe-Owners-Manual.pdf"
+  ],
+  "hyundai-santa-fe-2022-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/santa-fe/2022-Santa-Fe-Owners-Manual.pdf"
+  ],
+  "hyundai-santa-fe-2022-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/santa-fe/2022-Santa-Fe-Owners-Manual.pdf"
+  ],
+  "hyundai-santa-fe-2022-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/santa-fe/2022-Santa-Fe-Owners-Manual.pdf"
   ],
   "toyota-4runner-2025-sr5": [
     "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-254Runner/pdf/T-MMS-254Runner.pdf"
@@ -2086,6 +2494,48 @@
   ],
   "ford-escape-2025-titanium": [
     "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/CG3994en-202501-20250507135423.pdf"
+  ],
+  "ford-escape-2024-sel": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Escape_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-escape-2024-titanium": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Escape_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-escape-2021-se": [
+    "https://manuals.startmycar.com/published/Ford-Escape_2021_EN-US_US_4b98ceebaa.pdf"
+  ],
+  "ford-escape-2021-sel": [
+    "https://manuals.startmycar.com/published/Ford-Escape_2021_EN-US_US_4b98ceebaa.pdf"
+  ],
+  "ford-escape-2021-titanium": [
+    "https://manuals.startmycar.com/published/Ford-Escape_2021_EN-US_US_4b98ceebaa.pdf"
+  ],
+  "ford-escape-2020-se": [
+    "https://manuals.startmycar.com/published/Ford-Escape_2020_EN-US_US_73f0e52f93.pdf"
+  ],
+  "ford-escape-2020-sel": [
+    "https://manuals.startmycar.com/published/Ford-Escape_2020_EN-US_US_73f0e52f93.pdf"
+  ],
+  "ford-escape-2020-titanium": [
+    "https://manuals.startmycar.com/published/Ford-Escape_2020_EN-US_US_73f0e52f93.pdf"
+  ],
+  "chevrolet-traverse-2024-lt": [
+    "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Traverse_OM_en_US_U_17442647D_2024OCT10_4P.pdf"
+  ],
+  "chevrolet-traverse-2024-rs": [
+    "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Traverse_OM_en_US_U_17442647D_2024OCT10_4P.pdf"
+  ],
+  "chevrolet-traverse-2024-premier": [
+    "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Traverse_OM_en_US_U_17442647D_2024OCT10_4P.pdf"
+  ],
+  "chevrolet-traverse-2023-lt": [
+    "https://manuals.startmycar.com/published/Chevrolet-Traverse_2023_EN_US_3f8171d068.pdf"
+  ],
+  "chevrolet-traverse-2023-rs": [
+    "https://manuals.startmycar.com/published/Chevrolet-Traverse_2023_EN_US_3f8171d068.pdf"
+  ],
+  "chevrolet-traverse-2023-premier": [
+    "https://manuals.startmycar.com/published/Chevrolet-Traverse_2023_EN_US_3f8171d068.pdf"
   ],
   "chevrolet-traverse-2022-lt": [
     "https://experience.gm.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2022/chevrolet/traverse/2022-chevrolet-traverse-owners-manual.pdf"
@@ -2168,6 +2618,57 @@
   "nissan-altima-2020-sr": [
     "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/altima/2020/2020-nissan-altima-owner-manual.pdf"
   ],
+  "hyundai-elantra-2024-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/elantra/2024%20Elantra%20ICE%20and%20N-Line%20(CN7)%20OM.pdf"
+  ],
+  "hyundai-elantra-2024-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/elantra/2024%20Elantra%20ICE%20and%20N-Line%20(CN7)%20OM.pdf"
+  ],
+  "hyundai-elantra-2023-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/elantra/2023-Elantra-Owners-Manual.pdf"
+  ],
+  "hyundai-elantra-2023-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/elantra/2023-Elantra-Owners-Manual.pdf"
+  ],
+  "hyundai-elantra-2023-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/elantra/2023-Elantra-Owners-Manual.pdf"
+  ],
+  "hyundai-elantra-2022-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/elantra/2022-Elantra-Owners-Manual.pdf"
+  ],
+  "hyundai-elantra-2022-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/elantra/2022-Elantra-Owners-Manual.pdf"
+  ],
+  "hyundai-elantra-2022-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/elantra/2022-Elantra-Owners-Manual.pdf"
+  ],
+  "hyundai-elantra-2021-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/elantra/2021-Elantra-Owners-Manual.pdf"
+  ],
+  "hyundai-elantra-2021-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/elantra/2021-Elantra-Owners-Manual.pdf"
+  ],
+  "hyundai-elantra-2021-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/elantra/2021-Elantra-Owners-Manual.pdf"
+  ],
+  "hyundai-elantra-2020-se": [
+    "https://manuals.startmycar.com/published/Hyundai-Elantra_2020_EN-US_US_d43ca94d3f.pdf"
+  ],
+  "hyundai-elantra-2020-sel": [
+    "https://manuals.startmycar.com/published/Hyundai-Elantra_2020_EN-US_US_d43ca94d3f.pdf"
+  ],
+  "hyundai-elantra-2020-limited": [
+    "https://manuals.startmycar.com/published/Hyundai-Elantra_2020_EN-US_US_d43ca94d3f.pdf"
+  ],
+  "subaru-crosstrek-2025-base": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+  ],
+  "subaru-crosstrek-2025-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+  ],
+  "subaru-crosstrek-2025-limited": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+  ],
   "subaru-crosstrek-2024-base": [
     "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
   ],
@@ -2194,6 +2695,24 @@
   ],
   "subaru-crosstrek-2022-limited": [
     "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
+  ],
+  "subaru-crosstrek-2021-base": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+  ],
+  "subaru-crosstrek-2021-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+  ],
+  "subaru-crosstrek-2021-limited": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+  ],
+  "subaru-crosstrek-2020-base": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+  ],
+  "subaru-crosstrek-2020-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+  ],
+  "subaru-crosstrek-2020-limited": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
   ],
   "toyota-prius-2025-le-hybrid": [
     "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-25Prius/pdf/T-MMS-25Prius.pdf"
@@ -2339,6 +2858,15 @@
   "honda-hr-v-2020-sport": [
     "https://owners.honda.com/utility/download?path=%2Fstatic%2Fpdfs%2F2020%2FHR-V%2F2020_HR-V_Maintenance_Minder_System.pdf"
   ],
+  "mazda-cx-30-2025-select": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/cx-30/2025-cx-30-vehicle-owners-manual.pdf"
+  ],
+  "mazda-cx-30-2025-preferred": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/cx-30/2025-cx-30-vehicle-owners-manual.pdf"
+  ],
+  "mazda-cx-30-2025-premium": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/cx-30/2025-cx-30-vehicle-owners-manual.pdf"
+  ],
   "mazda-cx-30-2024-select": [
     "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-30/2024-cx-30-owners-manual.pdf"
   ],
@@ -2384,6 +2912,15 @@
   "mazda-cx-30-2020-premium": [
     "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2020/cx-30/2020-cx-30-owners-manual.pdf"
   ],
+  "subaru-impreza-2025-base": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+  ],
+  "subaru-impreza-2025-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+  ],
+  "subaru-impreza-2025-sport": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+  ],
   "subaru-impreza-2024-base": [
     "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
   ],
@@ -2410,6 +2947,75 @@
   ],
   "subaru-impreza-2022-sport": [
     "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2023_war_and_maint_060822.PDF"
+  ],
+  "subaru-impreza-2021-base": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+  ],
+  "subaru-impreza-2021-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+  ],
+  "subaru-impreza-2021-sport": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+  ],
+  "subaru-impreza-2020-base": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+  ],
+  "subaru-impreza-2020-premium": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+  ],
+  "subaru-impreza-2020-sport": [
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+  ],
+  "honda-passport-2025-ex-l": [
+    "https://owners.honda.com/static/pdfs/2025/Passport/2025_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2025-touring": [
+    "https://owners.honda.com/static/pdfs/2025/Passport/2025_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2025-elite": [
+    "https://owners.honda.com/static/pdfs/2025/Passport/2025_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2024-touring": [
+    "https://owners.honda.com/static/pdfs/2024/Passport/2024_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2024-elite": [
+    "https://owners.honda.com/static/pdfs/2024/Passport/2024_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2023-ex-l": [
+    "https://owners.honda.com/static/pdfs/2023/Passport/2023_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2023-touring": [
+    "https://owners.honda.com/static/pdfs/2023/Passport/2023_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2023-elite": [
+    "https://owners.honda.com/static/pdfs/2023/Passport/2023_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2022-ex-l": [
+    "https://owners.honda.com/static/pdfs/2022/Passport/2022_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2022-touring": [
+    "https://owners.honda.com/static/pdfs/2022/Passport/2022_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2022-elite": [
+    "https://owners.honda.com/static/pdfs/2022/Passport/2022_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2021-ex-l": [
+    "https://owners.honda.com/static/pdfs/2021/Passport/2021_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2021-touring": [
+    "https://owners.honda.com/static/pdfs/2021/Passport/2021_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2021-elite": [
+    "https://owners.honda.com/static/pdfs/2021/Passport/2021_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2020-ex-l": [
+    "https://owners.honda.com/static/pdfs/2020/Passport/2020_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2020-touring": [
+    "https://owners.honda.com/static/pdfs/2020/Passport/2020_Passport_Maintenance_Minder.pdf"
+  ],
+  "honda-passport-2020-elite": [
+    "https://owners.honda.com/static/pdfs/2020/Passport/2020_Passport_Maintenance_Minder.pdf"
   ],
   "honda-odyssey-2025-ex-l": [
     "https://owners.honda.com/utility/download?path=%2Fstatic%2Fpdfs%2F2025%2FOdyssey%2F2025_Odyssey_Maintenance_Minder_System.pdf"
@@ -2492,6 +3098,39 @@
   "toyota-sienna-2021-limited-hybrid": [
     "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-21SiennaHV/pdf/T-MMS-21SiennaHV.pdf"
   ],
+  "ford-mustang-mach-e-2024-select": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-mustang-mach-e-2024-premium": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-mustang-mach-e-2024-gt": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-mustang-mach-e-2023-select": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2023_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-mustang-mach-e-2023-premium": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2023_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-mustang-mach-e-2023-gt": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2023_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-mustang-mach-e-2022-select": [
+    "https://manuals.startmycar.com/published/Ford-Mustang-Mach-E_2022_EN-US_US_3504acec02.pdf"
+  ],
+  "ford-mustang-mach-e-2022-premium": [
+    "https://manuals.startmycar.com/published/Ford-Mustang-Mach-E_2022_EN-US_US_3504acec02.pdf"
+  ],
+  "ford-mustang-mach-e-2022-gt": [
+    "https://manuals.startmycar.com/published/Ford-Mustang-Mach-E_2022_EN-US_US_3504acec02.pdf"
+  ],
+  "chevrolet-bolt-ev-2023-1lt": [
+    "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2023/23_CHEV_Bolt_EV_OM_en_US_U_84953304C_2023MAR10_3P.pdf"
+  ],
+  "chevrolet-bolt-ev-2023-2lt": [
+    "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2023/23_CHEV_Bolt_EV_OM_en_US_U_84953304C_2023MAR10_3P.pdf"
+  ],
   "chevrolet-bolt-ev-2022-1lt": [
     "https://experience.gm.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2022/chevrolet/bolt-ev/2022-chevrolet-bolt-ev-owners-manual.pdf"
   ],
@@ -2503,6 +3142,12 @@
   ],
   "chevrolet-bolt-ev-2021-2lt": [
     "https://experience.gm.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2021/chevrolet/bolt-ev/2021-chevrolet-bolt-ev-owners-manual.pdf"
+  ],
+  "chevrolet-bolt-ev-2020-1lt": [
+    "https://manuals.startmycar.com/published/Chevrolet-Bolt-EV_2020_EN-US_US_766f15128a.pdf"
+  ],
+  "chevrolet-bolt-ev-2020-2lt": [
+    "https://manuals.startmycar.com/published/Chevrolet-Bolt-EV_2020_EN-US_US_766f15128a.pdf"
   ],
   "nissan-leaf-2025-s": [
     "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/leaf/2025/2025-nissan-leaf-owner-manual.pdf"
@@ -2603,6 +3248,51 @@
   "nissan-pathfinder-2020-platinum": [
     "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/pathfinder/2020/2020-nissan-pathfinder-owner-manual.pdf"
   ],
+  "mazda-3-2025-select": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/m3s/2025-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2025-preferred": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/m3s/2025-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2025-premium": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/m3s/2025-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2024-select": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/m3s/2024-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2024-preferred": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/m3s/2024-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2024-premium": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/m3s/2024-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2023-select": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2023/m3s/2023-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2023-preferred": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2023/m3s/2023-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2023-premium": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2023/m3s/2023-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2022-select": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2022/m3s/2022-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2022-preferred": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2022/m3s/2022-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2022-premium": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2022/m3s/2022-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2020-select": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2020/m3s/2020-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2020-preferred": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2020/m3s/2020-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
+  "mazda-3-2020-premium": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2020/m3s/2020-mazda3-hatchback-sedan-owners-manual.pdf"
+  ],
   "mazda-cx-50-2025-select": [
     "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/cx-50/2025-cx-50-owners-manual.pdf"
   ],
@@ -2611,6 +3301,15 @@
   ],
   "mazda-cx-50-2025-premium": [
     "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/cx-50/2025-cx-50-owners-manual.pdf"
+  ],
+  "mazda-cx-50-2024-select": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-50/2024-cx-50-vehicle-owners-manual.pdf"
+  ],
+  "mazda-cx-50-2024-preferred": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-50/2024-cx-50-vehicle-owners-manual.pdf"
+  ],
+  "mazda-cx-50-2024-premium": [
+    "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-50/2024-cx-50-vehicle-owners-manual.pdf"
   ],
   "mazda-cx-50-2023-select": [
     "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2023/cx-50/2023-cx-50-owners-manual.pdf"
@@ -2621,6 +3320,24 @@
   "mazda-cx-50-2023-premium": [
     "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2023/cx-50/2023-cx-50-owners-manual.pdf"
   ],
+  "jeep-grand-cherokee-2023-laredo": [
+    "https://manuals.startmycar.com/published/Jeep-Grand-Cherokee_2023_EN_US_d7726128d6.pdf"
+  ],
+  "jeep-grand-cherokee-2023-limited": [
+    "https://manuals.startmycar.com/published/Jeep-Grand-Cherokee_2023_EN_US_d7726128d6.pdf"
+  ],
+  "jeep-grand-cherokee-2023-overland": [
+    "https://manuals.startmycar.com/published/Jeep-Grand-Cherokee_2023_EN_US_d7726128d6.pdf"
+  ],
+  "jeep-grand-cherokee-2021-laredo": [
+    "https://manuals.startmycar.com/published/Jeep-Grand-Cherokee_2021_EN-US_US_d2b42f4998.pdf"
+  ],
+  "jeep-grand-cherokee-2021-limited": [
+    "https://manuals.startmycar.com/published/Jeep-Grand-Cherokee_2021_EN-US_US_d2b42f4998.pdf"
+  ],
+  "jeep-grand-cherokee-2021-overland": [
+    "https://manuals.startmycar.com/published/Jeep-Grand-Cherokee_2021_EN-US_US_d2b42f4998.pdf"
+  ],
   "ford-bronco-sport-2025-base": [
     "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2025_Ford_Bronco_Sport_OM_ENGLISH_V1.pdf"
   ],
@@ -2629,6 +3346,78 @@
   ],
   "ford-bronco-sport-2025-outer-banks": [
     "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2025_Ford_Bronco_Sport_OM_ENGLISH_V1.pdf"
+  ],
+  "ford-bronco-sport-2024-base": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Bronco_Sport_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-bronco-sport-2024-big-bend": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Bronco_Sport_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "ford-bronco-sport-2024-outer-banks": [
+    "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Bronco_Sport_Owners_Manual_version_1_om_EN-US.pdf"
+  ],
+  "volkswagen-tiguan-2023-s": [
+    "https://manuals.startmycar.com/published/Volkswagen-Tiguan_2023_EN_US_16ca8b27e5.pdf"
+  ],
+  "volkswagen-tiguan-2023-se": [
+    "https://manuals.startmycar.com/published/Volkswagen-Tiguan_2023_EN_US_16ca8b27e5.pdf"
+  ],
+  "volkswagen-tiguan-2023-sel-r-line": [
+    "https://manuals.startmycar.com/published/Volkswagen-Tiguan_2023_EN_US_16ca8b27e5.pdf"
+  ],
+  "hyundai-palisade-2025-se": [
+    "https://manuals.startmycar.com/published/Hyundai-Palisade_2025_EN_US_b4142e9172.pdf"
+  ],
+  "hyundai-palisade-2025-sel": [
+    "https://manuals.startmycar.com/published/Hyundai-Palisade_2025_EN_US_b4142e9172.pdf"
+  ],
+  "hyundai-palisade-2025-limited": [
+    "https://manuals.startmycar.com/published/Hyundai-Palisade_2025_EN_US_b4142e9172.pdf"
+  ],
+  "hyundai-palisade-2024-se": [
+    "https://manuals.startmycar.com/published/Hyundai-Palisade_2024_EN_US_e671929815.pdf"
+  ],
+  "hyundai-palisade-2024-sel": [
+    "https://manuals.startmycar.com/published/Hyundai-Palisade_2024_EN_US_e671929815.pdf"
+  ],
+  "hyundai-palisade-2024-limited": [
+    "https://manuals.startmycar.com/published/Hyundai-Palisade_2024_EN_US_e671929815.pdf"
+  ],
+  "hyundai-palisade-2023-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/palisade/2023-Palisade-Owners-Manual.pdf"
+  ],
+  "hyundai-palisade-2023-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/palisade/2023-Palisade-Owners-Manual.pdf"
+  ],
+  "hyundai-palisade-2023-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/palisade/2023-Palisade-Owners-Manual.pdf"
+  ],
+  "hyundai-palisade-2022-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/palisade/2022-Palisade-Owners-Manual.pdf"
+  ],
+  "hyundai-palisade-2022-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/palisade/2022-Palisade-Owners-Manual.pdf"
+  ],
+  "hyundai-palisade-2022-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/palisade/2022-Palisade-Owners-Manual.pdf"
+  ],
+  "hyundai-palisade-2021-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/palisade/2021-Palisade-Owners-Manual.pdf"
+  ],
+  "hyundai-palisade-2021-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/palisade/2021-Palisade-Owners-Manual.pdf"
+  ],
+  "hyundai-palisade-2021-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/palisade/2021-Palisade-Owners-Manual.pdf"
+  ],
+  "kia-sorento-2020-lx": [
+    "https://manuals.startmycar.com/published/Kia-Sorento_2020_EN-US_US_c92a3470f4.pdf"
+  ],
+  "kia-sorento-2020-ex": [
+    "https://manuals.startmycar.com/published/Kia-Sorento_2020_EN-US_US_c92a3470f4.pdf"
+  ],
+  "kia-sorento-2020-sx": [
+    "https://manuals.startmycar.com/published/Kia-Sorento_2020_EN-US_US_c92a3470f4.pdf"
   ],
   "nissan-sentra-2025-s": [
     "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/sentra/2025/2025-nissan-sentra-owner-manual.pdf"
@@ -2714,6 +3503,96 @@
   "toyota-bz4x-2024-limited": [
     "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-24bZ4X/pdf/T-MMS-24bZ4X.pdf"
   ],
+  "hyundai-sonata-2023-se": [
+    "https://manuals.startmycar.com/published/Hyundai-Sonata_2023_EN-US_US_0ffe1bddc4.pdf"
+  ],
+  "hyundai-sonata-2023-sel": [
+    "https://manuals.startmycar.com/published/Hyundai-Sonata_2023_EN-US_US_0ffe1bddc4.pdf"
+  ],
+  "hyundai-sonata-2023-limited": [
+    "https://manuals.startmycar.com/published/Hyundai-Sonata_2023_EN-US_US_0ffe1bddc4.pdf"
+  ],
+  "hyundai-sonata-2022-se": [
+    "https://manuals.startmycar.com/published/Hyundai-Sonata_2022_EN_US_2d1853cb94.pdf"
+  ],
+  "hyundai-sonata-2022-sel": [
+    "https://manuals.startmycar.com/published/Hyundai-Sonata_2022_EN_US_2d1853cb94.pdf"
+  ],
+  "hyundai-sonata-2022-limited": [
+    "https://manuals.startmycar.com/published/Hyundai-Sonata_2022_EN_US_2d1853cb94.pdf"
+  ],
+  "hyundai-sonata-2021-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/sonata/2021-Sonata-Owners-Manual.pdf"
+  ],
+  "hyundai-sonata-2021-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/sonata/2021-Sonata-Owners-Manual.pdf"
+  ],
+  "hyundai-sonata-2021-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/sonata/2021-Sonata-Owners-Manual.pdf"
+  ],
+  "hyundai-sonata-2020-se": [
+    "https://manuals.startmycar.com/published/Hyundai-Sonata_2020_EN-US_US_f65523d9fc.pdf"
+  ],
+  "hyundai-sonata-2020-sel": [
+    "https://manuals.startmycar.com/published/Hyundai-Sonata_2020_EN-US_US_f65523d9fc.pdf"
+  ],
+  "hyundai-sonata-2020-limited": [
+    "https://manuals.startmycar.com/published/Hyundai-Sonata_2020_EN-US_US_f65523d9fc.pdf"
+  ],
+  "hyundai-kona-2023-se": [
+    "https://manuals.startmycar.com/published/Hyundai-Kona_2023_EN_US_1294147445.pdf"
+  ],
+  "hyundai-kona-2023-sel": [
+    "https://manuals.startmycar.com/published/Hyundai-Kona_2023_EN_US_1294147445.pdf"
+  ],
+  "hyundai-kona-2023-limited": [
+    "https://manuals.startmycar.com/published/Hyundai-Kona_2023_EN_US_1294147445.pdf"
+  ],
+  "hyundai-kona-2022-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/kona/2022-Kona-Owners-Manual.pdf"
+  ],
+  "hyundai-kona-2022-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/kona/2022-Kona-Owners-Manual.pdf"
+  ],
+  "hyundai-kona-2022-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/kona/2022-Kona-Owners-Manual.pdf"
+  ],
+  "hyundai-kona-2021-se": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/kona/2021_Kona_Owners_Manual.pdf"
+  ],
+  "hyundai-kona-2021-sel": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/kona/2021_Kona_Owners_Manual.pdf"
+  ],
+  "hyundai-kona-2021-limited": [
+    "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/kona/2021_Kona_Owners_Manual.pdf"
+  ],
+  "hyundai-kona-2020-se": [
+    "https://manuals.startmycar.com/published/Hyundai-Kona_2020_EN-US_US_0679514311.pdf"
+  ],
+  "hyundai-kona-2020-sel": [
+    "https://manuals.startmycar.com/published/Hyundai-Kona_2020_EN-US_US_0679514311.pdf"
+  ],
+  "hyundai-kona-2020-limited": [
+    "https://manuals.startmycar.com/published/Hyundai-Kona_2020_EN-US_US_0679514311.pdf"
+  ],
+  "chevrolet-malibu-2024-ls": [
+    "https://manuals.startmycar.com/published/Chevrolet-Malibu_2024_EN-US_US_e874c76e30.pdf"
+  ],
+  "chevrolet-malibu-2024-rs": [
+    "https://manuals.startmycar.com/published/Chevrolet-Malibu_2024_EN-US_US_e874c76e30.pdf"
+  ],
+  "chevrolet-malibu-2024-premier": [
+    "https://manuals.startmycar.com/published/Chevrolet-Malibu_2024_EN-US_US_e874c76e30.pdf"
+  ],
+  "chevrolet-malibu-2023-ls": [
+    "https://manuals.startmycar.com/published/Chevrolet-Malibu_2023_EN-US_US_1a2fa52966.pdf"
+  ],
+  "chevrolet-malibu-2023-rs": [
+    "https://manuals.startmycar.com/published/Chevrolet-Malibu_2023_EN-US_US_1a2fa52966.pdf"
+  ],
+  "chevrolet-malibu-2023-premier": [
+    "https://manuals.startmycar.com/published/Chevrolet-Malibu_2023_EN-US_US_1a2fa52966.pdf"
+  ],
   "chevrolet-malibu-2022-ls": [
     "https://experience.gm.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2022/chevrolet/malibu/2022-chevrolet-malibu-owners-manual.pdf"
   ],
@@ -2740,6 +3619,15 @@
   ],
   "chevrolet-malibu-2020-premier": [
     "https://experience.gm.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2020/chevrolet/malibu/2020-chevrolet-malibu-owners-manual.pdf"
+  ],
+  "chevrolet-blazer-2024-lt": [
+    "https://manuals.startmycar.com/published/Chevrolet-Blazer_2024_EN-US_US_7e64ac5c3b.pdf"
+  ],
+  "chevrolet-blazer-2024-rs": [
+    "https://manuals.startmycar.com/published/Chevrolet-Blazer_2024_EN-US_US_7e64ac5c3b.pdf"
+  ],
+  "chevrolet-blazer-2024-premier": [
+    "https://manuals.startmycar.com/published/Chevrolet-Blazer_2024_EN-US_US_7e64ac5c3b.pdf"
   ],
   "chevrolet-blazer-2022-lt": [
     "https://experience.gm.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2022/chevrolet/blazer/2022-chevrolet-blazer-owners-manual.pdf"
@@ -2876,6 +3764,33 @@
   "mini-countryman-2020-jcw": [
     "https://www.miniusa.com/content/dam/mini/PDF/warranties/2020_MINI_Maintenance.pdf"
   ],
+  "buick-enclave-2024-preferred": [
+    "https://manuals.startmycar.com/published/Buick-Enclave_2024_EN_US_25ede6a155.pdf"
+  ],
+  "buick-enclave-2024-essence": [
+    "https://manuals.startmycar.com/published/Buick-Enclave_2024_EN_US_25ede6a155.pdf"
+  ],
+  "buick-enclave-2024-avenir": [
+    "https://manuals.startmycar.com/published/Buick-Enclave_2024_EN_US_25ede6a155.pdf"
+  ],
+  "buick-enclave-2023-preferred": [
+    "https://manuals.startmycar.com/published/Buick-Enclave_20023_EN_US_d6a78f0bdd.pdf"
+  ],
+  "buick-enclave-2023-essence": [
+    "https://manuals.startmycar.com/published/Buick-Enclave_20023_EN_US_d6a78f0bdd.pdf"
+  ],
+  "buick-enclave-2023-avenir": [
+    "https://manuals.startmycar.com/published/Buick-Enclave_20023_EN_US_d6a78f0bdd.pdf"
+  ],
+  "buick-enclave-2022-preferred": [
+    "https://manuals.startmycar.com/published/Buick-Enclave_2022_EN_US_c1d1997ce5.pdf"
+  ],
+  "buick-enclave-2022-essence": [
+    "https://manuals.startmycar.com/published/Buick-Enclave_2022_EN_US_c1d1997ce5.pdf"
+  ],
+  "buick-enclave-2022-avenir": [
+    "https://manuals.startmycar.com/published/Buick-Enclave_2022_EN_US_c1d1997ce5.pdf"
+  ],
   "buick-enclave-2021-preferred": [
     "https://experience.gm.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2021/buick/enclave/2021-buick-enclave-owners-manual.pdf"
   ],
@@ -2893,6 +3808,51 @@
   ],
   "buick-enclave-2020-avenir": [
     "https://experience.gm.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2020/buick/enclave/2020-buick-enclave-owners-manual.pdf"
+  ],
+  "buick-encore-gx-2024-preferred": [
+    "https://manuals.startmycar.com/published/Buick-Encore-GX_2024_EN_US_7423f05636.pdf"
+  ],
+  "buick-encore-gx-2024-essence": [
+    "https://manuals.startmycar.com/published/Buick-Encore-GX_2024_EN_US_7423f05636.pdf"
+  ],
+  "buick-encore-gx-2024-avenir": [
+    "https://manuals.startmycar.com/published/Buick-Encore-GX_2024_EN_US_7423f05636.pdf"
+  ],
+  "buick-encore-gx-2023-preferred": [
+    "https://manuals.startmycar.com/published/Buick-Encore-GX_2023_EN_US_d4f51db50c.pdf"
+  ],
+  "buick-encore-gx-2023-essence": [
+    "https://manuals.startmycar.com/published/Buick-Encore-GX_2023_EN_US_d4f51db50c.pdf"
+  ],
+  "buick-encore-gx-2023-avenir": [
+    "https://manuals.startmycar.com/published/Buick-Encore-GX_2023_EN_US_d4f51db50c.pdf"
+  ],
+  "buick-encore-gx-2021-preferred": [
+    "https://manuals.startmycar.com/published/Buick-Encore-GX_2021_EN_US-CA_9f4dffff03.pdf"
+  ],
+  "buick-encore-gx-2021-essence": [
+    "https://manuals.startmycar.com/published/Buick-Encore-GX_2021_EN_US-CA_9f4dffff03.pdf"
+  ],
+  "buick-encore-gx-2021-avenir": [
+    "https://manuals.startmycar.com/published/Buick-Encore-GX_2021_EN_US-CA_9f4dffff03.pdf"
+  ],
+  "chrysler-pacifica-2023-touring": [
+    "https://manuals.startmycar.com/published/Chrysler-Pacifica_2023_EN_US_79ef11357d.pdf"
+  ],
+  "chrysler-pacifica-2023-touring-l": [
+    "https://manuals.startmycar.com/published/Chrysler-Pacifica_2023_EN_US_79ef11357d.pdf"
+  ],
+  "chrysler-pacifica-2023-limited": [
+    "https://manuals.startmycar.com/published/Chrysler-Pacifica_2023_EN_US_79ef11357d.pdf"
+  ],
+  "chrysler-pacifica-2022-touring": [
+    "https://manuals.startmycar.com/published/Chrysler-Pacifica_2022_EN__8c61fef35e.pdf"
+  ],
+  "chrysler-pacifica-2022-touring-l": [
+    "https://manuals.startmycar.com/published/Chrysler-Pacifica_2022_EN__8c61fef35e.pdf"
+  ],
+  "chrysler-pacifica-2022-limited": [
+    "https://manuals.startmycar.com/published/Chrysler-Pacifica_2022_EN__8c61fef35e.pdf"
   ],
   "mitsubishi-outlander-2022-es": [
     "https://www.mitsubishicars.com/content/dam/mitsubishi-motors-us/images/siteimages/pdf/what-drives-us/warranty/2022-Mitsubishi-Warranty-Outlander.pdf"

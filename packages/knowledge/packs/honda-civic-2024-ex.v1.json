@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2024 Honda Civic EX — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "maintenance_minder",
-  "qaStatus": "creator_review_required",
-  "qaNotes": "Tier-2 catalog pack — no verified OEM PDF yet. Creator review required before auto_verified promotion.",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#honda-civic-2024-ex",
   "vehicle": {
     "make": "Honda",
@@ -20,7 +20,7 @@
       "serviceName": "Replace engine oil (Maintenance Minder A)",
       "intervalMiles": 10000,
       "intervalMonths": 12,
-      "sourcePage": "Maintenance Minder — Code A",
+      "sourcePage": "P. 4 — Code A",
       "ruleId": "knowledge.policy.code-a.v1",
       "mainItemCode": "A",
       "confidence": 0.94
@@ -31,7 +31,7 @@
       "serviceName": "Replace engine oil and filter (Maintenance Minder B)",
       "intervalMiles": 10000,
       "intervalMonths": 12,
-      "sourcePage": "Maintenance Minder — Code B",
+      "sourcePage": "P. 4 — Code B",
       "ruleId": "knowledge.policy.code-b.v1",
       "mainItemCode": "B",
       "confidence": 0.94
@@ -42,7 +42,7 @@
       "serviceName": "Rotate tires (Maintenance Minder sub 1)",
       "intervalMiles": 7500,
       "intervalMonths": 12,
-      "sourcePage": "Maintenance Minder — Sub 1",
+      "sourcePage": "P. 4 — Sub 1",
       "ruleId": "knowledge.policy.mm-sub-1.v1",
       "subItemCode": "1",
       "confidence": 0.93
@@ -53,7 +53,7 @@
       "serviceName": "Replace brake fluid (Maintenance Minder sub 7)",
       "intervalMiles": null,
       "intervalMonths": 36,
-      "sourcePage": "Maintenance Minder — Sub 7",
+      "sourcePage": "P. 4 — Sub 7; footnote *5",
       "ruleId": "knowledge.policy.mm-sub-7.v1",
       "subItemCode": "7",
       "confidence": 0.92

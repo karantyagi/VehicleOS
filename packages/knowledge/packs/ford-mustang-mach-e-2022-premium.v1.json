@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2022 Ford Mustang Mach-E Premium — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "ev_simplified",
-  "qaStatus": "creator_review_required",
-  "qaNotes": "Tier-2 catalog pack — no verified OEM PDF yet. Creator review required before auto_verified promotion.",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#ford-mustang-mach-e-2022-premium",
   "vehicle": {
     "make": "Ford",
@@ -18,9 +18,9 @@
       "entryId": "tire-rotation",
       "canonicalServiceId": "generic.tire_rotation",
       "serviceName": "Rotate tires",
-      "intervalMiles": 7500,
-      "intervalMonths": 6,
-      "sourcePage": "EV maintenance schedule — Tire rotation",
+      "intervalMiles": 10000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — Tire rotation",
       "ruleId": "knowledge.policy.tire-rotation.v1",
       "confidence": 0.92
     },

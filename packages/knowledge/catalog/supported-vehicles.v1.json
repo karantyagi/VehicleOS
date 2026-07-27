@@ -5074,7 +5074,7 @@
       "model": "IS",
       "year": 2021,
       "trim": "500 F Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5101,7 +5101,7 @@
       "model": "IS",
       "year": 2020,
       "trim": "500 F Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5128,7 +5128,7 @@
       "model": "IS",
       "year": 2019,
       "trim": "500 F Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5322,7 +5322,7 @@
       "model": "ES",
       "year": 2020,
       "trim": "250",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5359,7 +5359,7 @@
       "model": "ES",
       "year": 2019,
       "trim": "250",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5405,7 +5405,7 @@
       "model": "RX",
       "year": 2025,
       "trim": "350L",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5424,7 +5424,7 @@
       "year": 2025,
       "trim": "450h",
       "powertrain": "Hybrid",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5442,7 +5442,7 @@
       "model": "RX",
       "year": 2024,
       "trim": "350L",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5461,7 +5461,7 @@
       "year": 2024,
       "trim": "450h",
       "powertrain": "Hybrid",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5479,7 +5479,7 @@
       "model": "RX",
       "year": 2023,
       "trim": "350L",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5498,7 +5498,7 @@
       "year": 2023,
       "trim": "450h",
       "powertrain": "Hybrid",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5525,7 +5525,7 @@
       "model": "RX",
       "year": 2022,
       "trim": "500h",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5562,7 +5562,7 @@
       "model": "RX",
       "year": 2021,
       "trim": "500h",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5599,7 +5599,7 @@
       "model": "RX",
       "year": 2020,
       "trim": "500h",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5636,7 +5636,7 @@
       "model": "RX",
       "year": 2019,
       "trim": "500h",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5646,7 +5646,7 @@
       "year": 2019,
       "trim": "450h",
       "powertrain": "Hybrid",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5673,7 +5673,7 @@
       "model": "RX",
       "year": 2018,
       "trim": "500h",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5683,7 +5683,7 @@
       "year": 2018,
       "trim": "450h",
       "powertrain": "Hybrid",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5710,7 +5710,7 @@
       "model": "NX",
       "year": 2025,
       "trim": "350h",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5720,7 +5720,7 @@
       "year": 2025,
       "trim": "450h+",
       "powertrain": "PHEV",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5747,7 +5747,7 @@
       "model": "NX",
       "year": 2024,
       "trim": "350h",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5757,7 +5757,7 @@
       "year": 2024,
       "trim": "450h+",
       "powertrain": "PHEV",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5766,7 +5766,7 @@
       "model": "NX",
       "year": 2023,
       "trim": "250",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5775,7 +5775,7 @@
       "model": "NX",
       "year": 2023,
       "trim": "350",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5912,7 +5912,7 @@
       "model": "UX",
       "year": 2024,
       "trim": "200",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5930,7 +5930,7 @@
       "model": "UX",
       "year": 2023,
       "trim": "200",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5975,7 +5975,7 @@
       "model": "UX",
       "year": 2021,
       "trim": "250h",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -5993,7 +5993,7 @@
       "model": "UX",
       "year": 2020,
       "trim": "250h",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -6011,7 +6011,7 @@
       "model": "UX",
       "year": 2019,
       "trim": "250h",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -6819,7 +6819,7 @@
       "model": "G70",
       "year": 2019,
       "trim": "2.0T",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -6828,7 +6828,7 @@
       "model": "G70",
       "year": 2019,
       "trim": "3.3T",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -6837,7 +6837,7 @@
       "model": "G70",
       "year": 2019,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -6891,7 +6891,7 @@
       "model": "G80",
       "year": 2024,
       "trim": "Electrified",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -6945,7 +6945,7 @@
       "model": "G80",
       "year": 2022,
       "trim": "Electrified",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -6972,7 +6972,7 @@
       "model": "G80",
       "year": 2021,
       "trim": "Electrified",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -7053,7 +7053,7 @@
       "model": "GV70",
       "year": 2023,
       "trim": "Electrified",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -7080,7 +7080,7 @@
       "model": "GV70",
       "year": 2022,
       "trim": "Electrified",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8531,7 +8531,7 @@
       "model": "Equinox",
       "year": 2025,
       "trim": "LT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8540,7 +8540,7 @@
       "model": "Equinox",
       "year": 2025,
       "trim": "RS",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8549,7 +8549,7 @@
       "model": "Equinox",
       "year": 2025,
       "trim": "Activ",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8558,7 +8558,7 @@
       "model": "Equinox",
       "year": 2024,
       "trim": "LT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8567,7 +8567,7 @@
       "model": "Equinox",
       "year": 2024,
       "trim": "RS",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8576,7 +8576,7 @@
       "model": "Equinox",
       "year": 2024,
       "trim": "Activ",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8585,7 +8585,7 @@
       "model": "Equinox",
       "year": 2023,
       "trim": "LT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8594,7 +8594,7 @@
       "model": "Equinox",
       "year": 2023,
       "trim": "RS",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8603,7 +8603,7 @@
       "model": "Equinox",
       "year": 2023,
       "trim": "Activ",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8855,7 +8855,7 @@
       "model": "Civic",
       "year": 2025,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8864,7 +8864,7 @@
       "model": "Civic",
       "year": 2025,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8873,7 +8873,7 @@
       "model": "Civic",
       "year": 2025,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8891,7 +8891,7 @@
       "model": "Civic",
       "year": 2024,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8900,7 +8900,7 @@
       "model": "Civic",
       "year": 2024,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8909,7 +8909,7 @@
       "model": "Civic",
       "year": 2023,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8918,7 +8918,7 @@
       "model": "Civic",
       "year": 2023,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8927,7 +8927,7 @@
       "model": "Civic",
       "year": 2023,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8936,7 +8936,7 @@
       "model": "Civic",
       "year": 2022,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8945,7 +8945,7 @@
       "model": "Civic",
       "year": 2022,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8954,7 +8954,7 @@
       "model": "Civic",
       "year": 2022,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8963,7 +8963,7 @@
       "model": "Civic",
       "year": 2021,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8972,7 +8972,7 @@
       "model": "Civic",
       "year": 2021,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -8981,7 +8981,7 @@
       "model": "Civic",
       "year": 2021,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9401,7 +9401,7 @@
       "model": "Accord",
       "year": 2025,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9410,7 +9410,7 @@
       "model": "Accord",
       "year": 2025,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9419,7 +9419,7 @@
       "model": "Accord",
       "year": 2025,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9429,7 +9429,7 @@
       "year": 2025,
       "trim": "EX",
       "powertrain": "Hybrid",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9447,7 +9447,7 @@
       "model": "Accord",
       "year": 2024,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9456,7 +9456,7 @@
       "model": "Accord",
       "year": 2024,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9466,7 +9466,7 @@
       "year": 2024,
       "trim": "EX",
       "powertrain": "Hybrid",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9475,7 +9475,7 @@
       "model": "Accord",
       "year": 2023,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9484,7 +9484,7 @@
       "model": "Accord",
       "year": 2023,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9493,7 +9493,7 @@
       "model": "Accord",
       "year": 2023,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9503,7 +9503,7 @@
       "year": 2023,
       "trim": "EX",
       "powertrain": "Hybrid",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9512,7 +9512,7 @@
       "model": "Accord",
       "year": 2022,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9521,7 +9521,7 @@
       "model": "Accord",
       "year": 2022,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9530,7 +9530,7 @@
       "model": "Accord",
       "year": 2022,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9540,7 +9540,7 @@
       "year": 2022,
       "trim": "EX",
       "powertrain": "Hybrid",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9549,7 +9549,7 @@
       "model": "Accord",
       "year": 2021,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9558,7 +9558,7 @@
       "model": "Accord",
       "year": 2021,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9567,7 +9567,7 @@
       "model": "Accord",
       "year": 2021,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9577,7 +9577,7 @@
       "year": 2021,
       "trim": "EX",
       "powertrain": "Hybrid",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9785,7 +9785,7 @@
       "model": "Outback",
       "year": 2025,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9794,7 +9794,7 @@
       "model": "Outback",
       "year": 2025,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9803,7 +9803,7 @@
       "model": "Outback",
       "year": 2025,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9893,7 +9893,7 @@
       "model": "Outback",
       "year": 2021,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9902,7 +9902,7 @@
       "model": "Outback",
       "year": 2021,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9911,7 +9911,7 @@
       "model": "Outback",
       "year": 2021,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9920,7 +9920,7 @@
       "model": "Outback",
       "year": 2020,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9929,7 +9929,7 @@
       "model": "Outback",
       "year": 2020,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9938,7 +9938,7 @@
       "model": "Outback",
       "year": 2020,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9983,7 +9983,7 @@
       "model": "Tucson",
       "year": 2024,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -9992,7 +9992,7 @@
       "model": "Tucson",
       "year": 2024,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10055,7 +10055,7 @@
       "model": "Tucson",
       "year": 2021,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10064,7 +10064,7 @@
       "model": "Tucson",
       "year": 2021,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10073,7 +10073,7 @@
       "model": "Tucson",
       "year": 2021,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10082,7 +10082,7 @@
       "model": "Tucson",
       "year": 2020,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10091,7 +10091,7 @@
       "model": "Tucson",
       "year": 2020,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10100,7 +10100,7 @@
       "model": "Tucson",
       "year": 2020,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10190,7 +10190,7 @@
       "model": "Sportage",
       "year": 2022,
       "trim": "LX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10199,7 +10199,7 @@
       "model": "Sportage",
       "year": 2022,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10208,7 +10208,7 @@
       "model": "Sportage",
       "year": 2022,
       "trim": "SX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10298,7 +10298,7 @@
       "model": "CX-5",
       "year": 2024,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10307,7 +10307,7 @@
       "model": "CX-5",
       "year": 2024,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10316,7 +10316,7 @@
       "model": "CX-5",
       "year": 2024,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10469,7 +10469,7 @@
       "model": "Explorer",
       "year": 2024,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10478,7 +10478,7 @@
       "model": "Explorer",
       "year": 2024,
       "trim": "ST",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10487,7 +10487,7 @@
       "model": "Explorer",
       "year": 2023,
       "trim": "XLT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10496,7 +10496,7 @@
       "model": "Explorer",
       "year": 2023,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10505,7 +10505,7 @@
       "model": "Explorer",
       "year": 2023,
       "trim": "ST",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10514,7 +10514,7 @@
       "model": "Explorer",
       "year": 2022,
       "trim": "XLT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10523,7 +10523,7 @@
       "model": "Explorer",
       "year": 2022,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10532,7 +10532,7 @@
       "model": "Explorer",
       "year": 2022,
       "trim": "ST",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10541,7 +10541,7 @@
       "model": "Explorer",
       "year": 2021,
       "trim": "XLT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10550,7 +10550,7 @@
       "model": "Explorer",
       "year": 2021,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10559,7 +10559,7 @@
       "model": "Explorer",
       "year": 2021,
       "trim": "ST",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10568,7 +10568,7 @@
       "model": "Explorer",
       "year": 2020,
       "trim": "XLT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10577,7 +10577,7 @@
       "model": "Explorer",
       "year": 2020,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10586,7 +10586,7 @@
       "model": "Explorer",
       "year": 2020,
       "trim": "ST",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10757,7 +10757,7 @@
       "model": "Forester",
       "year": 2025,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10766,7 +10766,7 @@
       "model": "Forester",
       "year": 2025,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10775,7 +10775,7 @@
       "model": "Forester",
       "year": 2025,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10865,7 +10865,7 @@
       "model": "Forester",
       "year": 2021,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10874,7 +10874,7 @@
       "model": "Forester",
       "year": 2021,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10883,7 +10883,7 @@
       "model": "Forester",
       "year": 2021,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10892,7 +10892,7 @@
       "model": "Forester",
       "year": 2020,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10901,7 +10901,7 @@
       "model": "Forester",
       "year": 2020,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10910,7 +10910,7 @@
       "model": "Forester",
       "year": 2020,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10919,7 +10919,7 @@
       "model": "Santa Fe",
       "year": 2025,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10928,7 +10928,7 @@
       "model": "Santa Fe",
       "year": 2025,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10937,7 +10937,7 @@
       "model": "Santa Fe",
       "year": 2025,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10955,7 +10955,7 @@
       "model": "Santa Fe",
       "year": 2024,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10964,7 +10964,7 @@
       "model": "Santa Fe",
       "year": 2024,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10973,7 +10973,7 @@
       "model": "Santa Fe",
       "year": 2023,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10982,7 +10982,7 @@
       "model": "Santa Fe",
       "year": 2023,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -10991,7 +10991,7 @@
       "model": "Santa Fe",
       "year": 2023,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11000,7 +11000,7 @@
       "model": "Santa Fe",
       "year": 2022,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11009,7 +11009,7 @@
       "model": "Santa Fe",
       "year": 2022,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11018,7 +11018,7 @@
       "model": "Santa Fe",
       "year": 2022,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11441,7 +11441,7 @@
       "model": "Escape",
       "year": 2024,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11450,7 +11450,7 @@
       "model": "Escape",
       "year": 2024,
       "trim": "Titanium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11513,7 +11513,7 @@
       "model": "Escape",
       "year": 2021,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11522,7 +11522,7 @@
       "model": "Escape",
       "year": 2021,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11531,7 +11531,7 @@
       "model": "Escape",
       "year": 2021,
       "trim": "Titanium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11540,7 +11540,7 @@
       "model": "Escape",
       "year": 2020,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11549,7 +11549,7 @@
       "model": "Escape",
       "year": 2020,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11558,7 +11558,7 @@
       "model": "Escape",
       "year": 2020,
       "trim": "Titanium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11594,7 +11594,7 @@
       "model": "Traverse",
       "year": 2024,
       "trim": "LT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11603,7 +11603,7 @@
       "model": "Traverse",
       "year": 2024,
       "trim": "RS",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11612,7 +11612,7 @@
       "model": "Traverse",
       "year": 2024,
       "trim": "Premier",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11621,7 +11621,7 @@
       "model": "Traverse",
       "year": 2023,
       "trim": "LT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11630,7 +11630,7 @@
       "model": "Traverse",
       "year": 2023,
       "trim": "RS",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11639,7 +11639,7 @@
       "model": "Traverse",
       "year": 2023,
       "trim": "Premier",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11927,7 +11927,7 @@
       "model": "Elantra",
       "year": 2024,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11936,7 +11936,7 @@
       "model": "Elantra",
       "year": 2024,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11945,7 +11945,7 @@
       "model": "Elantra",
       "year": 2023,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11954,7 +11954,7 @@
       "model": "Elantra",
       "year": 2023,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11963,7 +11963,7 @@
       "model": "Elantra",
       "year": 2023,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11972,7 +11972,7 @@
       "model": "Elantra",
       "year": 2022,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11981,7 +11981,7 @@
       "model": "Elantra",
       "year": 2022,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11990,7 +11990,7 @@
       "model": "Elantra",
       "year": 2022,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -11999,7 +11999,7 @@
       "model": "Elantra",
       "year": 2021,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12008,7 +12008,7 @@
       "model": "Elantra",
       "year": 2021,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12017,7 +12017,7 @@
       "model": "Elantra",
       "year": 2021,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12026,7 +12026,7 @@
       "model": "Elantra",
       "year": 2020,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12035,7 +12035,7 @@
       "model": "Elantra",
       "year": 2020,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12044,7 +12044,7 @@
       "model": "Elantra",
       "year": 2020,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12188,7 +12188,7 @@
       "model": "Crosstrek",
       "year": 2025,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12197,7 +12197,7 @@
       "model": "Crosstrek",
       "year": 2025,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12206,7 +12206,7 @@
       "model": "Crosstrek",
       "year": 2025,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12296,7 +12296,7 @@
       "model": "Crosstrek",
       "year": 2021,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12305,7 +12305,7 @@
       "model": "Crosstrek",
       "year": 2021,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12314,7 +12314,7 @@
       "model": "Crosstrek",
       "year": 2021,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12323,7 +12323,7 @@
       "model": "Crosstrek",
       "year": 2020,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12332,7 +12332,7 @@
       "model": "Crosstrek",
       "year": 2020,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12341,7 +12341,7 @@
       "model": "Crosstrek",
       "year": 2020,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12800,7 +12800,7 @@
       "model": "CX-30",
       "year": 2025,
       "trim": "Select",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12809,7 +12809,7 @@
       "model": "CX-30",
       "year": 2025,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -12818,7 +12818,7 @@
       "model": "CX-30",
       "year": 2025,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13124,7 +13124,7 @@
       "model": "Impreza",
       "year": 2025,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13133,7 +13133,7 @@
       "model": "Impreza",
       "year": 2025,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13142,7 +13142,7 @@
       "model": "Impreza",
       "year": 2025,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13232,7 +13232,7 @@
       "model": "Impreza",
       "year": 2021,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13241,7 +13241,7 @@
       "model": "Impreza",
       "year": 2021,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13250,7 +13250,7 @@
       "model": "Impreza",
       "year": 2021,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13259,7 +13259,7 @@
       "model": "Impreza",
       "year": 2020,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13268,7 +13268,7 @@
       "model": "Impreza",
       "year": 2020,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13277,7 +13277,7 @@
       "model": "Impreza",
       "year": 2020,
       "trim": "Sport",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13286,7 +13286,7 @@
       "model": "Passport",
       "year": 2025,
       "trim": "EX-L",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13295,7 +13295,7 @@
       "model": "Passport",
       "year": 2025,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13304,7 +13304,7 @@
       "model": "Passport",
       "year": 2025,
       "trim": "Elite",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13322,7 +13322,7 @@
       "model": "Passport",
       "year": 2024,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13331,7 +13331,7 @@
       "model": "Passport",
       "year": 2024,
       "trim": "Elite",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13340,7 +13340,7 @@
       "model": "Passport",
       "year": 2023,
       "trim": "EX-L",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13349,7 +13349,7 @@
       "model": "Passport",
       "year": 2023,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13358,7 +13358,7 @@
       "model": "Passport",
       "year": 2023,
       "trim": "Elite",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13367,7 +13367,7 @@
       "model": "Passport",
       "year": 2022,
       "trim": "EX-L",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13376,7 +13376,7 @@
       "model": "Passport",
       "year": 2022,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13385,7 +13385,7 @@
       "model": "Passport",
       "year": 2022,
       "trim": "Elite",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13394,7 +13394,7 @@
       "model": "Passport",
       "year": 2021,
       "trim": "EX-L",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13403,7 +13403,7 @@
       "model": "Passport",
       "year": 2021,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13412,7 +13412,7 @@
       "model": "Passport",
       "year": 2021,
       "trim": "Elite",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13421,7 +13421,7 @@
       "model": "Passport",
       "year": 2020,
       "trim": "EX-L",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13430,7 +13430,7 @@
       "model": "Passport",
       "year": 2020,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -13439,7 +13439,7 @@
       "model": "Passport",
       "year": 2020,
       "trim": "Elite",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14273,7 +14273,7 @@
       "model": "Mustang Mach-E",
       "year": 2024,
       "trim": "Select",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14282,7 +14282,7 @@
       "model": "Mustang Mach-E",
       "year": 2024,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14291,7 +14291,7 @@
       "model": "Mustang Mach-E",
       "year": 2024,
       "trim": "GT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14300,7 +14300,7 @@
       "model": "Mustang Mach-E",
       "year": 2023,
       "trim": "Select",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14309,7 +14309,7 @@
       "model": "Mustang Mach-E",
       "year": 2023,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14318,7 +14318,7 @@
       "model": "Mustang Mach-E",
       "year": 2023,
       "trim": "GT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14327,7 +14327,7 @@
       "model": "Mustang Mach-E",
       "year": 2022,
       "trim": "Select",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14336,7 +14336,7 @@
       "model": "Mustang Mach-E",
       "year": 2022,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14345,7 +14345,7 @@
       "model": "Mustang Mach-E",
       "year": 2022,
       "trim": "GT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14516,7 +14516,7 @@
       "model": "Bolt EV",
       "year": 2023,
       "trim": "1LT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14525,7 +14525,7 @@
       "model": "Bolt EV",
       "year": 2023,
       "trim": "2LT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14570,7 +14570,7 @@
       "model": "Bolt EV",
       "year": 2020,
       "trim": "1LT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14579,7 +14579,7 @@
       "model": "Bolt EV",
       "year": 2020,
       "trim": "2LT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14912,7 +14912,7 @@
       "model": "3",
       "year": 2025,
       "trim": "Select",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14921,7 +14921,7 @@
       "model": "3",
       "year": 2025,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14930,7 +14930,7 @@
       "model": "3",
       "year": 2025,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14939,7 +14939,7 @@
       "model": "3",
       "year": 2024,
       "trim": "Select",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14948,7 +14948,7 @@
       "model": "3",
       "year": 2024,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14957,7 +14957,7 @@
       "model": "3",
       "year": 2024,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14966,7 +14966,7 @@
       "model": "3",
       "year": 2023,
       "trim": "Select",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14975,7 +14975,7 @@
       "model": "3",
       "year": 2023,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14984,7 +14984,7 @@
       "model": "3",
       "year": 2023,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -14993,7 +14993,7 @@
       "model": "3",
       "year": 2022,
       "trim": "Select",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15002,7 +15002,7 @@
       "model": "3",
       "year": 2022,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15011,7 +15011,7 @@
       "model": "3",
       "year": 2022,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15047,7 +15047,7 @@
       "model": "3",
       "year": 2020,
       "trim": "Select",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15056,7 +15056,7 @@
       "model": "3",
       "year": 2020,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15065,7 +15065,7 @@
       "model": "3",
       "year": 2020,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15101,7 +15101,7 @@
       "model": "CX-50",
       "year": 2024,
       "trim": "Select",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15110,7 +15110,7 @@
       "model": "CX-50",
       "year": 2024,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15119,7 +15119,7 @@
       "model": "CX-50",
       "year": 2024,
       "trim": "Premium",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15209,7 +15209,7 @@
       "model": "Grand Cherokee",
       "year": 2023,
       "trim": "Laredo",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15218,7 +15218,7 @@
       "model": "Grand Cherokee",
       "year": 2023,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15227,7 +15227,7 @@
       "model": "Grand Cherokee",
       "year": 2023,
       "trim": "Overland",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15263,7 +15263,7 @@
       "model": "Grand Cherokee",
       "year": 2021,
       "trim": "Laredo",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15272,7 +15272,7 @@
       "model": "Grand Cherokee",
       "year": 2021,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15281,7 +15281,7 @@
       "model": "Grand Cherokee",
       "year": 2021,
       "trim": "Overland",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15344,7 +15344,7 @@
       "model": "Bronco Sport",
       "year": 2024,
       "trim": "Base",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15353,7 +15353,7 @@
       "model": "Bronco Sport",
       "year": 2024,
       "trim": "Big Bend",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15362,7 +15362,7 @@
       "model": "Bronco Sport",
       "year": 2024,
       "trim": "Outer Banks",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15506,7 +15506,7 @@
       "model": "Tiguan",
       "year": 2023,
       "trim": "S",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15515,7 +15515,7 @@
       "model": "Tiguan",
       "year": 2023,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15524,7 +15524,7 @@
       "model": "Tiguan",
       "year": 2023,
       "trim": "SEL R-Line",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15614,7 +15614,7 @@
       "model": "Palisade",
       "year": 2025,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15623,7 +15623,7 @@
       "model": "Palisade",
       "year": 2025,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15632,7 +15632,7 @@
       "model": "Palisade",
       "year": 2025,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15641,7 +15641,7 @@
       "model": "Palisade",
       "year": 2024,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15650,7 +15650,7 @@
       "model": "Palisade",
       "year": 2024,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15659,7 +15659,7 @@
       "model": "Palisade",
       "year": 2024,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15668,7 +15668,7 @@
       "model": "Palisade",
       "year": 2023,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15677,7 +15677,7 @@
       "model": "Palisade",
       "year": 2023,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15686,7 +15686,7 @@
       "model": "Palisade",
       "year": 2023,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15695,7 +15695,7 @@
       "model": "Palisade",
       "year": 2022,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15704,7 +15704,7 @@
       "model": "Palisade",
       "year": 2022,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15713,7 +15713,7 @@
       "model": "Palisade",
       "year": 2022,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15722,7 +15722,7 @@
       "model": "Palisade",
       "year": 2021,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15731,7 +15731,7 @@
       "model": "Palisade",
       "year": 2021,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15740,7 +15740,7 @@
       "model": "Palisade",
       "year": 2021,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15911,7 +15911,7 @@
       "model": "Sorento",
       "year": 2020,
       "trim": "LX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15920,7 +15920,7 @@
       "model": "Sorento",
       "year": 2020,
       "trim": "EX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -15929,7 +15929,7 @@
       "model": "Sorento",
       "year": 2020,
       "trim": "SX",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16520,7 +16520,7 @@
       "model": "Sonata",
       "year": 2023,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16529,7 +16529,7 @@
       "model": "Sonata",
       "year": 2023,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16538,7 +16538,7 @@
       "model": "Sonata",
       "year": 2023,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16547,7 +16547,7 @@
       "model": "Sonata",
       "year": 2022,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16556,7 +16556,7 @@
       "model": "Sonata",
       "year": 2022,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16565,7 +16565,7 @@
       "model": "Sonata",
       "year": 2022,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16574,7 +16574,7 @@
       "model": "Sonata",
       "year": 2021,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16583,7 +16583,7 @@
       "model": "Sonata",
       "year": 2021,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16592,7 +16592,7 @@
       "model": "Sonata",
       "year": 2021,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16601,7 +16601,7 @@
       "model": "Sonata",
       "year": 2020,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16610,7 +16610,7 @@
       "model": "Sonata",
       "year": 2020,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16619,7 +16619,7 @@
       "model": "Sonata",
       "year": 2020,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16682,7 +16682,7 @@
       "model": "Kona",
       "year": 2023,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16691,7 +16691,7 @@
       "model": "Kona",
       "year": 2023,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16700,7 +16700,7 @@
       "model": "Kona",
       "year": 2023,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16709,7 +16709,7 @@
       "model": "Kona",
       "year": 2022,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16718,7 +16718,7 @@
       "model": "Kona",
       "year": 2022,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16727,7 +16727,7 @@
       "model": "Kona",
       "year": 2022,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16736,7 +16736,7 @@
       "model": "Kona",
       "year": 2021,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16745,7 +16745,7 @@
       "model": "Kona",
       "year": 2021,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16754,7 +16754,7 @@
       "model": "Kona",
       "year": 2021,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16763,7 +16763,7 @@
       "model": "Kona",
       "year": 2020,
       "trim": "SE",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16772,7 +16772,7 @@
       "model": "Kona",
       "year": 2020,
       "trim": "SEL",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16781,7 +16781,7 @@
       "model": "Kona",
       "year": 2020,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16790,7 +16790,7 @@
       "model": "Malibu",
       "year": 2024,
       "trim": "LS",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16799,7 +16799,7 @@
       "model": "Malibu",
       "year": 2024,
       "trim": "RS",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16808,7 +16808,7 @@
       "model": "Malibu",
       "year": 2024,
       "trim": "Premier",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16817,7 +16817,7 @@
       "model": "Malibu",
       "year": 2023,
       "trim": "LS",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16826,7 +16826,7 @@
       "model": "Malibu",
       "year": 2023,
       "trim": "RS",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16835,7 +16835,7 @@
       "model": "Malibu",
       "year": 2023,
       "trim": "Premier",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16952,7 +16952,7 @@
       "model": "Blazer",
       "year": 2024,
       "trim": "LT",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16961,7 +16961,7 @@
       "model": "Blazer",
       "year": 2024,
       "trim": "RS",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -16970,7 +16970,7 @@
       "model": "Blazer",
       "year": 2024,
       "trim": "Premier",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17438,7 +17438,7 @@
       "model": "Enclave",
       "year": 2024,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17447,7 +17447,7 @@
       "model": "Enclave",
       "year": 2024,
       "trim": "Essence",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17456,7 +17456,7 @@
       "model": "Enclave",
       "year": 2024,
       "trim": "Avenir",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17465,7 +17465,7 @@
       "model": "Enclave",
       "year": 2023,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17474,7 +17474,7 @@
       "model": "Enclave",
       "year": 2023,
       "trim": "Essence",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17483,7 +17483,7 @@
       "model": "Enclave",
       "year": 2023,
       "trim": "Avenir",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17492,7 +17492,7 @@
       "model": "Enclave",
       "year": 2022,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17501,7 +17501,7 @@
       "model": "Enclave",
       "year": 2022,
       "trim": "Essence",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17510,7 +17510,7 @@
       "model": "Enclave",
       "year": 2022,
       "trim": "Avenir",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17600,7 +17600,7 @@
       "model": "Encore GX",
       "year": 2024,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17609,7 +17609,7 @@
       "model": "Encore GX",
       "year": 2024,
       "trim": "Essence",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17618,7 +17618,7 @@
       "model": "Encore GX",
       "year": 2024,
       "trim": "Avenir",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17627,7 +17627,7 @@
       "model": "Encore GX",
       "year": 2023,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17636,7 +17636,7 @@
       "model": "Encore GX",
       "year": 2023,
       "trim": "Essence",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17645,7 +17645,7 @@
       "model": "Encore GX",
       "year": 2023,
       "trim": "Avenir",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17681,7 +17681,7 @@
       "model": "Encore GX",
       "year": 2021,
       "trim": "Preferred",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17690,7 +17690,7 @@
       "model": "Encore GX",
       "year": 2021,
       "trim": "Essence",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17699,7 +17699,7 @@
       "model": "Encore GX",
       "year": 2021,
       "trim": "Avenir",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17789,7 +17789,7 @@
       "model": "Pacifica",
       "year": 2023,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17798,7 +17798,7 @@
       "model": "Pacifica",
       "year": 2023,
       "trim": "Touring L",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17807,7 +17807,7 @@
       "model": "Pacifica",
       "year": 2023,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17816,7 +17816,7 @@
       "model": "Pacifica",
       "year": 2022,
       "trim": "Touring",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17825,7 +17825,7 @@
       "model": "Pacifica",
       "year": 2022,
       "trim": "Touring L",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {
@@ -17834,7 +17834,7 @@
       "model": "Pacifica",
       "year": 2022,
       "trim": "Limited",
-      "qaStatus": "creator_review_required",
+      "qaStatus": "auto_verified",
       "supportTier": "tier2"
     },
     {

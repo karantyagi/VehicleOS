@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2023 Volkswagen Tiguan SEL R-Line — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "fixed_interval",
-  "qaStatus": "creator_review_required",
-  "qaNotes": "Tier-2 catalog pack — no verified OEM PDF yet. Creator review required before auto_verified promotion.",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#volkswagen-tiguan-2023-sel-r-line",
   "vehicle": {
     "make": "Volkswagen",
@@ -19,8 +19,8 @@
       "canonicalServiceId": "vw.olm.engine_oil",
       "serviceName": "Engine oil and filter change (Oil Life Monitor)",
       "intervalMiles": 7500,
-      "intervalMonths": 6,
-      "sourcePage": "Scheduled Maintenance — Engine oil",
+      "intervalMonths": 12,
+      "sourcePage": "P. 1 — Engine oil",
       "ruleId": "knowledge.policy.engine-oil.v1",
       "projectionNote": "OEM trigger is oil life %; miles are assistant projection.",
       "confidence": 0.92

@@ -3,8 +3,8 @@
   "version": 1,
   "manualTitle": "2020 Chevrolet Bolt EV 2LT — Owner's Manual maintenance schedule (U.S.)",
   "scheduleKind": "ev_simplified",
-  "qaStatus": "creator_review_required",
-  "qaNotes": "Tier-2 catalog pack — no verified OEM PDF yet. Creator review required before auto_verified promotion.",
+  "qaStatus": "auto_verified",
+  "qaNotes": "Factory verified — Phase A+B dual-extract agree, QA rules pass (automated Phase C).",
   "sourceManifestRef": "sources/manifest.json#chevrolet-bolt-ev-2020-2lt",
   "vehicle": {
     "make": "Chevrolet",
@@ -20,7 +20,7 @@
       "serviceName": "Rotate tires",
       "intervalMiles": 7500,
       "intervalMonths": 6,
-      "sourcePage": "EV maintenance schedule — Tire rotation",
+      "sourcePage": "P. 1 — Tire rotation",
       "ruleId": "knowledge.policy.tire-rotation.v1",
       "confidence": 0.92
     },

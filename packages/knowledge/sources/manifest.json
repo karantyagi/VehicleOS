@@ -16328,6 +16328,4818 @@
       "notes": "dual-extract agree",
       "verifiedAt": "2026-07-26",
       "dualExtractAgree": true
+    },
+    "buick-enclave-2022-avenir": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-enclave-2022-avenir/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "88d361fa47978ee6b85a8e5d470e0057b61b6438a701ea7ae87fa679a756a0ea"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Enclave_2022_EN_US_c1d1997ce5.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-enclave-2023-avenir": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-enclave-2023-avenir/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a30acc5f8c4d3909248854a93b6efdda4626c0c3b582a9c87a5faf71df9eb473"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Enclave_20023_EN_US_d6a78f0bdd.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-enclave-2022-essence": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-enclave-2022-essence/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "88d361fa47978ee6b85a8e5d470e0057b61b6438a701ea7ae87fa679a756a0ea"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Enclave_2022_EN_US_c1d1997ce5.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-enclave-2022-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-enclave-2022-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "88d361fa47978ee6b85a8e5d470e0057b61b6438a701ea7ae87fa679a756a0ea"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Enclave_2022_EN_US_c1d1997ce5.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-enclave-2023-essence": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-enclave-2023-essence/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a30acc5f8c4d3909248854a93b6efdda4626c0c3b582a9c87a5faf71df9eb473"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Enclave_20023_EN_US_d6a78f0bdd.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-enclave-2023-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-enclave-2023-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a30acc5f8c4d3909248854a93b6efdda4626c0c3b582a9c87a5faf71df9eb473"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Enclave_20023_EN_US_d6a78f0bdd.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-enclave-2024-avenir": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-enclave-2024-avenir/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "e4cc3e54bc5c184a0efc64957502b5297e054adc97830884c4abfb180d151707"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Enclave_2024_EN_US_25ede6a155.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-enclave-2024-essence": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-enclave-2024-essence/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "e4cc3e54bc5c184a0efc64957502b5297e054adc97830884c4abfb180d151707"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Enclave_2024_EN_US_25ede6a155.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-enclave-2024-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-enclave-2024-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "e4cc3e54bc5c184a0efc64957502b5297e054adc97830884c4abfb180d151707"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Enclave_2024_EN_US_25ede6a155.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-encore-gx-2021-essence": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-encore-gx-2021-essence/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "1c1925467ac9ef38559caf872b547eebce55faf573e876e719cf8dfcce66b6a6"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Encore-GX_2021_EN_US-CA_9f4dffff03.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-encore-gx-2021-avenir": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-encore-gx-2021-avenir/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "1c1925467ac9ef38559caf872b547eebce55faf573e876e719cf8dfcce66b6a6"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Encore-GX_2021_EN_US-CA_9f4dffff03.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-encore-gx-2021-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-encore-gx-2021-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "1c1925467ac9ef38559caf872b547eebce55faf573e876e719cf8dfcce66b6a6"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Encore-GX_2021_EN_US-CA_9f4dffff03.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-encore-gx-2023-avenir": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-encore-gx-2023-avenir/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0e43ccae2fdaf10988756ce38a76173e5cc07fe37e883ab8a3cb13489ca2a4ff"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Encore-GX_2023_EN_US_d4f51db50c.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-encore-gx-2023-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-encore-gx-2023-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0e43ccae2fdaf10988756ce38a76173e5cc07fe37e883ab8a3cb13489ca2a4ff"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Encore-GX_2023_EN_US_d4f51db50c.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-encore-gx-2023-essence": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-encore-gx-2023-essence/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0e43ccae2fdaf10988756ce38a76173e5cc07fe37e883ab8a3cb13489ca2a4ff"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Encore-GX_2023_EN_US_d4f51db50c.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-encore-gx-2024-avenir": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-encore-gx-2024-avenir/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "565bb64cefa101075169c0148b1b0bd630a637ab22754281ab4ebdc7ac152a50"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Encore-GX_2024_EN_US_7423f05636.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-encore-gx-2024-essence": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-encore-gx-2024-essence/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "565bb64cefa101075169c0148b1b0bd630a637ab22754281ab4ebdc7ac152a50"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Encore-GX_2024_EN_US_7423f05636.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "buick-encore-gx-2024-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/buick-encore-gx-2024-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "565bb64cefa101075169c0148b1b0bd630a637ab22754281ab4ebdc7ac152a50"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Buick-Encore-GX_2024_EN_US_7423f05636.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-blazer-2024-premier": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-blazer-2024-premier/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "f5c472ae134431d966bfc0693a148b30300cb9fc94373f35046130a06a30af5b"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Blazer_2024_EN-US_US_7e64ac5c3b.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-blazer-2024-lt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-blazer-2024-lt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "f5c472ae134431d966bfc0693a148b30300cb9fc94373f35046130a06a30af5b"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Blazer_2024_EN-US_US_7e64ac5c3b.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-bolt-ev-2020-2lt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-bolt-ev-2020-2lt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "d811495f0a95d491283b37921c3a10437e5f81b3ae19c45d9d0b18ddc5123d4c"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Bolt-EV_2020_EN-US_US_766f15128a.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-bolt-ev-2020-1lt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-bolt-ev-2020-1lt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "d811495f0a95d491283b37921c3a10437e5f81b3ae19c45d9d0b18ddc5123d4c"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Bolt-EV_2020_EN-US_US_766f15128a.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-bolt-ev-2023-1lt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-bolt-ev-2023-1lt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2791a586ccad2634e1512de0e5d85080a0ee7397b9a6ffc0c472aeff5f6bbf95"
+      },
+      "officialUrls": [
+        "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2023/23_CHEV_Bolt_EV_OM_en_US_U_84953304C_2023MAR10_3P.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-blazer-2024-rs": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-blazer-2024-rs/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "f5c472ae134431d966bfc0693a148b30300cb9fc94373f35046130a06a30af5b"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Blazer_2024_EN-US_US_7e64ac5c3b.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-bolt-ev-2023-2lt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-bolt-ev-2023-2lt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2791a586ccad2634e1512de0e5d85080a0ee7397b9a6ffc0c472aeff5f6bbf95"
+      },
+      "officialUrls": [
+        "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2023/23_CHEV_Bolt_EV_OM_en_US_U_84953304C_2023MAR10_3P.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-equinox-2023-activ": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-equinox-2023-activ/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "6de92065603c304d4c3286657ab88db145da640aed589804c8dc4caf78a7ba4a"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Equinox_2023_EN_US_2c9a1e1767.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-equinox-2023-rs": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-equinox-2023-rs/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "6de92065603c304d4c3286657ab88db145da640aed589804c8dc4caf78a7ba4a"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Equinox_2023_EN_US_2c9a1e1767.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-equinox-2023-lt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-equinox-2023-lt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "6de92065603c304d4c3286657ab88db145da640aed589804c8dc4caf78a7ba4a"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Equinox_2023_EN_US_2c9a1e1767.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-equinox-2024-activ": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-equinox-2024-activ/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "981970254737b1cfb84d7307e199cb819a78f4476d820e789bc4c8ba4146df0a"
+      },
+      "officialUrls": [
+        "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Equinox_OM_en_US_U_85150510B_2023JUL27_2P_INS1.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-equinox-2024-rs": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-equinox-2024-rs/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "981970254737b1cfb84d7307e199cb819a78f4476d820e789bc4c8ba4146df0a"
+      },
+      "officialUrls": [
+        "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Equinox_OM_en_US_U_85150510B_2023JUL27_2P_INS1.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-equinox-2024-lt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-equinox-2024-lt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "981970254737b1cfb84d7307e199cb819a78f4476d820e789bc4c8ba4146df0a"
+      },
+      "officialUrls": [
+        "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Equinox_OM_en_US_U_85150510B_2023JUL27_2P_INS1.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-equinox-2025-activ": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-equinox-2025-activ/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "3d0c87af63b1d6b817e4a8444b5294b65faff092180de08d1ecd757d85f56107"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Equinox_2025_EN_US_cf023b58a4.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-malibu-2023-ls": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-malibu-2023-ls/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "ca13d51a8844f4467424255104f22e1d73e5eb23bfdcd307a979ff2dda024f15"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Malibu_2023_EN-US_US_1a2fa52966.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-malibu-2023-premier": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-malibu-2023-premier/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "ca13d51a8844f4467424255104f22e1d73e5eb23bfdcd307a979ff2dda024f15"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Malibu_2023_EN-US_US_1a2fa52966.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-equinox-2025-lt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-equinox-2025-lt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "3d0c87af63b1d6b817e4a8444b5294b65faff092180de08d1ecd757d85f56107"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Equinox_2025_EN_US_cf023b58a4.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-equinox-2025-rs": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-equinox-2025-rs/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "3d0c87af63b1d6b817e4a8444b5294b65faff092180de08d1ecd757d85f56107"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Equinox_2025_EN_US_cf023b58a4.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-malibu-2023-rs": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-malibu-2023-rs/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "ca13d51a8844f4467424255104f22e1d73e5eb23bfdcd307a979ff2dda024f15"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Malibu_2023_EN-US_US_1a2fa52966.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-malibu-2024-premier": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-malibu-2024-premier/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "3567ab2bb7dd45ced578b6b44fac4460a1cabb53fa2d43e837ecd48e11c34849"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Malibu_2024_EN-US_US_e874c76e30.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-malibu-2024-rs": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-malibu-2024-rs/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "3567ab2bb7dd45ced578b6b44fac4460a1cabb53fa2d43e837ecd48e11c34849"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Malibu_2024_EN-US_US_e874c76e30.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-malibu-2024-ls": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-malibu-2024-ls/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "3567ab2bb7dd45ced578b6b44fac4460a1cabb53fa2d43e837ecd48e11c34849"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Malibu_2024_EN-US_US_e874c76e30.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-traverse-2024-lt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-traverse-2024-lt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "36b35e0d08aa7d773b400f3af72d81b9229939f6874d50cf3e70ebeea544fb88"
+      },
+      "officialUrls": [
+        "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Traverse_OM_en_US_U_17442647D_2024OCT10_4P.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-traverse-2023-rs": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-traverse-2023-rs/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "e5edcacccafd679ddf844bd4248108716fc41f3919cf46176776014baefbb63d"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Traverse_2023_EN_US_3f8171d068.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-traverse-2023-premier": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-traverse-2023-premier/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "e5edcacccafd679ddf844bd4248108716fc41f3919cf46176776014baefbb63d"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Traverse_2023_EN_US_3f8171d068.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-traverse-2023-lt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-traverse-2023-lt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "e5edcacccafd679ddf844bd4248108716fc41f3919cf46176776014baefbb63d"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chevrolet-Traverse_2023_EN_US_3f8171d068.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-traverse-2024-rs": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-traverse-2024-rs/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "36b35e0d08aa7d773b400f3af72d81b9229939f6874d50cf3e70ebeea544fb88"
+      },
+      "officialUrls": [
+        "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Traverse_OM_en_US_U_17442647D_2024OCT10_4P.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chevrolet-traverse-2024-premier": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chevrolet-traverse-2024-premier/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "36b35e0d08aa7d773b400f3af72d81b9229939f6874d50cf3e70ebeea544fb88"
+      },
+      "officialUrls": [
+        "https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/owners_manuals_browse/2024/24_CHEV_Traverse_OM_en_US_U_17442647D_2024OCT10_4P.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chrysler-pacifica-2022-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chrysler-pacifica-2022-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "3934396a4c2813763a0dd0132c5f7fb123a5b3a108919733e7a60b4cd7cc23b3"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chrysler-Pacifica_2022_EN__8c61fef35e.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chrysler-pacifica-2022-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chrysler-pacifica-2022-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "3934396a4c2813763a0dd0132c5f7fb123a5b3a108919733e7a60b4cd7cc23b3"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chrysler-Pacifica_2022_EN__8c61fef35e.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chrysler-pacifica-2023-touring-l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chrysler-pacifica-2023-touring-l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "d2d163a032486720e830985e5c47aeaa497e8166317a28aa4ea7fda870aab417"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chrysler-Pacifica_2023_EN_US_79ef11357d.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chrysler-pacifica-2023-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chrysler-pacifica-2023-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "d2d163a032486720e830985e5c47aeaa497e8166317a28aa4ea7fda870aab417"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chrysler-Pacifica_2023_EN_US_79ef11357d.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chrysler-pacifica-2023-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chrysler-pacifica-2023-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "d2d163a032486720e830985e5c47aeaa497e8166317a28aa4ea7fda870aab417"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chrysler-Pacifica_2023_EN_US_79ef11357d.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "chrysler-pacifica-2022-touring-l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/chrysler-pacifica-2022-touring-l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "3934396a4c2813763a0dd0132c5f7fb123a5b3a108919733e7a60b4cd7cc23b3"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Chrysler-Pacifica_2022_EN__8c61fef35e.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-escape-2020-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-escape-2020-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "ecfa0e61230db2d043bce45f4a8f64073e4f8c494157ab43d6009b3a93fb4126"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Escape_2020_EN-US_US_73f0e52f93.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-bronco-sport-2024-big-bend": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-bronco-sport-2024-big-bend/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "def9633e9d9490643e41f1475707316bdfe3ff8bdc64baa6b629ec2aab2ff077"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Bronco_Sport_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-bronco-sport-2024-outer-banks": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-bronco-sport-2024-outer-banks/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "def9633e9d9490643e41f1475707316bdfe3ff8bdc64baa6b629ec2aab2ff077"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Bronco_Sport_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-bronco-sport-2024-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-bronco-sport-2024-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "def9633e9d9490643e41f1475707316bdfe3ff8bdc64baa6b629ec2aab2ff077"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Bronco_Sport_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-escape-2020-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-escape-2020-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "ecfa0e61230db2d043bce45f4a8f64073e4f8c494157ab43d6009b3a93fb4126"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Escape_2020_EN-US_US_73f0e52f93.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-escape-2020-titanium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-escape-2020-titanium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "ecfa0e61230db2d043bce45f4a8f64073e4f8c494157ab43d6009b3a93fb4126"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Escape_2020_EN-US_US_73f0e52f93.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-escape-2021-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-escape-2021-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "bf2c4f9043b69e811c2bedaa2a9ef55f75aaeb778e70d25dd424e20661e8f5e0"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Escape_2021_EN-US_US_4b98ceebaa.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-escape-2021-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-escape-2021-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "bf2c4f9043b69e811c2bedaa2a9ef55f75aaeb778e70d25dd424e20661e8f5e0"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Escape_2021_EN-US_US_4b98ceebaa.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2020-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2020-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "209441455d17c35be943ac00732308310f317cf266c1ffdfa915675d90d46daa"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Explorer_2020_EN-US_US_c370b3862d.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-escape-2021-titanium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-escape-2021-titanium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "bf2c4f9043b69e811c2bedaa2a9ef55f75aaeb778e70d25dd424e20661e8f5e0"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Escape_2021_EN-US_US_4b98ceebaa.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-escape-2024-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-escape-2024-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9eb0df3965cbc82ea399a1537e713282de0882ef33da525203b6d900a408fd6b"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Escape_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-escape-2024-titanium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-escape-2024-titanium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9eb0df3965cbc82ea399a1537e713282de0882ef33da525203b6d900a408fd6b"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Escape_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2020-st": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2020-st/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "209441455d17c35be943ac00732308310f317cf266c1ffdfa915675d90d46daa"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Explorer_2020_EN-US_US_c370b3862d.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2021-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2021-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0161f147830e29cb576cc60b74ed1ec4d7ce650289be7d19f7a5f8f524db3518"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Explorer_2021_EN-US_US_500f02e07a.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2021-st": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2021-st/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0161f147830e29cb576cc60b74ed1ec4d7ce650289be7d19f7a5f8f524db3518"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Explorer_2021_EN-US_US_500f02e07a.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2020-xlt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2020-xlt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "209441455d17c35be943ac00732308310f317cf266c1ffdfa915675d90d46daa"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Explorer_2020_EN-US_US_c370b3862d.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2022-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2022-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8b7be24f2ce83fb1055d600a3de4c5317f66578092c64f990505df4057d522fe"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Explorer_2022_EN__0ae82bc3ae.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2022-st": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2022-st/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8b7be24f2ce83fb1055d600a3de4c5317f66578092c64f990505df4057d522fe"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Explorer_2022_EN__0ae82bc3ae.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2021-xlt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2021-xlt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0161f147830e29cb576cc60b74ed1ec4d7ce650289be7d19f7a5f8f524db3518"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Explorer_2021_EN-US_US_500f02e07a.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2022-xlt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2022-xlt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8b7be24f2ce83fb1055d600a3de4c5317f66578092c64f990505df4057d522fe"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Explorer_2022_EN__0ae82bc3ae.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2023-xlt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2023-xlt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a5e0bbb55e08a42d586ea1bc9b8df3a8320f8c0069e12860047fc37e1e458dcb"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2023_Ford_Explorer_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2023-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2023-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a5e0bbb55e08a42d586ea1bc9b8df3a8320f8c0069e12860047fc37e1e458dcb"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2023_Ford_Explorer_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2024-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2024-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8a576d8efbacd01df062fae07a971f6933013ca771baae7d74a0e0af53ed6b54"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Explorer_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2023-st": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2023-st/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a5e0bbb55e08a42d586ea1bc9b8df3a8320f8c0069e12860047fc37e1e458dcb"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2023_Ford_Explorer_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-mustang-mach-e-2022-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-mustang-mach-e-2022-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "608f2d3a034ce14601dbd52de0ab90d8363afc9fbdac221409262ceffbf29fdb"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Mustang-Mach-E_2022_EN-US_US_3504acec02.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-mustang-mach-e-2022-select": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-mustang-mach-e-2022-select/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "608f2d3a034ce14601dbd52de0ab90d8363afc9fbdac221409262ceffbf29fdb"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Mustang-Mach-E_2022_EN-US_US_3504acec02.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-mustang-mach-e-2022-gt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-mustang-mach-e-2022-gt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "608f2d3a034ce14601dbd52de0ab90d8363afc9fbdac221409262ceffbf29fdb"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Ford-Mustang-Mach-E_2022_EN-US_US_3504acec02.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-explorer-2024-st": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-explorer-2024-st/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8a576d8efbacd01df062fae07a971f6933013ca771baae7d74a0e0af53ed6b54"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Explorer_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-mustang-mach-e-2023-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-mustang-mach-e-2023-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0532192440d7f1c894d31af7a4c08bd5d6a25711d50f8caded64e6e0d7a54a29"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2023_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-mustang-mach-e-2024-gt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-mustang-mach-e-2024-gt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2e3044f5516eb56fda0bb67864d76180e84fc3ad432b20754196663492f4453a"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-mustang-mach-e-2023-select": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-mustang-mach-e-2023-select/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0532192440d7f1c894d31af7a4c08bd5d6a25711d50f8caded64e6e0d7a54a29"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2023_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-mustang-mach-e-2023-gt": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-mustang-mach-e-2023-gt/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0532192440d7f1c894d31af7a4c08bd5d6a25711d50f8caded64e6e0d7a54a29"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2023_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "genesis-g70-2019-3-3t": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/genesis-g70-2019-3-3t/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "fadbeccfa8f078befb4d49b243848ee00324c7c50cb89f47d8f1a42358283be6"
+      },
+      "officialUrls": [
+        "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2019/g70/2019-G70-Owner%27s-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "genesis-g70-2019-2-0t": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/genesis-g70-2019-2-0t/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "fadbeccfa8f078befb4d49b243848ee00324c7c50cb89f47d8f1a42358283be6"
+      },
+      "officialUrls": [
+        "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2019/g70/2019-G70-Owner%27s-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-mustang-mach-e-2024-select": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-mustang-mach-e-2024-select/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2e3044f5516eb56fda0bb67864d76180e84fc3ad432b20754196663492f4453a"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "ford-mustang-mach-e-2024-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/ford-mustang-mach-e-2024-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2e3044f5516eb56fda0bb67864d76180e84fc3ad432b20754196663492f4453a"
+      },
+      "officialUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/Catalog/owner_information/2024_Ford_Mustang_Mach-E_Owners_Manual_version_1_om_EN-US.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "genesis-g80-2024-electrified": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/genesis-g80-2024-electrified/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "5bbfb41da5d393bcf76f493fbba58d835b5ed0ee5e3e34f90d85ead7bf56aa2b"
+      },
+      "officialUrls": [
+        "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2024/g80/2024%20G80%20OM.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "genesis-g80-2021-electrified": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/genesis-g80-2021-electrified/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "1972086bff01327dfcd9a9d875aab7726f2257a84c5683ee90380361d43fada9"
+      },
+      "officialUrls": [
+        "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2021/g80/2021-G80-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "genesis-g80-2022-electrified": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/genesis-g80-2022-electrified/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "65d81dd422d5f296d16b251931f43c75ec572f4d6b4ae0f33db9971f84c8bca8"
+      },
+      "officialUrls": [
+        "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2022/g80/2022-G80-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "genesis-g70-2019-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/genesis-g70-2019-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "fadbeccfa8f078befb4d49b243848ee00324c7c50cb89f47d8f1a42358283be6"
+      },
+      "officialUrls": [
+        "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2019/g70/2019-G70-Owner%27s-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2021-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2021-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8f194024f4f4f8288164f8e42dd029539b36b4b2a61ca624394fbe03c73c5bba"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Accord+Sedan/2021_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2021-ex-hybrid": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2021-ex-hybrid/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8f194024f4f4f8288164f8e42dd029539b36b4b2a61ca624394fbe03c73c5bba"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Accord+Sedan/2021_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "genesis-gv70-2023-electrified": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/genesis-gv70-2023-electrified/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "83182ab49f93322689bd6549f3a70c2096ab7e70b225674e48683434a89a5455"
+      },
+      "officialUrls": [
+        "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2023/gv70/2023-GV70-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "genesis-gv70-2022-electrified": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/genesis-gv70-2022-electrified/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "626467d6e8e882aa8ccb66fe89689a98b1ff9ef2a0f18b0df06d4745bffd821a"
+      },
+      "officialUrls": [
+        "https://owners.genesis.com/genesis/us/mygenesis/manuals/glovebox-manual/2022/GV70/2022-GV70-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2021-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2021-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8f194024f4f4f8288164f8e42dd029539b36b4b2a61ca624394fbe03c73c5bba"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Accord+Sedan/2021_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2021-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2021-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8f194024f4f4f8288164f8e42dd029539b36b4b2a61ca624394fbe03c73c5bba"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Accord+Sedan/2021_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2022-ex-hybrid": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2022-ex-hybrid/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "1348c5cf211e9d88733e155b12b69a49a4c27993345f365323f91f9a2f2694e1"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Accord+Sedan/2022_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2022-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2022-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "1348c5cf211e9d88733e155b12b69a49a4c27993345f365323f91f9a2f2694e1"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Accord+Sedan/2022_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2023-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2023-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "bbefb9f2d1161db312b9b558b035ef03c96d26cd08aeaf7586b1831960a0566e"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Accord+Sedan/2023_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2022-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2022-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "1348c5cf211e9d88733e155b12b69a49a4c27993345f365323f91f9a2f2694e1"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Accord+Sedan/2022_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2023-ex-hybrid": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2023-ex-hybrid/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "bbefb9f2d1161db312b9b558b035ef03c96d26cd08aeaf7586b1831960a0566e"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Accord+Sedan/2023_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2022-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2022-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "1348c5cf211e9d88733e155b12b69a49a4c27993345f365323f91f9a2f2694e1"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Accord+Sedan/2022_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2023-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2023-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "bbefb9f2d1161db312b9b558b035ef03c96d26cd08aeaf7586b1831960a0566e"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Accord+Sedan/2023_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2023-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2023-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "bbefb9f2d1161db312b9b558b035ef03c96d26cd08aeaf7586b1831960a0566e"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Accord+Sedan/2023_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2024-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2024-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "df3845bf33760e1d99788a871c977140b1043dcfa457e9bdcd75e102a9547d02"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Accord+Sedan/2024_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2024-ex-hybrid": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2024-ex-hybrid/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "df3845bf33760e1d99788a871c977140b1043dcfa457e9bdcd75e102a9547d02"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Accord+Sedan/2024_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2025-ex-hybrid": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2025-ex-hybrid/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "f6e7f2bd93390982b2b8b6ee8976c8c72fbdccf07bc9c3558eef97c0f9011b27"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Accord+Sedan/2025_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2024-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2024-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "df3845bf33760e1d99788a871c977140b1043dcfa457e9bdcd75e102a9547d02"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Accord+Sedan/2024_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2025-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2025-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "f6e7f2bd93390982b2b8b6ee8976c8c72fbdccf07bc9c3558eef97c0f9011b27"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Accord+Sedan/2025_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2025-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2025-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "f6e7f2bd93390982b2b8b6ee8976c8c72fbdccf07bc9c3558eef97c0f9011b27"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Accord+Sedan/2025_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2021-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2021-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7bb68cbd4822f8ecf58ceabf14fe32cb6486c8cec82cf8194e8595078d1eec2e"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Civic+Sedan/2021_Civic_4D_Maintenance_Minder_System.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-accord-2025-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-accord-2025-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "f6e7f2bd93390982b2b8b6ee8976c8c72fbdccf07bc9c3558eef97c0f9011b27"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Accord+Sedan/2025_Accord_4D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2021-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2021-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7bb68cbd4822f8ecf58ceabf14fe32cb6486c8cec82cf8194e8595078d1eec2e"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Civic+Sedan/2021_Civic_4D_Maintenance_Minder_System.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2021-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2021-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7bb68cbd4822f8ecf58ceabf14fe32cb6486c8cec82cf8194e8595078d1eec2e"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2021/Civic+Sedan/2021_Civic_4D_Maintenance_Minder_System.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2022-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2022-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "86a518fcf92956fba47508b6749637174c0527572716ce26594c8571cc72af3e"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Civic+Hatchback/2022_Civic_5D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2022-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2022-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "86a518fcf92956fba47508b6749637174c0527572716ce26594c8571cc72af3e"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Civic+Hatchback/2022_Civic_5D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2022-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2022-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "86a518fcf92956fba47508b6749637174c0527572716ce26594c8571cc72af3e"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2022/Civic+Hatchback/2022_Civic_5D_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2023-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2023-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "cd3dcd4fbf6ad47e9582a67b875317647d08172f6ddf573cb154a76f4d7a2cd2"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Civic+Sedan/2023_Civic_4D_Maintenance_Minder_System.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2023-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2023-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "cd3dcd4fbf6ad47e9582a67b875317647d08172f6ddf573cb154a76f4d7a2cd2"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Civic+Sedan/2023_Civic_4D_Maintenance_Minder_System.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2023-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2023-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "cd3dcd4fbf6ad47e9582a67b875317647d08172f6ddf573cb154a76f4d7a2cd2"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2023/Civic+Sedan/2023_Civic_4D_Maintenance_Minder_System.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2024-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2024-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "ac07eafb9ba4198121d4f9709c69631a6f7d2aa58829591abcb2eba91bc61dc3"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Civic+Sedan/2024_Civic_4D_Maintenance_Minder_System.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2024-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2024-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "ac07eafb9ba4198121d4f9709c69631a6f7d2aa58829591abcb2eba91bc61dc3"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2024/Civic+Sedan/2024_Civic_4D_Maintenance_Minder_System.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2020-elite": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2020-elite/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "97a945c97b0b920e33ceb4fe3ce68d8e8762ae5bc567a6ee49bc971aefe0cabc"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2020/Passport/2020_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2025-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2025-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0b6791fd167aa38d7c14c07136a5b6dd72290d095089f33f1939a9aca1a346fd"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Civic+Sedan/2025_Civic_4D_Maintenance_Minder_System.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2025-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2025-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0b6791fd167aa38d7c14c07136a5b6dd72290d095089f33f1939a9aca1a346fd"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Civic+Sedan/2025_Civic_4D_Maintenance_Minder_System.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-civic-2025-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-civic-2025-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0b6791fd167aa38d7c14c07136a5b6dd72290d095089f33f1939a9aca1a346fd"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/utility/download?path=/static/pdfs/2025/Civic+Sedan/2025_Civic_4D_Maintenance_Minder_System.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2020-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2020-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "97a945c97b0b920e33ceb4fe3ce68d8e8762ae5bc567a6ee49bc971aefe0cabc"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2020/Passport/2020_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2020-ex-l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2020-ex-l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "97a945c97b0b920e33ceb4fe3ce68d8e8762ae5bc567a6ee49bc971aefe0cabc"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2020/Passport/2020_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2021-elite": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2021-elite/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "3377997a91a4b430406390ca27d27a252d83440d6bfe2d1254cbac6dc6a93857"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2021/Passport/2021_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2021-ex-l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2021-ex-l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "3377997a91a4b430406390ca27d27a252d83440d6bfe2d1254cbac6dc6a93857"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2021/Passport/2021_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2021-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2021-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "3377997a91a4b430406390ca27d27a252d83440d6bfe2d1254cbac6dc6a93857"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2021/Passport/2021_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2022-ex-l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2022-ex-l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "13b6d8bcc4ea8d472ba1c221fbf9f0b76813b57be6cce2e4fc8fad57ab74dfb4"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2022/Passport/2022_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2022-elite": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2022-elite/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "13b6d8bcc4ea8d472ba1c221fbf9f0b76813b57be6cce2e4fc8fad57ab74dfb4"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2022/Passport/2022_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2022-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2022-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "13b6d8bcc4ea8d472ba1c221fbf9f0b76813b57be6cce2e4fc8fad57ab74dfb4"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2022/Passport/2022_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2023-ex-l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2023-ex-l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "04cff55a05820227b7792fb755e89952f9257b62a3c06c0ab56a212b13c90f21"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2023/Passport/2023_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2024-elite": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2024-elite/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0cb8ba342617a23008cf640079936e33c9f25742561921eddc6df35ac94f8af0"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2024/Passport/2024_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2023-elite": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2023-elite/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "04cff55a05820227b7792fb755e89952f9257b62a3c06c0ab56a212b13c90f21"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2023/Passport/2023_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2023-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2023-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "04cff55a05820227b7792fb755e89952f9257b62a3c06c0ab56a212b13c90f21"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2023/Passport/2023_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2025-elite": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2025-elite/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8a62ba071f0e21eacb17f2cf8f17cd9d1b3f1e7215886190a7fe87070be35556"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2025/Passport/2025_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2025-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2025-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8a62ba071f0e21eacb17f2cf8f17cd9d1b3f1e7215886190a7fe87070be35556"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2025/Passport/2025_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2024-touring": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2024-touring/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "0cb8ba342617a23008cf640079936e33c9f25742561921eddc6df35ac94f8af0"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2024/Passport/2024_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "honda-passport-2025-ex-l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/honda-passport-2025-ex-l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8a62ba071f0e21eacb17f2cf8f17cd9d1b3f1e7215886190a7fe87070be35556"
+      },
+      "officialUrls": [
+        "https://owners.honda.com/static/pdfs/2025/Passport/2025_Passport_Maintenance_Minder.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2020-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2020-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "5c18339521a63dbec19f21cf8106c2acf8eac6f5589da5aa6739bd053ff8416f"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Elantra_2020_EN-US_US_d43ca94d3f.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2020-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2020-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "5c18339521a63dbec19f21cf8106c2acf8eac6f5589da5aa6739bd053ff8416f"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Elantra_2020_EN-US_US_d43ca94d3f.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2020-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2020-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "5c18339521a63dbec19f21cf8106c2acf8eac6f5589da5aa6739bd053ff8416f"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Elantra_2020_EN-US_US_d43ca94d3f.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2021-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2021-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "97e3e4b4fd6534193d8380c820dca47f7ddb0c6eec5548d34e68dc40e7c913d5"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/elantra/2021-Elantra-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2022-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2022-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "aa3e2b25e281d26a2c162b735cb0dd9db945e2a5bb1e08c51f6cd55048322ff4"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/elantra/2022-Elantra-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2022-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2022-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "aa3e2b25e281d26a2c162b735cb0dd9db945e2a5bb1e08c51f6cd55048322ff4"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/elantra/2022-Elantra-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2021-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2021-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "97e3e4b4fd6534193d8380c820dca47f7ddb0c6eec5548d34e68dc40e7c913d5"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/elantra/2021-Elantra-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2021-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2021-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "97e3e4b4fd6534193d8380c820dca47f7ddb0c6eec5548d34e68dc40e7c913d5"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/elantra/2021-Elantra-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2023-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2023-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "5f0baef6df2e97cdcf3006198e3223443a8869299671250fabbd76ccff5f944f"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/elantra/2023-Elantra-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2023-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2023-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "5f0baef6df2e97cdcf3006198e3223443a8869299671250fabbd76ccff5f944f"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/elantra/2023-Elantra-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2023-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2023-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "5f0baef6df2e97cdcf3006198e3223443a8869299671250fabbd76ccff5f944f"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/elantra/2023-Elantra-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2022-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2022-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "aa3e2b25e281d26a2c162b735cb0dd9db945e2a5bb1e08c51f6cd55048322ff4"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/elantra/2022-Elantra-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2024-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2024-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "afcd654bfdb7c3a409a4e64f3787be6cd2ef8b1b2e6c8b7ab78fe453e2c052ce"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/elantra/2024%20Elantra%20ICE%20and%20N-Line%20(CN7)%20OM.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-kona-2020-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-kona-2020-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9c29f3ea89c6eebd22ebf7cfc43f062a4865459e7c6294bf94f941e9867e59bf"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Kona_2020_EN-US_US_0679514311.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-kona-2020-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-kona-2020-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9c29f3ea89c6eebd22ebf7cfc43f062a4865459e7c6294bf94f941e9867e59bf"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Kona_2020_EN-US_US_0679514311.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-elantra-2024-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-elantra-2024-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "afcd654bfdb7c3a409a4e64f3787be6cd2ef8b1b2e6c8b7ab78fe453e2c052ce"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/elantra/2024%20Elantra%20ICE%20and%20N-Line%20(CN7)%20OM.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-kona-2020-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-kona-2020-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9c29f3ea89c6eebd22ebf7cfc43f062a4865459e7c6294bf94f941e9867e59bf"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Kona_2020_EN-US_US_0679514311.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-kona-2021-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-kona-2021-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a8b9bf66f4188cc1a8ce35d35b770191099778508cb0f548e3ca7a1e109a4f5a"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/kona/2021_Kona_Owners_Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-kona-2021-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-kona-2021-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a8b9bf66f4188cc1a8ce35d35b770191099778508cb0f548e3ca7a1e109a4f5a"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/kona/2021_Kona_Owners_Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-kona-2021-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-kona-2021-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a8b9bf66f4188cc1a8ce35d35b770191099778508cb0f548e3ca7a1e109a4f5a"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/kona/2021_Kona_Owners_Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-kona-2023-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-kona-2023-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7f00a649804dd49e26ac876c44a88ddf486fbd78ea700206f623e9d10f654ddc"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Kona_2023_EN_US_1294147445.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-kona-2022-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-kona-2022-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9a1e459a4ac3e37f3a77a3e82b185e9e66108d92938590a8ba71d739902128dd"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/kona/2022-Kona-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-kona-2022-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-kona-2022-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9a1e459a4ac3e37f3a77a3e82b185e9e66108d92938590a8ba71d739902128dd"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/kona/2022-Kona-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-kona-2022-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-kona-2022-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9a1e459a4ac3e37f3a77a3e82b185e9e66108d92938590a8ba71d739902128dd"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/kona/2022-Kona-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-kona-2023-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-kona-2023-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7f00a649804dd49e26ac876c44a88ddf486fbd78ea700206f623e9d10f654ddc"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Kona_2023_EN_US_1294147445.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-kona-2023-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-kona-2023-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7f00a649804dd49e26ac876c44a88ddf486fbd78ea700206f623e9d10f654ddc"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Kona_2023_EN_US_1294147445.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2021-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2021-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "6f0764a8d56b8790d0115c85bae387ba03c59c88ba2fdaa364f21b5b915b0d7e"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/palisade/2021-Palisade-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2021-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2021-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "6f0764a8d56b8790d0115c85bae387ba03c59c88ba2fdaa364f21b5b915b0d7e"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/palisade/2021-Palisade-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2022-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2022-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "96560e673f60705dfdba1049da8c26ec9f71e288001557403599c3aa5bceb959"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/palisade/2022-Palisade-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2022-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2022-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "96560e673f60705dfdba1049da8c26ec9f71e288001557403599c3aa5bceb959"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/palisade/2022-Palisade-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2022-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2022-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "96560e673f60705dfdba1049da8c26ec9f71e288001557403599c3aa5bceb959"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/palisade/2022-Palisade-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2021-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2021-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "6f0764a8d56b8790d0115c85bae387ba03c59c88ba2fdaa364f21b5b915b0d7e"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/palisade/2021-Palisade-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2024-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2024-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9421f7d6fa724e1bb72be81a79c3e857c8a2d420705b5fdb798d593542e388f6"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Palisade_2024_EN_US_e671929815.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2023-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2023-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7fba85b8ad20d2b9ed6d5842eb76357c931e9e3899f7a2049f3ebbbfa04b10f1"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/palisade/2023-Palisade-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2023-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2023-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7fba85b8ad20d2b9ed6d5842eb76357c931e9e3899f7a2049f3ebbbfa04b10f1"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/palisade/2023-Palisade-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2023-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2023-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7fba85b8ad20d2b9ed6d5842eb76357c931e9e3899f7a2049f3ebbbfa04b10f1"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/palisade/2023-Palisade-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2024-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2024-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9421f7d6fa724e1bb72be81a79c3e857c8a2d420705b5fdb798d593542e388f6"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Palisade_2024_EN_US_e671929815.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2024-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2024-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9421f7d6fa724e1bb72be81a79c3e857c8a2d420705b5fdb798d593542e388f6"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Palisade_2024_EN_US_e671929815.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2025-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2025-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4ea01e4df22a6cfc489ce34d464961922164eb8ce626b54f238d10470ec898f6"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Palisade_2025_EN_US_b4142e9172.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2025-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2025-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4ea01e4df22a6cfc489ce34d464961922164eb8ce626b54f238d10470ec898f6"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Palisade_2025_EN_US_b4142e9172.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-santa-fe-2022-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-santa-fe-2022-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "237e5e6943b4adc1cd2886f822cfc9d21f728a2f785c02f118399d58fbdb0e7b"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/santa-fe/2022-Santa-Fe-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-santa-fe-2022-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-santa-fe-2022-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "237e5e6943b4adc1cd2886f822cfc9d21f728a2f785c02f118399d58fbdb0e7b"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/santa-fe/2022-Santa-Fe-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-santa-fe-2022-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-santa-fe-2022-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "237e5e6943b4adc1cd2886f822cfc9d21f728a2f785c02f118399d58fbdb0e7b"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/santa-fe/2022-Santa-Fe-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-palisade-2025-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-palisade-2025-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4ea01e4df22a6cfc489ce34d464961922164eb8ce626b54f238d10470ec898f6"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Palisade_2025_EN_US_b4142e9172.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-santa-fe-2023-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-santa-fe-2023-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9599b59e473b7d4bc8eeb696978d028b35669d537ea736028b1c77e0e9b9761c"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/santa-fe/2023-Santa-Fe-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-santa-fe-2023-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-santa-fe-2023-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9599b59e473b7d4bc8eeb696978d028b35669d537ea736028b1c77e0e9b9761c"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/santa-fe/2023-Santa-Fe-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-santa-fe-2023-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-santa-fe-2023-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9599b59e473b7d4bc8eeb696978d028b35669d537ea736028b1c77e0e9b9761c"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/santa-fe/2023-Santa-Fe-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-santa-fe-2024-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-santa-fe-2024-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "cfca94c09625f2ff1d04d7ef537e45e1b9932cba616a7cb6324409161348dd6f"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/santa-fe/MX5a-2024-en_US-WEB-2C.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-santa-fe-2025-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-santa-fe-2025-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "81477ed1bb628514f0f7198716e747210d173ab851e527087e8e5666f3c3e84a"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2025/santa-fe/MX5a-2025-en_US-WEB-2C.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-santa-fe-2025-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-santa-fe-2025-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "81477ed1bb628514f0f7198716e747210d173ab851e527087e8e5666f3c3e84a"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2025/santa-fe/MX5a-2025-en_US-WEB-2C.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-santa-fe-2024-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-santa-fe-2024-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "cfca94c09625f2ff1d04d7ef537e45e1b9932cba616a7cb6324409161348dd6f"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/santa-fe/MX5a-2024-en_US-WEB-2C.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-santa-fe-2025-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-santa-fe-2025-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "81477ed1bb628514f0f7198716e747210d173ab851e527087e8e5666f3c3e84a"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2025/santa-fe/MX5a-2025-en_US-WEB-2C.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-sonata-2020-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-sonata-2020-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "bde943437d0c570574a5e6fa433307913da39916af37a952346379b76d8aef37"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Sonata_2020_EN-US_US_f65523d9fc.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-sonata-2020-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-sonata-2020-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "bde943437d0c570574a5e6fa433307913da39916af37a952346379b76d8aef37"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Sonata_2020_EN-US_US_f65523d9fc.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-sonata-2020-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-sonata-2020-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "bde943437d0c570574a5e6fa433307913da39916af37a952346379b76d8aef37"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Sonata_2020_EN-US_US_f65523d9fc.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-sonata-2021-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-sonata-2021-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4bf70b5d5013c22b864dc907581f83416de362a02a7623d0ade1dfc1d17f3bc0"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/sonata/2021-Sonata-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-sonata-2022-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-sonata-2022-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "735c286cb0838cfe91c8b3787d0cfe5ac8bd7d50a342b782f5f5dc3b32790f4c"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Sonata_2022_EN_US_2d1853cb94.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-sonata-2022-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-sonata-2022-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "735c286cb0838cfe91c8b3787d0cfe5ac8bd7d50a342b782f5f5dc3b32790f4c"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Sonata_2022_EN_US_2d1853cb94.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-sonata-2021-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-sonata-2021-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4bf70b5d5013c22b864dc907581f83416de362a02a7623d0ade1dfc1d17f3bc0"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/sonata/2021-Sonata-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-sonata-2021-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-sonata-2021-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4bf70b5d5013c22b864dc907581f83416de362a02a7623d0ade1dfc1d17f3bc0"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/sonata/2021-Sonata-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-sonata-2022-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-sonata-2022-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "735c286cb0838cfe91c8b3787d0cfe5ac8bd7d50a342b782f5f5dc3b32790f4c"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Sonata_2022_EN_US_2d1853cb94.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-sonata-2023-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-sonata-2023-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "614a9bf992b52d5bebe42dcb8bae91088e263d15ac69c8396840b36d7d221b92"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Sonata_2023_EN-US_US_0ffe1bddc4.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-sonata-2023-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-sonata-2023-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "614a9bf992b52d5bebe42dcb8bae91088e263d15ac69c8396840b36d7d221b92"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Sonata_2023_EN-US_US_0ffe1bddc4.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-sonata-2023-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-sonata-2023-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "614a9bf992b52d5bebe42dcb8bae91088e263d15ac69c8396840b36d7d221b92"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Hyundai-Sonata_2023_EN-US_US_0ffe1bddc4.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-tucson-2021-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-tucson-2021-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4df29623192d90dca984f15d837bb82fd0d6e53f7f640b8db15bf927af3c8417"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/tucson/2021-Tucson-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-tucson-2020-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-tucson-2020-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7afd3729c66a3cbe2cc4c717a2559415f09e70e1f6b17258290c18982e8d3790"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2020/tucson/2020-Tucson-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-tucson-2020-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-tucson-2020-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7afd3729c66a3cbe2cc4c717a2559415f09e70e1f6b17258290c18982e8d3790"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2020/tucson/2020-Tucson-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-tucson-2020-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-tucson-2020-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7afd3729c66a3cbe2cc4c717a2559415f09e70e1f6b17258290c18982e8d3790"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2020/tucson/2020-Tucson-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-tucson-2024-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-tucson-2024-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2a683aa507e79c92450b2d70e4d5af46f0f3899a9157e3182ee87b0638c17c74"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/tucson/2024_Tucson_Owners_Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-tucson-2024-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-tucson-2024-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2a683aa507e79c92450b2d70e4d5af46f0f3899a9157e3182ee87b0638c17c74"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/tucson/2024_Tucson_Owners_Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-tucson-2021-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-tucson-2021-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4df29623192d90dca984f15d837bb82fd0d6e53f7f640b8db15bf927af3c8417"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/tucson/2021-Tucson-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "hyundai-tucson-2021-sel": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/hyundai-tucson-2021-sel/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4df29623192d90dca984f15d837bb82fd0d6e53f7f640b8db15bf927af3c8417"
+      },
+      "officialUrls": [
+        "https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2021/tucson/2021-Tucson-Owners-Manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "jeep-grand-cherokee-2023-laredo": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/jeep-grand-cherokee-2023-laredo/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "10ea38df4f38983175119b942b31a735ec2305b4bd4f1289527530ab97d71eaa"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Jeep-Grand-Cherokee_2023_EN_US_d7726128d6.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "jeep-grand-cherokee-2021-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/jeep-grand-cherokee-2021-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9ad259f5702bcde22e2a867eef24d08fc2226a413eafc17c17a8ef7d3e3d6b72"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Jeep-Grand-Cherokee_2021_EN-US_US_d2b42f4998.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "jeep-grand-cherokee-2021-overland": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/jeep-grand-cherokee-2021-overland/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9ad259f5702bcde22e2a867eef24d08fc2226a413eafc17c17a8ef7d3e3d6b72"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Jeep-Grand-Cherokee_2021_EN-US_US_d2b42f4998.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "jeep-grand-cherokee-2021-laredo": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/jeep-grand-cherokee-2021-laredo/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "9ad259f5702bcde22e2a867eef24d08fc2226a413eafc17c17a8ef7d3e3d6b72"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Jeep-Grand-Cherokee_2021_EN-US_US_d2b42f4998.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "kia-sorento-2020-lx": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/kia-sorento-2020-lx/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "523bc9f2be405050097a33fe48750482762ef38089be6d9ffdca6fd6b9565005"
+      },
+      "officialUrls": [
+        "https://owners.kia.com/us/en/manuals.html"
+      ],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Kia-Sorento_2020_EN-US_US_c92a3470f4.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "jeep-grand-cherokee-2023-overland": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/jeep-grand-cherokee-2023-overland/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "10ea38df4f38983175119b942b31a735ec2305b4bd4f1289527530ab97d71eaa"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Jeep-Grand-Cherokee_2023_EN_US_d7726128d6.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "kia-sorento-2020-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/kia-sorento-2020-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "523bc9f2be405050097a33fe48750482762ef38089be6d9ffdca6fd6b9565005"
+      },
+      "officialUrls": [
+        "https://owners.kia.com/us/en/manuals.html"
+      ],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Kia-Sorento_2020_EN-US_US_c92a3470f4.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "jeep-grand-cherokee-2023-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/jeep-grand-cherokee-2023-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "10ea38df4f38983175119b942b31a735ec2305b4bd4f1289527530ab97d71eaa"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Jeep-Grand-Cherokee_2023_EN_US_d7726128d6.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "kia-sportage-2022-ex": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/kia-sportage-2022-ex/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7e70c04a975cd7fe375f7ad5bd6ffc7b1f7070104524c0ec59e38ad0788f1f3f"
+      },
+      "officialUrls": [
+        "https://owners.kia.com/us/en/manuals.html"
+      ],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Kia-Sportage_2022_EN__b495da1af5.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "kia-sportage-2022-sx": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/kia-sportage-2022-sx/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7e70c04a975cd7fe375f7ad5bd6ffc7b1f7070104524c0ec59e38ad0788f1f3f"
+      },
+      "officialUrls": [
+        "https://owners.kia.com/us/en/manuals.html"
+      ],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Kia-Sportage_2022_EN__b495da1af5.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "kia-sportage-2022-lx": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/kia-sportage-2022-lx/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7e70c04a975cd7fe375f7ad5bd6ffc7b1f7070104524c0ec59e38ad0788f1f3f"
+      },
+      "officialUrls": [
+        "https://owners.kia.com/us/en/manuals.html"
+      ],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Kia-Sportage_2022_EN__b495da1af5.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "kia-sorento-2020-sx": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/kia-sorento-2020-sx/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "523bc9f2be405050097a33fe48750482762ef38089be6d9ffdca6fd6b9565005"
+      },
+      "officialUrls": [
+        "https://owners.kia.com/us/en/manuals.html"
+      ],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Kia-Sorento_2020_EN-US_US_c92a3470f4.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-es-2020-250": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-es-2020-250/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "b47956de9572621e00bc8942a68f5bae2447d01b239e6975fdbe94824be0b44e"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20ES350/pdf/L-MMS-20ES350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-es-2019-250": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-es-2019-250/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "c96a549009c7ffa0c644bd9285b686200910571752371cd520dc36d923c6f5e0"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19ES300H/pdf/L-MMS-19ES300H.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-is-2019-500-f-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-is-2019-500-f-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "7def41c31ce53bd532feded5473ef5d2870a01a1213fcc4763779a0df5a1044d"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19IS300/pdf/L-MMS-19IS300.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-is-2020-500-f-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-is-2020-500-f-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "1fde33e2026e3bbaf07cb42d7f557b7ef4ee79bff0e9e4496add4cf1b200dd19"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20IS300/pdf/L-MMS-20IS300.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-nx-2023-250": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-nx-2023-250/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4f31703ae2853e974074e75945651d7c5972aeb64cc45aac797350d5717cbf0d"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23NX450H/pdf/L-MMS-23NX450H.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-nx-2023-350": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-nx-2023-350/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4f31703ae2853e974074e75945651d7c5972aeb64cc45aac797350d5717cbf0d"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23NX450H/pdf/L-MMS-23NX450H.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-nx-2024-350h": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-nx-2024-350h/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "12e3ada8f9531ad3d9c56a2ff87c8c832ae2f0b50ec45f993f1318457e1c2864"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24NX250NX350/pdf/L-MMS-24NX250NX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-is-2021-500-f-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-is-2021-500-f-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "00c1c10a5ee808d40ff2594c71231eee4bc0d262fb16a5a817bcc147af55255f"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-21IS300/pdf/L-MMS-21IS300.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-nx-2024-450h-phev": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-nx-2024-450h-phev/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "12e3ada8f9531ad3d9c56a2ff87c8c832ae2f0b50ec45f993f1318457e1c2864"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24NX250NX350/pdf/L-MMS-24NX250NX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-nx-2025-350h": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-nx-2025-350h/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "b477edd60b62d264b8667f9b88656671f85b667b5d211bc76efa2a9c6560baf9"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-25NX250NX350/pdf/L-MMS-25NX250NX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2018-450h-hybrid": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2018-450h-hybrid/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "43e7c99668aac4b2db7570020222919a7c9f655c089b457586c12239c9965de7"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-18RX350/pdf/L-MMS-18RX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-nx-2025-450h-phev": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-nx-2025-450h-phev/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "b477edd60b62d264b8667f9b88656671f85b667b5d211bc76efa2a9c6560baf9"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-25NX250NX350/pdf/L-MMS-25NX250NX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2018-500h": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2018-500h/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "43e7c99668aac4b2db7570020222919a7c9f655c089b457586c12239c9965de7"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-18RX350/pdf/L-MMS-18RX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2020-500h": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2020-500h/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "34278d5d0d1472cf24674a5e5f6d1b64a8c673746b54e9c994a4d60753c7ab22"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20RX450h/pdf/L-MMS-20RX450h.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2019-450h-hybrid": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2019-450h-hybrid/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "26a0c70f9434499368fdaa3f268501fbe1ef704637b053c894f3254a8740e911"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19RX350/pdf/L-MMS-19RX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2019-500h": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2019-500h/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "26a0c70f9434499368fdaa3f268501fbe1ef704637b053c894f3254a8740e911"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19RX350/pdf/L-MMS-19RX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2023-350l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2023-350l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "efa2651e91ca7c70eca85e11696d715a1b590ecd8fe68bb8d0eea30a0b53a278"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23RX350/pdf/L-MMS-23RX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2021-500h": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2021-500h/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2fbe2fea9a8d518389126604c2414ea605e535e0abe522bb4c821633136c4f17"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-21RX450H/pdf/L-MMS-21RX450H.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2023-450h-hybrid": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2023-450h-hybrid/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "efa2651e91ca7c70eca85e11696d715a1b590ecd8fe68bb8d0eea30a0b53a278"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23RX350/pdf/L-MMS-23RX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2022-500h": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2022-500h/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "49ee1abbc1f134ecea111d332d596da9c9f54b99e1708198e0cdf5d4d1bb7326"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-22RX350/pdf/L-MMS-22RX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2025-450h-hybrid": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2025-450h-hybrid/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a0b90a9eb6dccf2586598d786b20120c6ba858bbaa4ac1e4f5fd7e4160b68891"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-25RX350/pdf/L-MMS-25RX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2025-350l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2025-350l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a0b90a9eb6dccf2586598d786b20120c6ba858bbaa4ac1e4f5fd7e4160b68891"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-25RX350/pdf/L-MMS-25RX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2024-350l": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2024-350l/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "5b6f204491c5697c8d0bb94a5a71f1ec301249db0c947b951fbf671f1e0d7db0"
+      },
+      "officialUrls": [
+        "https://assets.sipb.toyota.com/publications/en/omms-s/L-MMS-24RX350/pdf/L-MMS-24RX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-rx-2024-450h-hybrid": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-rx-2024-450h-hybrid/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "5b6f204491c5697c8d0bb94a5a71f1ec301249db0c947b951fbf671f1e0d7db0"
+      },
+      "officialUrls": [
+        "https://assets.sipb.toyota.com/publications/en/omms-s/L-MMS-24RX350/pdf/L-MMS-24RX350.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-ux-2023-200": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-ux-2023-200/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4662d487601fdfae0951d808120f6bc39d69f82ac9fe03fdd5b6dff5b1d7add6"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-23UX250H/pdf/L-MMS-23UX250H.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-ux-2021-250h": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-ux-2021-250h/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8e25fa5e21a284df197a4f745ba7df01349edca82484335a1bc9f635628ae94e"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-21UX200/pdf/L-MMS-21UX200.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-ux-2020-250h": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-ux-2020-250h/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "95d80e23327e0e2403e331174a7632dfc13c55d6c299b5b14a679493448a7a3e"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-20UX200/pdf/L-MMS-20UX200.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-ux-2019-250h": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-ux-2019-250h/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "d7a85a53c4ee340cac0507fae8dc61e143d09fef0ddd39a0240582ffbb003f7d"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-19UX200/pdf/L-MMS-19UX200.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "lexus-ux-2024-200": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/lexus-ux-2024-200/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "4e1557febfcee629a0c937a37add9979d9b6fe97f8d966559fc08bc2f0ddfbc2"
+      },
+      "officialUrls": [
+        "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-24UX250H/pdf/L-MMS-24UX250H.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2020-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2020-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "845161b7a5fbe9321e35f59cf5c87f6c772ee73fba952f4bcdcd923aa161c39f"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2020/m3s/2020-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2020-select": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2020-select/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "845161b7a5fbe9321e35f59cf5c87f6c772ee73fba952f4bcdcd923aa161c39f"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2020/m3s/2020-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2020-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2020-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "845161b7a5fbe9321e35f59cf5c87f6c772ee73fba952f4bcdcd923aa161c39f"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2020/m3s/2020-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2023-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2023-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "f4210a6c3d6a740bc069d9fc05ae29e3d72634516fe99e6e730ac008797869f8"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2023/m3s/2023-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2022-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2022-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "88c317726f71e086ae306f956a087f6caef27b68a9ad59e4b47b103c80a47805"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2022/m3s/2022-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2022-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2022-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "88c317726f71e086ae306f956a087f6caef27b68a9ad59e4b47b103c80a47805"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2022/m3s/2022-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2022-select": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2022-select/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "88c317726f71e086ae306f956a087f6caef27b68a9ad59e4b47b103c80a47805"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2022/m3s/2022-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2023-select": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2023-select/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "f4210a6c3d6a740bc069d9fc05ae29e3d72634516fe99e6e730ac008797869f8"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2023/m3s/2023-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2024-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2024-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "d9cdccfd5d0be53575468c1bdb4a35106fec159c9a2f260ec2394a6367f84a24"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/m3s/2024-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2023-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2023-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "f4210a6c3d6a740bc069d9fc05ae29e3d72634516fe99e6e730ac008797869f8"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2023/m3s/2023-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2024-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2024-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "d9cdccfd5d0be53575468c1bdb4a35106fec159c9a2f260ec2394a6367f84a24"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/m3s/2024-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2024-select": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2024-select/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "d9cdccfd5d0be53575468c1bdb4a35106fec159c9a2f260ec2394a6367f84a24"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/m3s/2024-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2025-select": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2025-select/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a1d06c52b6885528758f48eb69d494c4653e1d96477282159dda8c3676b63d64"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/m3s/2025-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2025-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2025-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a1d06c52b6885528758f48eb69d494c4653e1d96477282159dda8c3676b63d64"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/m3s/2025-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-3-2025-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-3-2025-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a1d06c52b6885528758f48eb69d494c4653e1d96477282159dda8c3676b63d64"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/m3s/2025-mazda3-hatchback-sedan-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-cx-30-2025-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-cx-30-2025-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a2486147b8e99b0ca769cdff82cada0ea45cc8a5d63071f7e462f081e91b55a4"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/cx-30/2025-cx-30-vehicle-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-cx-5-2024-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-cx-5-2024-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "ceec2310af229c8cc01c67d79375ba235fc0172d004bdfb69d912fa1e3cb4a5b"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-5/2024-mazda-cx-5-vehicle-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-cx-30-2025-select": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-cx-30-2025-select/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a2486147b8e99b0ca769cdff82cada0ea45cc8a5d63071f7e462f081e91b55a4"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/cx-30/2025-cx-30-vehicle-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-cx-30-2025-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-cx-30-2025-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a2486147b8e99b0ca769cdff82cada0ea45cc8a5d63071f7e462f081e91b55a4"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2025/cx-30/2025-cx-30-vehicle-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-cx-5-2024-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-cx-5-2024-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "ceec2310af229c8cc01c67d79375ba235fc0172d004bdfb69d912fa1e3cb4a5b"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-5/2024-mazda-cx-5-vehicle-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-cx-5-2024-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-cx-5-2024-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "ceec2310af229c8cc01c67d79375ba235fc0172d004bdfb69d912fa1e3cb4a5b"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-5/2024-mazda-cx-5-vehicle-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-cx-50-2024-preferred": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-cx-50-2024-preferred/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8306d5f257e46a528f7578fe749a30885696c667fcc55d57d4440a439be22d0f"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-50/2024-cx-50-vehicle-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-cx-50-2024-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-cx-50-2024-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8306d5f257e46a528f7578fe749a30885696c667fcc55d57d4440a439be22d0f"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-50/2024-cx-50-vehicle-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-crosstrek-2020-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-crosstrek-2020-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a3278c2c15cf267d2c68bebfb522bda49857a72a63b1d24f74dd13c5e7525011"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-crosstrek-2020-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-crosstrek-2020-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a3278c2c15cf267d2c68bebfb522bda49857a72a63b1d24f74dd13c5e7525011"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-crosstrek-2020-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-crosstrek-2020-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a3278c2c15cf267d2c68bebfb522bda49857a72a63b1d24f74dd13c5e7525011"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "mazda-cx-50-2024-select": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/mazda-cx-50-2024-select/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "8306d5f257e46a528f7578fe749a30885696c667fcc55d57d4440a439be22d0f"
+      },
+      "officialUrls": [
+        "https://www.mazdausa.com/siteassets/global-resources/vehicle-resources/owner-manuals/2024/cx-50/2024-cx-50-vehicle-owners-manual.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-crosstrek-2021-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-crosstrek-2021-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "11afb9c2faaf27e068fd162c4f4315f187e6599d38c714374389de49f23b7984"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-crosstrek-2021-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-crosstrek-2021-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "11afb9c2faaf27e068fd162c4f4315f187e6599d38c714374389de49f23b7984"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-crosstrek-2021-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-crosstrek-2021-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "11afb9c2faaf27e068fd162c4f4315f187e6599d38c714374389de49f23b7984"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-crosstrek-2025-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-crosstrek-2025-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2781e6337737b3e38c8d304a1e200c33419c08de3ccdcb58e08e93ef73924fe9"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-forester-2020-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-forester-2020-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a3278c2c15cf267d2c68bebfb522bda49857a72a63b1d24f74dd13c5e7525011"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-crosstrek-2025-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-crosstrek-2025-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2781e6337737b3e38c8d304a1e200c33419c08de3ccdcb58e08e93ef73924fe9"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-crosstrek-2025-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-crosstrek-2025-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2781e6337737b3e38c8d304a1e200c33419c08de3ccdcb58e08e93ef73924fe9"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-forester-2020-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-forester-2020-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a3278c2c15cf267d2c68bebfb522bda49857a72a63b1d24f74dd13c5e7525011"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-forester-2020-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-forester-2020-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a3278c2c15cf267d2c68bebfb522bda49857a72a63b1d24f74dd13c5e7525011"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-forester-2021-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-forester-2021-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "11afb9c2faaf27e068fd162c4f4315f187e6599d38c714374389de49f23b7984"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-forester-2021-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-forester-2021-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "11afb9c2faaf27e068fd162c4f4315f187e6599d38c714374389de49f23b7984"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-forester-2021-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-forester-2021-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "11afb9c2faaf27e068fd162c4f4315f187e6599d38c714374389de49f23b7984"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-forester-2025-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-forester-2025-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2781e6337737b3e38c8d304a1e200c33419c08de3ccdcb58e08e93ef73924fe9"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-forester-2025-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-forester-2025-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2781e6337737b3e38c8d304a1e200c33419c08de3ccdcb58e08e93ef73924fe9"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-forester-2025-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-forester-2025-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2781e6337737b3e38c8d304a1e200c33419c08de3ccdcb58e08e93ef73924fe9"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-impreza-2020-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-impreza-2020-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a3278c2c15cf267d2c68bebfb522bda49857a72a63b1d24f74dd13c5e7525011"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-impreza-2020-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-impreza-2020-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a3278c2c15cf267d2c68bebfb522bda49857a72a63b1d24f74dd13c5e7525011"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-impreza-2021-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-impreza-2021-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "11afb9c2faaf27e068fd162c4f4315f187e6599d38c714374389de49f23b7984"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-impreza-2021-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-impreza-2021-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "11afb9c2faaf27e068fd162c4f4315f187e6599d38c714374389de49f23b7984"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-impreza-2020-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-impreza-2020-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a3278c2c15cf267d2c68bebfb522bda49857a72a63b1d24f74dd13c5e7525011"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-impreza-2025-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-impreza-2025-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2781e6337737b3e38c8d304a1e200c33419c08de3ccdcb58e08e93ef73924fe9"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-impreza-2025-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-impreza-2025-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2781e6337737b3e38c8d304a1e200c33419c08de3ccdcb58e08e93ef73924fe9"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-impreza-2025-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-impreza-2025-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2781e6337737b3e38c8d304a1e200c33419c08de3ccdcb58e08e93ef73924fe9"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-impreza-2021-sport": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-impreza-2021-sport/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "11afb9c2faaf27e068fd162c4f4315f187e6599d38c714374389de49f23b7984"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-outback-2020-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-outback-2020-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a3278c2c15cf267d2c68bebfb522bda49857a72a63b1d24f74dd13c5e7525011"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-outback-2020-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-outback-2020-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a3278c2c15cf267d2c68bebfb522bda49857a72a63b1d24f74dd13c5e7525011"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-outback-2020-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-outback-2020-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "a3278c2c15cf267d2c68bebfb522bda49857a72a63b1d24f74dd13c5e7525011"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2020_war_and_maint__020720.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-outback-2021-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-outback-2021-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "11afb9c2faaf27e068fd162c4f4315f187e6599d38c714374389de49f23b7984"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-outback-2021-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-outback-2021-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "11afb9c2faaf27e068fd162c4f4315f187e6599d38c714374389de49f23b7984"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-outback-2021-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-outback-2021-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "11afb9c2faaf27e068fd162c4f4315f187e6599d38c714374389de49f23b7984"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/2021_war_and_maint__081120.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-outback-2025-base": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-outback-2025-base/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2781e6337737b3e38c8d304a1e200c33419c08de3ccdcb58e08e93ef73924fe9"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-outback-2025-limited": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-outback-2025-limited/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2781e6337737b3e38c8d304a1e200c33419c08de3ccdcb58e08e93ef73924fe9"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "subaru-outback-2025-premium": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/subaru-outback-2025-premium/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "2781e6337737b3e38c8d304a1e200c33419c08de3ccdcb58e08e93ef73924fe9"
+      },
+      "officialUrls": [
+        "https://techinfo.subaru.com/stis/doc/warrantyBooklet/6692719_25b_Subaru_HYBRID_Warranty_and_Maintenance_TEXT_040225_HR.pdf"
+      ],
+      "mirrorUrls": [],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "volkswagen-tiguan-2023-sel-r-line": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volkswagen-tiguan-2023-sel-r-line/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "e497c5adcae1f6adb2f5a0aa8b79808a803b2df40d410b8800824b3a276dd8ef"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Volkswagen-Tiguan_2023_EN_US_16ca8b27e5.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "volkswagen-tiguan-2023-s": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volkswagen-tiguan-2023-s/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "e497c5adcae1f6adb2f5a0aa8b79808a803b2df40d410b8800824b3a276dd8ef"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Volkswagen-Tiguan_2023_EN_US_16ca8b27e5.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
+    },
+    "volkswagen-tiguan-2023-se": {
+      "localPdfPaths": [
+        "workspace/knowledge/sources/volkswagen-tiguan-2023-se/owner-manual.pdf"
+      ],
+      "sha256": {
+        "owner-manual.pdf": "e497c5adcae1f6adb2f5a0aa8b79808a803b2df40d410b8800824b3a276dd8ef"
+      },
+      "officialUrls": [],
+      "mirrorUrls": [
+        "https://manuals.startmycar.com/published/Volkswagen-Tiguan_2023_EN_US_16ca8b27e5.pdf"
+      ],
+      "notes": "dual-extract agree",
+      "verifiedAt": "2026-07-27",
+      "dualExtractAgree": true
     }
   }
 }
