@@ -68,6 +68,13 @@ export const formatCatalogTrimOptionLabel = (
   return `${row.trim}${powertrain}`;
 };
 
+export const formatCatalogVehicleLabel = (
+  row: Pick<CatalogVehicleRow, "year" | "make" | "model" | "trim" | "powertrain">,
+): string => {
+  const powertrain = row.powertrain ? ` · ${row.powertrain}` : "";
+  return `${row.year} ${row.make} ${row.model} ${row.trim}${powertrain}`;
+};
+
 export const fetchCatalogVehicles = async (): Promise<CatalogVehicleRow[]> => {
   const response = await fetch("/api/catalog/vehicles");
   if (!response.ok) {

@@ -10,7 +10,7 @@ Default strategy for any UX/UI work: **use existing, battle-tested components**.
 
 ## Before writing UI
 
-1. Check `apps/web/components/ui/` (shadcn/Radix wrappers already in repo).
+1. Check `apps/web/components/ui/` or `apps/marketing/components/ui/` (shadcn/Radix wrappers).
 2. Check installed deps: Radix, cmdk, match-sorter, sonner, react-day-picker, lucide-react.
 3. Search [shadcn/ui](https://ui.shadcn.com) for the pattern (Combobox, Select, Command, etc.).
 4. Prefer adding a shadcn component via its standard Radix wrapper over hand-rolling HTML.
