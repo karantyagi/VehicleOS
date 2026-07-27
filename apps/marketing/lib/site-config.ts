@@ -1,9 +1,9 @@
 export const siteConfig = {
   name: "VehicleOS",
-  tagline: "Your car's reminding assistant — not another dashboard.",
-  metaTitle: "VehicleOS — Hire a reminding assistant for your car",
+  tagline: "Stop planning your car's maintenance.",
+  metaTitle: "VehicleOS — Maintenance assistant for your car",
   metaDescription:
-    "Free early access now. Initial release in ~2 months. Hand off CARFAX or service history once — verified OEM schedules, calendar-first reminders, and plain-English why from your actual records.",
+    "Hand off your CARFAX once. An assistant that remembers everything, schedules maintenance, and nudges you before something slips.",
   githubUrl: process.env.NEXT_PUBLIC_GITHUB_URL ?? "https://github.com/karantyagi/VehicleOS",
   appUrl: process.env.NEXT_PUBLIC_APP_URL ?? "https://app.vehicleos.app",
   linkedInUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL ?? "https://www.linkedin.com/in/karantyagi-21",
@@ -12,116 +12,191 @@ export const siteConfig = {
 } as const;
 
 export const releaseNote = {
-  label: "Initial release · ~8 weeks",
-  detail: "Dogfooding in hosted early access today. v1 owner loop ships late 2026.",
+  label: "Early access · live",
+  detail: "Dogfooding now · v1 ships late 2026.",
 } as const;
 
 export const heroContent = {
-  hook: "Your car's reminding assistant",
-  headline: "Stop planning.",
-  headlineHighlight: "Just show up.",
-  outcomeLine:
-    "Hand off your records once. Your assistant remembers everything, projects what's due from verified OEM schedules, and nudges you only when it matters.",
-  engineeringLine:
-    "Event-sourced truth · deterministic OEM packs · AI for extraction and explanation — not guesswork on what's due",
-  problem:
-    "Maintenance lives in your head, glove box, and camera roll — until something gets missed. You shouldn't be the planner.",
-  oneLiner:
-    "What's due next — with plain-English why, from your actual service history.",
+  headline: "Stop planning your car's",
+  headlineHighlight: "maintenance.",
+  hook: "An assistant with one job — schedule maintenance and send reminders.",
+  subline:
+    "Hand off your CARFAX once. It remembers everything, plans what's ahead, and nudges you when something is coming up.",
 } as const;
 
-export const heroPills = [
-  "Free early access · live today",
-  releaseNote.label,
-  "Calendar-first reminders",
-] as const;
+export const heroPills = ["Free early access", releaseNote.label, "OEM-verified schedules"] as const;
 
 export const earlyAccessContent = {
-  sectionLabel: "Early access",
-  sectionTitle: "One owner workflow — setup to reminders",
-  sectionDesc:
-    "Sign in, add your vehicle, import history once, and let the assistant work in the background. No daily logbook. No shop portal. No second product surface.",
-  wedge: "Know what's due next, with plain-English why, from your actual service history.",
+  sectionLabel: "Get started",
+  sectionTitle: "Three steps, then the assistant runs",
+  sectionDesc: "Check compatibility, sign in, import once — reminders start from real history and OEM schedules.",
+  priceNote: "Free · early access",
+  cta: {
+    label: "Open the app",
+    href: process.env.NEXT_PUBLIC_APP_URL ?? "https://app.vehicleos.app",
+  },
+  ctaSecondary: { label: "Check your car", href: "#supported" },
+} as const;
+
+export const featuresContent = {
+  sectionLabel: "Features",
+  sectionTitle: "Owners · one workflow",
+  sectionDesc: "Everything in early access today — one assistant surface, no second app to check.",
+  badge: "Owners · one workflow",
   priceNote: "Early access · free",
-  highlights: [
-    "Verified OEM packs — supported year/make/trim loads maintenance intervals at setup (no PDF upload)",
-    "Import history — CARFAX PDFs, portal exports, and RMV records in one skippable step",
-    "Calendar-first reminders — act this week or snooze 1–4 weeks; assistant escalates if you defer",
-    "Deterministic matching — CARFAX lines like “Oil and filter changed” map to OEM codes with CI fixtures",
-    "Owner verification only when data conflicts — fewer each week as memory grows",
-    "You execute — book, pay, show up. No planning overhead.",
+  executeCallout: "You execute. Book, pay, and show up. No planning overhead.",
+  items: [
+    {
+      id: "oem",
+      title: "Verified OEM packs",
+      detail: "Supported year, make, and trim loads maintenance intervals at setup — no manual PDF hunt.",
+    },
+    {
+      id: "import",
+      title: "Import history",
+      detail: "CARFAX PDFs, portal exports, and RMV records in one skippable step.",
+    },
+    {
+      id: "reminders",
+      title: "Calendar-first reminders",
+      detail: "Act this week or snooze 1–4 weeks — the assistant escalates if you defer.",
+    },
+    {
+      id: "matching",
+      title: "Deterministic matching",
+      detail: "CARFAX lines like “Oil and filter changed” map to OEM codes — tested with CI fixtures.",
+    },
+    {
+      id: "verify",
+      title: "Verify only on conflict",
+      detail: "Owner confirmation when data conflicts — fewer each week as memory grows.",
+    },
+    {
+      id: "execute",
+      title: "You execute",
+      detail: "Book, pay, and show up. The assistant plans — you don't carry the planner in your head.",
+    },
   ],
   cta: {
     label: "Open the app",
     href: process.env.NEXT_PUBLIC_APP_URL ?? "https://app.vehicleos.app",
   },
-  ctaSecondary: { label: "Check compatibility first", href: "#supported" },
+  ctaSecondary: { label: "Check your car", href: "#supported" },
 } as const;
 
 export const setupSteps = [
-  {
-    step: "01",
-    title: "Vehicle record",
-    detail: "Year, make, model, trim, mileage — we check OEM pack support live.",
-  },
-  {
-    step: "02",
-    title: "Driving profile",
-    detail: "Garage city, driving style, and annual miles anchor calendar projection.",
-  },
-  {
-    step: "03",
-    title: "Import history",
-    detail: "Hand off CARFAX or portal PDFs once — skippable, but reminders get smarter immediately.",
-  },
+  { step: "01", title: "Your car", detail: "Year, make, model, trim — live OEM pack check." },
+  { step: "02", title: "How you drive", detail: "City, style, miles — anchors the calendar." },
+  { step: "03", title: "Import once", detail: "CARFAX or portal PDF — optional, recommended." },
 ] as const;
 
 export const trustSignals = [
-  { label: "Free early access", detail: "Hosted app · no terminal" },
-  { label: "Low cognitive load", detail: "Assistant plans · you execute" },
-  { label: "Nothing missed", detail: "Timely reminders + evidence" },
-  { label: "Explainable", detail: "Rules own truth · AI at edges" },
+  { label: "Free early access", detail: "Hosted · no terminal" },
+  { label: "You execute", detail: "Assistant plans" },
+  { label: "Explainable", detail: "Rules + ADRs" },
 ] as const;
 
 export const coreLoopSteps = [
-  { label: "Hand off", detail: "CARFAX, receipts, RMV PDFs — one-time import" },
-  { label: "Hydrate", detail: "Verified OEM pack + alias bundles at vehicle create" },
-  { label: "Remember", detail: "Event-sourced history + evidence vault" },
-  { label: "Project", detail: "OEM intervals, baselines from your timeline" },
-  { label: "Remind", detail: "Calendar deadlines — snooze or act" },
-  { label: "Verify", detail: "Owner confirms only when blocked" },
+  { label: "Hand off", detail: "CARFAX or portal PDF — once" },
+  { label: "Hydrate", detail: "OEM schedule for your trim" },
+  { label: "Remember", detail: "History and evidence on file" },
+  { label: "Project", detail: "What's due — OEM + your miles" },
+  { label: "Remind", detail: "Calendar nudge — snooze or act" },
+  { label: "Verify", detail: "You confirm only on conflict" },
 ] as const;
 
-/** Positioning copy — gap cards on main `#positioning`. */
+export const loopContent = {
+  sectionLabel: "How it works",
+  sectionTitle: "Hand off once. Get nudged. Show up.",
+  sectionDesc:
+    "One import builds memory. The assistant projects what's ahead and nudges you — you step in only when data conflicts.",
+  diagramCaption: "Same flow — records in, reminders out",
+} as const;
+
+export const demoContent = {
+  sectionLabel: "Product",
+  sectionTitle: "See it in action",
+  sectionDesc: "Import, OEM hydrate, calendar reminders — the owner loop in under two minutes.",
+  placeholderTitle: "Product walkthrough",
+  placeholderDetail: "Full demo recording ships with v1.",
+} as const;
+
+export const versionLadder = {
+  sectionLabel: "Roadmap",
+  sectionTitle: "v1 reminds · v2 recommends",
+  cards: [
+    {
+      id: "v1",
+      badge: "v1",
+      phase: "Now · early access",
+      title: "Reminds what's upcoming",
+      detail: "Projects from OEM schedules and your history. Nudges before something slips.",
+      bullets: ["Calendar-first reminders", "Snooze 1–4 weeks", "Owner verify only on conflict"],
+    },
+    {
+      id: "v2",
+      badge: "v2",
+      phase: "Next",
+      title: "Recommends how, where, and cost",
+      detail: "Same memory — plus paths that fit your time and budget.",
+      bullets: [
+        "How — DIY, dealer, local shop, Costco-style",
+        "Where — location-aware options",
+        "Cost — time and money, side by side",
+      ],
+    },
+  ],
+} as const;
+
 export const positioningContent = {
-  sectionLabel: "Where this fits",
+  sectionLabel: "Compare",
   sectionTitle: "Three tools people already reach for",
   intro:
-    "History reports are a snapshot. General AI helps once — then forgets. Neither stays on the job month after month, sending calendar reminders before something slips.",
+    "History reports are a snapshot. General AI helps once — then forgets. Neither stays on the job month after month.",
   footnote:
-    "VehicleOS is the reminding assistant that keeps your car's story — so maintenance stays on time without you carrying the planner in your head.",
-  gapCards: [
+    "VehicleOS is the reminding assistant that keeps your car's story — maintenance stays on time without you as the planner.",
+  columns: [
+    { id: "history", label: "History reports", subtitle: "CARFAX · portal PDF" },
+    { id: "ai", label: "General AI", subtitle: "ChatGPT · Gemini" },
+    { id: "vehicleos", label: "VehicleOS", subtitle: "Reminding assistant", highlight: true },
+  ],
+  rows: [
     {
-      id: "history",
-      label: "History reports",
-      line: "Snapshot — not ongoing memory",
+      id: "memory",
+      label: "Memory",
+      history: "One-time snapshot",
+      ai: "Starts from zero each chat",
+      vehicleos: "Hand off once — keeps the full story",
     },
     {
-      id: "ai",
-      label: "General AI",
-      line: "Helpful once — starts from zero",
+      id: "reminders",
+      label: "Reminders",
+      history: "None — you check manually",
+      ai: "You have to ask again",
+      vehicleos: "Calendar nudges before due dates",
     },
     {
-      id: "vehicleos",
-      label: "VehicleOS",
-      line: "Hand off once → reminds → nothing missed",
-      highlight: true,
+      id: "schedule",
+      label: "OEM schedule",
+      history: "Not built in",
+      ai: "May guess or hallucinate",
+      vehicleos: "Verified packs for your trim",
+    },
+    {
+      id: "ongoing",
+      label: "Stays on the job",
+      history: "No",
+      ai: "No",
+      vehicleos: "Yes — month after month",
     },
   ],
 } as const;
 
 export const aiNativeBlurb =
-  "VehicleOS is built AI-native by a single staff-level architect. Product scope, trust boundaries, and ADRs are human-owned. Cursor agents implement from briefs. Deterministic engines own vehicle state, OEM schedules, and due-date policy; LLMs handle extraction, enrichment, and explanation on async paths only. The result: shipping velocity without losing explainability — the bar you'd expect from a senior engineer building agentic systems in production.";
+  "Staff-level architecture. ADRs own truth boundaries. Agents implement; deterministic engines own schedules and due dates. LLMs on async extraction only.";
+
+export const architectureBlurb =
+  "Event-sourced domain · versioned OEM JSON · rules-first policy. Diagrams and ADRs below — for engineers who care how it's built.";
 
 const adrBase = `${siteConfig.githubUrl}/blob/main/docs-lite/adr`;
 
@@ -133,28 +208,18 @@ export const adrs = [
   },
   {
     id: "ADR-010",
-    title: "Deterministic service matching & OEM knowledge packs",
+    title: "Deterministic service matching & OEM packs",
     href: `${adrBase}/ADR-010-deterministic-service-matching-and-oem-knowledge-packs.md`,
   },
   {
     id: "ADR-011",
-    title: "Import enrichment, assistant review & shop memory",
+    title: "Import enrichment & assistant review",
     href: `${adrBase}/ADR-011-import-enrichment-assistant-review-and-shop-memory.md`,
   },
   {
     id: "ADR-009",
-    title: "PDF record import (CARFAX / portal history)",
+    title: "PDF record import",
     href: `${adrBase}/ADR-009-pdf-record-import.md`,
-  },
-  {
-    id: "ADR-001",
-    title: "Postgres + pgvector as core data platform",
-    href: `${adrBase}/ADR-001-postgres-pgvector.md`,
-  },
-  {
-    id: "ADR-004",
-    title: "Phase 0 hosted deployment (Vercel + Supabase)",
-    href: `${adrBase}/ADR-004-phase0-hosted-deployment.md`,
   },
 ] as const;
 
@@ -164,20 +229,12 @@ export type StatusRow = {
 };
 
 export const statusRows: StatusRow[] = [
-  { item: "Hosted owner app — auth, onboarding wizard, assistant workspace", status: "shipped" },
-  { item: "OEM knowledge packs + hydrate on vehicle create (PROC-KB)", status: "shipped" },
-  { item: "Deterministic service-name matching (CARFAX → OEM codes)", status: "shipped" },
-  { item: "CARFAX / portal PDF import + tiered row verification", status: "shipped" },
-  { item: "Shop memory + Nominatim geocoding on import enrich", status: "shipped" },
-  { item: "Calendar-first reminders with snooze (1–4 weeks)", status: "shipped" },
-  { item: "Event-sourced domain + golden-path integration tests + CI", status: "shipped" },
-  { item: "Supported-vehicle catalog API + onboarding support check", status: "shipped" },
-  { item: "Privacy, security, and self-serve account deletion", status: "shipped" },
-  { item: "Receipt capture + mobile PWA handoff", status: "shipped" },
-  { item: "LLM-assisted PDF extraction (receipts + messy imports)", status: "planned" },
-  { item: "Demo video (full walkthrough at v1 freeze)", status: "in-progress" },
-  { item: "OEM pack factory — Tier 1 passenger catalog (50 verified)", status: "shipped" },
-  { item: "SMS / email / push proactive reminders", status: "planned" },
-  { item: "Multi-vehicle garage switcher", status: "planned" },
-  { item: "Vehicle OS Connect desktop (Owners)", status: "planned" },
+  { item: "Hosted app — onboarding + assistant workspace", status: "shipped" },
+  { item: "OEM packs + hydrate on vehicle create", status: "shipped" },
+  { item: "CARFAX / RMV import + tiered review", status: "shipped" },
+  { item: "Calendar reminders + snooze", status: "shipped" },
+  { item: "Event-sourced domain + CI golden path", status: "shipped" },
+  { item: "v2 — how / where / cost recommendations", status: "planned" },
+  { item: "LLM PDF extraction", status: "planned" },
+  { item: "Demo walkthrough video", status: "in-progress" },
 ];

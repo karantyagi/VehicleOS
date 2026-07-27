@@ -96,7 +96,7 @@ export default function DesignPreviewPage() {
                 <span className="path-price">{earlyAccessContent.priceNote}</span>
               </div>
               <h3>{earlyAccessContent.sectionTitle}</h3>
-              <p className="path-tagline">{earlyAccessContent.wedge}</p>
+              <p className="path-tagline">{earlyAccessContent.sectionDesc}</p>
             </article>
           </div>
         </section>
@@ -118,10 +118,8 @@ export default function DesignPreviewPage() {
               {heroContent.headline}{" "}
               <span className="highlight">{heroContent.headlineHighlight}</span>
             </h3>
-            <p className="hero-hook">
-              <span className="hero-hook-ai">Explainable AI</span> maintenance for vehicle ownership
-            </p>
-            <p className="hero-outcome">{heroContent.outcomeLine}</p>
+            <p className="hero-hook">{heroContent.hook}</p>
+            <p className="hero-outcome">{heroContent.subline}</p>
             <div className="cta-row preview-cta-row">
               <span className="btn btn-primary">Get early access</span>
               <span className="btn btn-secondary">Watch demo</span>

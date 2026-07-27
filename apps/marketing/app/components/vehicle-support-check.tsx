@@ -215,7 +215,7 @@ export function VehicleSupportCheck() {
         <div className="support-request support-request-success" role="status">
           <strong>Got it — we&apos;re prioritizing your car.</strong>
           <p>
-            We&apos;ll email you when VehicleOS is ready with your car&apos;s official OEM maintenance schedule.
+            We&apos;ll email you when your car is ready.
           </p>
           <button type="button" className="btn btn-secondary support-request-back" onClick={() => {
             setRequestSuccess(null);
