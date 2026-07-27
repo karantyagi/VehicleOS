@@ -10,6 +10,7 @@ import {
   formatIntervalProposalTaskTitle,
 } from "../schedule/detect-interval-proposal.js";
 import { intervalRuleIdForEntry } from "../schedule/interval-rule-id.js";
+import { hasHandledVerificationPromptForRule } from "./verification-prompt-suppression.js";
 
 const loadVehicleEvents = async (
   eventStore: EventStore,
@@ -43,6 +44,7 @@ export const ensureIntervalVerificationPrompts = async (
 ): Promise<EnsureIntervalVerificationPromptsResult> => {
   const events = await loadVehicleEvents(input.eventStore, input.vehicleId);
   const state = foldEvents(input.vehicleId, events);
+  const today = new Date().toISOString().slice(0, 10);
 
   const proposals = detectIntervalProposals({
     knowledgeSchedule: input.knowledgeSchedule ?? state.knowledgeSchedule,
@@ -55,14 +57,15 @@ export const ensureIntervalVerificationPrompts = async (
 
   for (const proposal of proposals) {
     const ruleId = intervalRuleIdForEntry(proposal.entryId);
-    const hasPendingPrompt = state.nowQueue.some(
-      (item) =>
-        item.status === "pending" &&
-        item.taskKind === "verification" &&
-        item.ruleId === ruleId,
-    );
-
-    if (hasPendingPrompt) continue;
+    if (
+      hasHandledVerificationPromptForRule({
+        nowQueue: state.nowQueue,
+        ruleId,
+        today,
+      })
+    ) {
+      continue;
+    }
 
     const taskId = crypto.randomUUID();
     const correlationId = crypto.randomUUID();

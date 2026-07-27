@@ -88,4 +88,41 @@ describe("ensureDeviationVerificationPrompts", () => {
 
     expect(first.createdCount).toBe(0);
   });
+
+  it("does not recreate after owner dismisses the prompt", async () => {
+    const eventStore = new InMemoryEventStore();
+    await seedKnowledgeAndTimeline(eventStore);
+
+    const first = await ensureDeviationVerificationPrompts({
+      eventStore,
+      vehicleId,
+      ownedSince: "2020-01-01",
+      today: "2026-07-27",
+    });
+    const taskId = first.nowQueue.find((item) => item.status === "pending")?.taskId;
+    expect(taskId).toBeTruthy();
+
+    await eventStore.append({
+      aggregateType: "task",
+      aggregateId: taskId!,
+      eventType: EVENT_TYPES.TASK_DECIDED,
+      eventVersion: EVENT_VERSIONS[EVENT_TYPES.TASK_DECIDED],
+      payload: {
+        vehicleId,
+        taskId: taskId!,
+        decision: "dismiss",
+        decidedAt: "2026-07-27T12:00:00.000Z",
+      },
+    });
+
+    const second = await ensureDeviationVerificationPrompts({
+      eventStore,
+      vehicleId,
+      ownedSince: "2020-01-01",
+      today: "2026-07-27",
+    });
+
+    expect(second.createdCount).toBe(0);
+    expect(second.nowQueue.filter((item) => item.status === "pending")).toHaveLength(0);
+  });
 });
