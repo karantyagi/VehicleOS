@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  findCatalogVehicleByPackId,
+  findCatalogVehicleRow,
   formatCatalogTrimOptionLabel,
   listCatalogMakes,
   listCatalogModels,
@@ -23,6 +23,7 @@ import {
 type VehicleYmmPickerProps = {
   vehicles: CatalogVehicleRow[];
   value: string;
+  selectedYear?: number;
   disabled?: boolean;
   onSelect: (row: CatalogVehicleRow | null) => void;
 };
@@ -30,6 +31,7 @@ type VehicleYmmPickerProps = {
 export function VehicleYmmPicker({
   vehicles,
   value,
+  selectedYear,
   disabled = false,
   onSelect,
 }: VehicleYmmPickerProps) {
@@ -40,20 +42,20 @@ export function VehicleYmmPicker({
 
   useEffect(() => {
     if (!value) {
-      setMake("");
-      setModel("");
-      setYear("");
       setTrimPackId("");
       return;
     }
 
-    const row = findCatalogVehicleByPackId(vehicles, value);
+    const row = findCatalogVehicleRow(vehicles, {
+      packId: value,
+      year: selectedYear,
+    });
     if (!row) return;
     setMake(row.make);
     setModel(row.model);
     setYear(row.year);
     setTrimPackId(row.packId);
-  }, [value, vehicles]);
+  }, [value, selectedYear, vehicles]);
 
   const makes = useMemo(() => listCatalogMakes(vehicles), [vehicles]);
   const models = useMemo(() => listCatalogModels(vehicles, make), [vehicles, make]);
@@ -96,8 +98,13 @@ export function VehicleYmmPicker({
 
   const handleTrimChange = (packId: string) => {
     setTrimPackId(packId);
-    const row = findCatalogVehicleByPackId(vehicles, packId);
-    onSelect(row);
+    const row =
+      trimRows.find((entry) => entry.packId === packId) ??
+      findCatalogVehicleRow(vehicles, {
+        packId,
+        year: typeof year === "number" ? year : selectedYear,
+      });
+    onSelect(row ?? null);
   };
 
   return (
@@ -108,6 +115,7 @@ export function VehicleYmmPicker({
           vehicles={vehicles}
           disabled={disabled}
           selectedPackId={trimPackId}
+          selectedYear={typeof year === "number" ? year : selectedYear}
           placeholder="e.g. 2021 Acura TLX or Honda Accord 2022"
           onSelect={applyRow}
         />

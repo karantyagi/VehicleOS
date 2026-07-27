@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import {
   fetchCatalogVehicles,
+  findCatalogVehicleRow,
   formatCatalogTrimOptionLabel,
   listCatalogMakes,
   listCatalogModels,
@@ -70,8 +71,12 @@ export function VehicleSupportCheck() {
   const [requestSuccess, setRequestSuccess] = useState<RequestSuccess | null>(null);
 
   const selectedRow = useMemo(
-    () => catalog.find((row) => row.packId === selectedPackId) ?? null,
-    [catalog, selectedPackId],
+    () =>
+      findCatalogVehicleRow(catalog, {
+        packId: selectedPackId,
+        year: typeof year === "number" ? year : undefined,
+      }),
+    [catalog, selectedPackId, year],
   );
 
   const makes = useMemo(() => listCatalogMakes(catalog), [catalog]);
@@ -272,6 +277,7 @@ export function VehicleSupportCheck() {
               <VehicleCatalogCombobox
                 vehicles={catalog}
                 selectedPackId={selectedPackId}
+                selectedYear={typeof year === "number" ? year : undefined}
                 placeholder="e.g. 2021 Acura TLX or Honda Accord 2022"
                 onSelect={applyCatalogRow}
               />

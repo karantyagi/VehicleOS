@@ -21,6 +21,7 @@ import {
 import { todayIsoDate } from "@/lib/date-input";
 import {
   fetchVerifiedCatalogVehicles,
+  findCatalogVehicleRow,
   formatCatalogVehicleLabel,
   type CatalogVehicleRow,
 } from "@/lib/supported-vehicle-catalog";
@@ -150,7 +151,10 @@ export function OnboardingWizard({
         if (cancelled) return;
         setCatalog(rows);
         if (!prefillDogfood) return;
-        const defaultRow = rows.find((row) => row.packId === DOGFOOD_PACK_ID);
+        const defaultRow = findCatalogVehicleRow(rows, {
+          packId: DOGFOOD_PACK_ID,
+          year: 2021,
+        });
         if (defaultRow) {
           setForm((current) =>
             current.packId ? current : vehicleFormFromCatalog(defaultRow, true),
@@ -178,8 +182,12 @@ export function OnboardingWizard({
   };
 
   const selectedVehicle = useMemo(
-    () => catalog.find((row) => row.packId === form.packId) ?? null,
-    [catalog, form.packId],
+    () =>
+      findCatalogVehicleRow(catalog, {
+        packId: form.packId,
+        year: form.year || undefined,
+      }),
+    [catalog, form.packId, form.year],
   );
 
   const selectVehicle = (row: CatalogVehicleRow | null) => {
@@ -358,6 +366,7 @@ export function OnboardingWizard({
                 <VehicleYmmPicker
                   vehicles={catalog}
                   value={form.packId}
+                  selectedYear={form.year || undefined}
                   disabled={isCatalogLoading || catalog.length === 0}
                   onSelect={selectVehicle}
                 />
