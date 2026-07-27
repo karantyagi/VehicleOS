@@ -10,6 +10,8 @@ build/
 coverage/
 .turbo/
 *.tsbuildinfo
+apps/web/knowledge-data/
+apps/marketing/knowledge-data/
 
 # Environment
 .env

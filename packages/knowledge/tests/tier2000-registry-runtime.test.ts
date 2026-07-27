@@ -1,7 +1,11 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { resolveKnowledgePackageRoot } from "../src/package-root.js";
+import {
+  listKnowledgeRootCandidates,
+  resolveKnowledgePackageRoot,
+  resolveOemPackPath,
+} from "../src/package-root.js";
 import {
   loadTier2000SourceByPackId,
   loadTier2000SourceRegistry,
@@ -11,9 +15,15 @@ import {
 describe("resolveKnowledgePackageRoot", () => {
   it("points at packages/knowledge (not src/factory)", () => {
     const root = resolveKnowledgePackageRoot();
-    expect(existsSync(join(root, "package.json"))).toBe(true);
     expect(existsSync(join(root, "catalog/supported-vehicles.v1.json"))).toBe(true);
     expect(existsSync(join(root, "sources/registries/tier-2000"))).toBe(true);
+    expect(existsSync(join(root, "packs/acura-tlx-2021-sh-awd.v1.json"))).toBe(true);
+  });
+
+  it("resolves a concrete OEM pack path on disk", () => {
+    const packPath = resolveOemPackPath("acura-tlx-2021-sh-awd");
+    expect(existsSync(packPath)).toBe(true);
+    expect(listKnowledgeRootCandidates().length).toBeGreaterThan(0);
   });
 });
 
