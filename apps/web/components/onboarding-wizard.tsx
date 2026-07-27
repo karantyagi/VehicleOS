@@ -55,6 +55,8 @@ type VehicleForm = {
 
 type OnboardingWizardProps = {
   onComplete: (vehicle: OnboardingVehicle) => void;
+  mode?: "first" | "additional";
+  onCancel?: () => void;
 };
 
 const DOGFOOD_PACK_ID = "acura-tlx-2021-sh-awd";
@@ -93,9 +95,9 @@ const progressForStep = (step: WizardStep): number => {
   return 85;
 };
 
-export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
+export function OnboardingWizard({ onComplete, mode = "first", onCancel }: OnboardingWizardProps) {
   const apiBase = getApiBase();
-  const [step, setStep] = useState<WizardStep>("welcome");
+  const [step, setStep] = useState<WizardStep>(mode === "additional" ? "car" : "welcome");
   const [form, setForm] = useState<VehicleForm>(emptyVehicleForm);
   const [catalog, setCatalog] = useState<CatalogVehicleRow[]>([]);
   const [catalogError, setCatalogError] = useState("");
@@ -201,7 +203,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     }
 
     if (!driverDraft.primaryCity.trim()) {
-      setError("Garage city is required — it anchors seasonal reminders and shop lookups.");
+      setError("Home city is required — it anchors seasonal reminders and shop lookups.");
       setIsBusy(false);
       return null;
     }
@@ -243,6 +245,11 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               "This vehicle is not available in early access yet. Send a quick request below and we will email you.",
           );
           setRequestPanelOpen(true);
+        } else if (body.code === "vehicle_limit_reached") {
+          setError(
+            body.error ??
+              "Free early access includes up to 2 vehicles. Pro/Premium for more vehicles ships with v1.",
+          );
         } else {
           setError(body.error ?? "Could not create your vehicle.");
         }
@@ -276,7 +283,13 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const goBack = () => {
     if (step === "history") setStep("driver");
     else if (step === "driver") setStep("car");
-    else if (step === "car") setStep("welcome");
+    else if (step === "car") {
+      if (mode === "additional") {
+        onCancel?.();
+        return;
+      }
+      setStep("welcome");
+    }
   };
 
   const progress = progressForStep(step);
@@ -304,18 +317,24 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           {step === "welcome"
             ? "Set up your reminding assistant"
             : step === "car"
-              ? "Vehicle record"
+              ? mode === "additional"
+                ? "Add another vehicle"
+                : "Vehicle record"
               : step === "driver"
                 ? "Driving profile"
-                : "Import history"}
+                : mode === "additional"
+                  ? "Import history (optional)"
+                  : "Import history"}
         </CardTitle>
         <CardDescription className={cn(step === "welcome" && "max-w-md")}>
           {step === "welcome"
             ? "Three quick steps — pick your supported vehicle, driving profile, and import history — then your assistant workspace unlocks."
             : step === "car"
-              ? "Select make, model, year, and trim — verified vehicles only. Check compatibility on vehicleos.app if you're unsure."
+              ? mode === "additional"
+                ? "Each car gets its own timeline, schedule, and reminders — nothing mixes between vehicles."
+                : "Select make, model, year, and trim — verified vehicles only. Check compatibility on vehicleos.app if you're unsure."
               : step === "driver"
-                ? "Driving style and garage city shape preemptive nudges. Annual miles fine-tunes Schedule dates."
+                ? "Driving style and home city shape preemptive nudges. Annual miles fine-tunes Schedule dates."
                 : "Hand off CARFAX or portal PDFs so reminders start from your actual service history."}
         </CardDescription>
       </CardHeader>
@@ -505,10 +524,10 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             {step === "history" && createdVehicle ? (
               <>
                 <Button type="button" variant="outline" disabled={isBusy} onClick={() => finishSetup(createdVehicle)}>
-                  Skip for now
+                  {mode === "additional" ? "Skip import" : "Skip for now"}
                 </Button>
                 <Button type="button" disabled={isBusy} onClick={() => finishSetup(createdVehicle)}>
-                  Open assistant workspace
+                  {mode === "additional" ? "Switch to this vehicle" : "Open assistant workspace"}
                 </Button>
               </>
             ) : null}

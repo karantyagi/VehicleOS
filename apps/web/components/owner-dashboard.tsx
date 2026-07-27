@@ -31,6 +31,8 @@ import { useReminderNotifications } from "@/lib/use-reminder-notifications";
 import { OwnerServiceNotePanel } from "./owner-service-note-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 import { useVehicleConsole } from "@/lib/vehicle-console-context";
+import { useGarage } from "@/lib/garage/garage-context";
+import { isGarageSwitchLocked } from "@/lib/garage/types";
 import { RecordImportPanel } from "./record-import-panel";
 import { DateField } from "@/components/date-field";
 import { todayIsoDate } from "@/lib/date-input";
@@ -61,6 +63,8 @@ const emptyReceiptForm = {
 export function OwnerDashboard() {
   const apiBase = getApiBase();
   const { setSnapshot } = useVehicleConsole();
+  const garage = useGarage();
+  const clearVehicleSelections = useAppUiStore((state) => state.clearVehicleSelections);
   const activeSection = useAppUiStore((state) => state.activeSection);
   const consoleMode = useAppUiStore((state) => state.consoleMode);
   const setActiveSection = useAppUiStore((state) => state.setActiveSection);
@@ -94,6 +98,8 @@ export function OwnerDashboard() {
   const [verificationMaturity, setVerificationMaturity] = useState<VerificationMaturityView | null>(null);
   const [pipelinePhase, setPipelinePhase] = useState<PipelinePhase>("idle");
   const [ownerSetupComplete, setOwnerSetupComplete] = useState(false);
+  const [importBusy, setImportBusy] = useState(false);
+  const [isVehicleStateLoading, setIsVehicleStateLoading] = useState(false);
 
   const feedback = useCallback((message: string) => {
     notifyAuto(message);
@@ -195,48 +201,94 @@ export function OwnerDashboard() {
     [apiBase, applyQueueState],
   );
 
+  const resetVehicleWorkspace = useCallback(() => {
+    setTimeline([]);
+    setOwnershipRecords([]);
+    setNowQueue([]);
+    setReminders([]);
+    setVerifications([]);
+    setQuoteAnalyses([]);
+    setEvidenceVault([]);
+    setKnowledgeSchedule([]);
+    setMaintenanceSchedule({ near: [], extended: [], full: [], effectiveMilesPerYear: 10_000 });
+    setVerificationMaturity(null);
+    setForm(emptyReceiptForm);
+    setUploadedReceipt(null);
+    setReceiptNeedsManualEntry(false);
+    setCaptureError("");
+    setServiceHistoryTab("history");
+    setPipelinePhase("idle");
+    clearVehicleSelections();
+  }, [clearVehicleSelections]);
+
   useEffect(() => {
-    let isMounted = true;
+    const lock = isGarageSwitchLocked({
+      isBusy,
+      isRefreshingNow,
+      pipelinePhase,
+      importBusy,
+    });
+    garage.setSwitchLock(lock);
+  }, [garage.setSwitchLock, importBusy, isBusy, isRefreshingNow, pipelinePhase]);
 
-    const bootstrap = async () => {
-      try {
-        const response = await fetch(`${apiBase}/api/vehicles`);
-        if (!response.ok) throw new Error("list failed");
+  useEffect(() => {
+    if (garage.isLoading) return;
 
-        const body = (await response.json()) as { vehicles: Vehicle[] };
-        const existing = body.vehicles[0];
-        if (!existing) {
-          if (isMounted) setIsLoading(false);
-          return;
-        }
+    if (garage.isAddingVehicle) {
+      resetVehicleWorkspace();
+      setVehicle(null);
+      setOwnerSetupComplete(false);
+      setIsLoading(false);
+      return;
+    }
 
-        if (isMounted) {
-          setVehicle(existing);
-          setOwnerSetupComplete(isOwnerSetupComplete(existing));
-          setForm((current) => ({ ...current, mileage: existing.currentMileage }));
-          await loadVehicleState(existing);
-        }
-      } catch {
-        if (isMounted) {
-          feedback("Could not load your workspace. Refresh to try again.");
-        }
-      } finally {
-        if (isMounted) setIsLoading(false);
+    const nextVehicle =
+      garage.vehicles.find((entry) => entry.id === garage.activeVehicleId) ?? null;
+    if (!nextVehicle) {
+      resetVehicleWorkspace();
+      setVehicle(null);
+      setOwnerSetupComplete(false);
+      setIsLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setVehicle(nextVehicle);
+    setOwnerSetupComplete(isOwnerSetupComplete(nextVehicle));
+    setForm((current) => ({ ...current, mileage: nextVehicle.currentMileage }));
+    resetVehicleWorkspace();
+    setIsVehicleStateLoading(true);
+
+    void loadVehicleState(nextVehicle).finally(() => {
+      if (!cancelled) {
+        setIsVehicleStateLoading(false);
+        setIsLoading(false);
       }
-    };
-
-    void bootstrap();
+    });
 
     return () => {
-      isMounted = false;
+      cancelled = true;
     };
-  }, [apiBase, loadVehicleState, feedback]);
+  }, [
+    garage.activeVehicleId,
+    garage.isAddingVehicle,
+    garage.isLoading,
+    garage.vehicles,
+    loadVehicleState,
+    resetVehicleWorkspace,
+  ]);
 
   const handleOnboardingComplete = async (created: OnboardingVehicle) => {
+    const isAdditional = garage.vehicles.length > 0;
+    garage.completeAddVehicle(created);
     setVehicle(created);
     setOwnerSetupComplete(true);
     setForm((current) => ({ ...current, mileage: created.currentMileage }));
-    feedback("Setup complete. Import history from the sidebar; snap receipts on your phone (Add to Home Screen).");
+    feedback(
+      isAdditional
+        ? "Vehicle added. Reminders and history are scoped to this vehicle only."
+        : "Setup complete. Import history from the sidebar; snap receipts on your phone (Add to Home Screen).",
+    );
     await loadVehicleState(created);
   };
 
@@ -464,7 +516,7 @@ export function OwnerDashboard() {
     document.title = `${sectionMeta.label} · VehicleOS`;
   }, [sectionMeta.label]);
 
-  if (isLoading) {
+  if (isLoading || garage.isLoading || isVehicleStateLoading) {
     return (
       <div className="space-y-6" aria-busy="true" aria-label="Loading workspace">
         <Skeleton className="h-8 w-48" />
@@ -479,8 +531,18 @@ export function OwnerDashboard() {
     );
   }
 
+  if (garage.isAddingVehicle) {
+    return (
+      <OnboardingWizard
+        mode="additional"
+        onCancel={() => garage.cancelAddVehicle()}
+        onComplete={(created) => void handleOnboardingComplete(created)}
+      />
+    );
+  }
+
   if (!vehicle) {
-    return <OnboardingWizard onComplete={handleOnboardingComplete} />;
+    return <OnboardingWizard onComplete={(created) => void handleOnboardingComplete(created)} />;
   }
 
   if (!ownerSetupComplete) {
@@ -610,6 +672,7 @@ export function OwnerDashboard() {
             existingTimeline={timeline}
             existingOwnershipRecords={ownershipRecords}
             disabled={isBusy}
+            onActivityChange={setImportBusy}
             onError={(message) => notify(message, "error")}
             onCarfaxImported={(body) => {
               setTimeline(body.timeline as TimelineEntry[]);

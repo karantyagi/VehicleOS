@@ -1,7 +1,7 @@
 "use client";
 
 import { FileJson, FileUp, Loader2, Upload } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ExtractionStatusBanner } from "@/components/extraction-status-banner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,7 @@ type RecordImportPanelProps = {
   existingTimeline?: TimelineEntry[];
   existingOwnershipRecords?: OwnershipRecordEntry[];
   disabled?: boolean;
+  onActivityChange?: (active: boolean) => void;
   onError: (message: string) => void;
   onCarfaxImported: (body: {
     importedCount: number;
@@ -166,6 +167,7 @@ export function RecordImportPanel({
   existingTimeline = [],
   existingOwnershipRecords = [],
   disabled = false,
+  onActivityChange,
   onError,
   onCarfaxImported,
   onRmvImported,
@@ -182,6 +184,10 @@ export function RecordImportPanel({
   const [isExtracting, setIsExtracting] = useState(false);
   const [isLoadingDogfood, setIsLoadingDogfood] = useState(false);
   const [pdfFileName, setPdfFileName] = useState<string | null>(null);
+
+  useEffect(() => {
+    onActivityChange?.(isImporting || isExtracting || isLoadingDogfood);
+  }, [isExtracting, isImporting, isLoadingDogfood, onActivityChange]);
 
   const category = useMemo(
     () => RECORD_IMPORT_CATEGORIES.find((entry) => entry.id === activeCategory) ?? RECORD_IMPORT_CATEGORIES[0],

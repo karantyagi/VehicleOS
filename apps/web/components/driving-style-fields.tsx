@@ -68,12 +68,12 @@ export function DrivingStyleFields({
       </fieldset>
 
       <FormField
-        label="Garage city"
-        htmlFor="garage-city"
+        label="Home city"
+        htmlFor="home-city"
         hint="Required — where the car is usually parked; shapes seasonal reminders and shop lookups"
       >
         <Input
-          id="garage-city"
+          id="home-city"
           value={draft.primaryCity}
           placeholder="Boston"
           onChange={(event) => onDraftChange({ ...draft, primaryCity: event.target.value })}

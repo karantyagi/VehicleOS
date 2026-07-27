@@ -17,6 +17,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { VehicleContextBar } from "@/components/vehicle-context-bar";
 import { Button } from "@/components/ui/button";
 import type { SessionUser } from "@/lib/auth/types";
+import { GarageProvider } from "@/lib/garage/garage-context";
 import { useAppUiStore } from "@/lib/store/app-ui-store";
 import { cn } from "@/lib/utils";
 
@@ -63,7 +64,8 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
   );
 
   return (
-    <div className="min-h-[100dvh] bg-background lg:flex">
+    <GarageProvider userId={user?.id ?? null}>
+      <div className="min-h-[100dvh] bg-background lg:flex">
       <Suspense fallback={null}>
         <PwaSectionLauncher />
       </Suspense>
@@ -125,5 +127,6 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
         </main>
       </div>
     </div>
+    </GarageProvider>
   );
 }

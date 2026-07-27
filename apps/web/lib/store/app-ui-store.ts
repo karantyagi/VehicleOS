@@ -98,6 +98,7 @@ type AppUiState = {
   setSelectedEvidenceId: (id: string | null) => void;
   setSelectedNowTaskId: (id: string | null) => void;
   setSelectedOwnershipRecordId: (id: string | null) => void;
+  clearVehicleSelections: () => void;
 };
 
 const clearSelections = {
@@ -180,4 +181,5 @@ export const useAppUiStore = create<AppUiState>((set, get) => ({
       selectedEvidenceId: null,
       selectedNowTaskId: null,
     }),
+  clearVehicleSelections: () => set(clearSelections),
 }));

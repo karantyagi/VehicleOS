@@ -1,6 +1,10 @@
 import type { ApiServices } from "../services/index.js";
 import { normalizeOwnerContextMemory, type OwnerContextMemory } from "@vehicleos/domain";
 import { assertVehicleCreateAllowed } from "./catalog-handlers.js";
+import {
+  buildGarageEntitlements,
+  vehicleLimitErrorBody,
+} from "../entitlements/garage-entitlements.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
 import { recommendationContextFromVehicle } from "./recommendation-context-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
@@ -36,6 +40,7 @@ type TaskDecisionBody = {
 
 type AuthContext = {
   userId: string;
+  email?: string | null;
 };
 
 const unauthorized = (): JsonResponse => jsonResponse(401, { error: "Unauthorized" });
@@ -81,6 +86,16 @@ export const createVehicle = async (
     });
   }
 
+  const existingVehicles = await services.vehicles.listByUserId(auth.userId);
+  const garage = buildGarageEntitlements({
+    userId: auth.userId,
+    email: auth.email,
+    vehicleCount: existingVehicles.length,
+  });
+  if (!garage.canAddVehicle) {
+    return jsonResponse(403, vehicleLimitErrorBody(garage));
+  }
+
   const vehicle = await services.vehicles.create({
     userId: auth.userId,
     vin: body.vin ?? "DEMO-VIN-001",
@@ -104,7 +119,11 @@ export const createVehicle = async (
     currentMileage: vehicle.currentMileage,
   });
 
-  return jsonResponse(201, { vehicle, oemPack, packId: allowed.packId });
+  return jsonResponse(201, { vehicle, oemPack, packId: allowed.packId, garage: buildGarageEntitlements({
+    userId: auth.userId,
+    email: auth.email,
+    vehicleCount: existingVehicles.length + 1,
+  }) });
 };
 
 export const listVehicles = async (
@@ -114,7 +133,12 @@ export const listVehicles = async (
   if (!auth?.userId) return unauthorized();
 
   const vehicles = await services.vehicles.listByUserId(auth.userId);
-  return jsonResponse(200, { vehicles });
+  const garage = buildGarageEntitlements({
+    userId: auth.userId,
+    email: auth.email,
+    vehicleCount: vehicles.length,
+  });
+  return jsonResponse(200, { vehicles, garage });
 };
 
 export const getVehicle = async (

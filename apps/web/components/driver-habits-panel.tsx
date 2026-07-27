@@ -65,7 +65,7 @@ export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPa
     }
 
     if (!draft.primaryCity.trim()) {
-      notify("Garage city is required — it anchors seasonal reminders and shop lookups.", "error");
+      notify("Home city is required — it anchors seasonal reminders and shop lookups.", "error");
       return;
     }
 
@@ -100,7 +100,7 @@ export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPa
     <PanelCard
       hideHeader={minimal}
       title="Driving profile"
-      description="How you drive and where you garage the car shape preemptive recommendations — not OEM due dates."
+      description="How you drive and your home city shape preemptive recommendations — not OEM due dates."
     >
       {!minimal ? (
         <p className="text-xs leading-relaxed text-muted-foreground">
