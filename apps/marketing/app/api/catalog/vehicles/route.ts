@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { listSupportedVehicles } from "@vehicleos/server";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const parsePositiveInt = (value: string | null): number | undefined => {
   if (!value) return undefined;
