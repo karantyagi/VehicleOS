@@ -87,6 +87,7 @@ type AppUiState = {
   selectedEvidenceId: string | null;
   selectedNowTaskId: string | null;
   selectedOwnershipRecordId: string | null;
+  setupFlowActive: boolean;
   setConsoleMode: (mode: ConsoleMode) => void;
   hydrateConsoleMode: (mode: ConsoleMode) => void;
   setActiveSection: (section: AppSection) => void;
@@ -99,6 +100,7 @@ type AppUiState = {
   setSelectedNowTaskId: (id: string | null) => void;
   setSelectedOwnershipRecordId: (id: string | null) => void;
   clearVehicleSelections: () => void;
+  setSetupFlowActive: (active: boolean) => void;
 };
 
 const clearSelections = {
@@ -118,6 +120,7 @@ export const useAppUiStore = create<AppUiState>((set, get) => ({
   selectedEvidenceId: null,
   selectedNowTaskId: null,
   selectedOwnershipRecordId: null,
+  setupFlowActive: false,
   setConsoleMode: (consoleMode) => {
     persistConsoleMode(consoleMode);
     set({
@@ -182,4 +185,5 @@ export const useAppUiStore = create<AppUiState>((set, get) => ({
       selectedNowTaskId: null,
     }),
   clearVehicleSelections: () => set(clearSelections),
+  setSetupFlowActive: (setupFlowActive) => set({ setupFlowActive, mobileNavOpen: false }),
 }));

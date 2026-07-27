@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { DrivingStyleFields } from "@/components/driving-style-fields";
 import { DateField } from "@/components/date-field";
 import { FormActions, FormField } from "@/components/form-field";
-import { RecordImportPanel } from "@/components/record-import-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,7 +16,6 @@ import {
   type DriverHabitsDraft,
 } from "@/lib/driver-habits";
 import { todayIsoDate } from "@/lib/date-input";
-import { notify } from "@/lib/notify";
 import {
   fetchVerifiedCatalogVehicles,
   formatCatalogVehicleLabel,
@@ -60,6 +58,7 @@ type OnboardingWizardProps = {
   onComplete: (vehicle: OnboardingVehicle) => void;
   mode?: "first" | "additional";
   onCancel?: () => void;
+  prefillDogfood?: boolean;
 };
 
 const DOGFOOD_PACK_ID = "acura-tlx-2021-sh-awd";
@@ -71,52 +70,54 @@ const emptyVehicleForm = (): VehicleForm => ({
   model: "",
   trim: "",
   vin: "",
-  currentMileage: 58_819,
+  currentMileage: 0,
   ownedSince: "",
 });
 
-const vehicleFormFromCatalog = (row: CatalogVehicleRow): VehicleForm => ({
+const vehicleFormFromCatalog = (
+  row: CatalogVehicleRow,
+  prefillDogfood: boolean,
+): VehicleForm => ({
   packId: row.packId,
   year: row.year,
   make: row.make,
   model: row.model,
   trim: row.trim,
   vin: "",
-  currentMileage: row.packId === DOGFOOD_PACK_ID ? 58_819 : 0,
+  currentMileage:
+    prefillDogfood && row.packId === DOGFOOD_PACK_ID ? 58_819 : 0,
   ownedSince: "",
 });
 
-const steps = ["car", "driver", "history"] as const;
+const steps = ["setup", "ready"] as const;
 type WizardStep = (typeof steps)[number];
 
 const stepIndex = (step: WizardStep) => steps.indexOf(step);
 
-const progressForStep = (step: WizardStep): number => {
-  if (step === "car") return 33;
-  if (step === "driver") return 66;
-  return 90;
-};
+const progressForStep = (step: WizardStep): number => (step === "setup" ? 45 : 100);
 
 const stepMeta = (
   step: WizardStep,
   mode: "first" | "additional",
 ): { title: string; description?: string } => {
-  if (step === "car") {
+  if (step === "setup") {
     return mode === "additional"
-      ? { title: "Add a vehicle", description: "Separate timeline and reminders." }
-      : { title: "Your car", description: "Pick make, model, year, trim." };
-  }
-  if (step === "driver") {
-    return { title: "How you drive", description: "Home city required." };
+      ? { title: "Add a vehicle", description: "~2 min · separate timeline and reminders." }
+      : { title: "Your car", description: "~2 min · then reminders start." };
   }
   return mode === "additional"
-    ? { title: "Import history", description: "Optional — sharpens baselines." }
-    : { title: "Make assistant smarter", description: "CARFAX or RMV PDF — skip anytime; schedule already loaded." };
+    ? { title: "Ready", description: "Switch to this vehicle anytime in the menu." }
+    : { title: "You're set", description: "OEM schedule loaded. Add CARFAX anytime from Import history." };
 };
 
-export function OnboardingWizard({ onComplete, mode = "first", onCancel }: OnboardingWizardProps) {
+export function OnboardingWizard({
+  onComplete,
+  mode = "first",
+  onCancel,
+  prefillDogfood = false,
+}: OnboardingWizardProps) {
   const apiBase = getApiBase();
-  const [step, setStep] = useState<WizardStep>("car");
+  const [step, setStep] = useState<WizardStep>("setup");
   const [form, setForm] = useState<VehicleForm>(emptyVehicleForm);
   const [catalog, setCatalog] = useState<CatalogVehicleRow[]>([]);
   const [catalogError, setCatalogError] = useState("");
@@ -130,11 +131,12 @@ export function OnboardingWizard({ onComplete, mode = "first", onCancel }: Onboa
   });
   const [milesInput, setMilesInput] = useState("");
   const [createdVehicle, setCreatedVehicle] = useState<OnboardingVehicle | null>(null);
+  const [oemEntriesLoaded, setOemEntriesLoaded] = useState<number | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (step !== "car" || catalog.length > 0) return;
+    if (step !== "setup" || catalog.length > 0) return;
 
     let cancelled = false;
     setIsCatalogLoading(true);
@@ -144,9 +146,12 @@ export function OnboardingWizard({ onComplete, mode = "first", onCancel }: Onboa
       .then((rows) => {
         if (cancelled) return;
         setCatalog(rows);
-        const defaultRow = rows.find((row) => row.packId === DOGFOOD_PACK_ID) ?? rows[0];
+        if (!prefillDogfood) return;
+        const defaultRow = rows.find((row) => row.packId === DOGFOOD_PACK_ID);
         if (defaultRow) {
-          setForm((current) => (current.packId ? current : vehicleFormFromCatalog(defaultRow)));
+          setForm((current) =>
+            current.packId ? current : vehicleFormFromCatalog(defaultRow, true),
+          );
         }
       })
       .catch(() => {
@@ -161,7 +166,7 @@ export function OnboardingWizard({ onComplete, mode = "first", onCancel }: Onboa
     return () => {
       cancelled = true;
     };
-  }, [apiBase, catalog.length, step, catalogLoadAttempt]);
+  }, [apiBase, catalog.length, prefillDogfood, step, catalogLoadAttempt]);
 
   const retryCatalogLoad = () => {
     setCatalog([]);
@@ -188,13 +193,13 @@ export function OnboardingWizard({ onComplete, mode = "first", onCancel }: Onboa
     }
 
     setForm((current) => ({
-      ...vehicleFormFromCatalog(row),
+      ...vehicleFormFromCatalog(row, prefillDogfood),
       vin: current.vin,
       ownedSince: current.ownedSince,
       currentMileage:
         current.packId === row.packId && current.currentMileage > 0
           ? current.currentMileage
-          : vehicleFormFromCatalog(row).currentMileage,
+          : vehicleFormFromCatalog(row, prefillDogfood).currentMileage,
     }));
   };
 
@@ -277,7 +282,7 @@ export function OnboardingWizard({ onComplete, mode = "first", onCancel }: Onboa
 
       setCreatedVehicle(body.vehicle);
       if (body.oemPack?.hydrated) {
-        notify(`Verified OEM schedule loaded (${body.oemPack.entriesRecorded ?? 0} items).`);
+        setOemEntriesLoaded(body.oemPack.entriesRecorded ?? 0);
       }
       return body.vehicle;
     } catch {
@@ -288,25 +293,31 @@ export function OnboardingWizard({ onComplete, mode = "first", onCancel }: Onboa
     }
   };
 
-  const continueFromDriver = async () => {
+  const continueFromSetup = async () => {
     const vehicle = await createVehicle();
-    if (vehicle) setStep("history");
+    if (vehicle) setStep("ready");
   };
 
-  const finishSetup = (vehicle: OnboardingVehicle) => {
-    onComplete(vehicle);
+  const finishSetup = () => {
+    if (!createdVehicle) return;
+    onComplete(createdVehicle);
   };
 
   const goBack = () => {
-    if (step === "history") setStep("driver");
-    else if (step === "driver") setStep("car");
-    else if (step === "car" && mode === "additional") onCancel?.();
+    if (step === "ready") setStep("setup");
+    else if (step === "setup" && mode === "additional") onCancel?.();
   };
 
   const progress = progressForStep(step);
   const { title, description } = stepMeta(step, mode);
   const stepNumber = stepIndex(step) + 1;
-  const showBack = step !== "car" || mode === "additional";
+  const showBack = step === "ready" || mode === "additional";
+
+  const setupComplete =
+    Boolean(form.packId) &&
+    form.currentMileage > 0 &&
+    form.ownedSince.trim().length > 0 &&
+    driverDraft.primaryCity.trim().length > 0;
 
   return (
     <Card className="overflow-hidden border-border/80 shadow-md">
@@ -316,7 +327,7 @@ export function OnboardingWizard({ onComplete, mode = "first", onCancel }: Onboa
 
       <CardHeader className="pb-2">
         <div className="flex items-start gap-3">
-          {mode === "first" && step === "car" ? (
+          {mode === "first" && step === "setup" ? (
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
               <LogoMark />
             </div>
@@ -332,53 +343,82 @@ export function OnboardingWizard({ onComplete, mode = "first", onCancel }: Onboa
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {step === "car" ? (
-          <div className="grid gap-4 sm:grid-cols-2">
-            <FormField label="Vehicle" htmlFor="ob-vehicle-make" className="sm:col-span-2">
-              <VehicleYmmPicker
-                vehicles={catalog}
-                value={form.packId}
-                disabled={isCatalogLoading || catalog.length === 0}
-                onSelect={selectVehicle}
-              />
-            </FormField>
+        {step === "setup" ? (
+          <>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField label="Vehicle" htmlFor="ob-vehicle-make" className="sm:col-span-2">
+                <VehicleYmmPicker
+                  vehicles={catalog}
+                  value={form.packId}
+                  disabled={isCatalogLoading || catalog.length === 0}
+                  onSelect={selectVehicle}
+                />
+              </FormField>
 
-            {selectedVehicle ? (
-              <p className="sm:col-span-2 text-xs text-muted-foreground">
-                OEM schedule loads for {formatCatalogVehicleLabel(selectedVehicle)}.
-              </p>
-            ) : null}
+              {selectedVehicle ? (
+                <p className="sm:col-span-2 text-xs text-muted-foreground">
+                  OEM schedule loads for {formatCatalogVehicleLabel(selectedVehicle)}.
+                </p>
+              ) : null}
 
-            <FormField label="Mileage" htmlFor="ob-mileage">
-              <Input
-                id="ob-mileage"
-                type="number"
-                min={0}
-                value={form.currentMileage || ""}
-                onChange={(event) => setForm({ ...form, currentMileage: Number(event.target.value) })}
+              <FormField label="Mileage" htmlFor="ob-mileage">
+                <Input
+                  id="ob-mileage"
+                  type="number"
+                  min={0}
+                  inputMode="numeric"
+                  placeholder="Odometer"
+                  value={form.currentMileage || ""}
+                  onChange={(event) => setForm({ ...form, currentMileage: Number(event.target.value) })}
+                />
+              </FormField>
+              <FormField label="VIN" htmlFor="ob-vin" optional>
+                <Input
+                  id="ob-vin"
+                  placeholder="Last 8 OK"
+                  value={form.vin}
+                  onChange={(event) => setForm({ ...form, vin: event.target.value })}
+                />
+              </FormField>
+              <FormField
+                label="Owned since"
+                htmlFor="ob-owned-since"
+                hint="For calendar reminders"
+                className="sm:col-span-2"
+              >
+                <DateField
+                  id="ob-owned-since"
+                  value={form.ownedSince}
+                  max={todayIsoDate()}
+                  onChange={(ownedSince) => setForm({ ...form, ownedSince })}
+                />
+              </FormField>
+
+              {catalogError ? (
+                <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
+                  <p className="text-sm text-destructive">{catalogError}</p>
+                  <Button type="button" variant="outline" size="sm" onClick={retryCatalogLoad}>
+                    Retry
+                  </Button>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="border-t border-border/70 pt-4">
+              <DrivingStyleFields
+                variant="onboarding"
+                draft={driverDraft}
+                milesInput={milesInput}
+                onDraftChange={setDriverDraft}
+                onMilesInputChange={setMilesInput}
               />
-            </FormField>
-            <FormField label="VIN" htmlFor="ob-vin" optional>
-              <Input
-                id="ob-vin"
-                placeholder="Last 8 OK"
-                value={form.vin}
-                onChange={(event) => setForm({ ...form, vin: event.target.value })}
-              />
-            </FormField>
-            <FormField label="Owned since" htmlFor="ob-owned-since" className="sm:col-span-2">
-              <DateField
-                id="ob-owned-since"
-                value={form.ownedSince}
-                max={todayIsoDate()}
-                onChange={(ownedSince) => setForm({ ...form, ownedSince })}
-              />
-            </FormField>
+            </div>
 
             <RequestVehiclePanel
               apiBase={apiBase}
               source="onboarding"
-              variant="fallback"
+              variant="primary"
+              compact
               open={requestPanelOpen}
               onOpenChange={setRequestPanelOpen}
               defaultValues={{
@@ -388,63 +428,25 @@ export function OnboardingWizard({ onComplete, mode = "first", onCancel }: Onboa
                 trim: form.trim || undefined,
               }}
             />
+          </>
+        ) : null}
 
-            {catalogError ? (
-              <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
-                <p className="text-sm text-destructive">{catalogError}</p>
-                <Button type="button" variant="outline" size="sm" onClick={retryCatalogLoad}>
-                  Retry
-                </Button>
-              </div>
-            ) : null}
+        {step === "ready" && createdVehicle ? (
+          <div className="space-y-3 rounded-lg border border-primary/25 bg-primary/5 px-4 py-4 text-sm">
+            <p className="font-medium text-foreground">
+              {createdVehicle.year} {createdVehicle.make} {createdVehicle.model} is ready.
+            </p>
+            {oemEntriesLoaded !== null ? (
+              <p className="text-muted-foreground">
+                Verified OEM schedule loaded ({oemEntriesLoaded} items).
+              </p>
+            ) : (
+              <p className="text-muted-foreground">Reminders will use your OEM schedule.</p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              PDF import is coming soon — use Import history in the sidebar when ready.
+            </p>
           </div>
-        ) : null}
-
-        {step === "driver" ? (
-          <DrivingStyleFields
-            variant="onboarding"
-            draft={driverDraft}
-            milesInput={milesInput}
-            onDraftChange={setDriverDraft}
-            onMilesInputChange={setMilesInput}
-          />
-        ) : null}
-
-        {step === "history" && createdVehicle ? (
-          <RecordImportPanel
-            variant="onboarding"
-            vehicleId={createdVehicle.id}
-            apiBase={apiBase}
-            ownerShopLocations={createdVehicle.ownerContextMemory?.shopLocations}
-            disabled={isBusy}
-            onError={(message) => notify(message, "error")}
-            onCarfaxImported={(body) => {
-              const skipped = body.skippedCount ?? 0;
-              if (body.importedCount === 0 && skipped > 0) {
-                notify(`Already on timeline (${skipped} skipped).`, "success");
-              } else if (skipped > 0) {
-                notify(`${body.importedCount} imported · ${skipped} skipped.`, "success");
-              } else {
-                notify(`${body.importedCount} service row(s) imported.`, "success");
-              }
-              if (body.verificationTaskId) {
-                notify("Some rows need verification.", "success");
-              }
-            }}
-            onRmvImported={(body) => {
-              const skipped = body.skippedCount ?? 0;
-              if (body.importedCount === 0 && skipped > 0) {
-                notify(`Already on file (${skipped} skipped).`, "success");
-              } else {
-                notify(`${body.importedCount} record(s) imported.`, "success");
-              }
-              if (body.profilePatch?.vin) {
-                notify(`VIN saved from PDF.`, "success");
-              } else if (body.verificationTaskId) {
-                notify("Conflicts need review.", "success");
-              }
-            }}
-          />
         ) : null}
 
         {error ? <p className="text-sm text-destructive">{error}</p> : null}
@@ -455,35 +457,19 @@ export function OnboardingWizard({ onComplete, mode = "first", onCancel }: Onboa
               Back
             </Button>
           ) : null}
-          {step === "car" ? (
+          {step === "setup" ? (
             <Button
               type="button"
-              disabled={
-                !form.packId || isCatalogLoading || form.currentMileage <= 0 || !form.ownedSince.trim()
-              }
-              onClick={() => setStep("driver")}
-            >
-              Continue
-            </Button>
-          ) : null}
-          {step === "driver" ? (
-            <Button
-              type="button"
-              disabled={isBusy || !driverDraft.primaryCity.trim()}
-              onClick={() => void continueFromDriver()}
+              disabled={isBusy || isCatalogLoading || !setupComplete}
+              onClick={() => void continueFromSetup()}
             >
               {isBusy ? "Saving…" : "Continue"}
             </Button>
           ) : null}
-          {step === "history" && createdVehicle ? (
-            <>
-              <Button type="button" variant="outline" disabled={isBusy} onClick={() => finishSetup(createdVehicle)}>
-                Skip
-              </Button>
-              <Button type="button" disabled={isBusy} onClick={() => finishSetup(createdVehicle)}>
-                {mode === "additional" ? "Done" : "Go to reminders"}
-              </Button>
-            </>
+          {step === "ready" && createdVehicle ? (
+            <Button type="button" disabled={isBusy} onClick={finishSetup}>
+              {mode === "additional" ? "Done" : "Go to reminders"}
+            </Button>
           ) : null}
         </FormActions>
       </CardContent>

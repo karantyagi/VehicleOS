@@ -69,6 +69,7 @@ export function OwnerDashboard() {
   const activeSection = useAppUiStore((state) => state.activeSection);
   const consoleMode = useAppUiStore((state) => state.consoleMode);
   const setActiveSection = useAppUiStore((state) => state.setActiveSection);
+  const setSetupFlowActive = useAppUiStore((state) => state.setSetupFlowActive);
   const isDeveloper = consoleMode === "developer";
   const sectionMeta = APP_SECTIONS.find((section) => section.id === activeSection) ?? APP_SECTIONS[0];
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
@@ -144,6 +145,19 @@ export function OwnerDashboard() {
   }, [vehicle, timeline, reminders, verifications, isBusy, pipelinePhase, setSnapshot]);
 
   useReminderNotifications(reminders);
+
+  const inSetupFlow =
+    isLoading ||
+    garage.isLoading ||
+    isVehicleStateLoading ||
+    garage.isAddingVehicle ||
+    !vehicle ||
+    !ownerSetupComplete;
+
+  useEffect(() => {
+    setSetupFlowActive(inSetupFlow);
+    return () => setSetupFlowActive(false);
+  }, [inSetupFlow, setSetupFlowActive]);
 
   useEffect(() => {
     return () => setSnapshot(null);
@@ -540,6 +554,7 @@ export function OwnerDashboard() {
     return (
       <OnboardingWizard
         mode="additional"
+        prefillDogfood={isDeveloper}
         onCancel={() => garage.cancelAddVehicle()}
         onComplete={(created) => void handleOnboardingComplete(created)}
       />
@@ -547,7 +562,12 @@ export function OwnerDashboard() {
   }
 
   if (!vehicle) {
-    return <OnboardingWizard onComplete={(created) => void handleOnboardingComplete(created)} />;
+    return (
+      <OnboardingWizard
+        prefillDogfood={isDeveloper}
+        onComplete={(created) => void handleOnboardingComplete(created)}
+      />
+    );
   }
 
   if (!ownerSetupComplete) {
