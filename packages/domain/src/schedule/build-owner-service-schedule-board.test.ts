@@ -37,6 +37,31 @@ const loadPackEntries = (packId: string): KnowledgeScheduleEntry[] => {
   }));
 };
 
+const loadCarfaxTimelineAsImported = (): ServiceTimelineEntry[] => {
+  const carfax = JSON.parse(
+    readFileSync(join(repoRoot, "connectors/carfax-connect/examples/tlx-carfax-history.v1.json"), "utf8"),
+  ) as {
+    services: Array<{
+      shop: string;
+      serviceDate: string;
+      mileage: number;
+      lineItems: string[];
+      total?: string;
+    }>;
+  };
+
+  return carfax.services.map((service, serviceIndex) => ({
+    serviceId: `carfax-import-${serviceIndex}`,
+    shop: service.shop,
+    serviceDate: service.serviceDate,
+    mileage: service.mileage,
+    lineItems: service.lineItems,
+    total: service.total ?? "$0.00",
+    evidenceIds: [],
+    source: "carfax_import" as const,
+  }));
+};
+
 const loadCarfaxTimeline = (): ServiceTimelineEntry[] => {
   const carfax = JSON.parse(
     readFileSync(join(repoRoot, "connectors/carfax-connect/examples/tlx-carfax-history.v1.json"), "utf8"),
@@ -115,6 +140,66 @@ describe("buildOwnerServiceScheduleBoard — 2021 TLX dogfood", () => {
     const rearDiff = board.rows.find((row) => row.entryId === "mm-sub-6");
     expect(rearDiff?.serviceBaseline.performedMileage).toBe(44_567);
     expect(rearDiff?.verdict === "due_soon" || rearDiff?.verdict === "overdue").toBe(true);
+  });
+
+  it("shows only matching line items when one visit lists multiple services", () => {
+    const multiLineVisit: ServiceTimelineEntry = {
+      serviceId: "visit-ira-30777",
+      shop: "Ira Acura Westwood",
+      serviceDate: "2024-03-25",
+      mileage: 30_777,
+      lineItems: [
+        "Drive belts checked",
+        "Emissions or safety inspection performed",
+        "Oil and filter changed",
+        "Tire condition and pressure checked",
+        "Tires rotated",
+        "Air filter replaced",
+        "Cabin air filter replaced/cleaned",
+        "Safety inspection performed",
+        "Emissions inspection performed",
+      ],
+      total: "$0.00",
+      evidenceIds: [],
+      source: "carfax_import",
+    };
+
+    const board = buildOwnerServiceScheduleBoard({
+      knowledgeSchedule,
+      timeline: [multiLineVisit],
+      currentMileage: 59_000,
+      today: "2026-07-27",
+      serviceAliasRegistry: aliasRegistry,
+    });
+
+    const driveBelt = board.rows.find((row) => row.entryId === "mm-sub-2-drive-belt");
+    expect(driveBelt?.historyEvents).toHaveLength(1);
+    expect(driveBelt?.historyEvents[0]?.lineItem).toBe("Drive belts checked");
+
+    const oil = board.rows.find((row) => row.entryId === "code-b");
+    expect(oil?.historyEvents).toHaveLength(1);
+    expect(oil?.historyEvents[0]?.lineItem).toMatch(/oil and filter/i);
+
+    const rotation = board.rows.find((row) => row.entryId === "mm-sub-1");
+    expect(rotation?.historyEvents).toHaveLength(1);
+    expect(rotation?.historyEvents[0]?.lineItem).toMatch(/tires rotated/i);
+  });
+
+  it("filters Ira Acura multi-line CARFAX visit in real import shape", () => {
+    const board = buildOwnerServiceScheduleBoard({
+      knowledgeSchedule,
+      timeline: loadCarfaxTimelineAsImported(),
+      currentMileage: 58_819,
+      today: "2026-07-27",
+      serviceAliasRegistry: aliasRegistry,
+    });
+
+    const driveBelt = board.rows.find((row) => row.entryId === "mm-sub-2-drive-belt");
+    const iraDriveBeltEvents = driveBelt?.historyEvents.filter(
+      (event) => event.shop === "Ira Acura Westwood" && event.serviceDate === "2024-03-25",
+    );
+    expect(iraDriveBeltEvents).toHaveLength(1);
+    expect(iraDriveBeltEvents?.[0]?.lineItem).toBe("Drive belts checked");
   });
 
   it("uses needs_baseline when no history imported", () => {

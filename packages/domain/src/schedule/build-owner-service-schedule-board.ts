@@ -1,4 +1,4 @@
-import { findMatchingServices } from "../knowledge/match-service-name.js";
+import { findMatchingServices, lineMatchesServiceName } from "../knowledge/match-service-name.js";
 import type { ServiceAliasRegistry } from "../knowledge/service-alias-registry.js";
 import type { OwnerContextMemory } from "../owner-context/types.js";
 import type { KnowledgeScheduleEntry, ServiceTimelineEntry } from "../projections/types.js";
@@ -150,14 +150,16 @@ const flattenHistoryEvents = (
 ): OwnerServiceHistoryEvent[] => {
   const matches = findMatchingServices(timeline, serviceName, options);
   return matches.flatMap((entry) =>
-    entry.lineItems.map((lineItem) => ({
-      serviceId: entry.serviceId,
-      serviceDate: entry.serviceDate,
-      mileage: entry.mileage,
-      shop: entry.shop,
-      lineItem,
-      source: entry.source,
-    })),
+    entry.lineItems
+      .filter((lineItem) => lineMatchesServiceName(lineItem, serviceName, options))
+      .map((lineItem) => ({
+        serviceId: entry.serviceId,
+        serviceDate: entry.serviceDate,
+        mileage: entry.mileage,
+        shop: entry.shop,
+        lineItem,
+        source: entry.source,
+      })),
   );
 };
 
