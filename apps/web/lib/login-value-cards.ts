@@ -1,4 +1,4 @@
-/** Login spotlight stack — sync with assistant-product-model.md § Login page · owner-value-arc.md */
+/** Login spotlight stack — sync with assistant-product-model.md § Login page · oem-first-product-shape.md */
 export type LoginValueCard = {
   id: string;
   title: string;
@@ -12,9 +12,9 @@ export const LOGIN_VALUE_CARDS: LoginValueCard[] = [
     body: "Intervals and receipts — off your plate.",
   },
   {
-    id: "handoff",
-    title: "Hand off your history once",
-    body: "CARFAX, RMV, or receipts — your assistant keeps the story.",
+    id: "schedule",
+    title: "Official maintenance schedule built in",
+    body: "Verified OEM intervals load when you pick your car — no PDF hunt.",
   },
   {
     id: "reminders",
@@ -32,9 +32,9 @@ export const LOGIN_VALUE_CARDS: LoginValueCard[] = [
     body: "Light nudges when it matters — peek only when you want.",
   },
   {
-    id: "schedule",
-    title: "Official maintenance schedule built in",
-    body: "Verified maintenance intervals load automatically.",
+    id: "handoff",
+    title: "Hand off history when you want",
+    body: "CARFAX or RMV — optional; makes the assistant smarter for you.",
   },
 ];
 

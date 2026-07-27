@@ -106,8 +106,8 @@ const stepMeta = (
     return { title: "How you drive", description: "Home city required." };
   }
   return mode === "additional"
-    ? { title: "Import history", description: "Optional." }
-    : { title: "Past records", description: "CARFAX or RMV PDF — optional." };
+    ? { title: "Import history", description: "Optional — sharpens baselines." }
+    : { title: "Make assistant smarter", description: "CARFAX or RMV PDF — skip anytime; schedule already loaded." };
 };
 
 export function OnboardingWizard({ onComplete, mode = "first", onCancel }: OnboardingWizardProps) {

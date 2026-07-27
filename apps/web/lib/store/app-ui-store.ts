@@ -28,13 +28,13 @@ export const APP_SECTIONS: { id: AppSection; label: string; description: string 
   },
   {
     id: "timeline",
-    label: "Maintenance history",
-    description: "Past maintenance, receipts, and imported records",
+    label: "Maintenance",
+    description: "OEM schedule projection, past maintenance, and ownership records",
   },
   {
     id: "imports",
     label: "Import history",
-    description: "CARFAX, RMV, and portal PDFs — hand off past records for review",
+    description: "Optional — CARFAX and RMV PDFs to sharpen baselines and memory",
   },
   {
     id: "receipts",

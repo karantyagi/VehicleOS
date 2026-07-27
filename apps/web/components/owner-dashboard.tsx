@@ -73,7 +73,7 @@ export function OwnerDashboard() {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
   const [ownershipRecords, setOwnershipRecords] = useState<OwnershipRecordEntry[]>([]);
-  const [serviceHistoryTab, setServiceHistoryTab] = useState<ServiceHistoryTab>("history");
+  const [serviceHistoryTab, setServiceHistoryTab] = useState<ServiceHistoryTab>("schedule");
   const [nowQueue, setNowQueue] = useState<QueueItem[]>([]);
   const [reminders, setReminders] = useState<OwnerReminderItem[]>([]);
   const [verifications, setVerifications] = useState<QueueItem[]>([]);
@@ -633,8 +633,8 @@ export function OwnerDashboard() {
       {activeSection === "timeline" ? (
         <PanelCard
           hideHeader={!isDeveloper}
-          title="Maintenance history"
-          description="Past maintenance, verified OEM schedule projection, and RMV/DMV ownership records."
+          title="Maintenance"
+          description="Forward OEM schedule, past maintenance, and RMV/DMV ownership records."
         >
           <MaintenanceTimelineSection
             timeline={timeline}
@@ -646,7 +646,6 @@ export function OwnerDashboard() {
             hasKnowledgeSchedule={knowledgeSchedule.length > 0}
             activeTab={serviceHistoryTab}
             onTabChange={setServiceHistoryTab}
-            historyOnly={!isDeveloper}
             ownerSimple={!isDeveloper}
             disabled={isBusy}
             defaultMileage={vehicle.currentMileage}
@@ -663,7 +662,7 @@ export function OwnerDashboard() {
         <PanelCard
           hideHeader={!isDeveloper}
           title="Import history"
-          description="Upload portal PDFs or JSON — CARFAX service history and RMV/DMV ownership."
+          description="Optional — upload CARFAX or RMV PDFs to sharpen baselines and owner-specific context."
         >
           <RecordImportPanel
             vehicleId={vehicle.id}

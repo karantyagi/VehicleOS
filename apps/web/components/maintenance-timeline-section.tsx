@@ -30,8 +30,8 @@ type MaintenanceTimelineSectionProps = {
 };
 
 const TAB_ITEMS = [
-  { id: "history" as const, label: "History" },
   { id: "schedule" as const, label: "Schedule" },
+  { id: "history" as const, label: "History" },
   { id: "ownership" as const, label: "Ownership" },
 ] as const;
 
@@ -55,7 +55,7 @@ export function MaintenanceTimelineSection({
   historyOnly = false,
   ownerSimple = false,
 }: MaintenanceTimelineSectionProps) {
-  const [internalTab, setInternalTab] = useState<ServiceHistoryTab>("history");
+  const [internalTab, setInternalTab] = useState<ServiceHistoryTab>("schedule");
   const tab = activeTab ?? internalTab;
 
   const setTab = (next: ServiceHistoryTab) => {
@@ -84,7 +84,7 @@ export function MaintenanceTimelineSection({
           <div
             className="grid w-full grid-cols-3 rounded-lg border border-border bg-muted/40 p-0.5 sm:inline-flex sm:w-auto"
             role="tablist"
-            aria-label="Maintenance history views"
+            aria-label="Maintenance views"
           >
             {TAB_ITEMS.map((item) => (
               <Button

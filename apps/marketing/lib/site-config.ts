@@ -3,7 +3,7 @@ export const siteConfig = {
   tagline: "Stop planning your car's maintenance.",
   metaTitle: "VehicleOS — Maintenance assistant for your car",
   metaDescription:
-    "Hand off your CARFAX once. An assistant that remembers everything, schedules maintenance, and nudges you before something slips.",
+    "Pick your car — verified OEM schedule loads, reminders start. Optionally hand off CARFAX so your assistant learns your patterns.",
   githubUrl: process.env.NEXT_PUBLIC_GITHUB_URL ?? "https://github.com/karantyagi/VehicleOS",
   appUrl: process.env.NEXT_PUBLIC_APP_URL ?? "https://app.vehicleos.app",
   linkedInUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL ?? "https://www.linkedin.com/in/karantyagi-21",
@@ -21,7 +21,7 @@ export const heroContent = {
   headlineHighlight: "maintenance.",
   hook: "An assistant with one job — schedule maintenance and send reminders.",
   subline:
-    "Hand off your CARFAX once. It remembers everything, plans what's ahead, and nudges you when something is coming up.",
+    "Verified OEM schedule loads at setup. Reminders start — no import required. Hand off CARFAX when you want the assistant to learn your history.",
 } as const;
 
 export const heroPills = ["Free early access", releaseNote.label, "OEM-verified schedules"] as const;
@@ -29,7 +29,7 @@ export const heroPills = ["Free early access", releaseNote.label, "OEM-verified 
 export const earlyAccessContent = {
   sectionLabel: "Get started",
   sectionTitle: "Three steps, then the assistant runs",
-  sectionDesc: "Check compatibility, sign in, import once — reminders start from real history and OEM schedules.",
+  sectionDesc: "Pick your car, set how you drive — OEM schedule and reminders start. Import history anytime to sharpen the assistant.",
   priceNote: "Free · early access",
   cta: {
     label: "Open the app",
@@ -49,17 +49,17 @@ export const featuresContent = {
     {
       id: "oem",
       title: "Verified OEM packs",
-      detail: "Supported year, make, and trim loads maintenance intervals at setup — no manual PDF hunt.",
-    },
-    {
-      id: "import",
-      title: "Import history",
-      detail: "CARFAX PDFs, portal exports, and RMV records in one skippable step.",
+      detail: "Supported year, make, and trim loads maintenance intervals at setup — schedule and reminders start without import.",
     },
     {
       id: "reminders",
       title: "Calendar-first reminders",
       detail: "Act this week or snooze 1–4 weeks — the assistant escalates if you defer.",
+    },
+    {
+      id: "import",
+      title: "Import history (optional)",
+      detail: "CARFAX PDFs, portal exports, and RMV records — skippable enrichment that sharpens baselines.",
     },
     {
       id: "matching",
@@ -85,9 +85,9 @@ export const featuresContent = {
 } as const;
 
 export const setupSteps = [
-  { step: "01", title: "Your car", detail: "Year, make, model, trim — live OEM pack check." },
-  { step: "02", title: "How you drive", detail: "City, style, miles — anchors the calendar." },
-  { step: "03", title: "Import once", detail: "CARFAX or portal PDF — optional, recommended." },
+  { step: "01", title: "Your car", detail: "Year, make, model, trim — verified OEM pack hydrates." },
+  { step: "02", title: "How you drive", detail: "City, style, miles — anchors calendar reminders." },
+  { step: "03", title: "Import (optional)", detail: "CARFAX or RMV — skip anytime; makes the assistant smarter." },
 ] as const;
 
 export const trustSignals = [
@@ -97,26 +97,26 @@ export const trustSignals = [
 ] as const;
 
 export const coreLoopSteps = [
-  { label: "Hand off", detail: "CARFAX or portal PDF — once" },
-  { label: "Hydrate", detail: "OEM schedule for your trim" },
-  { label: "Remember", detail: "History and evidence on file" },
-  { label: "Project", detail: "What's due — OEM + your miles" },
-  { label: "Remind", detail: "Calendar nudge — snooze or act" },
+  { label: "Pick car", detail: "Supported YMM at setup" },
+  { label: "Hydrate", detail: "Verified OEM schedule loads" },
+  { label: "Project", detail: "What's due — calendar-first" },
+  { label: "Remind", detail: "Nudge — snooze or act" },
+  { label: "Enrich", detail: "Optional CARFAX / RMV import" },
   { label: "Verify", detail: "You confirm only on conflict" },
 ] as const;
 
 export const loopContent = {
   sectionLabel: "How it works",
-  sectionTitle: "Hand off once. Get nudged. Show up.",
+  sectionTitle: "Schedule first. Enrich when you want.",
   sectionDesc:
-    "One import builds memory. The assistant projects what's ahead and nudges you — you step in only when data conflicts.",
-  diagramCaption: "Same flow — records in, reminders out",
+    "OEM intervals load at setup and reminders start. Hand off CARFAX or RMV anytime to sharpen baselines — you step in only when data conflicts.",
+  diagramCaption: "OEM truth in, reminders out — history optional",
 } as const;
 
 export const demoContent = {
   sectionLabel: "Product",
   sectionTitle: "See it in action",
-  sectionDesc: "Import, OEM hydrate, calendar reminders — the owner loop in under two minutes.",
+  sectionDesc: "Pick car, OEM schedule, calendar reminders — optional import in under two minutes.",
   placeholderTitle: "Product walkthrough",
   placeholderDetail: "Full demo recording ships with v1.",
 } as const;
