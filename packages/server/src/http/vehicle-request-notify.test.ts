@@ -1,20 +1,27 @@
 import { describe, expect, it } from "vitest";
-import {
-  formatVehicleRequestOpsEmail,
-  formatVehicleRequestOwnerConfirmationEmail,
-} from "./vehicle-request-notify.js";
+import { formatVehicleRequestOwnerConfirmationEmail } from "./vehicle-request-owner-email.js";
+import { formatVehicleRequestOpsEmail } from "./vehicle-request-notify.js";
+
+const samplePayload = {
+  requestId: "req-123",
+  createdAt: "2026-07-26T20:00:00.000Z",
+  year: 2025,
+  make: "Acura",
+  model: "Integra",
+  trim: "A-Spec",
+  contactEmail: "abc@gmail.com",
+  source: "marketing" as const,
+};
 
 describe("formatVehicleRequestOpsEmail", () => {
   it("includes vehicle, owner reply-to, and note", () => {
     const result = formatVehicleRequestOpsEmail({
-      requestId: "req-123",
-      createdAt: "2026-07-26T20:00:00.000Z",
+      ...samplePayload,
       year: 2019,
       make: "Honda",
       model: "Civic",
       trim: "EX",
       contactEmail: "owner@example.com",
-      source: "marketing",
       note: "Daily driver",
     });
 
@@ -26,19 +33,17 @@ describe("formatVehicleRequestOpsEmail", () => {
 });
 
 describe("formatVehicleRequestOwnerConfirmationEmail", () => {
-  it("confirms receipt without promising immediate access", () => {
-    const result = formatVehicleRequestOwnerConfirmationEmail({
-      requestId: "req-123",
-      createdAt: "2026-07-26T20:00:00.000Z",
-      year: 2019,
-      make: "Honda",
-      model: "Civic",
-      trim: "EX",
-      contactEmail: "owner@example.com",
-    });
+  it("matches marketing success copy and includes html", () => {
+    const result = formatVehicleRequestOwnerConfirmationEmail(samplePayload);
 
-    expect(result.subject).toContain("2019 Honda Civic EX");
-    expect(result.text).toContain("email you again");
-    expect(result.text).toContain("req-123");
+    expect(result.subject).toBe("Working on your request — 2025 Acura Integra A-Spec");
+    expect(result.text).toContain("Got it — we're prioritizing your car.");
+    expect(result.text).toContain("You asked — we're on it.");
+    expect(result.text).toContain("We'll email abc@gmail.com when VehicleOS is ready for your car.");
+    expect(result.text).not.toContain("Request ID");
+    expect(result.html).toContain("Got it — we're prioritizing your car.");
+    expect(result.html).toContain("You asked — we're on it.");
+    expect(result.html).toContain("when VehicleOS is ready for your car.");
+    expect(result.html).not.toContain("Open VehicleOS");
   });
 });

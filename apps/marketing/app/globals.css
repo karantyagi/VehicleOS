@@ -1389,6 +1389,39 @@ a {
   gap: 12px;
 }
 
+.support-check-alt {
+  margin: 14px 0 0;
+  font-size: 0.875rem;
+  color: var(--ink-secondary);
+}
+
+.support-check-alt-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--owners-accent);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.support-check-alt-link:hover {
+  color: var(--ink);
+}
+
+.support-request-intro {
+  margin: 0 0 16px;
+  font-size: 0.9375rem;
+  color: var(--ink-secondary);
+  line-height: 1.5;
+}
+
+.support-request-back {
+  margin-top: 14px;
+}
+
 .support-field {
   display: flex;
   flex-direction: column;

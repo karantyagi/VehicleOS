@@ -7,12 +7,12 @@ const monorepoRoot = path.join(__dirname, "../..");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  outputFileTracingRoot: monorepoRoot,
-  outputFileTracingIncludes: {
-    "/api/catalog/*": ["./packages/knowledge/**/*"],
-  },
   transpilePackages: ["@vehicleos/server", "@vehicleos/domain", "@vehicleos/knowledge"],
   experimental: {
+    outputFileTracingRoot: monorepoRoot,
+    outputFileTracingIncludes: {
+      "/api/**": ["../../packages/knowledge/**/*"],
+    },
     serverComponentsExternalPackages: ["pg"],
   },
   webpack: (config) => {
