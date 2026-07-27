@@ -213,10 +213,10 @@ export function VehicleSupportCheck() {
     return (
       <div className="support-check" id="supported">
         <div className="support-request support-request-success" role="status">
-          <strong>Got it — we&apos;ll be in touch</strong>
+          <strong>Got it — we&apos;re prioritizing your car.</strong>
           <p>
-            We saved your {vehicle.year} {vehicle.make} {vehicle.model} {vehicle.trim}. We&apos;ll
-            email <span className="support-request-email">{email}</span> when your car is ready.
+            We&apos;ll email <span className="support-request-email">{email}</span> when your{" "}
+            {vehicle.year} {vehicle.make} {vehicle.model} {vehicle.trim} is ready.
           </p>
           <button type="button" className="btn btn-secondary support-request-back" onClick={() => {
             setRequestSuccess(null);
