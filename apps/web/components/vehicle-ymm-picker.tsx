@@ -2,6 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { VehicleCatalogCombobox } from "@/components/vehicle-catalog-combobox";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   findCatalogVehicleByPackId,
   formatCatalogTrimOptionLabel,
@@ -18,9 +26,6 @@ type VehicleYmmPickerProps = {
   disabled?: boolean;
   onSelect: (row: CatalogVehicleRow | null) => void;
 };
-
-const selectClassName =
-  "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
 
 export function VehicleYmmPicker({
   vehicles,
@@ -84,8 +89,8 @@ export function VehicleYmmPicker({
     clearSelection();
   };
 
-  const handleYearChange = (nextYear: number) => {
-    setYear(nextYear);
+  const handleYearChange = (nextYear: string) => {
+    setYear(Number(nextYear));
     clearSelection();
   };
 
@@ -111,77 +116,85 @@ export function VehicleYmmPicker({
       <p className="text-xs text-muted-foreground">Or browse:</p>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <label className="grid gap-1.5 text-sm">
-          <span className="font-medium">Make</span>
-          <select
-            className={selectClassName}
-            value={make}
+        <div className="grid gap-1.5 text-sm">
+          <Label htmlFor="vehicle-make">Make</Label>
+          <Select
+            value={make || undefined}
             disabled={disabled || makes.length === 0}
-            aria-label="Vehicle make"
-            onChange={(event) => handleMakeChange(event.target.value)}
+            onValueChange={handleMakeChange}
           >
-            <option value="">Select make</option>
-            {makes.map((entry) => (
-              <option key={entry} value={entry}>
-                {entry}
-              </option>
-            ))}
-          </select>
-        </label>
+            <SelectTrigger id="vehicle-make" aria-label="Vehicle make">
+              <SelectValue placeholder="Select make" />
+            </SelectTrigger>
+            <SelectContent>
+              {makes.map((entry) => (
+                <SelectItem key={entry} value={entry}>
+                  {entry}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-        <label className="grid gap-1.5 text-sm">
-          <span className="font-medium">Model</span>
-          <select
-            className={selectClassName}
-            value={model}
+        <div className="grid gap-1.5 text-sm">
+          <Label htmlFor="vehicle-model">Model</Label>
+          <Select
+            value={model || undefined}
             disabled={disabled || !make || models.length === 0}
-            aria-label="Vehicle model"
-            onChange={(event) => handleModelChange(event.target.value)}
+            onValueChange={handleModelChange}
           >
-            <option value="">Select model</option>
-            {models.map((entry) => (
-              <option key={entry} value={entry}>
-                {entry}
-              </option>
-            ))}
-          </select>
-        </label>
+            <SelectTrigger id="vehicle-model" aria-label="Vehicle model">
+              <SelectValue placeholder="Select model" />
+            </SelectTrigger>
+            <SelectContent>
+              {models.map((entry) => (
+                <SelectItem key={entry} value={entry}>
+                  {entry}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-        <label className="grid gap-1.5 text-sm">
-          <span className="font-medium">Year</span>
-          <select
-            className={selectClassName}
-            value={year}
+        <div className="grid gap-1.5 text-sm">
+          <Label htmlFor="vehicle-year">Year</Label>
+          <Select
+            value={typeof year === "number" ? String(year) : undefined}
             disabled={disabled || !model || years.length === 0}
-            aria-label="Vehicle year"
-            onChange={(event) => handleYearChange(Number(event.target.value))}
+            onValueChange={handleYearChange}
           >
-            <option value="">Select year</option>
-            {years.map((entry) => (
-              <option key={entry} value={entry}>
-                {entry}
-              </option>
-            ))}
-          </select>
-        </label>
+            <SelectTrigger id="vehicle-year" aria-label="Vehicle year">
+              <SelectValue placeholder="Select year" />
+            </SelectTrigger>
+            <SelectContent>
+              {years.map((entry) => (
+                <SelectItem key={entry} value={String(entry)}>
+                  {entry}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-        <label className="grid gap-1.5 text-sm">
-          <span className="font-medium">Trim</span>
-          <select
-            className={selectClassName}
-            value={trimPackId}
+        <div className="grid gap-1.5 text-sm">
+          <Label htmlFor="vehicle-trim">Trim</Label>
+          <Select
+            value={trimPackId || undefined}
             disabled={disabled || !year || trimRows.length === 0}
-            aria-label="Vehicle trim"
-            onChange={(event) => handleTrimChange(event.target.value)}
+            onValueChange={handleTrimChange}
           >
-            <option value="">Select trim</option>
-            {trimRows.map((row) => (
-              <option key={row.packId} value={row.packId}>
-                {formatCatalogTrimOptionLabel(row)}
-              </option>
-            ))}
-          </select>
-        </label>
+            <SelectTrigger id="vehicle-trim" aria-label="Vehicle trim">
+              <SelectValue placeholder="Select trim" />
+            </SelectTrigger>
+            <SelectContent>
+              {trimRows.map((row) => (
+                <SelectItem key={row.packId} value={row.packId}>
+                  {formatCatalogTrimOptionLabel(row)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
   );

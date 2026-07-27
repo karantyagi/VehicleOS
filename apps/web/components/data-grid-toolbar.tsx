@@ -3,6 +3,13 @@
 import { ArrowDownAZ, Download, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type SortOption = {
   id: string;
@@ -47,18 +54,18 @@ export function DataGridToolbar({
       <div className="flex flex-wrap items-center gap-2">
         <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <ArrowDownAZ className="h-3.5 w-3.5" aria-hidden />
-          <select
-            value={sort}
-            onChange={(event) => onSortChange(event.target.value)}
-            className="h-9 rounded-md border border-input bg-background px-2 text-sm text-foreground"
-            aria-label="Sort rows"
-          >
-            {sortOptions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <Select value={sort} onValueChange={onSortChange}>
+            <SelectTrigger className="h-9 w-[10rem] bg-background" aria-label="Sort rows">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {sortOptions.map((option) => (
+                <SelectItem key={option.id} value={option.id}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
         {onExport ? (
           <Button type="button" variant="outline" size="sm" onClick={onExport}>

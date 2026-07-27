@@ -2,6 +2,8 @@
 
 import { FormField } from "@/components/form-field";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   DEFAULT_MILES_PER_YEAR,
   DRIVING_STYLE_OPTIONS,
@@ -47,33 +49,35 @@ export function DrivingStyleFields({
 
       <fieldset className="space-y-2">
         <legend className="text-sm font-medium text-foreground">Driving style</legend>
-        {DRIVING_STYLE_OPTIONS.map((option) => {
-          const selected = draft.drivingStyle === option.id;
-          return (
-            <label
-              key={option.id}
-              className={cn(
-                "flex cursor-pointer gap-3 rounded-lg border px-3 py-3 transition-colors",
-                isOnboarding && "py-2.5",
-                selected ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40",
-              )}
-            >
-              <input
-                type="radio"
-                name="driving-style"
-                className="mt-1"
-                checked={selected}
-                onChange={() => onDraftChange({ ...draft, drivingStyle: option.id as DrivingStyle })}
-              />
-              <span className="space-y-0.5">
-                <span className="block text-sm font-medium">{option.label}</span>
-                {!isOnboarding ? (
-                  <span className="block text-xs text-muted-foreground">{option.description}</span>
-                ) : null}
-              </span>
-            </label>
-          );
-        })}
+        <RadioGroup
+          value={draft.drivingStyle}
+          onValueChange={(value) =>
+            onDraftChange({ ...draft, drivingStyle: value as DrivingStyle })
+          }
+          className="space-y-2"
+        >
+          {DRIVING_STYLE_OPTIONS.map((option) => {
+            const selected = draft.drivingStyle === option.id;
+            return (
+              <div
+                key={option.id}
+                className={cn(
+                  "flex items-start gap-3 rounded-lg border px-3 py-3 transition-colors",
+                  isOnboarding && "py-2.5",
+                  selected ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40",
+                )}
+              >
+                <RadioGroupItem value={option.id} id={`driving-style-${option.id}`} className="mt-1" />
+                <Label htmlFor={`driving-style-${option.id}`} className="cursor-pointer space-y-0.5 font-normal">
+                  <span className="block text-sm font-medium">{option.label}</span>
+                  {!isOnboarding ? (
+                    <span className="block text-xs text-muted-foreground">{option.description}</span>
+                  ) : null}
+                </Label>
+              </div>
+            );
+          })}
+        </RadioGroup>
       </fieldset>
 
       <FormField

@@ -5,7 +5,13 @@ import { FormActions, FormField } from "@/components/form-field";
 import { DateField } from "@/components/date-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { todayIsoDate } from "@/lib/date-input";
 
@@ -86,13 +92,17 @@ export function OwnerServiceNotePanel({
 
       <FormField label="Recorded as" htmlFor="note-source">
         <Select
-          id="note-source"
           value={source}
           disabled={disabled || isSubmitting}
-          onChange={(event) => setSource(event.target.value as "owner_note" | "dealer")}
+          onValueChange={(value) => setSource(value as "owner_note" | "dealer")}
         >
-          <option value="owner_note">Owner note</option>
-          <option value="dealer">Dealer service</option>
+          <SelectTrigger id="note-source">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="owner_note">Owner note</SelectItem>
+            <SelectItem value="dealer">Dealer service</SelectItem>
+          </SelectContent>
         </Select>
       </FormField>
 
