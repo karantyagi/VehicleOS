@@ -3,12 +3,12 @@ import { join } from "node:path";
 import supportedVehicleCatalogJson from "../catalog/supported-vehicles.v1.json" with { type: "json" };
 import type { OemSchedulePack, ServiceAliasBundle, SupportedVehicleCatalog } from "./types.js";
 import { validateOemSchedulePack, validateServiceAliasBundle } from "./validate-pack.js";
-import { resolveKnowledgePackageRoot } from "./package-root.js";
+import { resolveKnowledgePackageRoot, resolveOemPackPath } from "./package-root.js";
 
 const knowledgeRoot = (): string => resolveKnowledgePackageRoot();
 
 export const loadOemSchedulePack = (packId: string): OemSchedulePack => {
-  const path = join(knowledgeRoot(), "packs", `${packId}.v1.json`);
+  const path = resolveOemPackPath(packId);
   const raw = JSON.parse(readFileSync(path, "utf8")) as unknown;
   return validateOemSchedulePack(raw);
 };
