@@ -62,11 +62,10 @@ export const listCatalogTrimRows = (
   sortCatalogVehicles(rows.filter((row) => matchesYear(row, make, model, year)));
 
 export const formatCatalogTrimOptionLabel = (
-  row: Pick<CatalogVehicleRow, "trim" | "powertrain" | "supported">,
+  row: Pick<CatalogVehicleRow, "trim" | "powertrain">,
 ): string => {
   const powertrain = row.powertrain ? ` · ${row.powertrain}` : "";
-  const status = row.supported ? "" : " · in review";
-  return `${row.trim}${powertrain}${status}`;
+  return `${row.trim}${powertrain}`;
 };
 
 export const fetchCatalogVehicles = async (): Promise<CatalogVehicleRow[]> => {
