@@ -4,6 +4,7 @@ import {
   findMatchingServices,
   serviceNamePattern,
 } from "./match-service-name.js";
+import { compileServiceAliasRegistry } from "./service-alias-registry.js";
 import type { ServiceTimelineEntry } from "../projections/types.js";
 
 const timelineRow = (overrides: Partial<ServiceTimelineEntry>): ServiceTimelineEntry => ({
@@ -48,5 +49,34 @@ describe("match-service-name", () => {
       timelineRow({ serviceId: "b", serviceDate: "2025-06-01", lineItems: ["Oil and filter changed"] }),
     ];
     expect(findLastMatchingService(timeline, "Engine oil & filter")?.serviceId).toBe("b");
+  });
+
+  it("matches Maintenance Minder B via alias registry when regex misses", () => {
+    const registry = compileServiceAliasRegistry([
+      {
+        bundleId: "acura-maintenance-minder",
+        aliases: [
+          {
+            canonicalServiceId: "acura.mm.b.oil_filter",
+            phrase: "Maintenance Minder B",
+            matchKind: "contains",
+            priority: 50,
+          },
+        ],
+      },
+    ]);
+    const timeline = [
+      timelineRow({
+        lineItems: ["Maintenance Minder B service"],
+      }),
+    ];
+    const oemName = "Replace engine oil and filter (Maintenance Minder B)";
+
+    expect(
+      findMatchingServices(timeline, oemName, {
+        canonicalServiceId: "acura.mm.b.oil_filter",
+        serviceAliasRegistry: registry,
+      }).length,
+    ).toBe(1);
   });
 });

@@ -1,6 +1,7 @@
 import { buildResaleReport, formatResaleReportMarkdown } from "@vehicleos/domain";
 import type { ApiServices } from "../services/index.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
+import { vehicleStateOptionsFromVehicle } from "./vehicle-state-options-from-vehicle.js";
 
 type AuthContext = {
   userId: string;
@@ -46,7 +47,10 @@ export const exportResaleReport = async (
   if (!vehicle) return jsonResponse(404, { error: "Vehicle not found" });
   if (vehicle.userId !== auth.userId) return forbidden();
 
-  const snapshot = await services.goldenPath.getVehicleState(vehicleId);
+  const snapshot = await services.goldenPath.getVehicleState(
+    vehicleId,
+    vehicleStateOptionsFromVehicle(vehicle),
+  );
   const report = buildResaleReport({
     vehicle: {
       id: vehicle.id,

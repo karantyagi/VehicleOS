@@ -19,6 +19,7 @@ import {
 import type { ApiServices } from "../services/index.js";
 import { extractPdfText } from "../import/pdf-text.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
+import { vehicleStateOptionsFromVehicle } from "./vehicle-state-options-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
 
 type VehicleOsImportBody = {
@@ -109,12 +110,10 @@ export const submitVehicleOsImport = async (
     ownerShopLocations,
   });
 
-  const snapshot = await services.goldenPath.getVehicleState(vehicleId, {
-    ownerContextMemory: vehicle.ownerContextMemory,
-    ownedSince: vehicle.ownedSince,
-    drivingStyle: vehicle.drivingStyle,
-    statedMilesPerYear: vehicle.statedMilesPerYear,
-  });
+  const snapshot = await services.goldenPath.getVehicleState(
+    vehicleId,
+    vehicleStateOptionsFromVehicle(vehicle),
+  );
   const { newRows } = filterNewImportServices(snapshot.state.timeline, enrichedServices);
   const newRowTierSummary = tierNewImportRows(snapshot.state.timeline, newRows);
 
@@ -126,6 +125,7 @@ export const submitVehicleOsImport = async (
     ownedSince: vehicle.ownedSince,
     drivingStyle: vehicle.drivingStyle,
     statedMilesPerYear: vehicle.statedMilesPerYear,
+    packProfile: vehicleStateOptionsFromVehicle(vehicle).packProfile,
   });
 
   const mergedShopLocations = mergeShopLocationsFromImport(ownerShopLocations, enrichedServices);

@@ -31,12 +31,15 @@ export type NowQueueItem = {
     | "VERIFY_DATE"
     | "VERIFY_VEHICLE_PROFILE"
     | "VERIFY_IMPORT_ROW"
-    | "VERIFY_MAINTENANCE_TIMING";
+    | "VERIFY_MAINTENANCE_TIMING"
+    | "VERIFY_OWNER_INTERVAL";
   dueBy?: string | null;
   snoozeUntil?: string | null;
   snoozeCount?: number;
   suggestedReasonId?: "winter_salt" | "noise_symptom" | "dealer_recommended" | "aggressive_driving" | "deferred_intentionally" | "other";
   draftReasonSource?: "heuristic" | "llm";
+  suggestedIntervalMiles?: number;
+  suggestedIntervalMonths?: number;
 };
 
 export type EvidenceVaultEntry = {
@@ -73,6 +76,7 @@ export type KnowledgeScheduleEntry = {
   sourcePage?: string;
   manualTitle: string;
   recordedAt: string;
+  canonicalServiceId?: string;
 };
 
 export type OwnershipRecordEntry = {

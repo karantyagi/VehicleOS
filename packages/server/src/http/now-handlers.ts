@@ -1,6 +1,7 @@
 import type { ApiServices } from "../services/index.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
 import { recommendationContextFromVehicle } from "./recommendation-context-from-vehicle.js";
+import { vehicleStateOptionsFromVehicle } from "./vehicle-state-options-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
 
 type AuthContext = {
@@ -27,9 +28,10 @@ export const refreshNowQueue = async (
     ...recommendationContextFromVehicle(vehicle),
   });
 
-  const snapshot = await services.goldenPath.getVehicleState(vehicleId, {
-    vehicleCreatedAt: vehicle.createdAt,
-  });
+  const snapshot = await services.goldenPath.getVehicleState(
+    vehicleId,
+    vehicleStateOptionsFromVehicle(vehicle),
+  );
 
   return jsonResponse(200, {
     created: result.created,

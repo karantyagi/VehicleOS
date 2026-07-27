@@ -1,9 +1,13 @@
+import { getServiceAliasRegistry } from "../adapters/service-alias-registry.js";
 import type { ApiServices } from "../services/index.js";
 import {
   classifyCaptureIntent,
+  formatIntervalOverlayLabel,
+  mergeIntervalOverlayMemory,
   mergeMaintenancePatternMemory,
   normalizeOwnerContextMemory,
   parseDeviationRuleEntryId,
+  parseIntervalRuleEntryId,
   projectMaintenanceDeviations,
   projectMaintenanceSchedule,
   resolveScheduleProjectionContext,
@@ -17,6 +21,7 @@ import {
 } from "../entitlements/garage-entitlements.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
 import { recommendationContextFromVehicle } from "./recommendation-context-from-vehicle.js";
+import { vehicleStateOptionsFromVehicle } from "./vehicle-state-options-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
 
 type ReceiptBody = {
@@ -47,6 +52,11 @@ type TaskDecisionBody = {
   decision: "approve" | "dismiss" | "snooze";
   snoozeDays?: number;
   maintenancePatternReason?: MaintenanceDeviationReasonId;
+  ownerIntervalOverlay?: {
+    intervalMiles?: number | null;
+    intervalMonths?: number | null;
+    label?: string;
+  };
 };
 
 type AuthContext = {
@@ -212,13 +222,10 @@ export const getVehicleState = async (
   const owned = await assertVehicleOwner(services, vehicleId, auth.userId);
   if (!owned.ok) return owned.response;
 
-  const snapshot = await services.goldenPath.getVehicleState(vehicleId, {
-    vehicleCreatedAt: owned.vehicle.createdAt,
-    ownerContextMemory: owned.vehicle.ownerContextMemory,
-    ownedSince: owned.vehicle.ownedSince,
-    drivingStyle: owned.vehicle.drivingStyle,
-    statedMilesPerYear: owned.vehicle.statedMilesPerYear,
-  });
+  const snapshot = await services.goldenPath.getVehicleState(
+    vehicleId,
+    vehicleStateOptionsFromVehicle(owned.vehicle),
+  );
   return jsonResponse(200, {
     vehicle: owned.vehicle,
     ...buildVehicleStateView(snapshot.state, owned.vehicle, snapshot.events),
@@ -417,11 +424,7 @@ export const decideOnTask = async (
   if (!owned.ok) return owned.response;
 
   const snapshot = await services.goldenPath.getVehicleState(vehicleId, {
-    vehicleCreatedAt: owned.vehicle.createdAt,
-    ownerContextMemory: owned.vehicle.ownerContextMemory,
-    ownedSince: owned.vehicle.ownedSince,
-    drivingStyle: owned.vehicle.drivingStyle,
-    statedMilesPerYear: owned.vehicle.statedMilesPerYear,
+    ...vehicleStateOptionsFromVehicle(owned.vehicle),
   });
   const task = snapshot.state.nowQueue.find((item) => item.taskId === taskId);
 
@@ -448,6 +451,7 @@ export const decideOnTask = async (
       effectiveMilesPerYear: scheduleContext.effectiveMilesPerYear,
       ownedSince: scheduleContext.ownedSince,
       horizonMode: "extended",
+      serviceAliasRegistry: getServiceAliasRegistry(),
     });
     const deviation = projectMaintenanceDeviations({
       scheduleRows: schedule.rows,
@@ -486,11 +490,77 @@ export const decideOnTask = async (
     });
 
     const refreshed = await services.goldenPath.getVehicleState(vehicleId, {
-      vehicleCreatedAt: owned.vehicle.createdAt,
+      ...vehicleStateOptionsFromVehicle(owned.vehicle),
       ownerContextMemory: nextMemory,
-      ownedSince: owned.vehicle.ownedSince,
-      drivingStyle: owned.vehicle.drivingStyle,
-      statedMilesPerYear: owned.vehicle.statedMilesPerYear,
+    });
+    const view = buildVehicleStateView(refreshed.state, refreshedVehicle, refreshed.events);
+
+    return jsonResponse(200, {
+      taskId,
+      decision,
+      nowQueue: view.nowQueue,
+      reminders: view.reminders,
+      verifications: view.verifications,
+      pendingReminderCount: view.pendingReminderCount,
+      pendingVerificationCount: view.pendingVerificationCount,
+      maintenanceDeviations: view.maintenanceDeviations,
+    });
+  }
+
+  if (
+    decision === "approve" &&
+    body.ownerIntervalOverlay &&
+    task?.verificationCode === "VERIFY_OWNER_INTERVAL"
+  ) {
+    const entryId = parseIntervalRuleEntryId(task.ruleId);
+    if (!entryId) {
+      return jsonResponse(400, { error: "Could not resolve maintenance item for this verification." });
+    }
+
+    const intervalMiles = body.ownerIntervalOverlay.intervalMiles ?? task.suggestedIntervalMiles ?? null;
+    const intervalMonths = body.ownerIntervalOverlay.intervalMonths ?? task.suggestedIntervalMonths ?? null;
+    if (intervalMiles === null && intervalMonths === null) {
+      return jsonResponse(400, { error: "Choose an interval to confirm." });
+    }
+
+    const label =
+      body.ownerIntervalOverlay.label ??
+      formatIntervalOverlayLabel({ intervalMiles, intervalMonths });
+
+    const nextMemory = mergeIntervalOverlayMemory({
+      memory: owned.vehicle.ownerContextMemory,
+      entryId,
+      overlay: {
+        intervalMiles,
+        intervalMonths,
+        label,
+        confirmedAt: new Date().toISOString(),
+      },
+    });
+
+    const refreshedVehicle = await services.vehicles.update(vehicleId, auth.userId, {
+      ownerContextMemory: nextMemory,
+    });
+    if (!refreshedVehicle) {
+      return jsonResponse(404, { error: "Vehicle not found" });
+    }
+
+    await services.goldenPath.decideOnTask({
+      vehicleId,
+      taskId,
+      decision,
+      snoozeDays,
+    });
+
+    await services.goldenPath.refreshMaintenanceRecommendation({
+      vehicleId,
+      ownerContextMemory: nextMemory,
+      drivingStyle: owned.vehicle.drivingStyle ?? null,
+    });
+
+    const refreshed = await services.goldenPath.getVehicleState(vehicleId, {
+      ...vehicleStateOptionsFromVehicle(owned.vehicle),
+      ownerContextMemory: nextMemory,
     });
     const view = buildVehicleStateView(refreshed.state, refreshedVehicle, refreshed.events);
 

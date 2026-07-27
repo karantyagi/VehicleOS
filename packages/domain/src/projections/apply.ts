@@ -105,6 +105,8 @@ export const applyEvent = (
         dueBy: event.payload.dueBy ?? null,
         suggestedReasonId: event.payload.suggestedReasonId,
         draftReasonSource: event.payload.draftReasonSource,
+        suggestedIntervalMiles: event.payload.suggestedIntervalMiles,
+        suggestedIntervalMonths: event.payload.suggestedIntervalMonths,
         snoozeCount: 0,
       };
 
@@ -168,6 +170,7 @@ export const applyEvent = (
             intervalMonths: entry.intervalMonths,
             sourceDocumentId: entry.sourceDocumentId,
             sourcePage: entry.sourcePage,
+            canonicalServiceId: entry.canonicalServiceId,
             manualTitle: event.payload.manualTitle,
             recordedAt: event.payload.recordedAt,
           })),

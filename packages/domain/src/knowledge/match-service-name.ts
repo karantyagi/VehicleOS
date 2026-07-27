@@ -1,5 +1,13 @@
 import type { ServiceTimelineEntry } from "../projections/types.js";
 
+import type { ServiceAliasRegistry } from "./service-alias-registry.js";
+import { lineMatchesCanonicalService } from "./service-alias-registry.js";
+
+export type ServiceMatchOptions = {
+  canonicalServiceId?: string | null;
+  serviceAliasRegistry?: ServiceAliasRegistry | null;
+};
+
 export const serviceNamePattern = (serviceName: string): RegExp => {
   const normalized = serviceName.toLowerCase();
   if (normalized.includes("oil")) {
@@ -30,20 +38,41 @@ export const serviceNamePattern = (serviceName: string): RegExp => {
   return new RegExp(normalized.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
 };
 
-export const lineMatchesServiceName = (lineItem: string, serviceName: string): boolean =>
-  serviceNamePattern(serviceName).test(lineItem);
+export const lineMatchesServiceName = (
+  lineItem: string,
+  serviceName: string,
+  options?: ServiceMatchOptions,
+): boolean => {
+  if (options?.canonicalServiceId && options.serviceAliasRegistry) {
+    if (
+      lineMatchesCanonicalService({
+        lineItem,
+        canonicalServiceId: options.canonicalServiceId,
+        registry: options.serviceAliasRegistry,
+      })
+    ) {
+      return true;
+    }
+  }
+
+  return serviceNamePattern(serviceName).test(lineItem);
+};
 
 export const findMatchingServices = (
   timeline: ServiceTimelineEntry[],
   serviceName: string,
+  options?: ServiceMatchOptions,
 ): ServiceTimelineEntry[] =>
-  timeline.filter((entry) => entry.lineItems.some((line) => lineMatchesServiceName(line, serviceName)));
+  timeline.filter((entry) =>
+    entry.lineItems.some((line) => lineMatchesServiceName(line, serviceName, options)),
+  );
 
 export const findLastMatchingService = (
   timeline: ServiceTimelineEntry[],
   serviceName: string,
+  options?: ServiceMatchOptions,
 ): ServiceTimelineEntry | undefined => {
-  const matches = findMatchingServices(timeline, serviceName);
+  const matches = findMatchingServices(timeline, serviceName, options);
   if (matches.length === 0) return undefined;
   return [...matches].sort((left, right) => left.serviceDate.localeCompare(right.serviceDate)).at(-1);
 };

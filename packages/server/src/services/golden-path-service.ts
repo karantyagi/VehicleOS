@@ -1,3 +1,5 @@
+import { getServiceAliasRegistry } from "../adapters/service-alias-registry.js";
+import { enrichKnowledgeScheduleForVehicle } from "../adapters/enrich-knowledge-schedule-for-vehicle.js";
 import {
   EVENT_TYPES,
   EVENT_VERSIONS,
@@ -5,6 +7,7 @@ import {
   confirmServiceWithConflictCheck,
   decideTask,
   ensureDeviationVerificationPrompts,
+  ensureIntervalVerificationPrompts,
   ensureStaleOdometerPrompt,
   foldEvents,
   heuristicReceiptExtract,
@@ -21,6 +24,7 @@ import {
   type TaskDecision,
   type VehicleOsImportService,
   type VehicleOsRmvRecord,
+  type VehicleProjectionState,
 } from "@vehicleos/domain";
 import {
   hydrateOemKnowledgePack,
@@ -33,12 +37,21 @@ export type GoldenPathDeps = {
   jobPublisher?: JobPublisher;
 };
 
+export type VehiclePackProfile = {
+  year: number;
+  make: string;
+  model: string;
+  trim?: string | null;
+};
+
 export type VehicleStateOptions = {
   vehicleCreatedAt?: string;
   ownerContextMemory?: OwnerContextMemory | null;
   ownedSince?: string | null;
   drivingStyle?: import("@vehicleos/domain").DrivingStyle | null;
   statedMilesPerYear?: number | null;
+  /** Resolve OEM pack canonicalServiceId for KB rows missing it (pre-ALIAS-1 vehicles). */
+  packProfile?: VehiclePackProfile | null;
 };
 
 export const createGoldenPathService = (deps: GoldenPathDeps) => {
@@ -47,6 +60,26 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
   const jobPublisher = deps.jobPublisher;
 
   const getVehicleState = async (vehicleId: string, options?: VehicleStateOptions) => {
+    const serviceAliasRegistry = getServiceAliasRegistry();
+
+    const loadState = async (): Promise<{
+      events: Awaited<ReturnType<typeof loadVehicleEvents>>;
+      state: VehicleProjectionState;
+    }> => {
+      const events = await loadVehicleEvents(eventStore, vehicleId);
+      const folded = foldEvents(vehicleId, events);
+      return {
+        events,
+        state: {
+          ...folded,
+          knowledgeSchedule: enrichKnowledgeScheduleForVehicle(
+            folded.knowledgeSchedule,
+            options?.packProfile,
+          ),
+        },
+      };
+    };
+
     if (options?.vehicleCreatedAt) {
       await ensureStaleOdometerPrompt({
         eventStore,
@@ -55,6 +88,8 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
       });
     }
 
+    let { events, state } = await loadState();
+
     await ensureDeviationVerificationPrompts({
       eventStore,
       vehicleId,
@@ -62,13 +97,24 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
       ownedSince: options?.ownedSince,
       drivingStyle: options?.drivingStyle,
       statedMilesPerYear: options?.statedMilesPerYear,
+      serviceAliasRegistry,
+      knowledgeSchedule: state.knowledgeSchedule,
     });
 
-    const events = await loadVehicleEvents(eventStore, vehicleId);
+    await ensureIntervalVerificationPrompts({
+      eventStore,
+      vehicleId,
+      ownerContextMemory: options?.ownerContextMemory,
+      serviceAliasRegistry,
+      knowledgeSchedule: state.knowledgeSchedule,
+    });
+
+    ({ events, state } = await loadState());
+
     return {
       vehicleId,
       events,
-      state: foldEvents(vehicleId, events),
+      state,
     };
   };
 
@@ -232,6 +278,7 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
       ownedSince?: string | null;
       drivingStyle?: import("@vehicleos/domain").DrivingStyle | null;
       statedMilesPerYear?: number | null;
+      packProfile?: VehiclePackProfile | null;
     }) {
       const importResult = await recordVehicleOsImport({ eventStore, input });
       await refreshMaintenanceRecommendation({
@@ -246,6 +293,7 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
         ownedSince: input.ownedSince,
         drivingStyle: input.drivingStyle,
         statedMilesPerYear: input.statedMilesPerYear,
+        packProfile: input.packProfile,
       });
       return {
         ...importResult,
