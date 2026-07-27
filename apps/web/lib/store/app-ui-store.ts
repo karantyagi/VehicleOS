@@ -28,8 +28,8 @@ export const APP_SECTIONS: { id: AppSection; label: string; description: string 
   },
   {
     id: "timeline",
-    label: "Service history",
-    description: "Past services from records and events",
+    label: "Maintenance history",
+    description: "Past maintenance, receipts, and imported records",
   },
   {
     id: "imports",

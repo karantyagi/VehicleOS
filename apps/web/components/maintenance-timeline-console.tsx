@@ -17,6 +17,13 @@ import { downloadCsv, filterByQuery, sortRows } from "@/lib/data-grid-utils";
 import { useConsoleListKeyboard } from "@/lib/use-console-list-keyboard";
 import { useAppUiStore } from "@/lib/store/app-ui-store";
 import { cn } from "@/lib/utils";
+import {
+  draftLineItems,
+  emptyMaintenanceRecordDraft,
+  MaintenanceRecordFields,
+  type MaintenanceRecordDraft,
+} from "@/components/maintenance-record-fields";
+import { Plus } from "lucide-react";
 
 const sourceLabel = (source: TimelineEntry["source"]): string => {
   if (source === "receipt") return "Receipt";
@@ -44,8 +51,10 @@ type ServiceDraft = {
 type MaintenanceTimelineConsoleProps = {
   entries: TimelineEntry[];
   disabled?: boolean;
+  defaultMileage?: number;
   onOpenEvidence?: (documentId: string) => void;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
   requireEditConfirmation?: boolean;
   ownerSimple?: boolean;
 };
@@ -67,8 +76,10 @@ const formatShopLine = (entry: TimelineEntry): string => {
 export function MaintenanceTimelineConsole({
   entries,
   disabled = false,
+  defaultMileage = 0,
   onOpenEvidence,
   onUpdateService,
+  onAddService,
   requireEditConfirmation = false,
   ownerSimple = false,
 }: MaintenanceTimelineConsoleProps) {
@@ -80,6 +91,10 @@ export function MaintenanceTimelineConsole({
   const [draft, setDraft] = useState<ServiceDraft | null>(null);
   const [confirmSave, setConfirmSave] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const [addDraft, setAddDraft] = useState<MaintenanceRecordDraft | null>(null);
+  const [confirmAdd, setConfirmAdd] = useState(false);
+  const [isAddingSaving, setIsAddingSaving] = useState(false);
 
   const sortedEntries = useMemo(
     () => [...entries].sort((a, b) => b.serviceDate.localeCompare(a.serviceDate)),
@@ -229,7 +244,7 @@ export function MaintenanceTimelineConsole({
         </div>
         {requireEditConfirmation && confirmSave ? (
           <p className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-foreground">
-            Save these changes to your service history?
+            Save these changes to your maintenance history?
           </p>
         ) : null}
         <div className="flex flex-wrap gap-2">
@@ -246,28 +261,72 @@ export function MaintenanceTimelineConsole({
     );
   };
 
-  if (entries.length === 0) {
-    return (
-      <EmptyState
-        icon={Clock3}
-        title="No service yet"
-        description={
-          ownerSimple
-            ? undefined
-            : "Add a receipt, voice note, or owner entry from Upload receipt or Owner notes intake to start your service history."
-        }
-      />
-    );
-  }
+  const startAdding = () => {
+    if (!onAddService || disabled) return;
+    cancelEditing();
+    setSelectedId(null);
+    setIsAdding(true);
+    setAddDraft(emptyMaintenanceRecordDraft(defaultMileage));
+    setConfirmAdd(false);
+  };
+
+  const cancelAdding = () => {
+    setIsAdding(false);
+    setAddDraft(null);
+    setConfirmAdd(false);
+  };
+
+  const saveAdding = async () => {
+    if (!onAddService || !addDraft) return;
+    if (draftLineItems(addDraft).length === 0) return;
+
+    setIsAddingSaving(true);
+    try {
+      await onAddService(addDraft);
+      cancelAdding();
+    } finally {
+      setIsAddingSaving(false);
+    }
+  };
+
+  const handleAddClick = () => {
+    if (requireEditConfirmation && !confirmAdd) {
+      setConfirmAdd(true);
+      return;
+    }
+    void saveAdding();
+  };
 
   if (ownerSimple) {
     return (
       <OwnerServiceHistoryTimeline
         entries={entries}
         disabled={disabled}
+        defaultMileage={defaultMileage}
         onUpdateService={onUpdateService}
+        onAddService={onAddService}
         requireEditConfirmation={requireEditConfirmation}
       />
+    );
+  }
+
+  if (entries.length === 0 && !isAdding) {
+    return (
+      <div className="space-y-4">
+        <EmptyState
+          icon={Clock3}
+          title="No maintenance records yet"
+          description="Add a receipt, voice note, or owner entry from Upload receipt or Owner notes intake to start your maintenance history."
+        />
+        {onAddService ? (
+          <div className="flex justify-center">
+            <Button type="button" size="sm" disabled={disabled} onClick={startAdding}>
+              <Plus className="mr-1.5 h-4 w-4" aria-hidden />
+              Add maintenance record
+            </Button>
+          </div>
+        ) : null}
+      </div>
     );
   }
 
@@ -279,6 +338,14 @@ export function MaintenanceTimelineConsole({
 
   const list = (
     <>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        {onAddService ? (
+          <Button type="button" size="sm" variant="outline" disabled={disabled || isAdding} onClick={startAdding}>
+            <Plus className="mr-1.5 h-4 w-4" aria-hidden />
+            Add maintenance record
+          </Button>
+        ) : null}
+      </div>
       <DataGridToolbar
         query={query}
         onQueryChange={setQuery}
@@ -351,7 +418,23 @@ export function MaintenanceTimelineConsole({
     </>
   );
 
-  const detail = selected ? (
+  const detail = isAdding && addDraft ? (
+    <ConsoleDetailPanel title="Add maintenance record">
+      <MaintenanceRecordFields
+        idPrefix="dev-add-maintenance"
+        draft={addDraft}
+        disabled={disabled}
+        isSaving={isAddingSaving}
+        saveLabel={requireEditConfirmation && !confirmAdd ? "Review save" : "Save record"}
+        confirmMessage={
+          requireEditConfirmation && confirmAdd ? "Save again to confirm this maintenance record." : null
+        }
+        onDraftChange={setAddDraft}
+        onSave={handleAddClick}
+        onCancel={cancelAdding}
+      />
+    </ConsoleDetailPanel>
+  ) : selected ? (
     <ConsoleDetailPanel title={selected.serviceDate}>
       {isEditingSelected && draft ? (
         renderEditForm(selected)
@@ -374,7 +457,7 @@ export function MaintenanceTimelineConsole({
               onClick={() => startEditing(selected)}
             >
               <Pencil className="mr-1.5 h-4 w-4" />
-              Edit service
+              Edit maintenance
             </Button>
           ) : null}
           {selected.evidenceIds.length > 0 && onOpenEvidence ? (
@@ -400,5 +483,12 @@ export function MaintenanceTimelineConsole({
     <ConsoleDetailPlaceholder />
   );
 
-  return <ConsoleSplit list={list} detail={detail} hasSelection={Boolean(selected)} emptyDetail={detail} />;
+  return (
+    <ConsoleSplit
+      list={list}
+      detail={detail}
+      hasSelection={Boolean(selected) || isAdding}
+      emptyDetail={detail}
+    />
+  );
 }

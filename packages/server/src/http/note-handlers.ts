@@ -6,6 +6,7 @@ import { buildVehicleStateView } from "./vehicle-state-view.js";
 
 type OwnerNoteBody = {
   shop?: string;
+  shopLocation?: string;
   serviceDate: string;
   mileage: number;
   lineItems?: string[];
@@ -59,6 +60,7 @@ export const submitOwnerServiceNote = async (
   const result = await services.goldenPath.confirmService({
     vehicleId,
     shop,
+    shopLocation: body.shopLocation?.trim() || undefined,
     serviceDate: body.serviceDate,
     mileage: body.mileage,
     lineItems,

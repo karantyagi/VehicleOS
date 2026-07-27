@@ -19,8 +19,10 @@ type MaintenanceTimelineSectionProps = {
   activeTab?: ServiceHistoryTab;
   onTabChange?: (tab: ServiceHistoryTab) => void;
   disabled?: boolean;
+  defaultMileage?: number;
   onOpenEvidence?: (documentId: string) => void;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onAddService?: (draft: import("@/components/maintenance-record-fields").MaintenanceRecordDraft) => Promise<void>;
   requireEditConfirmation?: boolean;
   onGoToImport?: () => void;
   historyOnly?: boolean;
@@ -44,8 +46,10 @@ export function MaintenanceTimelineSection({
   activeTab,
   onTabChange,
   disabled = false,
+  defaultMileage = 0,
   onOpenEvidence,
   onUpdateService,
+  onAddService,
   requireEditConfirmation = false,
   onGoToImport,
   historyOnly = false,
@@ -68,8 +72,10 @@ export function MaintenanceTimelineSection({
         <MaintenanceTimelineConsole
           entries={timeline}
           disabled={disabled}
+          defaultMileage={defaultMileage}
           onOpenEvidence={onOpenEvidence}
           onUpdateService={onUpdateService}
+          onAddService={onAddService}
           requireEditConfirmation={requireEditConfirmation}
           ownerSimple={ownerSimple}
         />
@@ -78,7 +84,7 @@ export function MaintenanceTimelineSection({
           <div
             className="grid w-full grid-cols-3 rounded-lg border border-border bg-muted/40 p-0.5 sm:inline-flex sm:w-auto"
             role="tablist"
-            aria-label="Service history views"
+            aria-label="Maintenance history views"
           >
             {TAB_ITEMS.map((item) => (
               <Button
@@ -108,8 +114,10 @@ export function MaintenanceTimelineSection({
             <MaintenanceTimelineConsole
               entries={timeline}
               disabled={disabled}
+              defaultMileage={defaultMileage}
               onOpenEvidence={onOpenEvidence}
               onUpdateService={onUpdateService}
+              onAddService={onAddService}
               requireEditConfirmation={requireEditConfirmation}
               ownerSimple={ownerSimple}
             />

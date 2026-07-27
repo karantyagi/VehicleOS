@@ -36,6 +36,7 @@ import { DateField } from "@/components/date-field";
 import { todayIsoDate } from "@/lib/date-input";
 import { ImportHistoryNudge } from "./import-history-nudge";
 import { VerificationMaturityPanel } from "./verification-maturity-panel";
+import { draftLineItems, type MaintenanceRecordDraft } from "@/components/maintenance-record-fields";
 import type {
   MaintenanceScheduleView,
   OwnershipRecordEntry,
@@ -313,9 +314,55 @@ export function OwnerDashboard() {
       if (typeof body.currentMileage === "number") {
         setVehicle((current) => (current ? { ...current, currentMileage: body.currentMileage! } : current));
       }
-      feedback(isDeveloper ? "Service record updated." : "Service history updated.");
+      feedback(isDeveloper ? "Service record updated." : "Maintenance history updated.");
     } catch (error) {
-      feedback(error instanceof Error ? error.message : "Could not update service record.");
+      feedback(error instanceof Error ? error.message : "Could not update maintenance record.");
+      throw error;
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const addMaintenanceRecord = async (draft: MaintenanceRecordDraft) => {
+    if (!vehicle) return;
+    const lineItems = draftLineItems(draft);
+    if (lineItems.length === 0) {
+      feedback("Add at least one line item.");
+      return;
+    }
+
+    setIsBusy(true);
+    try {
+      const response = await fetch(`${apiBase}/api/vehicles/${vehicle.id}/notes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          shop: draft.shop.trim() || undefined,
+          shopLocation: draft.shopLocation.trim() || undefined,
+          serviceDate: draft.serviceDate,
+          mileage: Number(draft.mileage),
+          lineItems,
+          total: draft.total.trim() || undefined,
+          source: "owner_note",
+        }),
+      });
+      const body = (await response.json()) as {
+        timeline?: TimelineEntry[];
+        currentMileage?: number;
+        error?: string;
+        conflict?: boolean;
+      };
+      if (!response.ok && response.status !== 409) {
+        throw new Error(body.error ?? "Could not save maintenance record.");
+      }
+      if (body.timeline) setTimeline(body.timeline);
+      if (typeof body.currentMileage === "number") {
+        setVehicle((current) => (current ? { ...current, currentMileage: body.currentMileage! } : current));
+      }
+      feedback(body.conflict ? "Saved — assistant flagged a conflict for review." : "Maintenance record saved.");
+      void loadVehicleState(vehicle);
+    } catch (error) {
+      feedback(error instanceof Error ? error.message : "Could not save maintenance record.");
       throw error;
     } finally {
       setIsBusy(false);
@@ -524,7 +571,7 @@ export function OwnerDashboard() {
       {activeSection === "timeline" ? (
         <PanelCard
           hideHeader={!isDeveloper}
-          title="Service history"
+          title="Maintenance history"
           description="Past maintenance, verified OEM schedule projection, and RMV/DMV ownership records."
         >
           <MaintenanceTimelineSection
@@ -540,8 +587,10 @@ export function OwnerDashboard() {
             historyOnly={!isDeveloper}
             ownerSimple={!isDeveloper}
             disabled={isBusy}
+            defaultMileage={vehicle.currentMileage}
             onOpenEvidence={openEvidence}
             onUpdateService={updateServiceRecord}
+            onAddService={addMaintenanceRecord}
             requireEditConfirmation={!isDeveloper}
             onGoToImport={() => setActiveSection("imports")}
           />
@@ -559,6 +608,7 @@ export function OwnerDashboard() {
             apiBase={apiBase}
             ownerShopLocations={vehicle.ownerContextMemory?.shopLocations}
             existingTimeline={timeline}
+            existingOwnershipRecords={ownershipRecords}
             disabled={isBusy}
             onError={(message) => notify(message, "error")}
             onCarfaxImported={(body) => {
@@ -571,10 +621,10 @@ export function OwnerDashboard() {
                 feedback(`All ${skipped} row(s) already on your timeline — nothing new imported.`);
               } else if (skipped > 0) {
                 feedback(
-                  `${body.importedCount} new service row(s) imported (${skipped} duplicate(s) skipped). Check Service history.`,
+                  `${body.importedCount} new service row(s) imported (${skipped} duplicate(s) skipped). Check Maintenance history.`,
                 );
               } else {
-                feedback(`${body.importedCount} service row(s) imported — check Service history.`);
+                feedback(`${body.importedCount} service row(s) imported — check Maintenance history.`);
               }
               if (body.verificationTaskId) {
                 feedback("Some imported rows need verification in your assistant queue.");

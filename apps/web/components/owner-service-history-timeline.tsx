@@ -11,12 +11,19 @@ import {
   Mic,
   PenLine,
   Pencil,
+  Plus,
   Receipt,
   Wrench,
   X,
 } from "lucide-react";
 import { DateField } from "@/components/date-field";
 import { EmptyState } from "@/components/empty-state";
+import {
+  draftLineItems,
+  emptyMaintenanceRecordDraft,
+  MaintenanceRecordFields,
+  type MaintenanceRecordDraft,
+} from "@/components/maintenance-record-fields";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,7 +44,9 @@ type ServiceDraft = {
 type OwnerServiceHistoryTimelineProps = {
   entries: TimelineEntry[];
   disabled?: boolean;
+  defaultMileage?: number;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
   requireEditConfirmation?: boolean;
 };
 
@@ -117,7 +126,9 @@ const groupEntriesByYear = (entries: TimelineEntry[]): [number, TimelineEntry[]]
 export function OwnerServiceHistoryTimeline({
   entries,
   disabled = false,
+  defaultMileage = 0,
   onUpdateService,
+  onAddService,
   requireEditConfirmation = false,
 }: OwnerServiceHistoryTimelineProps) {
   const sortedEntries = useMemo(
@@ -134,6 +145,10 @@ export function OwnerServiceHistoryTimeline({
   const [draft, setDraft] = useState<ServiceDraft | null>(null);
   const [confirmSave, setConfirmSave] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const [addDraft, setAddDraft] = useState<MaintenanceRecordDraft | null>(null);
+  const [confirmAdd, setConfirmAdd] = useState(false);
+  const [isAddingSaving, setIsAddingSaving] = useState(false);
 
   useEffect(() => {
     if (yearGroups.length === 0) return;
@@ -208,8 +223,91 @@ export function OwnerServiceHistoryTimeline({
     void saveEditing(entry);
   };
 
-  if (entries.length === 0) {
-    return <EmptyState icon={Clock3} title="No service yet" />;
+  const startAdding = () => {
+    if (!onAddService || disabled) return;
+    cancelEditing();
+    setIsAdding(true);
+    setAddDraft(emptyMaintenanceRecordDraft(defaultMileage));
+    setConfirmAdd(false);
+  };
+
+  const cancelAdding = () => {
+    setIsAdding(false);
+    setAddDraft(null);
+    setConfirmAdd(false);
+  };
+
+  const saveAdding = async () => {
+    if (!onAddService || !addDraft) return;
+    if (draftLineItems(addDraft).length === 0) return;
+
+    setIsAddingSaving(true);
+    try {
+      await onAddService(addDraft);
+      cancelAdding();
+    } finally {
+      setIsAddingSaving(false);
+    }
+  };
+
+  const handleAddClick = () => {
+    if (requireEditConfirmation && !confirmAdd) {
+      setConfirmAdd(true);
+      return;
+    }
+    void saveAdding();
+  };
+
+  const renderAddPanel = () => {
+    if (!isAdding || !addDraft) return null;
+
+    return (
+      <li className="overflow-hidden rounded-xl border history-interactive-active bg-card/90 shadow-sm">
+        <div className="flex items-start gap-3 p-3.5 sm:p-4">
+          <span
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-history-highlight/10 text-history-highlight"
+            aria-hidden
+          >
+            <Plus className="h-4 w-4" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-lg font-semibold tracking-tight text-foreground">Add maintenance record</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">Dealer visit, DIY work, or anything you want on file.</p>
+            <div className="mt-3">
+              <MaintenanceRecordFields
+                idPrefix="add-maintenance"
+                draft={addDraft}
+                disabled={disabled}
+                isSaving={isAddingSaving}
+                saveLabel={requireEditConfirmation && !confirmAdd ? "Review save" : "Save record"}
+                confirmMessage={
+                  requireEditConfirmation && confirmAdd ? "Tap save again to confirm this maintenance record." : null
+                }
+                onDraftChange={setAddDraft}
+                onSave={handleAddClick}
+                onCancel={cancelAdding}
+              />
+            </div>
+          </div>
+        </div>
+      </li>
+    );
+  };
+
+  if (entries.length === 0 && !isAdding) {
+    return (
+      <div className="space-y-4">
+        <EmptyState icon={Clock3} title="No maintenance records yet" />
+        {onAddService ? (
+          <div className="flex justify-center">
+            <Button type="button" size="sm" disabled={disabled} onClick={startAdding}>
+              <Plus className="mr-1.5 h-4 w-4" aria-hidden />
+              Add maintenance record
+            </Button>
+          </div>
+        ) : null}
+      </div>
+    );
   }
 
   const renderEditForm = (entry: TimelineEntry) => {
@@ -339,12 +437,27 @@ export function OwnerServiceHistoryTimeline({
 
   return (
     <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {onAddService && !isAdding ? (
+          <Button type="button" size="sm" variant="outline" disabled={disabled} onClick={startAdding}>
+            <Plus className="mr-1.5 h-4 w-4" aria-hidden />
+            Add maintenance record
+          </Button>
+        ) : (
+          <span aria-hidden />
+        )}
+      </div>
+
+      {isAdding && entries.length === 0 ? (
+        <ul className="history-accent-rail space-y-2.5">{renderAddPanel()}</ul>
+      ) : null}
+
       {latestEntry ? (
         <section className="history-surface p-4 sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-history-highlight">
-                Latest service
+                Latest maintenance
               </p>
               <div className="mt-2 flex items-start gap-3">
                 {renderSourceGlyph(latestEntry)}
@@ -375,6 +488,10 @@ export function OwnerServiceHistoryTimeline({
 
       <div className="relative space-y-6">
         <div className="pointer-events-none absolute bottom-0 left-[0.4375rem] top-2 w-px bg-gradient-to-b from-history-highlight/35 via-history-highlight/12 to-transparent" />
+
+        {isAdding && entries.length > 0 ? (
+          <ul className="history-accent-rail relative space-y-2.5 pl-6">{renderAddPanel()}</ul>
+        ) : null}
 
         {yearGroups.map(([year, yearEntries]) => {
           const isYearOpen = expandedYears.has(year);
@@ -475,7 +592,7 @@ export function OwnerServiceHistoryTimeline({
                               variant="ghost"
                               className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-history-highlight/10 hover:text-history-highlight"
                               disabled={disabled}
-                              aria-label="Edit service record"
+                              aria-label="Edit maintenance record"
                               onClick={(event) => {
                                 event.stopPropagation();
                                 startEditing(entry);
