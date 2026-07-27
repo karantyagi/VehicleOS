@@ -9,6 +9,8 @@ import {
   buildOwnerContextWithPrimaryCity,
   parseStatedMilesPerYear,
   patchVehicleProfile,
+  STATED_MILES_INVALID_MESSAGE,
+  STATED_MILES_REQUIRED_MESSAGE,
   type DriverHabitsDraft,
 } from "@/lib/driver-habits";
 import { notify } from "@/lib/notify";
@@ -30,8 +32,12 @@ export function SetupDriverGate({ vehicleId, vehicleLabel, onComplete }: SetupDr
 
   const saveAndContinue = async () => {
     const parsedMiles = parseStatedMilesPerYear(milesInput);
+    if (parsedMiles === null) {
+      notify(STATED_MILES_REQUIRED_MESSAGE, "error");
+      return;
+    }
     if (parsedMiles === "invalid") {
-      notify("Annual miles: 1,000–80,000.", "error");
+      notify(STATED_MILES_INVALID_MESSAGE, "error");
       return;
     }
 

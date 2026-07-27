@@ -13,6 +13,8 @@ import { getApiBase } from "../lib/api-base";
 import {
   buildOwnerContextWithPrimaryCity,
   parseStatedMilesPerYear,
+  STATED_MILES_INVALID_MESSAGE,
+  STATED_MILES_REQUIRED_MESSAGE,
   type DriverHabitsDraft,
 } from "@/lib/driver-habits";
 import { todayIsoDate } from "@/lib/date-input";
@@ -208,8 +210,13 @@ export function OnboardingWizard({
     setError("");
 
     const parsedMiles = parseStatedMilesPerYear(milesInput);
+    if (parsedMiles === null) {
+      setError(STATED_MILES_REQUIRED_MESSAGE);
+      setIsBusy(false);
+      return null;
+    }
     if (parsedMiles === "invalid") {
-      setError("Annual miles: 1,000–80,000.");
+      setError(STATED_MILES_INVALID_MESSAGE);
       setIsBusy(false);
       return null;
     }

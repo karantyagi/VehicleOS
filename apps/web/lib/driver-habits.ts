@@ -18,6 +18,16 @@ export type VehicleOwnerProfile = {
 };
 
 export const DEFAULT_MILES_PER_YEAR = 10_000;
+export const MIN_STATED_MILES_PER_YEAR = 1_000;
+export const MAX_STATED_MILES_PER_YEAR = 50_000;
+
+export const STATED_MILES_RANGE_LABEL = "1,000–50,000";
+
+export const STATED_MILES_REQUIRED_MESSAGE = `Enter annual miles driven (${STATED_MILES_RANGE_LABEL}).`;
+
+export const STATED_MILES_INVALID_MESSAGE = `Annual miles driven: ${STATED_MILES_RANGE_LABEL}.`;
+
+export const STATED_MILES_ONBOARDING_HINT = "Reminds when mileage-based services are due.";
 
 export const DRIVING_STYLE_OPTIONS: {
   id: DrivingStyle;
@@ -49,7 +59,7 @@ export const drivingStyleLabel = (style: DrivingStyle | null | undefined): strin
 export const parseStatedMilesPerYear = (milesInput: string): number | null | "invalid" => {
   if (!milesInput.trim()) return null;
   const parsed = Number(milesInput);
-  if (parsed < 1_000 || parsed > 80_000) return "invalid";
+  if (parsed < MIN_STATED_MILES_PER_YEAR || parsed > MAX_STATED_MILES_PER_YEAR) return "invalid";
   return parsed;
 };
 

@@ -8,6 +8,8 @@ import {
   buildOwnerContextWithPrimaryCity,
   parseStatedMilesPerYear,
   patchVehicleProfile,
+  STATED_MILES_INVALID_MESSAGE,
+  STATED_MILES_REQUIRED_MESSAGE,
   vehicleProfileFromRecord,
   type DriverHabitsDraft,
   type VehicleOwnerProfile,
@@ -70,8 +72,12 @@ export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPa
     }
 
     const parsedMiles = parseStatedMilesPerYear(milesInput);
+    if (parsedMiles === null) {
+      notify(STATED_MILES_REQUIRED_MESSAGE, "error");
+      return;
+    }
     if (parsedMiles === "invalid") {
-      notify("Enter annual mileage between 1,000 and 80,000.", "error");
+      notify(STATED_MILES_INVALID_MESSAGE, "error");
       return;
     }
 
