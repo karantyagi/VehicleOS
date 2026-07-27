@@ -100,6 +100,9 @@ export function NowQueueConsole({
                     disabled={disabled}
                     suggestedIntervalMiles={item.suggestedIntervalMiles ?? null}
                     suggestedIntervalMonths={item.suggestedIntervalMonths ?? null}
+                    dismissLabel={
+                      item.ruleId?.includes("owner-habit:") ? "Not now" : "Keep OEM interval"
+                    }
                     onConfirmed={() => onVerificationResolved?.()}
                     onDismiss={() => onDecide(item.taskId, "dismiss")}
                     onError={(message) => onError?.(message)}

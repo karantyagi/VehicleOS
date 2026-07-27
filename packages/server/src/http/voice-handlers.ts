@@ -1,7 +1,8 @@
-import { parseVoiceServiceNote } from "@vehicleos/domain";
+import { parseVoiceServiceNote, recordOwnershipFromServiceNote } from "@vehicleos/domain";
 import type { ApiServices } from "../services/index.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
 import { recommendationContextFromVehicle } from "./recommendation-context-from-vehicle.js";
+import { vehicleStateOptionsFromVehicle } from "./vehicle-state-options-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
 
 type VoiceBody = {
@@ -88,6 +89,24 @@ export const submitVoiceMemory = async (
     ...recommendationContextFromVehicle(vehicle),
   });
 
+  if (!result.conflict) {
+    await recordOwnershipFromServiceNote({
+      eventStore: services.eventStore,
+      input: {
+        vehicleId,
+        lineItems: extracted.lineItems,
+        recordDate: extracted.serviceDate,
+        mileage: extracted.mileage,
+      },
+    });
+  }
+
+  const snapshot = await services.goldenPath.getVehicleState(
+    vehicleId,
+    vehicleStateOptionsFromVehicle(vehicle),
+  );
+  const view = buildVehicleStateView(snapshot.state, vehicle, snapshot.events);
+
   if (result.conflict) {
     return jsonResponse(409, {
       conflict: true,
@@ -96,16 +115,14 @@ export const submitVoiceMemory = async (
       parsed: extracted,
       verificationTask: {
         taskId: result.taskId,
-        title: result.state.nowQueue.at(-1)?.title,
-        reason: result.state.nowQueue.at(-1)?.reason,
-        verificationCode: result.state.nowQueue.at(-1)?.verificationCode,
+        title: view.nowQueue.at(-1)?.title,
+        reason: view.nowQueue.at(-1)?.reason,
+        verificationCode: view.nowQueue.at(-1)?.verificationCode,
       },
-      timeline: buildVehicleStateView(result.state, vehicle).timeline,
-      nowQueue: buildVehicleStateView(result.state, vehicle).nowQueue,
+      timeline: view.timeline,
+      nowQueue: view.nowQueue,
     });
   }
-
-  const view = buildVehicleStateView(result.result.state, vehicle);
 
   return jsonResponse(result.result.skippedDuplicate ? 200 : 201, {
     documentId,
@@ -116,5 +133,7 @@ export const submitVoiceMemory = async (
     task: result.result.task,
     timeline: view.timeline,
     nowQueue: view.nowQueue,
+    ownershipRecords: view.ownershipRecords,
+    ownershipRenewals: view.ownershipRenewals,
   });
 };

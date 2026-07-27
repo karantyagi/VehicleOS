@@ -9,6 +9,7 @@ import {
   getVehicleState,
   listVehicles,
   submitReceipt,
+  previewReceiptExtract,
   submitVoiceMemory,
   refreshSeasonalPrompts,
   confirmManualSchedule,
@@ -42,6 +43,19 @@ export const registerGoldenPathRoutes = (app: FastifyInstance, services: ApiServ
       const result = await getVehicleState(
         services,
         request.params.vehicleId,
+        authFromRequest(request),
+      );
+      return reply.code(result.status).send(result.body);
+    },
+  );
+
+  app.post<{ Params: { vehicleId: string } }>(
+    "/api/vehicles/:vehicleId/receipts/extract",
+    async (request, reply) => {
+      const result = await previewReceiptExtract(
+        services,
+        request.params.vehicleId,
+        request.body as Parameters<typeof previewReceiptExtract>[2],
         authFromRequest(request),
       );
       return reply.code(result.status).send(result.body);

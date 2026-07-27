@@ -134,8 +134,11 @@ type HistoryCard = {
   ownershipEntry?: OwnershipRecordEntry;
 };
 
-const ownershipSourceLabel = (source: OwnershipRecordEntry["source"]): string =>
-  source === "rmv_import" ? "RMV import" : "CARFAX";
+const ownershipSourceLabel = (source: OwnershipRecordEntry["source"]): string => {
+  if (source === "rmv_import") return "RMV import";
+  if (source === "owner_note") return "Owner noted";
+  return "CARFAX";
+};
 
 const buildHistoryCards = (
   entries: TimelineEntry[],

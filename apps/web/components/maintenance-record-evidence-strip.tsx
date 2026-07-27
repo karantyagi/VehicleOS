@@ -57,6 +57,53 @@ export function MaintenanceRecordEvidenceStrip({
         evidenceFileName: body.fileName ?? file.name,
         captureChannel: "receipt",
       });
+
+      const extractResponse = await fetch(`${apiBase}/api/vehicles/${vehicleId}/receipts/extract`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          storageKey: body.storageKey,
+          channel: "receipt_upload",
+          hintText: draft.lineItems.trim() || undefined,
+          shop: draft.shop.trim() || undefined,
+          serviceDate: draft.serviceDate,
+          mileage: Number(draft.mileage),
+          lineItems: draft.lineItems
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean),
+          total: draft.total.trim() || undefined,
+        }),
+      });
+      const extractBody = (await extractResponse.json()) as {
+        extracted?: {
+          shop?: string;
+          serviceDate?: string;
+          mileage?: number;
+          lineItems?: string[];
+          total?: string;
+        };
+        error?: string;
+      };
+      if (extractResponse.ok && extractBody.extracted) {
+        const extracted = extractBody.extracted;
+        onDraftChange({
+          ...draft,
+          evidenceStorageKey: body.storageKey,
+          evidenceFileName: body.fileName ?? file.name,
+          captureChannel: "receipt",
+          shop: draft.shop.trim() || extracted.shop || "",
+          serviceDate: draft.serviceDate || extracted.serviceDate || draft.serviceDate,
+          mileage:
+            !draft.mileage.trim() && extracted.mileage
+              ? String(extracted.mileage)
+              : draft.mileage,
+          lineItems:
+            draft.lineItems.trim() ||
+            (extracted.lineItems?.length ? extracted.lineItems.join("\n") : draft.lineItems),
+          total: draft.total.trim() || extracted.total || draft.total,
+        });
+      }
     } catch (error) {
       onCaptureError?.(error instanceof Error ? error.message : "Could not attach receipt");
     } finally {

@@ -7,6 +7,8 @@ import {
   type ScheduleProjectionRow,
   type ScheduleProjectionStatus,
 } from "./project-maintenance-schedule.js";
+import { isOwnerHabitEntryId, OWNER_HABIT_DEFINITIONS } from "./owner-habit-definitions.js";
+import { projectOwnerHabitScheduleRows } from "./project-owner-habit-schedule-rows.js";
 
 export type OwnerServiceHistoryEvent = {
   serviceId: string;
@@ -56,6 +58,7 @@ export type OwnerServiceScheduleBoard = {
 const HIDDEN_ENTRY_IDS = new Set(["code-a"]);
 
 const formatIntervalRule = (row: ScheduleProjectionRow): string => {
+  if (row.overlayLabel) return row.overlayLabel;
   const parts: string[] = [];
   if (row.oemInterval.miles) parts.push(`${row.oemInterval.miles.toLocaleString()} mi`);
   if (row.oemInterval.months) parts.push(`${row.oemInterval.months} mo`);
@@ -143,11 +146,30 @@ const buildGapNote = (input: {
 const flattenHistoryEvents = (
   timeline: ServiceTimelineEntry[],
   serviceName: string,
+  entryId: string,
   options: {
     canonicalServiceId?: string | null;
     serviceAliasRegistry?: ServiceAliasRegistry | null;
   },
 ): OwnerServiceHistoryEvent[] => {
+  if (isOwnerHabitEntryId(entryId)) {
+    const habit = OWNER_HABIT_DEFINITIONS.find((definition) => definition.entryId === entryId);
+    if (!habit) return [];
+
+    return timeline.flatMap((entry) =>
+      entry.lineItems
+        .filter((lineItem) => habit.lineItemPattern.test(lineItem))
+        .map((lineItem) => ({
+          serviceId: entry.serviceId,
+          serviceDate: entry.serviceDate,
+          mileage: entry.mileage,
+          shop: entry.shop,
+          lineItem,
+          source: entry.source,
+        })),
+    );
+  }
+
   const matches = findMatchingServices(timeline, serviceName, options);
   return matches.flatMap((entry) =>
     entry.lineItems
@@ -179,11 +201,22 @@ export const buildOwnerServiceScheduleBoard = (
     horizonMode: "complete",
   });
 
+  const habitRows = projectOwnerHabitScheduleRows({
+    timeline: input.timeline,
+    currentMileage: input.currentMileage,
+    ownerContextMemory: input.ownerContextMemory,
+    effectiveMilesPerYear: input.effectiveMilesPerYear,
+    today: input.today,
+    dueSoonDays: input.dueSoonDays,
+  });
+
+  const allProjectionRows = [...projection.rows, ...habitRows];
+
   const scheduleByEntryId = new Map(
     input.knowledgeSchedule.map((entry) => [entry.entryId, entry]),
   );
 
-  const rows: OwnerServiceScheduleRow[] = projection.rows
+  const rows: OwnerServiceScheduleRow[] = allProjectionRows
     .filter((row) => !HIDDEN_ENTRY_IDS.has(row.entryId))
     .map((row) => {
       const scheduleEntry = scheduleByEntryId.get(row.entryId);
@@ -191,7 +224,12 @@ export const buildOwnerServiceScheduleBoard = (
         canonicalServiceId: scheduleEntry?.canonicalServiceId ?? null,
         serviceAliasRegistry: input.serviceAliasRegistry,
       };
-      const historyEvents = flattenHistoryEvents(input.timeline, row.serviceName, matchOptions);
+      const historyEvents = flattenHistoryEvents(
+        input.timeline,
+        row.serviceName,
+        row.entryId,
+        matchOptions,
+      );
       const lastEvent = historyEvents.at(-1);
       const milesSinceLast =
         lastEvent !== undefined ? input.currentMileage - lastEvent.mileage : null;

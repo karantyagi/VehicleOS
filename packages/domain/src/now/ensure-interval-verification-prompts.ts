@@ -9,6 +9,7 @@ import {
   formatIntervalProposalTaskReason,
   formatIntervalProposalTaskTitle,
 } from "../schedule/detect-interval-proposal.js";
+import { detectOwnerHabitProposals } from "../schedule/detect-owner-habit-proposals.js";
 import { intervalRuleIdForEntry } from "../schedule/interval-rule-id.js";
 import { hasHandledVerificationPromptForRule } from "./verification-prompt-suppression.js";
 
@@ -46,12 +47,17 @@ export const ensureIntervalVerificationPrompts = async (
   const state = foldEvents(input.vehicleId, events);
   const today = new Date().toISOString().slice(0, 10);
 
-  const proposals = detectIntervalProposals({
+  const oemProposals = detectIntervalProposals({
     knowledgeSchedule: input.knowledgeSchedule ?? state.knowledgeSchedule,
     timeline: state.timeline,
     ownerContextMemory: input.ownerContextMemory,
     serviceAliasRegistry: input.serviceAliasRegistry,
   });
+  const habitProposals = detectOwnerHabitProposals({
+    timeline: state.timeline,
+    ownerContextMemory: input.ownerContextMemory,
+  });
+  const proposals = [...oemProposals, ...habitProposals];
 
   let createdCount = 0;
 

@@ -1,7 +1,9 @@
+import { mergeReceiptExtractWithHints, recordOwnershipFromServiceNote } from "@vehicleos/domain";
 import type { IngestChannel, ServiceRecordSource } from "@vehicleos/domain";
 import type { ApiServices } from "../services/index.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
 import { recommendationContextFromVehicle } from "./recommendation-context-from-vehicle.js";
+import { vehicleStateOptionsFromVehicle } from "./vehicle-state-options-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
 
 type OwnerNoteBody = {
@@ -72,30 +74,45 @@ export const submitOwnerServiceNote = async (
   let documentId: string | undefined;
   let correlationId: string | undefined;
 
+  const hintText = [body.note, body.voiceTranscript, ...lineItems].filter(Boolean).join("\n");
+
   if (body.storageKey?.trim()) {
     const channel = body.channel ?? (source === "voice" ? "voice" : "receipt_upload");
-    const ingested = await services.goldenPath.ingestReceipt({
+    const extractResult = await services.goldenPath.queueReceiptExtract({
       vehicleId,
       storageKey: body.storageKey.trim(),
       channel,
+      hintText,
+      shop,
+      serviceDate: body.serviceDate,
+      mileage: body.mileage,
+      lineItems,
+      total: body.total?.trim(),
     });
-    documentId = ingested.documentId;
-    correlationId = ingested.correlationId;
+
+    if (extractResult.queued) {
+      return jsonResponse(202, {
+        queued: true,
+        documentId: extractResult.documentId,
+        message: "Receipt queued for assistant extraction (ENG-2 worker). Confirm fields manually for now.",
+      });
+    }
+
+    documentId = extractResult.documentId;
+    correlationId = extractResult.correlationId;
     evidenceIds = [documentId];
 
-    await services.goldenPath.completeExtraction({
-      vehicleId,
-      documentId,
-      correlationId,
-      extracted: {
-        shop,
-        serviceDate: body.serviceDate,
-        mileage: body.mileage,
-        lineItems,
-        total: body.total?.trim() || "$0.00",
-        confidence: source === "voice" ? 0.75 : 0.9,
-      },
+    const merged = mergeReceiptExtractWithHints(extractResult.extracted, {
+      shop,
+      serviceDate: body.serviceDate,
+      mileage: body.mileage,
+      lineItems,
+      total: body.total?.trim(),
     });
+
+    if (merged.lineItems.length > 0) {
+      lineItems.splice(0, lineItems.length, ...merged.lineItems);
+    }
   }
 
   const result = await services.goldenPath.confirmService({
@@ -113,17 +130,35 @@ export const submitOwnerServiceNote = async (
     ...recommendationContextFromVehicle(vehicle),
   });
 
+  if (!result.conflict) {
+    await recordOwnershipFromServiceNote({
+      eventStore: services.eventStore,
+      input: {
+        vehicleId,
+        lineItems,
+        recordDate: body.serviceDate,
+        mileage: body.mileage,
+      },
+    });
+  }
+
+  const snapshot = await services.goldenPath.getVehicleState(
+    vehicleId,
+    vehicleStateOptionsFromVehicle(vehicle),
+  );
+  const view = buildVehicleStateView(snapshot.state, vehicle, snapshot.events);
+
   if (result.conflict) {
     return jsonResponse(409, {
       conflict: true,
       conflictId: result.conflictId,
       verificationTask: {
         taskId: result.taskId,
-        title: result.state.nowQueue.at(-1)?.title,
-        reason: result.state.nowQueue.at(-1)?.reason,
-        verificationCode: result.state.nowQueue.at(-1)?.verificationCode,
+        title: view.nowQueue.at(-1)?.title,
+        reason: view.nowQueue.at(-1)?.reason,
+        verificationCode: view.nowQueue.at(-1)?.verificationCode,
       },
-      ...buildVehicleStateView(result.state, vehicle),
+      ...view,
     });
   }
 
@@ -131,6 +166,6 @@ export const submitOwnerServiceNote = async (
     duplicateSkipped: result.result.skippedDuplicate ?? false,
     recommendation: result.result.recommendation,
     task: result.result.task,
-    ...buildVehicleStateView(result.result.state, vehicle),
+    ...view,
   });
 };
