@@ -69,6 +69,8 @@ export type ScheduleProjectionRow = {
   oemSource: { manualTitle: string; page: string | null; ruleId: string };
   dueDateConfidence: "oem_calendar" | "mileage_converted" | "needs_baseline";
   isStubSchedule: boolean;
+  oemTiming?: "early" | "on_time" | "late" | "unknown" | null;
+  overdueWithoutHistory?: boolean;
 };
 
 export type MaintenanceScheduleView = {

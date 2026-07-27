@@ -213,4 +213,35 @@ describe("projectMaintenanceSchedule", () => {
     expect(baseline.rows[0]?.status).toBe("upcoming");
     expect(aggressive.rows[0]?.status).toBe("due_soon");
   });
+
+  it("computes OEM timing when history matches interval rows", () => {
+    const result = projectMaintenanceSchedule({
+      knowledgeSchedule: [entry({ intervalMonths: 6 })],
+      timeline: [
+        timelineRow({ serviceId: "a", serviceDate: "2025-01-01", lineItems: ["Oil change (synthetic)"] }),
+        timelineRow({ serviceId: "b", serviceDate: "2025-07-10", lineItems: ["Oil and filter changed"] }),
+      ],
+      currentMileage: 45_000,
+      ownedSince: "2024-01-01",
+      today: "2026-07-23",
+      horizonMonths: 12,
+    });
+
+    expect(result.rows[0]?.oemTiming).toBe("on_time");
+    expect(result.rows[0]?.serviceBaseline.baselineSource).toBe("receipt");
+  });
+
+  it("flags overdue rows without history match", () => {
+    const result = projectMaintenanceSchedule({
+      knowledgeSchedule: [entry({ intervalMonths: 6, intervalMiles: undefined })],
+      timeline: [],
+      currentMileage: 12_000,
+      ownedSince: "2025-01-01",
+      today: "2026-07-23",
+      horizonMonths: 12,
+    });
+
+    expect(result.rows[0]?.overdueWithoutHistory).toBe(true);
+    expect(result.rows[0]?.oemTiming).toBeNull();
+  });
 });

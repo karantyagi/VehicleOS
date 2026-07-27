@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { findLastMatchingService, serviceNamePattern } from "./match-service-name.js";
+import {
+  findLastMatchingService,
+  findMatchingServices,
+  serviceNamePattern,
+} from "./match-service-name.js";
 import type { ServiceTimelineEntry } from "../projections/types.js";
 
 const timelineRow = (overrides: Partial<ServiceTimelineEntry>): ServiceTimelineEntry => ({
@@ -25,5 +29,24 @@ describe("match-service-name", () => {
 
   it("matches oil & filter shorthand", () => {
     expect(serviceNamePattern("Engine oil & filter").test("Oil & filter replaced")).toBe(true);
+  });
+
+  it("matches rear brake pads to rear brake OEM rows", () => {
+    const timeline = [
+      timelineRow({
+        serviceDate: "2026-03-10",
+        lineItems: ["Rear brake pads replaced"],
+      }),
+    ];
+    expect(findMatchingServices(timeline, "Rear brake pads").length).toBe(1);
+    expect(findMatchingServices(timeline, "Front brake pads").length).toBe(0);
+  });
+
+  it("returns chronologically last match", () => {
+    const timeline = [
+      timelineRow({ serviceId: "a", serviceDate: "2024-01-01", lineItems: ["Oil and filter changed"] }),
+      timelineRow({ serviceId: "b", serviceDate: "2025-06-01", lineItems: ["Oil and filter changed"] }),
+    ];
+    expect(findLastMatchingService(timeline, "Engine oil & filter")?.serviceId).toBe("b");
   });
 });

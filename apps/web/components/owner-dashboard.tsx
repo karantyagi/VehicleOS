@@ -216,7 +216,7 @@ export function OwnerDashboard() {
     setUploadedReceipt(null);
     setReceiptNeedsManualEntry(false);
     setCaptureError("");
-    setServiceHistoryTab("history");
+    setServiceHistoryTab("schedule");
     setPipelinePhase("idle");
     clearVehicleSelections();
   }, [clearVehicleSelections]);

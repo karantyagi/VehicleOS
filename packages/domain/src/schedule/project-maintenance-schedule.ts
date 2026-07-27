@@ -1,4 +1,5 @@
-import { findLastMatchingService } from "../knowledge/match-service-name.js";
+import { findLastMatchingService, findMatchingServices } from "../knowledge/match-service-name.js";
+import { computeOemServiceTiming, type OemServiceTiming } from "./compute-oem-service-timing.js";
 import type { KnowledgeScheduleEntry, ServiceTimelineEntry } from "../projections/types.js";
 
 export type ScheduleProjectionStatus = "overdue" | "due_soon" | "upcoming" | "needs_baseline";
@@ -19,6 +20,10 @@ export type ScheduleProjectionRow = {
   oemSource: { manualTitle: string; page: string | null; ruleId: string };
   dueDateConfidence: "oem_calendar" | "mileage_converted" | "needs_baseline";
   isStubSchedule: boolean;
+  /** Deterministic timing of last performed service vs OEM interval (V1.1). */
+  oemTiming: OemServiceTiming | null;
+  /** True when overdue with no history match — owner may have skipped or deferred. */
+  overdueWithoutHistory: boolean;
 };
 
 export type ScheduleHorizonMode = "near" | "extended" | "full";
@@ -162,6 +167,7 @@ const buildRow = (input: {
   dueSoonDays: number;
 }): ScheduleProjectionRow => {
   const lastMatch = findLastMatchingService(input.timeline, input.entry.serviceName);
+  const allMatches = findMatchingServices(input.timeline, input.entry.serviceName);
   const performedDate = lastMatch?.serviceDate ?? null;
   const performedMileage = lastMatch?.mileage ?? null;
   const baselineSource = resolveBaselineSource({
@@ -200,6 +206,18 @@ const buildRow = (input: {
     needsBaseline,
   });
 
+  const oemTiming =
+    lastMatch && intervalMonths
+      ? computeOemServiceTiming({
+          matches: allMatches,
+          intervalMonths,
+          ownedSince: input.ownedSince,
+        })
+      : null;
+
+  const overdueWithoutHistory =
+    status === "overdue" && !lastMatch && baselineSource === "owned_since";
+
   return {
     entryId: input.entry.entryId,
     serviceName: input.entry.serviceName,
@@ -223,6 +241,8 @@ const buildRow = (input: {
     },
     dueDateConfidence,
     isStubSchedule: true,
+    oemTiming,
+    overdueWithoutHistory,
   };
 };
 

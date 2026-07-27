@@ -130,6 +130,7 @@ export function MaintenanceTimelineSection({
               fullRows={scheduleFull}
               effectiveMilesPerYear={effectiveMilesPerYear}
               hasKnowledgeSchedule={hasKnowledgeSchedule}
+              ownerSimple={ownerSimple}
             />
           ) : null}
 

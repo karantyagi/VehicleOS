@@ -165,6 +165,17 @@ export {
   type ScheduleProjectionStatus,
 } from "./schedule/project-maintenance-schedule.js";
 export {
+  computeOemServiceTiming,
+  DEFAULT_OEM_TIMING_TOLERANCE_DAYS,
+  type OemServiceTiming,
+} from "./schedule/compute-oem-service-timing.js";
+export {
+  findLastMatchingService,
+  findMatchingServices,
+  lineMatchesServiceName,
+  serviceNamePattern,
+} from "./knowledge/match-service-name.js";
+export {
   recordVehicleOsImport,
   type RecordVehicleOsImportInput,
   type RecordVehicleOsImportResult,
