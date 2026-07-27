@@ -77,6 +77,7 @@ export const recordKnowledgeSchedule = async (
     intervalMonths: entry.intervalMonths,
     sourceDocumentId: documentId,
     sourcePage: entry.sourcePage,
+    canonicalServiceId: entry.canonicalServiceId,
   }));
 
   await eventStore.append({

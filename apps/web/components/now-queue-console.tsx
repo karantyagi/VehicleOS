@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { ListChecks } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { DeviationPatternForm } from "@/components/deviation-pattern-form";
+import { IntervalConfirmForm } from "@/components/interval-confirm-form";
 import { OdometerInlineForm } from "@/components/odometer-inline-form";
 import { ConsoleDetailPanel, ConsoleDetailPlaceholder, ConsoleSplit } from "@/components/console-split";
 import { DataGridToolbar } from "@/components/data-grid-toolbar";
@@ -81,6 +82,8 @@ export function NowQueueConsole({
             item.verificationCode === "VERIFY_ODOMETER" && vehicleId && apiBase && currentMileage !== undefined;
           const showDeviationForm =
             item.verificationCode === "VERIFY_MAINTENANCE_TIMING" && vehicleId && apiBase;
+          const showIntervalForm =
+            item.verificationCode === "VERIFY_OWNER_INTERVAL" && vehicleId && apiBase;
 
           return (
             <li key={item.taskId} className="rounded-xl border border-border bg-card p-4 shadow-sm">
@@ -89,6 +92,19 @@ export function NowQueueConsole({
                   <h3 className="font-semibold leading-tight">{item.title}</h3>
                   <p className="text-sm text-muted-foreground">{item.reason}</p>
                 </div>
+                {showIntervalForm ? (
+                  <IntervalConfirmForm
+                    vehicleId={vehicleId}
+                    taskId={item.taskId}
+                    apiBase={apiBase}
+                    disabled={disabled}
+                    suggestedIntervalMiles={item.suggestedIntervalMiles ?? null}
+                    suggestedIntervalMonths={item.suggestedIntervalMonths ?? null}
+                    onConfirmed={() => onVerificationResolved?.()}
+                    onDismiss={() => onDecide(item.taskId, "dismiss")}
+                    onError={(message) => onError?.(message)}
+                  />
+                ) : null}
                 {showDeviationForm ? (
                   <DeviationPatternForm
                     vehicleId={vehicleId}
@@ -114,7 +130,7 @@ export function NowQueueConsole({
                     onError={(message) => onError?.(message)}
                   />
                 ) : null}
-                {!showDeviationForm ? (
+                {!showDeviationForm && !showIntervalForm ? (
                 <div className="flex flex-wrap gap-2">
                   <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
                     Confirm

@@ -1,9 +1,6 @@
 import { existsSync } from "node:fs";
-import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-
-const require = createRequire(import.meta.url);
 
 const sourceRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -24,12 +21,6 @@ export const listKnowledgeRootCandidates = (): string[] => {
     join(cwd, "../../packages/knowledge"),
     sourceRoot,
   ];
-
-  try {
-    candidates.push(dirname(require.resolve("@vehicleos/knowledge/package.json")));
-  } catch {
-    // workspace package may not resolve from every runtime cwd
-  }
 
   return [...new Set(candidates)];
 };

@@ -1,4 +1,5 @@
 import { findLastMatchingService, findMatchingServices } from "../knowledge/match-service-name.js";
+import type { ServiceAliasRegistry } from "../knowledge/service-alias-registry.js";
 import { resolveIntervalForEntry } from "../owner-context/merge-interval-overlay-memory.js";
 import type { OwnerContextMemory } from "../owner-context/types.js";
 import { computeOemServiceTiming, type OemServiceTiming } from "./compute-oem-service-timing.js";
@@ -46,6 +47,7 @@ export type ProjectMaintenanceScheduleInput = {
   horizonMode?: ScheduleHorizonMode;
   dueSoonDays?: number;
   ownerContextMemory?: OwnerContextMemory | null;
+  serviceAliasRegistry?: ServiceAliasRegistry | null;
 };
 
 export type ProjectMaintenanceScheduleResult = {
@@ -172,9 +174,14 @@ const buildRow = (input: {
   today: string;
   dueSoonDays: number;
   ownerContextMemory?: OwnerContextMemory | null;
+  serviceAliasRegistry?: ServiceAliasRegistry | null;
 }): ScheduleProjectionRow => {
-  const lastMatch = findLastMatchingService(input.timeline, input.entry.serviceName);
-  const allMatches = findMatchingServices(input.timeline, input.entry.serviceName);
+  const matchOptions = {
+    canonicalServiceId: input.entry.canonicalServiceId ?? null,
+    serviceAliasRegistry: input.serviceAliasRegistry,
+  };
+  const lastMatch = findLastMatchingService(input.timeline, input.entry.serviceName, matchOptions);
+  const allMatches = findMatchingServices(input.timeline, input.entry.serviceName, matchOptions);
   const performedDate = lastMatch?.serviceDate ?? null;
   const performedMileage = lastMatch?.mileage ?? null;
   const baselineSource = resolveBaselineSource({
@@ -314,6 +321,7 @@ export const projectMaintenanceSchedule = (
         today,
         dueSoonDays,
         ownerContextMemory: input.ownerContextMemory,
+        serviceAliasRegistry: input.serviceAliasRegistry,
       }),
     )
     .filter((row) => isWithinHorizon({ row, today, horizonEnd }));

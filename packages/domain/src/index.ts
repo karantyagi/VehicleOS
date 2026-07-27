@@ -180,10 +180,28 @@ export {
   parseDeviationRuleEntryId,
 } from "./schedule/deviation-rule-id.js";
 export {
+  INTERVAL_RULE_PREFIX,
+  INTERVAL_RULE_SUFFIX,
+  intervalRuleIdForEntry,
+  parseIntervalRuleEntryId,
+} from "./schedule/interval-rule-id.js";
+export {
+  detectIntervalProposalForEntry,
+  detectIntervalProposals,
+  formatIntervalProposalTaskReason,
+  formatIntervalProposalTaskTitle,
+  type IntervalProposal,
+} from "./schedule/detect-interval-proposal.js";
+export {
   ensureDeviationVerificationPrompts,
   type EnsureDeviationVerificationPromptsInput,
   type EnsureDeviationVerificationPromptsResult,
 } from "./now/ensure-deviation-verification-prompts.js";
+export {
+  ensureIntervalVerificationPrompts,
+  type EnsureIntervalVerificationPromptsInput,
+  type EnsureIntervalVerificationPromptsResult,
+} from "./now/ensure-interval-verification-prompts.js";
 export {
   evaluateOwnershipRenewalDue,
   isRenewalRuleId,
@@ -198,7 +216,16 @@ export {
   findMatchingServices,
   lineMatchesServiceName,
   serviceNamePattern,
+  type ServiceMatchOptions,
 } from "./knowledge/match-service-name.js";
+export { enrichKnowledgeScheduleCanonicalIds } from "./knowledge/enrich-knowledge-schedule-canonical-ids.js";
+export {
+  compileServiceAliasRegistry,
+  lineMatchesCanonicalService,
+  type ServiceAliasBundleInput,
+  type ServiceAliasDefinition,
+  type ServiceAliasRegistry,
+} from "./knowledge/service-alias-registry.js";
 export {
   recordVehicleOsImport,
   type RecordVehicleOsImportInput,
@@ -297,6 +324,7 @@ export {
   mergeIntervalOverlayMemory,
   resolveIntervalForEntry,
 } from "./owner-context/merge-interval-overlay-memory.js";
+export { formatIntervalOverlayLabel } from "./owner-context/format-interval-overlay-label.js";
 export {
   classifyCaptureIntent,
   type CaptureIntent,
@@ -403,3 +431,4 @@ export {
   type NominatimSearchResult,
 } from "./import/nominatim-shop-location.js";
 export type { KnowledgeScheduleRow } from "./events/catalog.js";
+export type { KnowledgeScheduleEntry } from "./projections/types.js";

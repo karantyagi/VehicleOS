@@ -4,6 +4,7 @@ export type ManualScheduleDraftRow = {
   intervalMiles?: number;
   intervalMonths?: number;
   sourcePage?: string;
+  canonicalServiceId?: string;
 };
 
 export type StubExtractManualScheduleInput = {

@@ -313,7 +313,7 @@ export default function HomePage() {
         <section className="cta-band shell">
           <RevealOnScroll>
             <h2>Stop planning. Start showing up.</h2>
-            <p>Free early access · hand off your records once at {siteConfig.appUrl.replace("https://", "")}.</p>
+            <p>Free early access · pick your car — verified OEM schedule loads at {siteConfig.appUrl.replace("https://", "")}.</p>
             <div className="cta-row">
               <a className="btn btn-primary" href={siteConfig.appUrl}>
                 Open the app

@@ -1,3 +1,4 @@
+import { getServiceAliasRegistry } from "../adapters/service-alias-registry.js";
 import type { CatalogDomainEvent, VehicleProjectionState } from "@vehicleos/domain";
 import {
   buildOwnerReminderViews,
@@ -28,6 +29,8 @@ export const buildVehicleStateView = (
     timeline: state.timeline,
   });
 
+  const serviceAliasRegistry = getServiceAliasRegistry();
+
   const scheduleProjectionBase = {
     knowledgeSchedule: state.knowledgeSchedule,
     timeline: state.timeline,
@@ -36,6 +39,7 @@ export const buildVehicleStateView = (
     ownedSince: scheduleContext.ownedSince,
     dueSoonDays: scheduleContext.dueSoonDays,
     ownerContextMemory: profile?.ownerContextMemory,
+    serviceAliasRegistry,
   };
 
   const scheduleNear = projectMaintenanceSchedule({

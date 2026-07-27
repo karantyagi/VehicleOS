@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { compileServiceAliasRegistry } from "@vehicleos/domain";
 import supportedVehicleCatalogJson from "../catalog/supported-vehicles.v1.json" with { type: "json" };
 import type { OemSchedulePack, ServiceAliasBundle, SupportedVehicleCatalog } from "./types.js";
 import { validateOemSchedulePack, validateServiceAliasBundle } from "./validate-pack.js";
@@ -80,6 +81,7 @@ export type KnowledgeScheduleDraftRow = {
   intervalMonths?: number;
   sourcePage?: string;
   ruleId: string;
+  canonicalServiceId?: string;
 };
 
 export const packToKnowledgeScheduleDraft = (
@@ -94,4 +96,8 @@ export const packToKnowledgeScheduleDraft = (
       intervalMonths: entry.intervalMonths ?? undefined,
       sourcePage: entry.sourcePage,
       ruleId: entry.ruleId,
+      canonicalServiceId: entry.canonicalServiceId,
     }));
+
+export const createRuntimeServiceAliasRegistry = () =>
+  compileServiceAliasRegistry(loadServiceAliasBundles());

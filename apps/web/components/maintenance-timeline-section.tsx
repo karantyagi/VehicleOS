@@ -31,6 +31,7 @@ type MaintenanceTimelineSectionProps = {
   maintenancePatterns?: Record<string, { timing: "early" | "late"; reason: string; confirmedAt: string }>;
   observedMilesPerYear?: number | null;
   statedMilesPerYear?: number | null;
+  dueSoonDays?: number;
 };
 
 const TAB_ITEMS = [
@@ -62,6 +63,7 @@ export function MaintenanceTimelineSection({
   maintenancePatterns,
   observedMilesPerYear,
   statedMilesPerYear,
+  dueSoonDays,
 }: MaintenanceTimelineSectionProps) {
   const [internalTab, setInternalTab] = useState<ServiceHistoryTab>("schedule");
   const tab = activeTab ?? internalTab;
@@ -142,6 +144,7 @@ export function MaintenanceTimelineSection({
               maintenancePatterns={maintenancePatterns}
               observedMilesPerYear={observedMilesPerYear}
               statedMilesPerYear={statedMilesPerYear}
+              dueSoonDays={dueSoonDays}
             />
           ) : null}
 

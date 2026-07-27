@@ -4,15 +4,12 @@ import type { EventStore } from "../ports/event-store.js";
 import type { OwnerContextMemory } from "../owner-context/types.js";
 import type { KnowledgeScheduleEntry } from "../projections/types.js";
 import type { ServiceAliasRegistry } from "../knowledge/service-alias-registry.js";
-import type { DrivingStyle } from "../schedule/resolve-schedule-projection-context.js";
-import { resolveScheduleProjectionContext } from "../schedule/resolve-schedule-projection-context.js";
-import { projectMaintenanceSchedule } from "../schedule/project-maintenance-schedule.js";
-import { projectMaintenanceDeviations } from "../schedule/project-maintenance-deviations.js";
-import { deviationRuleIdForEntry } from "../schedule/deviation-rule-id.js";
 import {
-  formatDraftDeviationTaskReason,
-  heuristicDraftDeviationReason,
-} from "../owner-context/draft-deviation-reason.js";
+  detectIntervalProposals,
+  formatIntervalProposalTaskReason,
+  formatIntervalProposalTaskTitle,
+} from "../schedule/detect-interval-proposal.js";
+import { intervalRuleIdForEntry } from "../schedule/interval-rule-id.js";
 
 const loadVehicleEvents = async (
   eventStore: EventStore,
@@ -28,58 +25,36 @@ const loadVehicleEvents = async (
   );
 };
 
-export type EnsureDeviationVerificationPromptsInput = {
+export type EnsureIntervalVerificationPromptsInput = {
   eventStore: EventStore;
   vehicleId: string;
   ownerContextMemory?: OwnerContextMemory | null;
-  ownedSince?: string | null;
-  drivingStyle?: DrivingStyle | null;
-  statedMilesPerYear?: number | null;
-  today?: string;
   serviceAliasRegistry?: ServiceAliasRegistry | null;
   knowledgeSchedule?: KnowledgeScheduleEntry[];
 };
 
-export type EnsureDeviationVerificationPromptsResult = {
+export type EnsureIntervalVerificationPromptsResult = {
   createdCount: number;
   nowQueue: ReturnType<typeof foldEvents>["nowQueue"];
 };
 
-export const ensureDeviationVerificationPrompts = async (
-  input: EnsureDeviationVerificationPromptsInput,
-): Promise<EnsureDeviationVerificationPromptsResult> => {
+export const ensureIntervalVerificationPrompts = async (
+  input: EnsureIntervalVerificationPromptsInput,
+): Promise<EnsureIntervalVerificationPromptsResult> => {
   const events = await loadVehicleEvents(input.eventStore, input.vehicleId);
   const state = foldEvents(input.vehicleId, events);
-  const today = input.today ?? new Date().toISOString().slice(0, 10);
 
-  const scheduleContext = resolveScheduleProjectionContext({
-    ownedSince: input.ownedSince ?? null,
-    drivingStyle: input.drivingStyle ?? null,
-    statedMilesPerYear: input.statedMilesPerYear ?? null,
-    timeline: state.timeline,
-  });
-
-  const schedule = projectMaintenanceSchedule({
+  const proposals = detectIntervalProposals({
     knowledgeSchedule: input.knowledgeSchedule ?? state.knowledgeSchedule,
     timeline: state.timeline,
-    currentMileage: state.currentMileage,
-    effectiveMilesPerYear: scheduleContext.effectiveMilesPerYear,
-    ownedSince: scheduleContext.ownedSince,
-    today,
-    horizonMode: "extended",
     ownerContextMemory: input.ownerContextMemory,
     serviceAliasRegistry: input.serviceAliasRegistry,
   });
 
-  const deviations = projectMaintenanceDeviations({
-    scheduleRows: schedule.rows,
-    ownerContextMemory: input.ownerContextMemory,
-  }).filter((deviation) => !deviation.hasConfirmedPattern);
-
   let createdCount = 0;
 
-  for (const deviation of deviations) {
-    const ruleId = deviationRuleIdForEntry(deviation.entryId);
+  for (const proposal of proposals) {
+    const ruleId = intervalRuleIdForEntry(proposal.entryId);
     const hasPendingPrompt = state.nowQueue.some(
       (item) =>
         item.status === "pending" &&
@@ -92,13 +67,6 @@ export const ensureDeviationVerificationPrompts = async (
     const taskId = crypto.randomUUID();
     const correlationId = crypto.randomUUID();
 
-    const draft = heuristicDraftDeviationReason({
-      deviation,
-      ownerContextMemory: input.ownerContextMemory,
-      drivingStyle: input.drivingStyle,
-      timeline: state.timeline,
-    });
-
     await input.eventStore.append({
       aggregateType: "task",
       aggregateId: taskId,
@@ -108,14 +76,14 @@ export const ensureDeviationVerificationPrompts = async (
         vehicleId: input.vehicleId,
         taskId,
         recommendationId: correlationId,
-        title: `${deviation.serviceName} — done ${deviation.oemTiming === "early" ? "early" : "late"}`,
-        reason: formatDraftDeviationTaskReason({ deviation, draft }),
+        title: formatIntervalProposalTaskTitle(proposal),
+        reason: formatIntervalProposalTaskReason(proposal),
         status: "pending",
         taskKind: "verification",
-        verificationCode: "VERIFY_MAINTENANCE_TIMING",
+        verificationCode: "VERIFY_OWNER_INTERVAL",
         ruleId,
-        suggestedReasonId: draft.suggestedReasonId,
-        draftReasonSource: draft.source,
+        suggestedIntervalMiles: proposal.intervalMiles ?? undefined,
+        suggestedIntervalMonths: proposal.intervalMonths ?? undefined,
       },
       correlationId,
     });

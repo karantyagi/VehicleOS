@@ -687,6 +687,7 @@ export function OwnerDashboard() {
             maintenancePatterns={vehicle.ownerContextMemory?.maintenancePatterns}
             observedMilesPerYear={maintenanceSchedule.observedMilesPerYear}
             statedMilesPerYear={maintenanceSchedule.statedMilesPerYear}
+            dueSoonDays={maintenanceSchedule.dueSoonDays}
           />
         </PanelCard>
       ) : null}
