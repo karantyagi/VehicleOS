@@ -5,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import {
   DEFAULT_MILES_PER_YEAR,
   DRIVING_STYLE_OPTIONS,
+  MAX_STATED_MILES_PER_YEAR,
+  MIN_STATED_MILES_PER_YEAR,
+  STATED_MILES_ONBOARDING_HINT,
   type DriverHabitsDraft,
   type DrivingStyle,
 } from "@/lib/driver-habits";
@@ -87,20 +90,19 @@ export function DrivingStyleFields({
       </FormField>
 
       <FormField
-        label="Annual miles"
+        label="Annual miles driven"
         htmlFor="stated-miles-per-year"
-        optional
         hint={
           isOnboarding
-            ? undefined
+            ? STATED_MILES_ONBOARDING_HINT
             : `≈ ${Math.round(effectiveMiles / 12).toLocaleString()} mi/month at current estimate`
         }
       >
         <Input
           id="stated-miles-per-year"
           type="number"
-          min={1000}
-          max={80000}
+          min={MIN_STATED_MILES_PER_YEAR}
+          max={MAX_STATED_MILES_PER_YEAR}
           placeholder={String(DEFAULT_MILES_PER_YEAR)}
           value={milesInput}
           onChange={(event) => {

@@ -59,6 +59,7 @@
   --ink-secondary: var(--vos-ink-secondary);
   --ink-tertiary: var(--vos-ink-tertiary);
   --accent: var(--vos-accent);
+  --accent-strong: var(--vos-accent-strong);
   --accent-soft: var(--vos-accent-soft);
   --accent-glow: var(--vos-accent-glow);
   --blue: var(--vos-builders-accent);
@@ -83,6 +84,7 @@
   --vos-status-shipped: #5eead4;
   --vos-status-shipped-soft: rgba(94, 234, 212, 0.12);
   --accent: var(--vos-accent);
+  --accent-strong: var(--vos-accent-strong);
   --accent-soft: var(--vos-accent-soft);
   --accent-glow: var(--vos-accent-glow);
   --blue: var(--vos-builders-accent);

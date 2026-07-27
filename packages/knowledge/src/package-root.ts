@@ -9,6 +9,7 @@ const hasPacksDir = (root: string): boolean => existsSync(join(root, "packs"));
 const isKnowledgeRoot = (root: string): boolean =>
   hasPacksDir(root) ||
   existsSync(join(root, "catalog/supported-vehicles.v1.json")) ||
+  existsSync(join(root, "schemas/oem-schedule-pack.v1.schema.json")) ||
   existsSync(join(root, "sources/registries/tier-2000"));
 
 export const listKnowledgeRootCandidates = (): string[] => {

@@ -1,14 +1,24 @@
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveKnowledgePackageRoot } from "./package-root.js";
 import type { OemSchedulePack, ServiceAliasBundle } from "./types.js";
 
 const packageRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
+const resolveSchemaPath = (name: string): string => {
+  for (const root of [resolveKnowledgePackageRoot(), packageRoot]) {
+    const path = join(root, "schemas", name);
+    if (existsSync(path)) return path;
+  }
+
+  throw new Error(`Schema file not found: ${name}`);
+};
+
 const loadSchema = (name: string): object =>
-  JSON.parse(readFileSync(join(packageRoot, "schemas", name), "utf8")) as object;
+  JSON.parse(readFileSync(resolveSchemaPath(name), "utf8")) as object;
 
 const createValidator = (): Ajv => {
   const ajv = new Ajv({ allErrors: true, strict: false });
