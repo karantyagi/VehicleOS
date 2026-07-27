@@ -116,7 +116,7 @@ describe("projectMaintenanceSchedule", () => {
     expect(extended.rows[0]?.status).toBe("upcoming");
   });
 
-  it("includes rows within full OEM life horizon from ownedSince", () => {
+  it("includes rows within full OEM life horizon from today when ownedSince is older", () => {
     const near = projectMaintenanceSchedule({
       knowledgeSchedule: [
         entry({
@@ -127,7 +127,7 @@ describe("projectMaintenanceSchedule", () => {
       ],
       timeline: [timelineRow({ serviceDate: "2024-01-01", mileage: 10_000, lineItems: ["Brake fluid"] })],
       currentMileage: 15_000,
-      ownedSince: "2024-01-01",
+      ownedSince: "2021-03-01",
       today: "2026-07-23",
       horizonMode: "near",
     });
@@ -142,7 +142,7 @@ describe("projectMaintenanceSchedule", () => {
       ],
       timeline: [timelineRow({ serviceDate: "2024-01-01", mileage: 10_000, lineItems: ["Brake fluid"] })],
       currentMileage: 15_000,
-      ownedSince: "2024-01-01",
+      ownedSince: "2021-03-01",
       today: "2026-07-23",
       horizonMode: "full",
     });
@@ -150,7 +150,7 @@ describe("projectMaintenanceSchedule", () => {
     expect(near.rows).toHaveLength(0);
     expect(full.rows).toHaveLength(1);
     expect(full.horizonMode).toBe("full");
-    expect(full.horizonEnd).toBe("2029-01-01");
+    expect(full.horizonEnd).toBe("2031-07-23");
     expect(full.horizonMonths).toBe(FULL_OEM_LIFE_CAP_YEARS * 12);
   });
 
@@ -174,10 +174,25 @@ describe("projectMaintenanceSchedule", () => {
     expect(result.rows[0]?.dueDate).toBe("2026-07-12");
   });
 
-  it("uses ownedSince as calendar baseline when no receipt exists", () => {
+  it("marks rows needing baseline when no service history exists", () => {
+    const result = projectMaintenanceSchedule({
+      knowledgeSchedule: [entry({ intervalMiles: undefined, intervalMonths: 36 })],
+      timeline: [],
+      currentMileage: 12_000,
+      ownedSince: "2026-01-01",
+      today: "2026-07-23",
+      horizonMode: "complete",
+    });
+
+    expect(result.rows[0]?.status).toBe("needs_baseline");
+    expect(result.rows[0]?.dueDate).toBeNull();
+    expect(result.rows[0]?.dueDateConfidence).toBe("needs_baseline");
+  });
+
+  it("uses ownedSince as calendar baseline when history exists but row has no match", () => {
     const result = projectMaintenanceSchedule({
       knowledgeSchedule: [entry({ intervalMiles: undefined, intervalMonths: 6 })],
-      timeline: [],
+      timeline: [timelineRow({ lineItems: ["Tire rotation"] })],
       currentMileage: 12_000,
       ownedSince: "2026-01-01",
       today: "2026-07-23",
@@ -190,22 +205,26 @@ describe("projectMaintenanceSchedule", () => {
   });
 
   it("marks due_soon earlier for aggressive lead-time policy", () => {
+    const history = timelineRow({
+      serviceDate: "2026-01-01",
+      mileage: 41_800,
+      lineItems: ["Oil change (synthetic)"],
+    });
+
     const baseline = projectMaintenanceSchedule({
-      knowledgeSchedule: [entry({ intervalMonths: 12, intervalMiles: undefined })],
-      timeline: [],
-      currentMileage: 12_000,
-      ownedSince: "2025-08-27",
-      today: "2026-07-23",
+      knowledgeSchedule: [entry({ intervalMonths: 6, intervalMiles: undefined })],
+      timeline: [history],
+      currentMileage: 42_000,
+      today: "2026-05-27",
       dueSoonDays: 30,
       horizonMonths: 12,
     });
 
     const aggressive = projectMaintenanceSchedule({
-      knowledgeSchedule: [entry({ intervalMonths: 12, intervalMiles: undefined })],
-      timeline: [],
-      currentMileage: 12_000,
-      ownedSince: "2025-08-27",
-      today: "2026-07-23",
+      knowledgeSchedule: [entry({ intervalMonths: 6, intervalMiles: undefined })],
+      timeline: [history],
+      currentMileage: 42_000,
+      today: "2026-05-27",
       dueSoonDays: 45,
       horizonMonths: 12,
     });
@@ -231,10 +250,10 @@ describe("projectMaintenanceSchedule", () => {
     expect(result.rows[0]?.serviceBaseline.baselineSource).toBe("receipt");
   });
 
-  it("flags overdue rows without history match", () => {
+  it("flags overdue rows without history match when other services exist", () => {
     const result = projectMaintenanceSchedule({
       knowledgeSchedule: [entry({ intervalMonths: 6, intervalMiles: undefined })],
-      timeline: [],
+      timeline: [timelineRow({ lineItems: ["Tire rotation"] })],
       currentMileage: 12_000,
       ownedSince: "2025-01-01",
       today: "2026-07-23",
