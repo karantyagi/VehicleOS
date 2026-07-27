@@ -12,7 +12,9 @@ import {
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
 import { searchCatalogVehicles } from "@/lib/catalog-vehicle-search";
 import {
+  catalogVehicleRowKey,
   formatCatalogVehicleLabel,
+  isSameCatalogVehicleRow,
   type CatalogVehicleRow,
 } from "@/lib/catalog-cascade";
 import { cn } from "@/lib/utils";
@@ -21,6 +23,7 @@ type VehicleCatalogComboboxProps = {
   vehicles: CatalogVehicleRow[];
   disabled?: boolean;
   selectedPackId?: string;
+  selectedYear?: number;
   placeholder?: string;
   onSelect: (row: CatalogVehicleRow) => void;
 };
@@ -29,6 +32,7 @@ export function VehicleCatalogCombobox({
   vehicles,
   disabled = false,
   selectedPackId,
+  selectedYear,
   placeholder = "Search year, make, model, trim…",
   onSelect,
 }: VehicleCatalogComboboxProps) {
@@ -39,6 +43,11 @@ export function VehicleCatalogCombobox({
     () => searchCatalogVehicles(vehicles, query, { limit: 20 }),
     [query, vehicles],
   );
+
+  const selectedRow = useMemo(() => {
+    if (!selectedPackId || selectedYear == null || selectedYear <= 0) return null;
+    return { packId: selectedPackId, year: selectedYear };
+  }, [selectedPackId, selectedYear]);
 
   const showResults = open && query.trim().length >= 2;
 
@@ -83,10 +92,12 @@ export function VehicleCatalogCombobox({
               <CommandGroup heading="Supported vehicles">
                 {results.map((row) => (
                   <CommandItem
-                    key={row.packId}
-                    value={row.packId}
+                    key={catalogVehicleRowKey(row)}
+                    value={catalogVehicleRowKey(row)}
                     className={cn(
-                      selectedPackId === row.packId && "bg-primary/10 font-medium text-primary",
+                      selectedRow &&
+                        isSameCatalogVehicleRow(selectedRow, row) &&
+                        "bg-primary/10 font-medium text-primary",
                     )}
                     onSelect={() => {
                       onSelect(row);
