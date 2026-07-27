@@ -5,10 +5,10 @@ import type { OemSchedulePack, ServiceAliasBundle, SupportedVehicleCatalog } fro
 import { validateOemSchedulePack, validateServiceAliasBundle } from "./validate-pack.js";
 import { resolveKnowledgePackageRoot } from "./package-root.js";
 
-const packageRoot = resolveKnowledgePackageRoot();
+const knowledgeRoot = (): string => resolveKnowledgePackageRoot();
 
 export const loadOemSchedulePack = (packId: string): OemSchedulePack => {
-  const path = join(packageRoot, "packs", `${packId}.v1.json`);
+  const path = join(knowledgeRoot(), "packs", `${packId}.v1.json`);
   const raw = JSON.parse(readFileSync(path, "utf8")) as unknown;
   return validateOemSchedulePack(raw);
 };
@@ -30,7 +30,7 @@ export const loadServiceAliasBundles = (): ServiceAliasBundle[] => {
     "ev-generic.v1.json",
   ];
   return files.map((file) => {
-    const raw = JSON.parse(readFileSync(join(packageRoot, "aliases", file), "utf8")) as unknown;
+    const raw = JSON.parse(readFileSync(join(knowledgeRoot(), "aliases", file), "utf8")) as unknown;
     return validateServiceAliasBundle(raw);
   });
 };

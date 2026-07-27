@@ -13,7 +13,7 @@ const nextConfig = {
     outputFileTracingRoot: monorepoRoot,
     // Include globs are resolved from this app dir (apps/web), not the monorepo root.
     outputFileTracingIncludes: {
-      "/api/**": ["../../packages/knowledge/**/*"],
+      "/api/**": ["../../packages/knowledge/**/*", "knowledge-data/**/*"],
     },
     serverComponentsExternalPackages: ["pg"],
   },

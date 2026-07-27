@@ -14,6 +14,7 @@ describe("resolveKnowledgePackageRoot", () => {
     expect(existsSync(join(root, "package.json"))).toBe(true);
     expect(existsSync(join(root, "catalog/supported-vehicles.v1.json"))).toBe(true);
     expect(existsSync(join(root, "sources/registries/tier-2000"))).toBe(true);
+    expect(existsSync(join(root, "packs/acura-tlx-2021-sh-awd.v1.json"))).toBe(true);
   });
 });
 

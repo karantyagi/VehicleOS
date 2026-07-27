@@ -11,7 +11,7 @@ const nextConfig = {
   experimental: {
     outputFileTracingRoot: monorepoRoot,
     outputFileTracingIncludes: {
-      "/api/**": ["../../packages/knowledge/**/*"],
+      "/api/**": ["../../packages/knowledge/**/*", "knowledge-data/**/*"],
     },
     serverComponentsExternalPackages: ["pg"],
   },
