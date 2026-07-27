@@ -98,7 +98,7 @@ describe("hydrateOemKnowledgePack", () => {
     expect(result.entriesRecorded).toBeGreaterThanOrEqual(10);
   });
 
-  it("hydrates promoted Kia K5 pack after Phase C", async () => {
+  it("hydrates promoted Honda Accord pack in interview fleet", async () => {
     const eventStore = new InMemoryEventStore();
     const policyEngine = new StubPolicyEngine();
 
@@ -107,20 +107,21 @@ describe("hydrateOemKnowledgePack", () => {
       policyEngine,
       vehicle: {
         id: crypto.randomUUID(),
-        year: 2024,
-        make: "Kia",
-        model: "K5",
-        trim: "LXS",
+        year: 2025,
+        make: "Honda",
+        model: "Accord",
+        trim: "EX",
         currentMileage: 12_000,
       },
     });
 
     expect(result).toEqual({
       hydrated: true,
-      packId: "kia-k5-2024-lxs",
-      entriesRecorded: 4,
+      packId: "honda-accord-2024-ex",
+      entriesRecorded: expect.any(Number),
       upgradedFromStub: false,
     });
+    expect(result.entriesRecorded).toBeGreaterThanOrEqual(8);
   });
 
   it("returns unsupported for unknown vehicles", async () => {
