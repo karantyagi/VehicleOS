@@ -16,6 +16,7 @@ type DrivingStyleFieldsProps = {
   onDraftChange: (draft: DriverHabitsDraft) => void;
   onMilesInputChange: (value: string) => void;
   compact?: boolean;
+  variant?: "default" | "onboarding";
 };
 
 export function DrivingStyleFields({
@@ -24,7 +25,9 @@ export function DrivingStyleFields({
   onDraftChange,
   onMilesInputChange,
   compact = false,
+  variant = "default",
 }: DrivingStyleFieldsProps) {
+  const isOnboarding = variant === "onboarding";
   const effectiveMiles =
     draft.statedMilesPerYear && draft.statedMilesPerYear > 0
       ? draft.statedMilesPerYear
@@ -32,7 +35,7 @@ export function DrivingStyleFields({
 
   return (
     <div className={cn("space-y-4", compact && "space-y-3")}>
-      {!compact ? (
+      {!compact && !isOnboarding ? (
         <p className="text-xs leading-relaxed text-muted-foreground">
           Schedule date math uses <strong>{DEFAULT_MILES_PER_YEAR.toLocaleString()} mi/year</strong> until you
           override below.
@@ -48,6 +51,7 @@ export function DrivingStyleFields({
               key={option.id}
               className={cn(
                 "flex cursor-pointer gap-3 rounded-lg border px-3 py-3 transition-colors",
+                isOnboarding && "py-2.5",
                 selected ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40",
               )}
             >
@@ -60,7 +64,9 @@ export function DrivingStyleFields({
               />
               <span className="space-y-0.5">
                 <span className="block text-sm font-medium">{option.label}</span>
-                <span className="block text-xs text-muted-foreground">{option.description}</span>
+                {!isOnboarding ? (
+                  <span className="block text-xs text-muted-foreground">{option.description}</span>
+                ) : null}
               </span>
             </label>
           );
@@ -70,7 +76,7 @@ export function DrivingStyleFields({
       <FormField
         label="Home city"
         htmlFor="home-city"
-        hint="Required — where the car is usually parked; shapes seasonal reminders and shop lookups"
+        hint={isOnboarding ? undefined : "Required — where the car is usually parked; shapes seasonal reminders and shop lookups"}
       >
         <Input
           id="home-city"
@@ -81,9 +87,14 @@ export function DrivingStyleFields({
       </FormField>
 
       <FormField
-        label="Annual miles (optional)"
+        label="Annual miles"
         htmlFor="stated-miles-per-year"
-        hint={`≈ ${Math.round(effectiveMiles / 12).toLocaleString()} mi/month at current estimate`}
+        optional
+        hint={
+          isOnboarding
+            ? undefined
+            : `≈ ${Math.round(effectiveMiles / 12).toLocaleString()} mi/month at current estimate`
+        }
       >
         <Input
           id="stated-miles-per-year"

@@ -40,6 +40,7 @@ type RecordImportPanelProps = {
   existingTimeline?: TimelineEntry[];
   existingOwnershipRecords?: OwnershipRecordEntry[];
   disabled?: boolean;
+  variant?: "default" | "onboarding";
   onActivityChange?: (active: boolean) => void;
   onError: (message: string) => void;
   onCarfaxImported: (body: {
@@ -160,6 +161,11 @@ const FLOW_STEPS = [
   "Review new rows only — matches already on file are skipped.",
 ] as const;
 
+const ONBOARDING_CATEGORY_BLURBS: Record<RecordImportCategoryId, string> = {
+  carfax: "Service visits → your timeline.",
+  rmv: "Registration & title events.",
+};
+
 export function RecordImportPanel({
   vehicleId,
   apiBase,
@@ -167,11 +173,13 @@ export function RecordImportPanel({
   existingTimeline = [],
   existingOwnershipRecords = [],
   disabled = false,
+  variant = "default",
   onActivityChange,
   onError,
   onCarfaxImported,
   onRmvImported,
 }: RecordImportPanelProps) {
+  const isOnboarding = variant === "onboarding";
   const [activeCategory, setActiveCategory] = useState<RecordImportCategoryId>("carfax");
   const [jsonDraft, setJsonDraft] = useState("");
   const [carfaxPreview, setCarfaxPreview] = useState<VehicleOsImportV1 | null>(null);
@@ -615,51 +623,65 @@ export function RecordImportPanel({
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="text-sm font-semibold">{entry.label}</p>
-                <Badge variant="outline" className="shrink-0 text-[10px] uppercase tracking-wide">
-                  PDF + JSON
-                </Badge>
+                {!isOnboarding ? (
+                  <Badge variant="outline" className="shrink-0 text-[10px] uppercase tracking-wide">
+                    PDF + JSON
+                  </Badge>
+                ) : null}
               </div>
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{entry.description}</p>
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                {isOnboarding ? ONBOARDING_CATEGORY_BLURBS[entry.id] : entry.description}
+              </p>
             </button>
           );
         })}
       </div>
 
-      <div className="rounded-lg border border-border/80 bg-[hsl(var(--surface-inset))] p-4">
-        <p className="text-[13px] font-medium text-foreground">How to get your PDF</p>
-        <ol className="mt-3 list-decimal space-y-2 pl-5 text-xs leading-relaxed text-muted-foreground">
-          {category.pdfInstructions.map((step) => (
-            <li key={step}>{step}</li>
-          ))}
-        </ol>
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="text-sm font-medium">Import funnel</p>
-          <Badge variant="secondary">Extract → review → confirm</Badge>
+      {!isOnboarding ? (
+        <div className="rounded-lg border border-border/80 bg-[hsl(var(--surface-inset))] p-4">
+          <p className="text-[13px] font-medium text-foreground">How to get your PDF</p>
+          <ol className="mt-3 list-decimal space-y-2 pl-5 text-xs leading-relaxed text-muted-foreground">
+            {category.pdfInstructions.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
         </div>
-        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {FLOW_STEPS.map((step, index) => (
-            <li
-              key={step}
-              className="rounded-md border border-border/70 bg-card p-3 text-xs leading-relaxed text-muted-foreground"
-            >
-              <span className="mb-1 block font-semibold tabular-nums text-foreground">Step {index + 1}</span>
-              {step}
-            </li>
-          ))}
-        </ol>
-      </div>
+      ) : (
+        <p className="text-xs text-muted-foreground">
+          Portal → Print → Save as PDF → upload below. Skip if you&apos;ll add records later.
+        </p>
+      )}
 
-      <ExtractionStatusBanner variant="llm-not-ready-pdf" />
+      {!isOnboarding ? (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-sm font-medium">Import funnel</p>
+            <Badge variant="secondary">Extract → review → confirm</Badge>
+          </div>
+          <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {FLOW_STEPS.map((step, index) => (
+              <li
+                key={step}
+                className="rounded-md border border-border/70 bg-card p-3 text-xs leading-relaxed text-muted-foreground"
+              >
+                <span className="mb-1 block font-semibold tabular-nums text-foreground">Step {index + 1}</span>
+                {step}
+              </li>
+            ))}
+          </ol>
+        </div>
+      ) : null}
+
+      {!isOnboarding ? <ExtractionStatusBanner variant="llm-not-ready-pdf" /> : null}
 
       <div className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Label htmlFor="record-import-pdf" className="text-sm font-medium">
             Upload PDF
           </Label>
-          <Badge className="text-[10px] uppercase tracking-wide">LLM upcoming</Badge>
+          {!isOnboarding ? (
+            <Badge className="text-[10px] uppercase tracking-wide">LLM upcoming</Badge>
+          ) : null}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button type="button" variant="outline" size="sm" disabled={disabled || isExtracting} asChild>
@@ -690,69 +712,71 @@ export function RecordImportPanel({
         </div>
       </div>
 
-      <div className="space-y-3 border-t border-border/70 pt-6">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <Label htmlFor="record-import-json" className="text-sm font-medium">
-            Import JSON (dogfood / testing)
-          </Label>
-          <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
-            Recommended for dogfood
-          </Badge>
+      {!isOnboarding ? (
+        <div className="space-y-3 border-t border-border/70 pt-6">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <Label htmlFor="record-import-json" className="text-sm font-medium">
+              Import JSON (dogfood / testing)
+            </Label>
+            <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
+              Recommended for dogfood
+            </Badge>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              disabled={disabled || isLoadingDogfood}
+              onClick={() => void loadDogfoodFixture()}
+            >
+              {isLoadingDogfood
+                ? "Loading…"
+                : activeCategory === "carfax"
+                  ? "Load dogfood CARFAX JSON"
+                  : "Load dogfood RMV JSON"}
+            </Button>
+            <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
+              <label className="cursor-pointer">
+                <FileUp className="mr-2 h-4 w-4" aria-hidden />
+                Choose JSON file
+                <input
+                  type="file"
+                  accept="application/json,.json"
+                  className="sr-only"
+                  disabled={disabled}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) void handleJsonFile(file);
+                    event.target.value = "";
+                  }}
+                />
+              </label>
+            </Button>
+          </div>
+          <Textarea
+            id="record-import-json"
+            value={jsonDraft}
+            onChange={(event) => loadJsonText(event.target.value)}
+            placeholder={
+              activeCategory === "carfax"
+                ? '{"version":"1","source":"carfax-pdf-manual",...}'
+                : '{"version":"1","source":"rmv-pdf-manual",...}'
+            }
+            rows={5}
+            disabled={disabled}
+            className="font-mono text-xs"
+          />
+          {parseError ? <p className="text-sm text-destructive">{parseError}</p> : null}
+          {extractWarnings.length > 0 ? (
+            <ul className="space-y-1 text-xs text-amber-700 dark:text-amber-400">
+              {extractWarnings.map((warning) => (
+                <li key={warning}>{warning}</li>
+              ))}
+            </ul>
+          ) : null}
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            disabled={disabled || isLoadingDogfood}
-            onClick={() => void loadDogfoodFixture()}
-          >
-            {isLoadingDogfood
-              ? "Loading…"
-              : activeCategory === "carfax"
-                ? "Load dogfood CARFAX JSON"
-                : "Load dogfood RMV JSON"}
-          </Button>
-          <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
-            <label className="cursor-pointer">
-              <FileUp className="mr-2 h-4 w-4" aria-hidden />
-              Choose JSON file
-              <input
-                type="file"
-                accept="application/json,.json"
-                className="sr-only"
-                disabled={disabled}
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file) void handleJsonFile(file);
-                  event.target.value = "";
-                }}
-              />
-            </label>
-          </Button>
-        </div>
-        <Textarea
-          id="record-import-json"
-          value={jsonDraft}
-          onChange={(event) => loadJsonText(event.target.value)}
-          placeholder={
-            activeCategory === "carfax"
-              ? '{"version":"1","source":"carfax-pdf-manual",...}'
-              : '{"version":"1","source":"rmv-pdf-manual",...}'
-          }
-          rows={5}
-          disabled={disabled}
-          className="font-mono text-xs"
-        />
-        {parseError ? <p className="text-sm text-destructive">{parseError}</p> : null}
-        {extractWarnings.length > 0 ? (
-          <ul className="space-y-1 text-xs text-amber-700 dark:text-amber-400">
-            {extractWarnings.map((warning) => (
-              <li key={warning}>{warning}</li>
-            ))}
-          </ul>
-        ) : null}
-      </div>
+      ) : null}
 
       {activeCategory === "carfax" && carfaxPreview && carfaxReviewRows.length > 0 ? (
         <CarfaxImportReview

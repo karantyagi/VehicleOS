@@ -286,8 +286,8 @@ export function OwnerDashboard() {
     setForm((current) => ({ ...current, mileage: created.currentMileage }));
     feedback(
       isAdditional
-        ? "Vehicle added. Reminders and history are scoped to this vehicle only."
-        : "Setup complete. Import history from the sidebar; snap receipts on your phone (Add to Home Screen).",
+        ? "Vehicle added."
+        : "You're set — reminders start from here.",
     );
     await loadVehicleState(created);
   };
