@@ -103,6 +103,8 @@ export const applyEvent = (
         verificationCode: event.payload.verificationCode,
         ruleId: event.payload.ruleId,
         dueBy: event.payload.dueBy ?? null,
+        suggestedReasonId: event.payload.suggestedReasonId,
+        draftReasonSource: event.payload.draftReasonSource,
         snoozeCount: 0,
       };
 

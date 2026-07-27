@@ -629,6 +629,10 @@ export function OwnerDashboard() {
               onOdometerSaved={() => {
                 if (vehicle) void loadVehicleState(vehicle);
               }}
+              onVerificationResolved={() => {
+                if (vehicle) void loadVehicleState(vehicle);
+                feedback("Pattern saved — your assistant will use this in future reminders.");
+              }}
               onError={(message) => feedback(message)}
             />
           </div>
@@ -660,6 +664,9 @@ export function OwnerDashboard() {
             onAddService={addMaintenanceRecord}
             requireEditConfirmation={!isDeveloper}
             onGoToImport={() => setActiveSection("imports")}
+            maintenancePatterns={vehicle.ownerContextMemory?.maintenancePatterns}
+            observedMilesPerYear={maintenanceSchedule.observedMilesPerYear}
+            statedMilesPerYear={maintenanceSchedule.statedMilesPerYear}
           />
         </PanelCard>
       ) : null}

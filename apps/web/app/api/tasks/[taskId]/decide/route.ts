@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { decideOnTask } from "@vehicleos/server";
+import type { MaintenanceDeviationReasonId } from "@vehicleos/domain";
 import { toAuthContext } from "../../../../../lib/auth/api-context";
 import { getSessionUser } from "../../../../../lib/auth/session";
 import { getServices } from "../../../../../lib/api-services";
@@ -14,6 +15,7 @@ export async function POST(request: Request, context: RouteContext) {
     vehicleId: string;
     decision: "approve" | "dismiss" | "snooze";
     snoozeDays?: number;
+    maintenancePatternReason?: MaintenanceDeviationReasonId;
   };
   const result = await decideOnTask(
     getServices(),

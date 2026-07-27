@@ -12,8 +12,11 @@ import { cn } from "@/lib/utils";
 type OwnerMaintenanceScheduleTimelineProps = {
   rows: ScheduleProjectionRow[];
   effectiveMilesPerYear: number;
+  observedMilesPerYear?: number | null;
+  statedMilesPerYear?: number | null;
   hasKnowledgeSchedule?: boolean;
   today?: string;
+  maintenancePatterns?: Record<string, { timing: "early" | "late"; reason: string; confirmedAt: string }>;
 };
 
 const statusLabel: Record<ScheduleProjectionRow["status"], string> = {
@@ -81,8 +84,11 @@ const groupRowsByMonth = (rows: ScheduleProjectionRow[]): [string, ScheduleProje
 export function OwnerMaintenanceScheduleTimeline({
   rows,
   effectiveMilesPerYear,
+  observedMilesPerYear = null,
+  statedMilesPerYear = null,
   hasKnowledgeSchedule = false,
   today,
+  maintenancePatterns = {},
 }: OwnerMaintenanceScheduleTimelineProps) {
   const todayIso = today ?? new Date().toISOString().slice(0, 10);
   const monthGroups = useMemo(() => groupRowsByMonth(rows), [rows]);
@@ -144,6 +150,12 @@ export function OwnerMaintenanceScheduleTimeline({
             <div>
               <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">Mi/year</dt>
               <dd className="mt-0.5 font-semibold text-foreground">{effectiveMilesPerYear.toLocaleString()}</dd>
+              {observedMilesPerYear ? (
+                <dd className="text-[10px] text-muted-foreground">
+                  Observed {observedMilesPerYear.toLocaleString()}
+                  {statedMilesPerYear ? ` · stated ${statedMilesPerYear.toLocaleString()}` : ""}
+                </dd>
+              ) : null}
             </div>
           </dl>
         </div>
@@ -231,8 +243,18 @@ export function OwnerMaintenanceScheduleTimeline({
                               No history match
                             </Badge>
                           ) : null}
+                          {row.usesOwnerOverlay && row.overlayLabel ? (
+                            <Badge variant="outline" className="text-[10px]">
+                              Your interval: {row.overlayLabel}
+                            </Badge>
+                          ) : null}
                         </div>
                       </div>
+                      {maintenancePatterns[row.entryId]?.reason ? (
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          Your pattern: {maintenancePatterns[row.entryId]?.reason}
+                        </p>
+                      ) : null}
                     </li>
                   ))}
                 </ul>

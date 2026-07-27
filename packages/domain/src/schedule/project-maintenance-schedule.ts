@@ -1,4 +1,6 @@
 import { findLastMatchingService, findMatchingServices } from "../knowledge/match-service-name.js";
+import { resolveIntervalForEntry } from "../owner-context/merge-interval-overlay-memory.js";
+import type { OwnerContextMemory } from "../owner-context/types.js";
 import { computeOemServiceTiming, type OemServiceTiming } from "./compute-oem-service-timing.js";
 import type { KnowledgeScheduleEntry, ServiceTimelineEntry } from "../projections/types.js";
 
@@ -24,6 +26,9 @@ export type ScheduleProjectionRow = {
   oemTiming: OemServiceTiming | null;
   /** True when overdue with no history match — owner may have skipped or deferred. */
   overdueWithoutHistory: boolean;
+  /** True when owner-verified interval overlay replaced OEM interval for projection. */
+  usesOwnerOverlay?: boolean;
+  overlayLabel?: string | null;
 };
 
 export type ScheduleHorizonMode = "near" | "extended" | "full";
@@ -40,6 +45,7 @@ export type ProjectMaintenanceScheduleInput = {
   /** Preferred horizon selector — near (3 mo), extended (12 mo), or full OEM life cap. */
   horizonMode?: ScheduleHorizonMode;
   dueSoonDays?: number;
+  ownerContextMemory?: OwnerContextMemory | null;
 };
 
 export type ProjectMaintenanceScheduleResult = {
@@ -165,6 +171,7 @@ const buildRow = (input: {
   ownedSince: string | null;
   today: string;
   dueSoonDays: number;
+  ownerContextMemory?: OwnerContextMemory | null;
 }): ScheduleProjectionRow => {
   const lastMatch = findLastMatchingService(input.timeline, input.entry.serviceName);
   const allMatches = findMatchingServices(input.timeline, input.entry.serviceName);
@@ -177,8 +184,14 @@ const buildRow = (input: {
 
   const baselineDate = performedDate ?? input.ownedSince ?? null;
   const baselineMileage = performedMileage ?? 0;
-  const intervalMonths = input.entry.intervalMonths ?? null;
-  const intervalMiles = input.entry.intervalMiles ?? null;
+  const resolvedInterval = resolveIntervalForEntry({
+    entryId: input.entry.entryId,
+    oemIntervalMonths: input.entry.intervalMonths ?? null,
+    oemIntervalMiles: input.entry.intervalMiles ?? null,
+    ownerContextMemory: input.ownerContextMemory,
+  });
+  const intervalMonths = resolvedInterval.intervalMonths;
+  const intervalMiles = resolvedInterval.intervalMiles;
   const dueMileage = intervalMiles !== null ? baselineMileage + intervalMiles : null;
 
   let dueDate: string | null = null;
@@ -231,8 +244,8 @@ const buildRow = (input: {
       baselineSource,
     },
     oemInterval: {
-      months: intervalMonths,
-      miles: intervalMiles,
+      months: input.entry.intervalMonths ?? null,
+      miles: input.entry.intervalMiles ?? null,
     },
     oemSource: {
       manualTitle: input.entry.manualTitle,
@@ -243,6 +256,8 @@ const buildRow = (input: {
     isStubSchedule: true,
     oemTiming,
     overdueWithoutHistory,
+    usesOwnerOverlay: resolvedInterval.usesOwnerOverlay,
+    overlayLabel: resolvedInterval.overlayLabel ?? null,
   };
 };
 
@@ -298,6 +313,7 @@ export const projectMaintenanceSchedule = (
         ownedSince,
         today,
         dueSoonDays,
+        ownerContextMemory: input.ownerContextMemory,
       }),
     )
     .filter((row) => isWithinHorizon({ row, today, horizonEnd }));

@@ -22,6 +22,10 @@ export type GarageVehicleSummary = {
   statedMilesPerYear?: number | null;
   ownerContextMemory?: {
     shopLocations?: Record<string, string>;
+    maintenancePatterns?: Record<
+      string,
+      { timing: "early" | "late"; reason: string; confirmedAt: string }
+    >;
   };
 };
 

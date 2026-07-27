@@ -3,6 +3,7 @@ import {
   buildOwnerReminderViews,
   computeVerificationMaturity,
   enrichTimelineForDisplay,
+  projectMaintenanceDeviations,
   projectMaintenanceSchedule,
   projectOwnershipRenewals,
   resolveScheduleProjectionContext,
@@ -12,7 +13,7 @@ import type { VehicleRecord } from "../repositories/vehicle-repository.js";
 
 export type VehicleProfileInput = Pick<
   VehicleRecord,
-  "ownedSince" | "drivingStyle" | "statedMilesPerYear" | "createdAt"
+  "ownedSince" | "drivingStyle" | "statedMilesPerYear" | "createdAt" | "ownerContextMemory"
 >;
 
 export const buildVehicleStateView = (
@@ -27,33 +28,28 @@ export const buildVehicleStateView = (
     timeline: state.timeline,
   });
 
-  const scheduleNear = projectMaintenanceSchedule({
+  const scheduleProjectionBase = {
     knowledgeSchedule: state.knowledgeSchedule,
     timeline: state.timeline,
     currentMileage: state.currentMileage,
     effectiveMilesPerYear: scheduleContext.effectiveMilesPerYear,
     ownedSince: scheduleContext.ownedSince,
     dueSoonDays: scheduleContext.dueSoonDays,
+    ownerContextMemory: profile?.ownerContextMemory,
+  };
+
+  const scheduleNear = projectMaintenanceSchedule({
+    ...scheduleProjectionBase,
     horizonMode: "near",
   });
 
   const scheduleExtended = projectMaintenanceSchedule({
-    knowledgeSchedule: state.knowledgeSchedule,
-    timeline: state.timeline,
-    currentMileage: state.currentMileage,
-    effectiveMilesPerYear: scheduleContext.effectiveMilesPerYear,
-    ownedSince: scheduleContext.ownedSince,
-    dueSoonDays: scheduleContext.dueSoonDays,
+    ...scheduleProjectionBase,
     horizonMode: "extended",
   });
 
   const scheduleFull = projectMaintenanceSchedule({
-    knowledgeSchedule: state.knowledgeSchedule,
-    timeline: state.timeline,
-    currentMileage: state.currentMileage,
-    effectiveMilesPerYear: scheduleContext.effectiveMilesPerYear,
-    ownedSince: scheduleContext.ownedSince,
-    dueSoonDays: scheduleContext.dueSoonDays,
+    ...scheduleProjectionBase,
     horizonMode: "full",
   });
 
@@ -98,6 +94,10 @@ export const buildVehicleStateView = (
     ownershipRenewals: projectOwnershipRenewals({
       ownershipRecords: state.ownershipRecords,
       today,
+    }),
+    maintenanceDeviations: projectMaintenanceDeviations({
+      scheduleRows: scheduleExtended.rows,
+      ownerContextMemory: profile?.ownerContextMemory,
     }),
     ownershipRecords: state.ownershipRecords,
   };

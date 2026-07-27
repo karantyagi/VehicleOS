@@ -28,6 +28,9 @@ type MaintenanceTimelineSectionProps = {
   onGoToImport?: () => void;
   historyOnly?: boolean;
   ownerSimple?: boolean;
+  maintenancePatterns?: Record<string, { timing: "early" | "late"; reason: string; confirmedAt: string }>;
+  observedMilesPerYear?: number | null;
+  statedMilesPerYear?: number | null;
 };
 
 const TAB_ITEMS = [
@@ -56,6 +59,9 @@ export function MaintenanceTimelineSection({
   onGoToImport,
   historyOnly = false,
   ownerSimple = false,
+  maintenancePatterns,
+  observedMilesPerYear,
+  statedMilesPerYear,
 }: MaintenanceTimelineSectionProps) {
   const [internalTab, setInternalTab] = useState<ServiceHistoryTab>("schedule");
   const tab = activeTab ?? internalTab;
@@ -133,6 +139,9 @@ export function MaintenanceTimelineSection({
               effectiveMilesPerYear={effectiveMilesPerYear}
               hasKnowledgeSchedule={hasKnowledgeSchedule}
               ownerSimple={ownerSimple}
+              maintenancePatterns={maintenancePatterns}
+              observedMilesPerYear={observedMilesPerYear}
+              statedMilesPerYear={statedMilesPerYear}
             />
           ) : null}
 

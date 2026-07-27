@@ -170,6 +170,21 @@ export {
   type OemServiceTiming,
 } from "./schedule/compute-oem-service-timing.js";
 export {
+  projectMaintenanceDeviations,
+  type MaintenanceDeviationRecord,
+} from "./schedule/project-maintenance-deviations.js";
+export {
+  DEVIATION_RULE_PREFIX,
+  DEVIATION_RULE_SUFFIX,
+  deviationRuleIdForEntry,
+  parseDeviationRuleEntryId,
+} from "./schedule/deviation-rule-id.js";
+export {
+  ensureDeviationVerificationPrompts,
+  type EnsureDeviationVerificationPromptsInput,
+  type EnsureDeviationVerificationPromptsResult,
+} from "./now/ensure-deviation-verification-prompts.js";
+export {
   evaluateOwnershipRenewalDue,
   isRenewalRuleId,
   parseExpirationDate,
@@ -261,11 +276,39 @@ export {
   type DrivingStyle,
   type ScheduleProjectionContext,
 } from "./schedule/resolve-schedule-projection-context.js";
-export type { OwnerContextMemory } from "./owner-context/types.js";
+export type { OwnerContextMemory, MaintenancePatternMemory, IntervalOverlayMemory } from "./owner-context/types.js";
 export {
   hasOwnerContextMemory,
   normalizeOwnerContextMemory,
 } from "./owner-context/normalize-owner-context.js";
+export {
+  MAINTENANCE_DEVIATION_REASONS,
+  maintenanceDeviationReasonLabel,
+  type MaintenanceDeviationReasonId,
+} from "./owner-context/deviation-reason-options.js";
+export { mergeMaintenancePatternMemory } from "./owner-context/merge-maintenance-pattern-memory.js";
+export {
+  heuristicDraftDeviationReason,
+  formatDraftDeviationTaskReason,
+  type DraftDeviationReasonInput,
+  type DraftDeviationReasonResult,
+} from "./owner-context/draft-deviation-reason.js";
+export {
+  mergeIntervalOverlayMemory,
+  resolveIntervalForEntry,
+} from "./owner-context/merge-interval-overlay-memory.js";
+export {
+  classifyCaptureIntent,
+  type CaptureIntent,
+  type ClassifyCaptureIntentInput,
+  type ClassifyCaptureIntentResult,
+} from "./capture/classify-capture-intent.js";
+export {
+  heuristicReceiptExtract,
+  type ReceiptExtractInput,
+  type ReceiptExtractResult,
+  type ReceiptExtractorPort,
+} from "./ports/receipt-extractor.js";
 export {
   enrichRecommendationReason,
   type EnrichRecommendationInput,

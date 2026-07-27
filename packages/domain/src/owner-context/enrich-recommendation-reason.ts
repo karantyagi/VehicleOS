@@ -40,6 +40,15 @@ export const enrichRecommendationReason = (
     snippets.push(`Owner priority: ${context.ownerStatedPriorities[0]}`);
   }
 
+  const entryIdFromRule = input.recommendation.ruleId?.match(/^knowledge\.policy\.(.+)\.v1$/)?.[1];
+  const maintenancePattern = entryIdFromRule
+    ? context.maintenancePatterns?.[entryIdFromRule]
+    : undefined;
+
+  if (maintenancePattern) {
+    snippets.push(`Your pattern: ${maintenancePattern.reason}`);
+  }
+
   if (snippets.length === 0 && !hasOwnerContextMemory(context) && !input.drivingStyle) {
     return input.recommendation;
   }

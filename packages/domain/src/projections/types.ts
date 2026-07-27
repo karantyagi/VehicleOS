@@ -26,10 +26,17 @@ export type NowQueueItem = {
   status: TaskStatus;
   ruleId?: string;
   taskKind?: "recommendation" | "verification";
-  verificationCode?: "VERIFY_ODOMETER" | "VERIFY_DATE" | "VERIFY_VEHICLE_PROFILE" | "VERIFY_IMPORT_ROW";
+  verificationCode?:
+    | "VERIFY_ODOMETER"
+    | "VERIFY_DATE"
+    | "VERIFY_VEHICLE_PROFILE"
+    | "VERIFY_IMPORT_ROW"
+    | "VERIFY_MAINTENANCE_TIMING";
   dueBy?: string | null;
   snoozeUntil?: string | null;
   snoozeCount?: number;
+  suggestedReasonId?: "winter_salt" | "noise_symptom" | "dealer_recommended" | "aggressive_driving" | "deferred_intentionally" | "other";
+  draftReasonSource?: "heuristic" | "llm";
 };
 
 export type EvidenceVaultEntry = {

@@ -38,6 +38,10 @@ export type OnboardingVehicle = {
   statedMilesPerYear?: number | null;
   ownerContextMemory?: {
     shopLocations?: Record<string, string>;
+    maintenancePatterns?: Record<
+      string,
+      { timing: "early" | "late"; reason: string; confirmedAt: string }
+    >;
   };
 };
 
@@ -249,6 +253,7 @@ export function OnboardingWizard({ onComplete, mode = "first", onCancel }: Onboa
 
       const body = (await response.json()) as {
         vehicle?: OnboardingVehicle;
+        oemPack?: { hydrated?: boolean; entriesRecorded?: number; packId?: string };
         error?: string;
         code?: string;
       };
@@ -271,6 +276,9 @@ export function OnboardingWizard({ onComplete, mode = "first", onCancel }: Onboa
       }
 
       setCreatedVehicle(body.vehicle);
+      if (body.oemPack?.hydrated) {
+        notify(`Verified OEM schedule loaded (${body.oemPack.entriesRecorded ?? 0} items).`);
+      }
       return body.vehicle;
     } catch {
       setError("Connection error — try again.");
