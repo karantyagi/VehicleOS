@@ -1,18 +1,21 @@
 {
   "packId": "subaru-forester-2024-premium",
-  "version": 1,
+  "version": 2,
   "cases": [
     {
-      "description": "CARFAX line maps to tire-rotation",
+      "carfaxLine": "Oil and filter changed",
+      "expectedCanonicalServiceId": "subaru.fixed.6000.engine_oil",
+      "expectedEntryId": "engine-oil"
+    },
+    {
       "carfaxLine": "Tires rotated",
       "expectedCanonicalServiceId": "generic.tire_rotation",
       "expectedEntryId": "tire-rotation"
     },
     {
-      "description": "CARFAX line maps to engine-oil",
-      "carfaxLine": "Oil and filter changed",
-      "expectedCanonicalServiceId": "subaru.fixed.6000.engine_oil",
-      "expectedEntryId": "engine-oil"
+      "carfaxLine": "Cabin air filter replaced/cleaned",
+      "expectedCanonicalServiceId": "generic.cabin_air_filter",
+      "expectedEntryId": "cabin-air-filter"
     }
   ]
 }

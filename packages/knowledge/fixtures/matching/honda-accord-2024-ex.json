@@ -1,28 +1,24 @@
 {
   "packId": "honda-accord-2024-ex",
-  "version": 1,
+  "version": 2,
   "cases": [
     {
-      "description": "CARFAX line maps to code-b",
       "carfaxLine": "Oil and filter changed",
       "expectedCanonicalServiceId": "honda.mm.b.oil_filter",
       "expectedEntryId": "code-b"
     },
     {
-      "description": "CARFAX line maps to mm-sub-1",
       "carfaxLine": "Tires rotated",
       "expectedCanonicalServiceId": "generic.tire_rotation",
       "expectedEntryId": "mm-sub-1"
     },
     {
-      "description": "CARFAX line maps to code-a",
-      "carfaxLine": "Engine oil changed",
-      "expectedCanonicalServiceId": "honda.mm.a.engine_oil",
-      "expectedEntryId": "code-a"
+      "carfaxLine": "Cabin air filter replaced/cleaned",
+      "expectedCanonicalServiceId": "generic.cabin_air_filter",
+      "expectedEntryId": "mm-sub-2-cabin"
     },
     {
-      "description": "CARFAX line maps to mm-sub-7",
-      "carfaxLine": "Brake fluid",
+      "carfaxLine": "Brake fluid flushed/changed",
       "expectedCanonicalServiceId": "generic.brake_fluid",
       "expectedEntryId": "mm-sub-7"
     }

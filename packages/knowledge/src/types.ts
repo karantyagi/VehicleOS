@@ -63,4 +63,6 @@ export type SupportedVehicleRow = {
   powertrain?: string;
   qaStatus: OemSchedulePack["qaStatus"];
   supportTier: "tier1" | "tier2" | "tier3";
+  /** verified = full OEM pack (8+ rows); preview = scaffold / not for owner demo */
+  scheduleDepth?: "verified" | "preview";
 };

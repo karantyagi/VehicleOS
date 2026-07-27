@@ -8,6 +8,7 @@ export {
 } from "./schedule-source-line.js";
 export type { ScheduleSourceRegistryRow, ScheduleSourceVehicle } from "./schedule-source-line.js";
 export { loadTier2000SourceByPackId } from "./factory/load-tier2000-registry.js";
+export { resolveScheduleDepthForPack, type ScheduleDepth } from "./resolve-schedule-depth.js";
 export { resolveScheduleSourceLineForPack } from "./resolve-schedule-source-line.js";
 export { runPackQaRules, validateOemSchedulePack, validateServiceAliasBundle } from "./validate-pack.js";
 export { hydrateOemKnowledgePack } from "./hydrate-oem-pack.js";
