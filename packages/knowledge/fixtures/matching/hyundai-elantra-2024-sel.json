@@ -4,7 +4,7 @@
   "cases": [
     {
       "carfaxLine": "Oil and filter changed",
-      "expectedCanonicalServiceId": "hyundai.fixed.7500.engine_oil",
+      "expectedCanonicalServiceId": "hyundai.fixed.8000.engine_oil",
       "expectedEntryId": "engine-oil"
     },
     {

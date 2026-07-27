@@ -99,33 +99,33 @@ const subaruForesterExtract = {
 
 const hyundaiElantraExtract = {
   version: "1",
-  source: "hyundai-elantra-2020-owners-manual-ch7",
+  source: "hyundai-elantra-2023-owners-manual-ch9",
   exportedAt,
-  manualTitle: "2024 Hyundai Elantra SE/SEL — Normal maintenance schedule (U.S., 2.0 MPI proxy)",
-  storageKey: "dogfood/oem-extracts/hyundai-elantra-2024/oem-schedule.v1.json",
+  manualTitle: "2025 Hyundai Elantra SE/SEL — Normal maintenance schedule (U.S., Smartstream G2.0)",
+  storageKey: "dogfood/oem-extracts/hyundai-elantra-2025/oem-schedule.v1.json",
   documentRef: {
-    fileName: "hyundai-elantra-2020-om.pdf",
-    pages: "P. 7-8, 7-9, 7-10 (Normal Maintenance Schedule 2.0 MPI); 2024 Elantra OM unavailable — 2020 schedule used as verified proxy for 2.0L IVT trims",
-    vehicleContext: { engine: "2.0L MPI / Smartstream 2.0", drivetrain: "FWD IVT", market: "US" },
+    fileName: "hyundai-elantra-2023-om.pdf",
+    pages: "P. 9-9–9-11 (Normal Maintenance Schedule, Smartstream G2.0 Atkinson)",
+    vehicleContext: { engine: "Smartstream G2.0 Atkinson", drivetrain: "FWD IVT", market: "US" },
     coverage: {
-      included: "Normal schedule replace/inspect rows for 2.0 MPI; severe table P. 7-11.",
-      excluded: "1.6 T-GDI schedule (P. 7-13); N-Line / hybrid variants.",
+      included: "Normal schedule replace/inspect rows for G2.0 Atkinson (SE/SEL); severe table P. 9-12.",
+      excluded: "G1.6 T-GDi schedule; N-Line / hybrid / DCT variants.",
     },
-    note: "Fixed-interval schedule. IVT fluid: no check/service under normal usage (P. 7-9).",
+    note: "Fixed-interval schedule. IVT fluid: no check/service under normal usage (P. 9-10).",
   },
   entries: [
-    { serviceName: "Engine oil and engine oil filter replacement", itemType: "replace", intervalMiles: 7500, intervalMonths: 12, sourcePage: "P. 7-8 — Engine oil and filter (severe: 3,750 mi / 6 mo)" },
-    { serviceName: "Fuel additives (if non-TOP TIER gasoline)", itemType: "replace", intervalMiles: 7500, intervalMonths: 12, sourcePage: "P. 7-8 — Fuel additives *1" },
-    { serviceName: "Rotate tires", itemType: "replace", intervalMiles: 7500, sourcePage: "P. 7-8 — Rotate tires every 7,500 miles" },
-    { serviceName: "Replace climate control air filter", itemType: "replace", intervalMonths: 12, sourcePage: "P. 7-8 — Climate control air filter every 12 months" },
-    { serviceName: "Replace air cleaner filter", itemType: "replace", intervalMiles: 30000, intervalMonths: 36, sourcePage: "P. 7-8 — Air cleaner filter (R at 30, 60, 90… mo)" },
-    { serviceName: "Inspect air cleaner filter", itemType: "inspect", intervalMiles: 7500, intervalMonths: 12, sourcePage: "P. 7-8 — Air cleaner filter (I between replacements)" },
-    { serviceName: "Replace spark plugs", itemType: "replace", intervalMiles: 97500, sourcePage: "P. 7-8 — Spark plugs every 97,500 miles" },
-    { serviceName: "Inspect drive belts", itemType: "inspect", intervalMiles: 60000, intervalMonths: 72, sourcePage: "P. 7-8 — Drive belts *2 (first at 60,000 mi / 72 mo, then every 15,000 mi / 24 mo)" },
-    { serviceName: "Replace engine coolant (first interval)", itemType: "replace", intervalMiles: 120000, intervalMonths: 120, sourcePage: "P. 7-8 — Engine coolant first at 120,000 mi / 10 years" },
-    { serviceName: "Replace engine coolant (subsequent)", itemType: "replace", intervalMiles: 30000, intervalMonths: 24, sourcePage: "P. 7-8 — Engine coolant thereafter every 30,000 mi / 24 mo" },
-    { serviceName: "Inspect brake/clutch fluid", itemType: "inspect", intervalMiles: 7500, intervalMonths: 12, sourcePage: "P. 7-10 — Brake/clutch fluid (inspect under normal schedule)" },
-    { serviceName: "Intelligent Variable Transmission (IVT) fluid — severe only", itemType: "replace", intervalMiles: 60000, sourcePage: "P. 7-11 — IVT fluid severe usage every 60,000 mi" },
+    { serviceName: "Engine oil and engine oil filter replacement", itemType: "replace", intervalMiles: 8000, intervalMonths: 12, sourcePage: "P. 9-9 — Smartstream G2.0 Atkinson (severe: 5,000 mi / 6 mo)" },
+    { serviceName: "Fuel additives (if non-TOP TIER gasoline)", itemType: "replace", intervalMiles: 8000, intervalMonths: 12, sourcePage: "P. 9-9 — Fuel additives *2" },
+    { serviceName: "Rotate tires", itemType: "replace", intervalMiles: 8000, intervalMonths: 12, sourcePage: "P. 9-9 — Rotate tires every 8,000 miles or 12 months" },
+    { serviceName: "Replace cabin air filter", itemType: "replace", intervalMonths: 12, sourcePage: "P. 9-9 — Cabin air filter every 12 months" },
+    { serviceName: "Replace air cleaner filter", itemType: "replace", intervalMiles: 24000, intervalMonths: 24, sourcePage: "P. 9-9 — Air cleaner filter (R at 24, 48, 72… mo)" },
+    { serviceName: "Inspect air cleaner filter", itemType: "inspect", intervalMiles: 8000, intervalMonths: 12, sourcePage: "P. 9-9 — Air cleaner filter (I between replacements)" },
+    { serviceName: "Replace spark plugs (Smartstream G2.0 Atkinson)", itemType: "replace", intervalMiles: 96000, sourcePage: "P. 9-9 — Spark plugs G2.0: every 96,000 miles" },
+    { serviceName: "Inspect drive belts", itemType: "inspect", intervalMiles: 48000, intervalMonths: 72, sourcePage: "P. 9-9 — Drive belts *3 (first at 48,000 mi / 72 mo, then every 8,000 mi / 12 mo)" },
+    { serviceName: "Replace engine coolant (first interval)", itemType: "replace", intervalMiles: 120000, intervalMonths: 120, sourcePage: "P. 9-10 — Engine coolant first at 120,000 mi / 120 months" },
+    { serviceName: "Replace engine coolant (subsequent)", itemType: "replace", intervalMiles: 24000, intervalMonths: 24, sourcePage: "P. 9-10 — Engine coolant thereafter every 24,000 mi / 24 months" },
+    { serviceName: "Replace brake fluid", itemType: "replace", intervalMiles: 48000, intervalMonths: 48, sourcePage: "P. 9-11 — Brake fluid (inspect every 8,000 mi / 12 mo)" },
+    { serviceName: "Intelligent Variable Transmission (IVT) fluid", itemType: "inspect", intervalMiles: null, sourcePage: "P. 9-10 — IVT fluid *2: no check, no service required (normal)" },
   ],
 };
 
@@ -163,7 +163,7 @@ const mazdaCx30Extract = {
 
 writeDogfood({ slug: "honda-accord-2024", payload: hondaAccordExtract });
 writeDogfood({ slug: "subaru-forester-2024", payload: subaruForesterExtract });
-writeDogfood({ slug: "hyundai-elantra-2024", payload: hyundaiElantraExtract });
+writeDogfood({ slug: "hyundai-elantra-2025", payload: hyundaiElantraExtract });
 writeDogfood({ slug: "mazda-cx-30-2024", payload: mazdaCx30Extract });
 
 const hondaPackEntries = [
@@ -193,16 +193,16 @@ const subaruPackEntries = [
 ];
 
 const hyundaiPackEntries = [
-  { entryId: "engine-oil", canonicalServiceId: "hyundai.fixed.7500.engine_oil", serviceName: "Engine oil and filter change", intervalMiles: 7500, intervalMonths: 12, sourcePage: "P. 7-8 — Engine oil and filter", ruleId: "knowledge.policy.engine-oil.v1", confidence: 0.97, projectionNote: "Severe: every 3,750 mi / 6 mo (P. 7-11)." },
-  { entryId: "tire-rotation", canonicalServiceId: "generic.tire_rotation", serviceName: "Rotate tires", intervalMiles: 7500, sourcePage: "P. 7-8 — Rotate tires every 7,500 miles", ruleId: "knowledge.policy.tire-rotation.v1", confidence: 0.96 },
-  { entryId: "cabin-air-filter", canonicalServiceId: "generic.cabin_air_filter", serviceName: "Replace climate control air filter", intervalMiles: null, intervalMonths: 12, sourcePage: "P. 7-8 — Climate control air filter", ruleId: "knowledge.policy.cabin-filter.v1", confidence: 0.95 },
-  { entryId: "engine-air-filter", canonicalServiceId: "generic.engine_air_filter", serviceName: "Replace air cleaner filter", intervalMiles: 30000, intervalMonths: 36, sourcePage: "P. 7-8 — Air cleaner filter", ruleId: "knowledge.policy.engine-air-filter.v1", confidence: 0.95 },
-  { entryId: "engine-air-inspect", canonicalServiceId: "hyundai.fixed.air_cleaner_inspect", serviceName: "Inspect air cleaner filter", intervalMiles: 7500, intervalMonths: 12, sourcePage: "P. 7-8 — Air cleaner filter (inspect between replacements)", ruleId: "knowledge.policy.engine-air-inspect.v1", confidence: 0.93, projectionNote: "Inspect only between 30k replacements." },
-  { entryId: "spark-plugs", canonicalServiceId: "generic.spark_plugs", serviceName: "Replace spark plugs", intervalMiles: 97500, sourcePage: "P. 7-8 — Spark plugs", ruleId: "knowledge.policy.spark-plugs.v1", confidence: 0.95 },
-  { entryId: "drive-belt-inspect", canonicalServiceId: "hyundai.fixed.drive_belt", serviceName: "Inspect drive belts", intervalMiles: 60000, intervalMonths: 72, sourcePage: "P. 7-8 — Drive belts *2", ruleId: "knowledge.policy.drive-belt.v1", confidence: 0.93, projectionNote: "First at 60,000 mi / 72 mo; then every 15,000 mi / 24 mo." },
-  { entryId: "coolant-first", canonicalServiceId: "generic.coolant", serviceName: "Replace engine coolant (first interval)", intervalMiles: 120000, intervalMonths: 120, sourcePage: "P. 7-8 — Engine coolant", ruleId: "knowledge.policy.coolant.v1", confidence: 0.94, projectionNote: "First: 120,000 mi / 10 years; thereafter every 30,000 mi / 24 mo." },
-  { entryId: "brake-fluid-inspect", canonicalServiceId: "hyundai.fixed.brake_fluid_inspect", serviceName: "Inspect brake/clutch fluid", intervalMiles: 7500, intervalMonths: 12, sourcePage: "P. 7-10 — Brake/clutch fluid", ruleId: "knowledge.policy.brake-fluid-inspect.v1", confidence: 0.93, projectionNote: "Inspect under normal schedule; replace if degraded." },
-  { entryId: "ivt-fluid-severe", canonicalServiceId: "generic.transmission_fluid", serviceName: "Replace IVT fluid (severe usage only)", intervalMiles: 60000, sourcePage: "P. 7-11 — IVT fluid severe", ruleId: "knowledge.policy.transmission-fluid.v1", confidence: 0.91, projectionNote: "Normal usage: no IVT service required (P. 7-9)." },
+  { entryId: "engine-oil", canonicalServiceId: "hyundai.fixed.8000.engine_oil", serviceName: "Engine oil and filter change", intervalMiles: 8000, intervalMonths: 12, sourcePage: "P. 9-9 — Smartstream G2.0 Atkinson", ruleId: "knowledge.policy.engine-oil.v1", confidence: 0.97, projectionNote: "Severe: every 5,000 mi / 6 mo (P. 9-12)." },
+  { entryId: "tire-rotation", canonicalServiceId: "generic.tire_rotation", serviceName: "Rotate tires", intervalMiles: 8000, intervalMonths: 12, sourcePage: "P. 9-9 — Rotate tires every 8,000 miles or 12 months", ruleId: "knowledge.policy.tire-rotation.v1", confidence: 0.96 },
+  { entryId: "cabin-air-filter", canonicalServiceId: "generic.cabin_air_filter", serviceName: "Replace cabin air filter", intervalMiles: null, intervalMonths: 12, sourcePage: "P. 9-9 — Cabin air filter every 12 months", ruleId: "knowledge.policy.cabin-filter.v1", confidence: 0.95 },
+  { entryId: "engine-air-filter", canonicalServiceId: "generic.engine_air_filter", serviceName: "Replace air cleaner filter", intervalMiles: 24000, intervalMonths: 24, sourcePage: "P. 9-9 — Air cleaner filter", ruleId: "knowledge.policy.engine-air-filter.v1", confidence: 0.95 },
+  { entryId: "engine-air-inspect", canonicalServiceId: "hyundai.fixed.air_cleaner_inspect", serviceName: "Inspect air cleaner filter", intervalMiles: 8000, intervalMonths: 12, sourcePage: "P. 9-9 — Air cleaner filter (inspect between replacements)", ruleId: "knowledge.policy.engine-air-inspect.v1", confidence: 0.93, projectionNote: "Inspect only between 24k replacements." },
+  { entryId: "spark-plugs", canonicalServiceId: "generic.spark_plugs", serviceName: "Replace spark plugs (Smartstream G2.0)", intervalMiles: 96000, sourcePage: "P. 9-9 — Spark plugs G2.0: every 96,000 miles", ruleId: "knowledge.policy.spark-plugs.v1", confidence: 0.95 },
+  { entryId: "drive-belt-inspect", canonicalServiceId: "hyundai.fixed.drive_belt", serviceName: "Inspect drive belts", intervalMiles: 48000, intervalMonths: 72, sourcePage: "P. 9-9 — Drive belts *3", ruleId: "knowledge.policy.drive-belt.v1", confidence: 0.93, projectionNote: "First at 48,000 mi / 72 mo; then every 8,000 mi / 12 mo." },
+  { entryId: "coolant-first", canonicalServiceId: "generic.coolant", serviceName: "Replace engine coolant (first interval)", intervalMiles: 120000, intervalMonths: 120, sourcePage: "P. 9-10 — Engine coolant", ruleId: "knowledge.policy.coolant.v1", confidence: 0.94, projectionNote: "First: 120,000 mi / 120 mo; thereafter every 24,000 mi / 24 mo." },
+  { entryId: "brake-fluid", canonicalServiceId: "generic.brake_fluid", serviceName: "Replace brake fluid", intervalMiles: 48000, intervalMonths: 48, sourcePage: "P. 9-11 — Brake fluid", ruleId: "knowledge.policy.brake-fluid.v1", confidence: 0.94, projectionNote: "Inspect every 8,000 mi / 12 mo between replacements." },
+  { entryId: "ivt-fluid-normal", canonicalServiceId: "hyundai.fixed.ivt_fluid", serviceName: "Intelligent Variable Transmission (IVT) fluid", intervalMiles: null, intervalMonths: null, sourcePage: "P. 9-10 — IVT fluid: no check, no service (normal)", ruleId: "knowledge.policy.transmission-fluid.v1", confidence: 0.91, projectionNote: "Normal usage: no IVT service required." },
 ];
 
 const mazdaPackEntries = [
@@ -270,8 +270,8 @@ for (const trim of ["SE", "SEL"]) {
   writePack({
     packId,
     ...packBase(packId, trim, {
-      manualTitle: `2024 Hyundai Elantra ${trim} — Normal maintenance schedule (U.S., 2.0 MPI)`,
-      qaNotes: "PDF-mined from 2020 Elantra Owner's Manual P. 7-8 (2.0 MPI proxy for 2024 SE/SEL IVT); dogfood extract seeds/dogfood/oem-extracts/hyundai-elantra-2024/.",
+      manualTitle: `2025 Hyundai Elantra ${trim} — Normal maintenance schedule (U.S., Smartstream G2.0)`,
+      qaNotes: "PDF-mined from 2023 Elantra Owner's Manual P. 9-9–9-11 (Smartstream G2.0 Atkinson); dogfood extract seeds/dogfood/oem-extracts/hyundai-elantra-2025/.",
       vehicle: { make: "Hyundai", model: "Elantra", year: 2024 },
       entries: hyundaiPackEntries,
     }),
