@@ -1,15 +1,8 @@
-export type VehicleRequestOpsPayload = {
-  requestId: string;
-  createdAt: string;
-  year: number;
-  make: string;
-  model: string;
-  trim: string;
-  note?: string;
-  contactEmail: string;
-  source?: string;
-  userId?: string;
-};
+export type { VehicleRequestOpsPayload } from "./vehicle-request-types.js";
+import { formatVehicleRequestOwnerConfirmationEmail } from "./vehicle-request-owner-email.js";
+import type { VehicleRequestOpsPayload } from "./vehicle-request-types.js";
+
+export { formatVehicleRequestOwnerConfirmationEmail } from "./vehicle-request-owner-email.js";
 
 export const formatVehicleRequestOpsEmail = (
   payload: VehicleRequestOpsPayload,
@@ -37,34 +30,13 @@ export const formatVehicleRequestOpsEmail = (
   return { subject, text: lines.join("\n") };
 };
 
-export const formatVehicleRequestOwnerConfirmationEmail = (
-  payload: VehicleRequestOpsPayload,
-): { subject: string; text: string } => {
-  const vehicle = `${payload.year} ${payload.make} ${payload.model} ${payload.trim}`;
-  const subject = `We received your VehicleOS request — ${vehicle}`;
-
-  const lines = [
-    "Hi,",
-    "",
-    `Thanks for requesting ${vehicle} for VehicleOS early access.`,
-    "",
-    "We add verified OEM maintenance schedules in batches. When your trim is ready to set up, we'll email you again with a link to sign in and pick your car from the catalog.",
-    "",
-    `Request ID: ${payload.requestId}`,
-    "",
-    "— VehicleOS",
-    "https://vehicleos.app",
-  ];
-
-  return { subject, text: lines.join("\n") };
-};
-
 const postResendEmail = async (input: {
   apiKey: string;
   from: string;
   to: string[];
   subject: string;
   text: string;
+  html?: string;
   replyTo?: string;
 }): Promise<void> => {
   const response = await fetch("https://api.resend.com/emails", {
@@ -79,6 +51,7 @@ const postResendEmail = async (input: {
       reply_to: input.replyTo,
       subject: input.subject,
       text: input.text,
+      html: input.html,
     }),
   });
 
@@ -129,7 +102,7 @@ export const sendVehicleRequestOwnerConfirmationEmail = async (
     return;
   }
 
-  const { subject, text } = formatVehicleRequestOwnerConfirmationEmail(payload);
+  const { subject, text, html } = formatVehicleRequestOwnerConfirmationEmail(payload);
 
   await postResendEmail({
     apiKey,
@@ -138,6 +111,7 @@ export const sendVehicleRequestOwnerConfirmationEmail = async (
     replyTo: process.env.VEHICLEOS_OPS_EMAIL?.trim() || undefined,
     subject,
     text,
+    html,
   });
 };
 
