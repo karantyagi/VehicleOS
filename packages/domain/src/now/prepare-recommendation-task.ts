@@ -77,6 +77,7 @@ export const buildTimeFirstTaskCopy = (input: {
   const today = input.today ?? new Date().toISOString().slice(0, 10);
   const scheduleRow = matchScheduleRowForRule(input.recommendation.ruleId, input.scheduleRows);
   const dueBy =
+    input.recommendation.dueBy ??
     scheduleRow?.dueDate ??
     (scheduleRow?.status === "overdue" ? today : addDays(today, 7));
 

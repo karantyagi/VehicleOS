@@ -42,6 +42,7 @@ import { draftLineItems, type MaintenanceRecordDraft } from "@/components/mainte
 import type {
   MaintenanceScheduleView,
   OwnershipRecordEntry,
+  OwnershipRenewalProjection,
   PipelinePhase,
   OwnerReminderItem,
   QueueItem,
@@ -73,6 +74,7 @@ export function OwnerDashboard() {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
   const [ownershipRecords, setOwnershipRecords] = useState<OwnershipRecordEntry[]>([]);
+  const [ownershipRenewals, setOwnershipRenewals] = useState<OwnershipRenewalProjection[]>([]);
   const [serviceHistoryTab, setServiceHistoryTab] = useState<ServiceHistoryTab>("schedule");
   const [nowQueue, setNowQueue] = useState<QueueItem[]>([]);
   const [reminders, setReminders] = useState<OwnerReminderItem[]>([]);
@@ -170,6 +172,7 @@ export function OwnerDashboard() {
         reminders?: OwnerReminderItem[];
         verifications?: QueueItem[];
         ownershipRecords?: OwnershipRecordEntry[];
+        ownershipRenewals?: OwnershipRenewalProjection[];
         quoteAnalyses?: QuoteAnalysisView[];
         evidenceVault?: EvidenceVaultItem[];
         knowledgeSchedule?: { serviceName: string; intervalMiles?: number; manualTitle: string }[];
@@ -180,6 +183,7 @@ export function OwnerDashboard() {
 
       setTimeline(body.timeline);
       setOwnershipRecords(body.ownershipRecords ?? []);
+      setOwnershipRenewals(body.ownershipRenewals ?? []);
       applyQueueState(body);
       setQuoteAnalyses(body.quoteAnalyses ?? []);
       setEvidenceVault(body.evidenceVault ?? []);
@@ -204,6 +208,7 @@ export function OwnerDashboard() {
   const resetVehicleWorkspace = useCallback(() => {
     setTimeline([]);
     setOwnershipRecords([]);
+    setOwnershipRenewals([]);
     setNowQueue([]);
     setReminders([]);
     setVerifications([]);
@@ -639,6 +644,7 @@ export function OwnerDashboard() {
           <MaintenanceTimelineSection
             timeline={timeline}
             ownershipRecords={ownershipRecords}
+            ownershipRenewals={ownershipRenewals}
             scheduleNear={maintenanceSchedule.near}
             scheduleExtended={maintenanceSchedule.extended}
             scheduleFull={maintenanceSchedule.full}

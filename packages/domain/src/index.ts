@@ -170,6 +170,15 @@ export {
   type OemServiceTiming,
 } from "./schedule/compute-oem-service-timing.js";
 export {
+  evaluateOwnershipRenewalDue,
+  isRenewalRuleId,
+  parseExpirationDate,
+  projectOwnershipRenewals,
+  DEFAULT_RENEWAL_LEAD_DAYS,
+  type OwnershipRenewalProjection,
+  type OwnershipRenewalStatus,
+} from "./ownership/evaluate-ownership-renewals.js";
+export {
   findLastMatchingService,
   findMatchingServices,
   lineMatchesServiceName,

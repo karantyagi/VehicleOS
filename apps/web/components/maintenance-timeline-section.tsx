@@ -5,12 +5,13 @@ import { MaintenanceScheduleConsole } from "@/components/maintenance-schedule-co
 import { MaintenanceTimelineConsole } from "@/components/maintenance-timeline-console";
 import { OwnershipRecordsConsole } from "@/components/ownership-records-console";
 import { Button } from "@/components/ui/button";
-import type { OwnershipRecordEntry, ScheduleProjectionRow, ServiceHistoryTab, TimelineEntry } from "@/lib/console-types";
+import type { OwnershipRecordEntry, OwnershipRenewalProjection, ScheduleProjectionRow, ServiceHistoryTab, TimelineEntry } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
 type MaintenanceTimelineSectionProps = {
   timeline: TimelineEntry[];
   ownershipRecords: OwnershipRecordEntry[];
+  ownershipRenewals?: OwnershipRenewalProjection[];
   scheduleNear: ScheduleProjectionRow[];
   scheduleExtended: ScheduleProjectionRow[];
   scheduleFull: ScheduleProjectionRow[];
@@ -38,6 +39,7 @@ const TAB_ITEMS = [
 export function MaintenanceTimelineSection({
   timeline,
   ownershipRecords,
+  ownershipRenewals = [],
   scheduleNear,
   scheduleExtended,
   scheduleFull,
@@ -137,6 +139,7 @@ export function MaintenanceTimelineSection({
           {tab === "ownership" ? (
             <OwnershipRecordsConsole
               entries={ownershipRecords}
+              renewals={ownershipRenewals}
               disabled={disabled}
               onGoToImport={onGoToImport}
             />

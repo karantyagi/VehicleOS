@@ -111,4 +111,14 @@ export type OwnershipRecordEntry = {
   source: "rmv_import" | "carfax_import";
 };
 
+export type OwnershipRenewalProjection = {
+  recordId: string;
+  eventType: OwnershipRecordEntry["eventType"];
+  title: string;
+  expirationDate: string;
+  status: "overdue" | "due_soon";
+  agency: string;
+  description: string;
+};
+
 export type ServiceHistoryTab = "history" | "schedule" | "ownership";

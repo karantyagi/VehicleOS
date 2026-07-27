@@ -155,7 +155,17 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
       importSource: string;
       records: VehicleOsRmvRecord[];
     }) {
-      return recordVehicleOsRmvImport({ eventStore, input });
+      const importResult = await recordVehicleOsRmvImport({ eventStore, input });
+      await refreshMaintenanceRecommendation({
+        eventStore,
+        policyEngine,
+        vehicleId: input.vehicleId,
+      });
+      const snapshot = await getVehicleState(input.vehicleId);
+      return {
+        ...importResult,
+        state: snapshot.state,
+      };
     },
 
     async hydrateOemKnowledgePack(input: {

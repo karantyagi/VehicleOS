@@ -1,6 +1,7 @@
 import type { PolicyEngine } from "./policy-engine.js";
 import type { MaintenanceRecommendation, PolicyEvaluationInput } from "./types.js";
 import { evaluateKnowledgeDue } from "../knowledge/evaluate-knowledge-due.js";
+import { evaluateOwnershipRenewalDue } from "../ownership/evaluate-ownership-renewals.js";
 
 const OIL_CHANGE_INTERVAL_MILES = 5_000;
 const CABIN_FILTER_INTERVAL_MILES = 15_000;
@@ -16,6 +17,9 @@ export class StubPolicyEngine implements PolicyEngine {
       const knowledgeDue = evaluateKnowledgeDue(state);
       if (knowledgeDue) return knowledgeDue;
 
+      const renewalDue = evaluateOwnershipRenewalDue({ state });
+      if (renewalDue) return renewalDue;
+
       return {
         recommendationId: crypto.randomUUID(),
         title: "Log your first service",
@@ -28,6 +32,9 @@ export class StubPolicyEngine implements PolicyEngine {
 
     const knowledgeDue = evaluateKnowledgeDue(state);
     if (knowledgeDue) return knowledgeDue;
+
+    const renewalDue = evaluateOwnershipRenewalDue({ state });
+    if (renewalDue) return renewalDue;
 
     const latestService = state.timeline[state.timeline.length - 1];
     const milesSinceLastService = Math.max(0, state.currentMileage - latestService.mileage);

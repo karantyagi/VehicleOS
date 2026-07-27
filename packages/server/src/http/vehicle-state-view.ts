@@ -4,6 +4,7 @@ import {
   computeVerificationMaturity,
   enrichTimelineForDisplay,
   projectMaintenanceSchedule,
+  projectOwnershipRenewals,
   resolveScheduleProjectionContext,
   splitOwnerQueues,
 } from "@vehicleos/domain";
@@ -94,6 +95,10 @@ export const buildVehicleStateView = (
         full: scheduleFull.horizonEnd,
       },
     },
+    ownershipRenewals: projectOwnershipRenewals({
+      ownershipRecords: state.ownershipRecords,
+      today,
+    }),
     ownershipRecords: state.ownershipRecords,
   };
 };
