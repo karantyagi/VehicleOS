@@ -53,13 +53,13 @@ export function SetupDriverGate({ vehicleId, vehicleLabel, onComplete }: SetupDr
   return (
     <Card className="overflow-hidden border-border/80 shadow-md">
       <div className="h-1 bg-muted">
-        <div className="h-full w-2/3 bg-primary transition-all duration-300" />
+        <div className="h-full w-full bg-primary transition-all duration-300" />
       </div>
       <CardHeader>
-        <p className="text-xs font-medium uppercase tracking-wide text-primary">Step 2 of 2</p>
-        <CardTitle>How you drive</CardTitle>
+        <p className="text-xs font-medium uppercase tracking-wide text-primary">Finish setup</p>
+        <CardTitle>Your driving profile</CardTitle>
         <CardDescription>
-          {vehicleLabel} is saved — add home city to unlock reminders.
+          {vehicleLabel} is saved — home city unlocks calendar reminders.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -72,7 +72,7 @@ export function SetupDriverGate({ vehicleId, vehicleLabel, onComplete }: SetupDr
         />
         <FormActions>
           <Button type="button" disabled={isSaving || !draft.primaryCity.trim()} onClick={() => void saveAndContinue()}>
-            {isSaving ? "Saving…" : "Continue"}
+            {isSaving ? "Saving…" : "Unlock reminders"}
           </Button>
         </FormActions>
       </CardContent>
