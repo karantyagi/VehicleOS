@@ -431,3 +431,4 @@ export {
   type NominatimSearchResult,
 } from "./import/nominatim-shop-location.js";
 export type { KnowledgeScheduleRow } from "./events/catalog.js";
+export type { KnowledgeScheduleEntry } from "./projections/types.js";
