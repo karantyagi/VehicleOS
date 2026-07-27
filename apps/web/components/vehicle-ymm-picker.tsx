@@ -1,19 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Input } from "@/components/ui/input";
+import { VehicleCatalogCombobox } from "@/components/vehicle-catalog-combobox";
 import {
-  filterCatalogVehicles,
   findCatalogVehicleByPackId,
   formatCatalogTrimOptionLabel,
-  formatCatalogVehicleLabel,
   listCatalogMakes,
   listCatalogModels,
   listCatalogTrimRows,
   listCatalogYears,
   type CatalogVehicleRow,
 } from "@/lib/supported-vehicle-catalog";
-import { cn } from "@/lib/utils";
 
 type VehicleYmmPickerProps = {
   vehicles: CatalogVehicleRow[];
@@ -35,7 +32,6 @@ export function VehicleYmmPicker({
   const [model, setModel] = useState("");
   const [year, setYear] = useState<number | "">("");
   const [trimPackId, setTrimPackId] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (!value) {
@@ -62,12 +58,6 @@ export function VehicleYmmPicker({
     [vehicles, make, model, year],
   );
 
-  const quickMatches = useMemo(() => {
-    const q = searchQuery.trim();
-    if (q.length < 2) return [];
-    return filterCatalogVehicles(vehicles, { q }).slice(0, 6);
-  }, [searchQuery, vehicles]);
-
   const clearSelection = () => {
     setTrimPackId("");
     onSelect(null);
@@ -78,7 +68,6 @@ export function VehicleYmmPicker({
     setModel(row.model);
     setYear(row.year);
     setTrimPackId(row.packId);
-    setSearchQuery("");
     onSelect(row);
   };
 
@@ -110,34 +99,14 @@ export function VehicleYmmPicker({
     <div className="space-y-4">
       <label className="grid gap-1.5 text-sm">
         <span className="font-medium">Quick find</span>
-        <Input
-          value={searchQuery}
+        <VehicleCatalogCombobox
+          vehicles={vehicles}
           disabled={disabled}
-          placeholder="e.g. Honda Accord 2022"
-          aria-label="Search vehicles"
-          onChange={(event) => setSearchQuery(event.target.value)}
+          selectedPackId={trimPackId}
+          placeholder="e.g. 2021 Acura TLX or Honda Accord 2022"
+          onSelect={applyRow}
         />
       </label>
-
-      {quickMatches.length > 0 ? (
-        <ul className="space-y-1 rounded-lg border border-border bg-muted/20 p-1">
-          {quickMatches.map((row) => (
-            <li key={row.packId}>
-              <button
-                type="button"
-                disabled={disabled}
-                className={cn(
-                  "w-full rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-muted/60",
-                  trimPackId === row.packId && "bg-primary/10 font-medium text-primary",
-                )}
-                onClick={() => applyRow(row)}
-              >
-                {formatCatalogVehicleLabel(row)}
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : null}
 
       <p className="text-xs text-muted-foreground">Or browse:</p>
 
