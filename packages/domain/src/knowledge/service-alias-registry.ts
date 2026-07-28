@@ -77,3 +77,11 @@ export const lineMatchesCanonicalService = (input: {
   const aliases = input.registry.byCanonicalId.get(input.canonicalServiceId) ?? [];
   return aliases.some((alias) => alias.test(input.lineItem));
 };
+
+export const lineMatchesKnownCanonicalService = (input: {
+  lineItem: string;
+  registry: ServiceAliasRegistry;
+}): boolean =>
+  [...input.registry.byCanonicalId.values()].some((aliases) =>
+    aliases.some((alias) => alias.test(input.lineItem)),
+  );

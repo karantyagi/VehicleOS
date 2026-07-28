@@ -1,7 +1,10 @@
 import type { ServiceTimelineEntry } from "../projections/types.js";
 
 import type { ServiceAliasRegistry } from "./service-alias-registry.js";
-import { lineMatchesCanonicalService } from "./service-alias-registry.js";
+import {
+  lineMatchesCanonicalService,
+  lineMatchesKnownCanonicalService,
+} from "./service-alias-registry.js";
 
 export type ServiceMatchOptions = {
   canonicalServiceId?: string | null;
@@ -10,6 +13,12 @@ export type ServiceMatchOptions = {
 
 export const serviceNamePattern = (serviceName: string): RegExp => {
   const normalized = serviceName.toLowerCase();
+  if (normalized.includes("differential") || normalized.includes("rear diff")) {
+    return /differential (fluid|gear oil|oil|service|serviced)|rear diff/i;
+  }
+  if (normalized.includes("transmission") || normalized.includes("transfer fluid")) {
+    return /transmission fluid|trans fluid|atf|transfer case|transfer fluid/i;
+  }
   if (normalized.includes("oil")) {
     return /oil change|oil (&|and|\/)\s*filter|engine oil|replace engine oil|synthetic oil|lube,? oil|oil filter|oil and filter changed/i;
   }
@@ -28,9 +37,6 @@ export const serviceNamePattern = (serviceName: string): RegExp => {
       return /front brake|brake pads?,\s*front|front pads|front rotors?/i;
     }
     return /brake fluid|brake service|brakes? inspected|brake pads? replaced|brake rotors?|fluid - brake|brake inspection/i;
-  }
-  if (normalized.includes("transmission")) {
-    return /transmission fluid|trans fluid|atf|transfer case|differential fluid|rear diff/i;
   }
   if (normalized.includes("coolant")) return /coolant|antifreeze|radiator flush|cooling system/i;
   if (normalized.includes("spark")) return /spark plug/i;
@@ -52,6 +58,18 @@ export const lineMatchesServiceName = (
       })
     ) {
       return true;
+    }
+
+    // Do not let an alias for a known, different service fall through to the
+    // looser text matcher. A rear-differential record is not transmission-fluid
+    // evidence just because both services contain the word "fluid".
+    if (
+      lineMatchesKnownCanonicalService({
+        lineItem,
+        registry: options.serviceAliasRegistry,
+      })
+    ) {
+      return false;
     }
   }
 
