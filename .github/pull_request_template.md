@@ -29,10 +29,13 @@
 <!-- Checklist a reviewer can follow -->
 
 - [ ] `pnpm install`
+- [ ] `pnpm docs:check-links`
+- [ ] `pnpm typecheck`
+- [ ] `pnpm test`
 - [ ] `pnpm --filter @vehicleos/marketing build` (if marketing touched)
 - [ ] `pnpm --filter @vehicleos/web build` (if web touched)
 - [ ] **CI** check green on PR
-- [ ] Vercel preview link on PR (after [Vercel setup](docs/deployment/vercel-setup.md))
+- [ ] Vercel preview link on PR (after [Vercel setup](../docs/deployment/vercel-setup.md))
 - [ ] Manual smoke test (URLs, copy, CTAs) if user-facing
 
 ## Notes

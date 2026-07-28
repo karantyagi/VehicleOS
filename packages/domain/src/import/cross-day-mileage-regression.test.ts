@@ -11,6 +11,7 @@ const row = (overrides: Partial<VehicleOsImportService>): VehicleOsImportService
   serviceDate: "2025-06-11",
   mileage: 44_567,
   lineItems: ["Oil changed"],
+  total: "$0.00",
   ...overrides,
 });
 

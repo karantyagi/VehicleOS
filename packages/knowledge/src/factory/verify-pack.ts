@@ -12,6 +12,7 @@ import { runPackQaRules, validateOemSchedulePack } from "../validate-pack.js";
 import type { OemSchedulePack, OemSchedulePackEntry } from "../types.js";
 import type { Tier1PackSpec } from "./tier1-manifest.js";
 import { inferOemFamilyFromMake } from "./oem-family-infer.js";
+import type { Tier2000OemFamily, Tier2000ScheduleKind } from "./tier2000-types.js";
 
 export type VerifyPackResult = {
   packId: string;
@@ -26,6 +27,11 @@ export type VerifyPackResult = {
   fixturePath?: string;
   pdfPath?: string;
   notes: string[];
+};
+
+type VerifyPackSpec = Omit<Tier1PackSpec, "oemFamily" | "scheduleKind"> & {
+  oemFamily: Tier2000OemFamily;
+  scheduleKind: Tier2000ScheduleKind;
 };
 
 const mergeExtractIntoPack = (
@@ -72,7 +78,7 @@ export const verifyOemPack = async (input: {
   const notes: string[] = [];
   let pack = loadOemSchedulePack(input.packId);
 
-  const spec =
+  const spec: VerifyPackSpec =
     input.spec ??
     ({
       packId: pack.packId,
@@ -82,7 +88,7 @@ export const verifyOemPack = async (input: {
       trim: pack.vehicle.trim,
       oemFamily: inferOemFamily(pack.vehicle.make),
       scheduleKind: pack.scheduleKind ?? "fixed_interval",
-    } satisfies Tier1PackSpec);
+    } satisfies VerifyPackSpec);
 
   const pdfSource = resolvePdfSourceSpec({
     packId: pack.packId,

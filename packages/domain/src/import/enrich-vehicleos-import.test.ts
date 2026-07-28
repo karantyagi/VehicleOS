@@ -48,6 +48,7 @@ describe("enrichVehicleOsImport", () => {
             serviceDate: "2026-07-15",
             mileage: 58819,
             lineItems: ["Oil changed"],
+            total: "$0.00",
           },
         ],
       },

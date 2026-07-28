@@ -3,6 +3,7 @@ import { PwaIconMark, pwaIconBackground } from "../lib/pwa-icon-mark";
 
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
+export const runtime = "edge";
 
 export default function Icon() {
   return new ImageResponse(

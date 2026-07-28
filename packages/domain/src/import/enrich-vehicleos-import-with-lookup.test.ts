@@ -30,6 +30,7 @@ describe("enrichVehicleOsImportServiceWithLookup", () => {
         serviceDate: "2025-01-01",
         mileage: 1000,
         lineItems: ["Oil changed"],
+        total: "$0.00",
       },
       {
         ownerShopLocations: { "joe's garage": "Cambridge, MA" },
@@ -58,6 +59,7 @@ describe("enrichVehicleOsImportServiceWithLookup", () => {
         serviceDate: "2025-01-01",
         mileage: 1000,
         lineItems: ["Inspection"],
+        total: "$0.00",
       },
       { lookupPort: wrapped },
       cache,
@@ -68,6 +70,7 @@ describe("enrichVehicleOsImportServiceWithLookup", () => {
         serviceDate: "2025-02-01",
         mileage: 2000,
         lineItems: ["Oil changed"],
+        total: "$0.00",
       },
       { lookupPort: wrapped },
       cache,
@@ -83,6 +86,7 @@ describe("enrichVehicleOsImportServiceWithLookup", () => {
         serviceDate: "2025-01-01",
         mileage: 1000,
         lineItems: ["Inspection"],
+        total: "$0.00",
       },
       {
         lookupPort: {
@@ -106,6 +110,7 @@ describe("enrichVehicleOsImportServiceWithLookup", () => {
         serviceDate: "2025-01-01",
         mileage: 1000,
         lineItems: ["Oil changed"],
+        total: "$0.00",
       },
       {
         lookupPort: {
@@ -142,12 +147,14 @@ describe("enrichVehicleOsImportWithLookup", () => {
             serviceDate: "2025-01-01",
             mileage: 1000,
             lineItems: ["Inspection"],
+            total: "$0.00",
           },
           {
             shop: "Costco Tire Center",
             serviceDate: "2025-02-01",
             mileage: 2000,
             lineItems: ["Tires rotated"],
+            total: "$0.00",
           },
         ],
       },
