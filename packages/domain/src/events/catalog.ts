@@ -27,7 +27,7 @@ export type ServiceRecordSource =
 
 export type VehicleRecordEventType = "registration" | "title" | "inspection" | "lien" | "other";
 
-export type VehicleRecordSource = "rmv_import" | "carfax_import";
+export type VehicleRecordSource = "rmv_import" | "carfax_import" | "owner_note";
 
 export type ExtractedServiceFields = {
   shop: string;

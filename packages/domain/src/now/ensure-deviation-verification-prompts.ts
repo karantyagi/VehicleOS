@@ -13,6 +13,7 @@ import {
   formatDraftDeviationTaskReason,
   heuristicDraftDeviationReason,
 } from "../owner-context/draft-deviation-reason.js";
+import { hasHandledVerificationPromptForRule } from "./verification-prompt-suppression.js";
 
 const loadVehicleEvents = async (
   eventStore: EventStore,
@@ -80,14 +81,15 @@ export const ensureDeviationVerificationPrompts = async (
 
   for (const deviation of deviations) {
     const ruleId = deviationRuleIdForEntry(deviation.entryId);
-    const hasPendingPrompt = state.nowQueue.some(
-      (item) =>
-        item.status === "pending" &&
-        item.taskKind === "verification" &&
-        item.ruleId === ruleId,
-    );
-
-    if (hasPendingPrompt) continue;
+    if (
+      hasHandledVerificationPromptForRule({
+        nowQueue: state.nowQueue,
+        ruleId,
+        today,
+      })
+    ) {
+      continue;
+    }
 
     const taskId = crypto.randomUUID();
     const correlationId = crypto.randomUUID();

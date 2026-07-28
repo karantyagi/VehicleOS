@@ -11,6 +11,7 @@ type IntervalConfirmFormProps = {
   disabled?: boolean;
   suggestedIntervalMiles?: number | null;
   suggestedIntervalMonths?: number | null;
+  dismissLabel?: string;
   onConfirmed: () => void;
   onDismiss: () => void;
   onError: (message: string) => void;
@@ -23,6 +24,7 @@ export function IntervalConfirmForm({
   disabled = false,
   suggestedIntervalMiles = null,
   suggestedIntervalMonths = null,
+  dismissLabel = "Keep OEM interval",
   onConfirmed,
   onDismiss,
   onError,
@@ -134,7 +136,7 @@ export function IntervalConfirmForm({
           disabled={disabled || isSaving}
           onClick={onDismiss}
         >
-          Keep OEM interval
+          {dismissLabel}
         </Button>
       </div>
     </div>

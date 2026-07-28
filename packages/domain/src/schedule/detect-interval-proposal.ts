@@ -179,6 +179,10 @@ export const formatIntervalProposalTaskTitle = (proposal: IntervalProposal): str
 };
 
 export const formatIntervalProposalTaskReason = (proposal: IntervalProposal): string => {
+  if (proposal.oemIntervalMiles === null && proposal.oemIntervalMonths === null) {
+    return `${proposal.evidenceSummary}. Confirm this cadence for reminders?`;
+  }
+
   const oemParts: string[] = [];
   if (proposal.oemIntervalMiles !== null) {
     oemParts.push(`${proposal.oemIntervalMiles.toLocaleString("en-US")} mi`);

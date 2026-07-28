@@ -1,5 +1,69 @@
 import { describe, expect, it } from "vitest";
-import { filterCatalogVehicles, type CatalogVehicleRow } from "./supported-vehicle-catalog";
+import {
+  catalogVehicleRowKey,
+  filterCatalogVehicles,
+  findCatalogVehicleRow,
+  formatCatalogTrimOptionLabel,
+  formatCatalogVehicleLabel,
+  type CatalogVehicleRow,
+} from "./supported-vehicle-catalog";
+
+const sharedPackRows = (): CatalogVehicleRow[] =>
+  [2021, 2022, 2023, 2024, 2025, 2026].map((year) => ({
+    packId: "acura-tlx-2021-technology",
+    make: "Acura",
+    model: "TLX",
+    year,
+    trim: "Technology",
+    powertrain: null,
+    supported: true,
+    qaStatus: "auto_verified",
+    supportTier: "tier1",
+  }));
+
+describe("findCatalogVehicleRow", () => {
+  it("disambiguates shared packId by model year", () => {
+    const rows = sharedPackRows();
+    expect(findCatalogVehicleRow(rows, { packId: "acura-tlx-2021-technology", year: 2021 })?.year).toBe(
+      2021,
+    );
+    expect(findCatalogVehicleRow(rows, { packId: "acura-tlx-2021-technology", year: 2026 })?.year).toBe(
+      2026,
+    );
+  });
+
+  it("falls back to earliest year when packId is reused without a year hint", () => {
+    const rows = sharedPackRows();
+    expect(findCatalogVehicleRow(rows, { packId: "acura-tlx-2021-technology" })?.year).toBe(2021);
+  });
+
+  it("assigns unique combobox keys per model year for shared packId", () => {
+    const rows = sharedPackRows();
+    const keys = rows.map(catalogVehicleRowKey);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+});
+
+describe("catalog vehicle labels", () => {
+  it("does not duplicate powertrain when trim already matches", () => {
+    expect(formatCatalogTrimOptionLabel({ trim: "SH-AWD", powertrain: "SH-AWD" })).toBe("SH-AWD");
+    expect(
+      formatCatalogVehicleLabel({
+        year: 2021,
+        make: "Acura",
+        model: "TLX",
+        trim: "SH-AWD",
+        powertrain: "SH-AWD",
+      }),
+    ).toBe("2021 Acura TLX SH-AWD");
+  });
+
+  it("appends powertrain when trim name differs", () => {
+    expect(formatCatalogTrimOptionLabel({ trim: "Technology", powertrain: "SH-AWD" })).toBe(
+      "Technology · SH-AWD",
+    );
+  });
+});
 
 const acuraTlxRows = (year: number): CatalogVehicleRow[] => [
   {

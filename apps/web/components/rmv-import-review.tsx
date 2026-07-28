@@ -248,7 +248,7 @@ export function RmvImportReview({
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            Ownership records stay on the Ownership tab — they do not appear on your maintenance timeline.
+            Ownership records appear on History (past) and Schedule (renewals) — same cards as maintenance.
           </p>
           <div className="max-h-96 space-y-2 overflow-y-auto pr-1">
             {importRows.map((row) => (

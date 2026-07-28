@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { TimelineEntry } from "@/lib/console-types";
+import type { OwnershipRecordEntry, TimelineEntry } from "@/lib/console-types";
 import { downloadCsv, filterByQuery, sortRows } from "@/lib/data-grid-utils";
 import { useConsoleListKeyboard } from "@/lib/use-console-list-keyboard";
 import { useAppUiStore } from "@/lib/store/app-ui-store";
@@ -50,8 +50,12 @@ type ServiceDraft = {
 
 type MaintenanceTimelineConsoleProps = {
   entries: TimelineEntry[];
+  ownershipRecords?: OwnershipRecordEntry[];
   disabled?: boolean;
   defaultMileage?: number;
+  vehicleId?: string;
+  apiBase?: string;
+  onCaptureError?: (message: string) => void;
   onOpenEvidence?: (documentId: string) => void;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
   onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
@@ -75,8 +79,12 @@ const formatShopLine = (entry: TimelineEntry): string => {
 
 export function MaintenanceTimelineConsole({
   entries,
+  ownershipRecords = [],
   disabled = false,
   defaultMileage = 0,
+  vehicleId,
+  apiBase,
+  onCaptureError,
   onOpenEvidence,
   onUpdateService,
   onAddService,
@@ -301,8 +309,12 @@ export function MaintenanceTimelineConsole({
     return (
       <OwnerServiceHistoryTimeline
         entries={entries}
+        ownershipRecords={ownershipRecords}
         disabled={disabled}
         defaultMileage={defaultMileage}
+        vehicleId={vehicleId}
+        apiBase={apiBase}
+        onCaptureError={onCaptureError}
         onUpdateService={onUpdateService}
         onAddService={onAddService}
         requireEditConfirmation={requireEditConfirmation}
@@ -425,6 +437,9 @@ export function MaintenanceTimelineConsole({
         draft={addDraft}
         disabled={disabled}
         isSaving={isAddingSaving}
+        vehicleId={vehicleId}
+        apiBase={apiBase}
+        onCaptureError={onCaptureError}
         saveLabel={requireEditConfirmation && !confirmAdd ? "Review save" : "Save record"}
         confirmMessage={
           requireEditConfirmation && confirmAdd ? "Save again to confirm this maintenance record." : null

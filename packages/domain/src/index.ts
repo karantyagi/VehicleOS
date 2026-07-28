@@ -202,6 +202,15 @@ export {
   type IntervalProposal,
 } from "./schedule/detect-interval-proposal.js";
 export {
+  detectOwnerHabitProposals,
+} from "./schedule/detect-owner-habit-proposals.js";
+export {
+  OWNER_HABIT_DEFINITIONS,
+  isOwnerHabitEntryId,
+  type OwnerHabitDefinition,
+} from "./schedule/owner-habit-definitions.js";
+export { projectOwnerHabitScheduleRows } from "./schedule/project-owner-habit-schedule-rows.js";
+export {
   ensureDeviationVerificationPrompts,
   type EnsureDeviationVerificationPromptsInput,
   type EnsureDeviationVerificationPromptsResult,
@@ -220,6 +229,15 @@ export {
   type OwnershipRenewalProjection,
   type OwnershipRenewalStatus,
 } from "./ownership/evaluate-ownership-renewals.js";
+export {
+  deriveOwnershipRecordsFromLineItems,
+  type DerivedOwnershipRecord,
+} from "./ownership/derive-ownership-from-line-items.js";
+export {
+  recordOwnershipFromServiceNote,
+  type RecordOwnershipFromServiceNoteInput,
+  type RecordOwnershipFromServiceNoteResult,
+} from "./ownership/record-ownership-from-service-note.js";
 export {
   findLastMatchingService,
   findMatchingServices,
@@ -347,6 +365,10 @@ export {
   type ReceiptExtractResult,
   type ReceiptExtractorPort,
 } from "./ports/receipt-extractor.js";
+export {
+  mergeReceiptExtractWithHints,
+  type ReceiptExtractHints,
+} from "./ports/merge-receipt-extract.js";
 export {
   enrichRecommendationReason,
   type EnrichRecommendationInput,

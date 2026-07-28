@@ -5,11 +5,13 @@ import {
   formatIntervalOverlayLabel,
   mergeIntervalOverlayMemory,
   mergeMaintenancePatternMemory,
+  mergeReceiptExtractWithHints,
   normalizeOwnerContextMemory,
   parseDeviationRuleEntryId,
   parseIntervalRuleEntryId,
   projectMaintenanceDeviations,
   projectMaintenanceSchedule,
+  recordOwnershipFromServiceNote,
   resolveScheduleProjectionContext,
   type MaintenanceDeviationReasonId,
   type OwnerContextMemory,
@@ -248,66 +250,150 @@ export const submitReceipt = async (
   }
 
   const channel = body.channel ?? "receipt_upload";
+  const hintText = body.lineItems?.join("\n") ?? null;
 
-  const { documentId, correlationId } = await services.goldenPath.ingestReceipt({
+  const extractResult = await services.goldenPath.queueReceiptExtract({
     vehicleId,
     storageKey: body.storageKey,
     channel,
-  });
-
-  await services.goldenPath.completeExtraction({
-    vehicleId,
-    documentId,
-    correlationId,
-    extracted: {
-      shop: body.shop,
-      serviceDate: body.serviceDate,
-      mileage: body.mileage,
-      lineItems: body.lineItems,
-      total: body.total,
-      confidence: 0.92,
-    },
-  });
-
-  const result = await services.goldenPath.confirmService({
-    vehicleId,
+    hintText,
     shop: body.shop,
     serviceDate: body.serviceDate,
     mileage: body.mileage,
     lineItems: body.lineItems,
     total: body.total,
-    evidenceIds: [documentId],
-    documentId,
-    correlationId,
+  });
+
+  if (extractResult.queued) {
+    return jsonResponse(202, {
+      documentId: extractResult.documentId,
+      queued: true,
+      message: "Receipt queued for assistant extraction (ENG-2 worker).",
+    });
+  }
+
+  const extracted = mergeReceiptExtractWithHints(extractResult.extracted, {
+    shop: body.shop,
+    serviceDate: body.serviceDate,
+    mileage: body.mileage,
+    lineItems: body.lineItems,
+    total: body.total,
+  });
+
+  const result = await services.goldenPath.confirmService({
+    vehicleId,
+    shop: extracted.shop,
+    serviceDate: extracted.serviceDate,
+    mileage: extracted.mileage,
+    lineItems: extracted.lineItems,
+    total: extracted.total,
+    evidenceIds: [extractResult.documentId],
+    documentId: extractResult.documentId,
+    correlationId: extractResult.correlationId,
     source: "receipt",
     ...recommendationContextFromVehicle(owned.vehicle),
   });
 
-  if (result.conflict) {
-    return jsonResponse(409, {
-      conflict: true,
-      documentId,
-      conflictId: result.conflictId,
-      verificationTask: {
-        taskId: result.taskId,
-        title: result.state.nowQueue.at(-1)?.title,
-        reason: result.state.nowQueue.at(-1)?.reason,
-        verificationCode: result.state.nowQueue.at(-1)?.verificationCode,
+  if (!result.conflict) {
+    await recordOwnershipFromServiceNote({
+      eventStore: services.eventStore,
+      input: {
+        vehicleId,
+        lineItems: extracted.lineItems,
+        recordDate: extracted.serviceDate,
+        mileage: extracted.mileage,
       },
-      timeline: buildVehicleStateView(result.state, owned.vehicle).timeline,
-      nowQueue: buildVehicleStateView(result.state, owned.vehicle).nowQueue,
     });
   }
 
-  const view = buildVehicleStateView(result.result.state, owned.vehicle);
+  const snapshot = await services.goldenPath.getVehicleState(
+    vehicleId,
+    vehicleStateOptionsFromVehicle(owned.vehicle),
+  );
+  const view = buildVehicleStateView(snapshot.state, owned.vehicle, snapshot.events);
+
+  if (result.conflict) {
+    return jsonResponse(409, {
+      conflict: true,
+      documentId: extractResult.documentId,
+      conflictId: result.conflictId,
+      extracted,
+      verificationTask: {
+        taskId: result.taskId,
+        title: view.nowQueue.at(-1)?.title,
+        reason: view.nowQueue.at(-1)?.reason,
+        verificationCode: view.nowQueue.at(-1)?.verificationCode,
+      },
+      timeline: view.timeline,
+      nowQueue: view.nowQueue,
+    });
+  }
 
   return jsonResponse(result.result.skippedDuplicate ? 200 : 201, {
-    documentId,
+    documentId: extractResult.documentId,
     duplicateSkipped: result.result.skippedDuplicate ?? false,
+    extracted,
+    extractSource: extractResult.extracted.source,
     recommendation: result.result.recommendation,
     task: result.result.task,
     timeline: view.timeline,
     nowQueue: view.nowQueue,
+  });
+};
+
+export const previewReceiptExtract = async (
+  services: ApiServices,
+  vehicleId: string,
+  body: Partial<ReceiptBody> & {
+    storageKey?: string;
+    hintText?: string | null;
+    filename?: string | null;
+  },
+  auth?: AuthContext,
+): Promise<JsonResponse> => {
+  if (!auth?.userId) return unauthorized();
+  const owned = await assertVehicleOwner(services, vehicleId, auth.userId);
+  if (!owned.ok) return owned.response;
+
+  if (!body.storageKey) {
+    return jsonResponse(400, { error: "storageKey is required — upload a receipt photo or PDF first" });
+  }
+
+  const channel = body.channel ?? "receipt_upload";
+  const extractResult = await services.goldenPath.queueReceiptExtract({
+    vehicleId,
+    storageKey: body.storageKey,
+    channel,
+    hintText: body.hintText ?? null,
+    shop: body.shop,
+    serviceDate: body.serviceDate,
+    mileage: body.mileage,
+    lineItems: body.lineItems,
+    total: body.total,
+  });
+
+  if (extractResult.queued) {
+    return jsonResponse(202, {
+      documentId: extractResult.documentId,
+      queued: true,
+      message: "Receipt queued for assistant extraction (ENG-2 worker).",
+    });
+  }
+
+  const extracted = mergeReceiptExtractWithHints(extractResult.extracted, {
+    shop: body.shop,
+    serviceDate: body.serviceDate,
+    mileage: body.mileage,
+    lineItems: body.lineItems,
+    total: body.total,
+  });
+
+  return jsonResponse(200, {
+    documentId: extractResult.documentId,
+    queued: false,
+    extracted,
+    extractSource: extractResult.extracted.source,
+    confidence: extracted.confidence ?? extractResult.extracted.confidence,
   });
 };
 
@@ -373,13 +459,21 @@ export const queueReceiptExtract = async (
     });
   }
 
+  const extracted = mergeReceiptExtractWithHints(extractResult.extracted, {
+    shop: body.shop,
+    serviceDate: body.serviceDate,
+    mileage: body.mileage,
+    lineItems: body.lineItems,
+    total: body.total,
+  });
+
   const result = await services.goldenPath.confirmService({
     vehicleId,
-    shop: extractResult.extracted.shop,
-    serviceDate: extractResult.extracted.serviceDate,
-    mileage: extractResult.extracted.mileage,
-    lineItems: extractResult.extracted.lineItems,
-    total: extractResult.extracted.total,
+    shop: extracted.shop,
+    serviceDate: extracted.serviceDate,
+    mileage: extracted.mileage,
+    lineItems: extracted.lineItems,
+    total: extracted.total,
     evidenceIds: [extractResult.documentId],
     documentId: extractResult.documentId,
     correlationId: extractResult.correlationId,
@@ -387,21 +481,39 @@ export const queueReceiptExtract = async (
     ...recommendationContextFromVehicle(owned.vehicle),
   });
 
+  if (!result.conflict) {
+    await recordOwnershipFromServiceNote({
+      eventStore: services.eventStore,
+      input: {
+        vehicleId,
+        lineItems: extracted.lineItems,
+        recordDate: extracted.serviceDate,
+        mileage: extracted.mileage,
+      },
+    });
+  }
+
+  const snapshot = await services.goldenPath.getVehicleState(
+    vehicleId,
+    vehicleStateOptionsFromVehicle(owned.vehicle),
+  );
+  const view = buildVehicleStateView(snapshot.state, owned.vehicle, snapshot.events);
+
   if (result.conflict) {
     return jsonResponse(409, {
       conflict: true,
       documentId: extractResult.documentId,
       captureIntent,
-      extracted: extractResult.extracted,
+      extracted,
     });
   }
 
-  const view = buildVehicleStateView(result.result.state, owned.vehicle);
   return jsonResponse(201, {
     documentId: extractResult.documentId,
     queued: false,
     captureIntent,
-    extracted: extractResult.extracted,
+    extracted,
+    extractSource: extractResult.extracted.source,
     timeline: view.timeline,
     nowQueue: view.nowQueue,
   });

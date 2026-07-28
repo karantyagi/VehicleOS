@@ -137,7 +137,7 @@ export type OwnershipRecordEntry = {
   eventType: "registration" | "title" | "inspection" | "lien" | "other";
   description: string;
   details: string[];
-  source: "rmv_import" | "carfax_import";
+  source: "rmv_import" | "carfax_import" | "owner_note";
 };
 
 export type OwnershipRenewalProjection = {
@@ -150,4 +150,4 @@ export type OwnershipRenewalProjection = {
   description: string;
 };
 
-export type ServiceHistoryTab = "history" | "schedule" | "ownership";
+export type ServiceHistoryTab = "history" | "schedule";
