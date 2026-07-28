@@ -23,6 +23,7 @@ export const INTERVIEW_PACK_IDS = [
   "subaru-forester-2024-limited",
   "hyundai-elantra-2024-se",
   "hyundai-elantra-2024-sel",
+  "hyundai-elantra-2022-sel",
   "mazda-cx-30-2024-select",
   "mazda-cx-30-2024-preferred",
 ];
@@ -54,6 +55,12 @@ const FLEET = [
       { trim: "Premium", packId: "subaru-forester-2024-premium", powertrain: "AWD", supportTier: "tier1" },
       { trim: "Limited", packId: "subaru-forester-2024-limited", powertrain: "AWD", supportTier: "tier1" },
     ],
+  },
+  {
+    make: "Hyundai",
+    model: "Elantra",
+    years: [2022],
+    trims: [{ trim: "SEL", packId: "hyundai-elantra-2022-sel", supportTier: "tier1" }],
   },
   {
     make: "Hyundai",
@@ -134,6 +141,7 @@ const pruneFixtures = () => {
     "subaru-forester-2024-limited": "subaru-forester-2024-limited.json",
     "hyundai-elantra-2024-se": "hyundai-elantra-2024-se.json",
     "hyundai-elantra-2024-sel": "hyundai-elantra-2024-sel.json",
+    "hyundai-elantra-2022-sel": "hyundai-elantra-2022-sel.json",
     "mazda-cx-30-2024-select": "mazda-cx-30-2024-select.json",
     "mazda-cx-30-2024-preferred": "mazda-cx-30-2024-preferred.json",
   };

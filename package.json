@@ -10,7 +10,8 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "dogfood:load-karan-tlx": "pnpm --filter @vehicleos/api exec tsx ../../seeds/dogfood/karan-tlx/load-seed.ts"
+    "dogfood:load-karan-tlx": "pnpm --filter @vehicleos/api exec tsx ../../seeds/dogfood/karan-tlx/load-seed.ts",
+    "dogfood:load-ayush-elantra": "pnpm --filter @vehicleos/api exec tsx ../../seeds/dogfood/ayush-elantra/load-seed.ts"
   },
   "devDependencies": {
     "turbo": "^2.1.3"

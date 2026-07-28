@@ -1,0 +1,21 @@
+{
+  "packId": "hyundai-elantra-2022-sel",
+  "version": 3,
+  "cases": [
+    {
+      "carfaxLine": "Oil and filter changed",
+      "expectedCanonicalServiceId": "hyundai.fixed.8000.engine_oil",
+      "expectedEntryId": "engine-oil"
+    },
+    {
+      "carfaxLine": "Tires rotated",
+      "expectedCanonicalServiceId": "generic.tire_rotation",
+      "expectedEntryId": "tire-rotation"
+    },
+    {
+      "carfaxLine": "Cabin air filter replaced/cleaned",
+      "expectedCanonicalServiceId": "generic.cabin_air_filter",
+      "expectedEntryId": "cabin-air-filter"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "version": "1",
+  "source": "myrmv-pdf-manual",
+  "exportedAt": "2026-07-27T22:42:00.000Z",
+  "vehicle": {
+    "vin": "KMHLS4AG3NU293303",
+    "year": 2022,
+    "make": "Hyundai",
+    "model": "Elantra",
+    "trim": "SEL",
+    "currentMileage": 34045
+  },
+  "records": [
+    {
+      "agency": "Massachusetts RMV (myRMV)",
+      "recordDate": "2026-01-15",
+      "mileage": null,
+      "eventType": "title",
+      "description": "Title active — CM161923",
+      "details": [
+        "Title Number: CM161923",
+        "Title Date: 2026-01-15",
+        "Title Status: Active",
+        "VIN: KMHLS4AG3NU293303",
+        "Vehicle: 2022 HYUN ELANTRA"
+      ]
+    },
+    {
+      "agency": "Massachusetts RMV (myRMV)",
+      "recordDate": "2026-02-01",
+      "mileage": null,
+      "eventType": "registration",
+      "description": "Registration active — plate 1NST41",
+      "details": [
+        "Type/Number: Passenger Normal Red Plate/1NST41",
+        "Plate: 1NST41",
+        "Effective Date: 2026-02-01",
+        "Expiration Date: 2028-01-31",
+        "Status: Active",
+        "VIN: KMHLS4AG3NU293303"
+      ]
+    }
+  ]
+}

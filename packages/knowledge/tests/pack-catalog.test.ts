@@ -43,6 +43,23 @@ describe("OEM schedule packs", () => {
     expect(packId).toBe("acura-tlx-2021-sh-awd");
   });
 
+  it("resolves Ayush dogfood 2022 Hyundai Elantra SEL", () => {
+    const packId = resolvePackIdForVehicle({
+      make: "Hyundai",
+      model: "Elantra",
+      year: 2022,
+      trim: "SEL",
+    });
+    expect(packId).toBe("hyundai-elantra-2022-sel");
+  });
+
+  it("loads 2022 Elantra SEL dogfood pack", () => {
+    const pack = loadOemSchedulePack("hyundai-elantra-2022-sel");
+    expect(pack.qaStatus).toBe("auto_verified");
+    expect(pack.entries.length).toBeGreaterThanOrEqual(8);
+    expect(pack.entries.some((entry) => entry.entryId === "engine-oil")).toBe(true);
+  });
+
   it("loads alias bundles", () => {
     const bundles = loadServiceAliasBundles();
     expect(bundles.length).toBeGreaterThan(0);

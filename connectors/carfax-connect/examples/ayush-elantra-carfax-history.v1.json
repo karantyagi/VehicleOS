@@ -1,0 +1,124 @@
+{
+  "version": "1",
+  "source": "carfax-pdf-manual",
+  "exportedAt": "2026-07-27T21:58:00.000Z",
+  "vehicle": {
+    "vin": "KMHLS4AG3NU293303",
+    "year": 2022,
+    "make": "Hyundai",
+    "model": "Elantra",
+    "trim": "SEL",
+    "currentMileage": 34045
+  },
+  "services": [
+    {
+      "shop": "Mirak Chevrolet",
+      "serviceDate": "2025-12-20",
+      "mileage": 34045,
+      "lineItems": [
+        "Oil and filter changed",
+        "Tires rotated"
+      ],
+      "total": "$0.00"
+    },
+    {
+      "shop": "Massachusetts",
+      "serviceDate": "2025-12-12",
+      "mileage": 33869,
+      "lineItems": [
+        "Passed safety inspection",
+        "Passed emissions inspection"
+      ],
+      "total": "$0.00",
+      "shopLocation": "Massachusetts"
+    },
+    {
+      "shop": "MetroWest Hyundai Genesis of Framingham",
+      "serviceDate": "2025-01-14",
+      "mileage": 26603,
+      "lineItems": [
+        "Back-up camera replaced",
+        "Oil and filter changed",
+        "Tires rotated"
+      ],
+      "total": "$0.00",
+      "shopLocation": "Framingham, MA"
+    },
+    {
+      "shop": "Massachusetts",
+      "serviceDate": "2024-11-08",
+      "mileage": 26030,
+      "lineItems": [
+        "Passed safety inspection",
+        "Passed emissions inspection"
+      ],
+      "total": "$0.00",
+      "shopLocation": "Massachusetts"
+    },
+    {
+      "shop": "MetroWest Hyundai Genesis of Framingham",
+      "serviceDate": "2024-03-15",
+      "mileage": 18474,
+      "lineItems": [
+        "Cabin air filter replaced/cleaned",
+        "Oil and filter changed",
+        "Tires rotated"
+      ],
+      "total": "$0.00",
+      "shopLocation": "Framingham, MA"
+    },
+    {
+      "shop": "Massachusetts",
+      "serviceDate": "2023-11-14",
+      "mileage": 15679,
+      "lineItems": [
+        "Passed safety inspection",
+        "Passed emissions inspection"
+      ],
+      "total": "$0.00",
+      "shopLocation": "Massachusetts"
+    },
+    {
+      "shop": "MetroWest Hyundai Genesis of Framingham",
+      "serviceDate": "2023-07-15",
+      "mileage": 13115,
+      "lineItems": [
+        "Oil and filter changed",
+        "Tires rotated"
+      ],
+      "total": "$0.00",
+      "shopLocation": "Framingham, MA"
+    },
+    {
+      "shop": "Genesis of Framingham",
+      "serviceDate": "2022-12-22",
+      "mileage": 6629,
+      "lineItems": [
+        "Service visit"
+      ],
+      "total": "$0.00",
+      "shopLocation": "Framingham, MA"
+    },
+    {
+      "shop": "Genesis of Framingham",
+      "serviceDate": "2022-11-22",
+      "mileage": 5620,
+      "lineItems": [
+        "Oil and filter changed",
+        "Tires rotated"
+      ],
+      "total": "$0.00",
+      "shopLocation": "Framingham, MA"
+    },
+    {
+      "shop": "McFarland Hyundai",
+      "serviceDate": "2022-02-01",
+      "mileage": 10,
+      "lineItems": [
+        "Pre-delivery inspection completed"
+      ],
+      "total": "$0.00",
+      "shopLocation": "North Hampton, NH"
+    }
+  ]
+}

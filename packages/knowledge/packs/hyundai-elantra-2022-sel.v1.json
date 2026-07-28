@@ -1,0 +1,123 @@
+{
+  "packId": "hyundai-elantra-2022-sel",
+  "version": 3,
+  "manualTitle": "2022 Hyundai Elantra SEL — Normal maintenance schedule (U.S., Smartstream G2.0)",
+  "scheduleKind": "fixed_interval",
+  "qaStatus": "auto_verified",
+  "qaNotes": "PDF-mined from 2022 Elantra Owner's Manual P. 9-9–9-11 (Smartstream G2.0 Atkinson); dogfood extract seeds/dogfood/oem-extracts/hyundai-elantra-2022/. Ayush CARFAX dogfood at 34,045 mi.",
+  "sourceManifestRef": "sources/manifest.json#hyundai-elantra-2022-sel",
+  "vehicle": {
+    "market": "US",
+    "make": "Hyundai",
+    "model": "Elantra",
+    "year": 2022,
+    "trim": "SEL"
+  },
+  "entries": [
+    {
+      "entryId": "engine-oil",
+      "canonicalServiceId": "hyundai.fixed.8000.engine_oil",
+      "serviceName": "Engine oil and filter change",
+      "intervalMiles": 8000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 9-9 — Smartstream G2.0 Atkinson",
+      "ruleId": "knowledge.policy.engine-oil.v1",
+      "confidence": 0.97,
+      "projectionNote": "Severe: every 5,000 mi / 6 mo (P. 9-12)."
+    },
+    {
+      "entryId": "tire-rotation",
+      "canonicalServiceId": "generic.tire_rotation",
+      "serviceName": "Rotate tires",
+      "intervalMiles": 8000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 9-9 — Rotate tires every 8,000 miles or 12 months",
+      "ruleId": "knowledge.policy.tire-rotation.v1",
+      "confidence": 0.96
+    },
+    {
+      "entryId": "cabin-air-filter",
+      "canonicalServiceId": "generic.cabin_air_filter",
+      "serviceName": "Replace cabin air filter",
+      "intervalMiles": null,
+      "intervalMonths": 12,
+      "sourcePage": "P. 9-9 — Cabin air filter every 12 months",
+      "ruleId": "knowledge.policy.cabin-filter.v1",
+      "confidence": 0.95
+    },
+    {
+      "entryId": "engine-air-filter",
+      "canonicalServiceId": "generic.engine_air_filter",
+      "serviceName": "Replace air cleaner filter",
+      "intervalMiles": 24000,
+      "intervalMonths": 24,
+      "sourcePage": "P. 9-9 — Air cleaner filter",
+      "ruleId": "knowledge.policy.engine-air-filter.v1",
+      "confidence": 0.95
+    },
+    {
+      "entryId": "engine-air-inspect",
+      "canonicalServiceId": "hyundai.fixed.air_cleaner_inspect",
+      "serviceName": "Inspect air cleaner filter",
+      "intervalMiles": 8000,
+      "intervalMonths": 12,
+      "sourcePage": "P. 9-9 — Air cleaner filter (inspect between replacements)",
+      "ruleId": "knowledge.policy.engine-air-inspect.v1",
+      "confidence": 0.93,
+      "projectionNote": "Inspect only between 24k replacements."
+    },
+    {
+      "entryId": "spark-plugs",
+      "canonicalServiceId": "generic.spark_plugs",
+      "serviceName": "Replace spark plugs (Smartstream G2.0)",
+      "intervalMiles": 96000,
+      "sourcePage": "P. 9-9 — Spark plugs G2.0: every 96,000 miles",
+      "ruleId": "knowledge.policy.spark-plugs.v1",
+      "confidence": 0.95
+    },
+    {
+      "entryId": "drive-belt-inspect",
+      "canonicalServiceId": "hyundai.fixed.drive_belt",
+      "serviceName": "Inspect drive belts",
+      "intervalMiles": 48000,
+      "intervalMonths": 72,
+      "sourcePage": "P. 9-9 — Drive belts *3",
+      "ruleId": "knowledge.policy.drive-belt.v1",
+      "confidence": 0.93,
+      "projectionNote": "First at 48,000 mi / 72 mo; then every 8,000 mi / 12 mo."
+    },
+    {
+      "entryId": "coolant-first",
+      "canonicalServiceId": "generic.coolant",
+      "serviceName": "Replace engine coolant (first interval)",
+      "intervalMiles": 120000,
+      "intervalMonths": 120,
+      "sourcePage": "P. 9-10 — Engine coolant",
+      "ruleId": "knowledge.policy.coolant.v1",
+      "confidence": 0.94,
+      "projectionNote": "First: 120,000 mi / 120 mo; thereafter every 24,000 mi / 24 mo."
+    },
+    {
+      "entryId": "brake-fluid",
+      "canonicalServiceId": "generic.brake_fluid",
+      "serviceName": "Replace brake fluid",
+      "intervalMiles": 48000,
+      "intervalMonths": 48,
+      "sourcePage": "P. 9-11 — Brake fluid",
+      "ruleId": "knowledge.policy.brake-fluid.v1",
+      "confidence": 0.94,
+      "projectionNote": "Inspect every 8,000 mi / 12 mo between replacements."
+    },
+    {
+      "entryId": "ivt-fluid-normal",
+      "canonicalServiceId": "hyundai.fixed.ivt_fluid",
+      "serviceName": "Intelligent Variable Transmission (IVT) fluid",
+      "intervalMiles": null,
+      "intervalMonths": null,
+      "sourcePage": "P. 9-10 — IVT fluid: no check, no service (normal)",
+      "ruleId": "knowledge.policy.transmission-fluid.v1",
+      "confidence": 0.91,
+      "projectionNote": "Normal usage: no IVT service required."
+    }
+  ]
+}
