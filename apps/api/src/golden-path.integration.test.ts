@@ -1,4 +1,5 @@
 import { afterAll, describe, expect, it } from "vitest";
+import type { InjectOptions, LightMyRequestResponse } from "fastify";
 import { InMemoryEventStore } from "@vehicleos/domain";
 import { InMemoryVehicleRepository } from "@vehicleos/server";
 import { buildApp } from "./app.js";
@@ -7,7 +8,7 @@ type TestApp = Awaited<ReturnType<typeof buildApp>>;
 
 type AuthClient = {
   userId: string;
-  inject: TestApp["inject"];
+  inject: (options: InjectOptions) => Promise<LightMyRequestResponse>;
 };
 
 type DogfoodVehicleOverrides = {

@@ -2,7 +2,7 @@ import { readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { TIER1_PACK_SPECS } from "../factory/tier1-manifest.js";
-import { verifyOemPack } from "../factory/verify-pack.js";
+import { verifyOemPack, type VerifyPackResult } from "../factory/verify-pack.js";
 import { matchingFixturesRoot, knowledgePackageRoot } from "../factory/paths.js";
 
 const args = process.argv.slice(2).filter((arg) => arg !== "--");
@@ -36,17 +36,19 @@ const runBatch = async (): Promise<void> => {
     const slice = packIds.slice(index, index + concurrency);
     const results = await Promise.all(
       slice.map((packId) =>
-        verifyOemPack({ packId, spec: specById.get(packId), dryRun }).catch((error: Error) => ({
-          packId,
-          phaseA: "blocked" as const,
-          phaseB: {
-            dualExtractAgree: false,
-            mismatchCount: 0,
-            qaIssueCount: 0,
-            schemaValid: false,
-          },
-          notes: [`ERROR: ${error.message}`],
-        })),
+        verifyOemPack({ packId, spec: specById.get(packId), dryRun }).catch(
+          (error: Error): VerifyPackResult => ({
+            packId,
+            phaseA: "blocked",
+            phaseB: {
+              dualExtractAgree: false,
+              mismatchCount: 0,
+              qaIssueCount: 0,
+              schemaValid: false,
+            },
+            notes: [`ERROR: ${error.message}`],
+          }),
+        ),
       ),
     );
 

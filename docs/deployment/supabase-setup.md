@@ -1,6 +1,6 @@
 # Supabase Postgres (hosted Owners)
 
-**Architecture decision:** [ADR-004 Phase 0 hosted deployment](../docs-lite/adr/ADR-004-phase0-hosted-deployment.md) — constraints, alternatives, revisit triggers.
+**Architecture decision:** [ADR-004 Phase 0 hosted deployment](../../docs-lite/adr/ADR-004-phase0-hosted-deployment.md) — constraints, alternatives, revisit triggers.
 
 VehicleOS uses **Supabase for managed Postgres** — not a separate Railway/Render database.
 

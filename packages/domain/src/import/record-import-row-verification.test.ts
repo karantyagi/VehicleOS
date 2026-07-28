@@ -1,6 +1,24 @@
 import { describe, expect, it } from "vitest";
+import type { AppendDomainEventInput, DomainEventEnvelope } from "../events/types.js";
+import type { EventStore } from "../ports/event-store.js";
 import { recordImportRowVerification } from "./record-import-row-verification.js";
 import type { TieredImportRow } from "./tier-import-rows.js";
+
+const asEnvelope = (event: AppendDomainEventInput, index = 0): DomainEventEnvelope => ({
+  ...event,
+  id: `event-${index + 1}`,
+  createdAt: "2026-07-28T00:00:00.000Z",
+});
+
+const eventStore = (onAppend?: (event: AppendDomainEventInput) => void): EventStore => ({
+  append: async (event) => {
+    onAppend?.(event);
+    return asEnvelope(event);
+  },
+  appendMany: async (events) => events.map(asEnvelope),
+  loadByAggregate: async () => [],
+  loadAll: async () => [],
+});
 
 const verifyRow = (overrides: Partial<TieredImportRow> = {}): TieredImportRow => ({
   index: 0,
@@ -20,6 +38,7 @@ const verifyRow = (overrides: Partial<TieredImportRow> = {}): TieredImportRow =>
     serviceDate: "2025-06-01",
     mileage: 50000,
     lineItems: ["Inspection"],
+    total: "$0.00",
   },
   ...overrides,
 });
@@ -27,7 +46,7 @@ const verifyRow = (overrides: Partial<TieredImportRow> = {}): TieredImportRow =>
 describe("recordImportRowVerification", () => {
   it("returns null task when no verify rows", async () => {
     const result = await recordImportRowVerification({
-      eventStore: { append: async () => undefined },
+      eventStore: eventStore(),
       input: {
         vehicleId: "veh-1",
         importSource: "carfax-json",
@@ -36,12 +55,14 @@ describe("recordImportRowVerification", () => {
             index: 0,
             tier: "auto",
             reasons: [],
+            ownerGuidance: [],
             service: {
               shop: "Costco Tire Center",
               shopLocation: "Waltham, MA",
               serviceDate: "2025-06-01",
               mileage: 50000,
               lineItems: ["Tires rotated"],
+              total: "$0.00",
             },
           },
         ],
@@ -54,11 +75,7 @@ describe("recordImportRowVerification", () => {
   it("creates verification task for verify-tier rows", async () => {
     const appended: unknown[] = [];
     const result = await recordImportRowVerification({
-      eventStore: {
-        append: async (event) => {
-          appended.push(event);
-        },
-      },
+      eventStore: eventStore((event) => appended.push(event)),
       input: {
         vehicleId: "veh-1",
         importSource: "carfax-json",

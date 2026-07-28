@@ -129,4 +129,4 @@ What Cursor **is not** a replacement for:
 3. Add `e2e/golden-path.spec.ts` (receipt flow with saved session).
 4. Document staging test user in 1Password / env template only — not in git.
 
-Related: [`04-apps-web-console-upgrade-ladder.md`](../../../../workspace/strategy/design-system/04-apps-web-console-upgrade-ladder.md)
+Related: [ADR-008 — owner navigation information architecture](../../../docs-lite/adr/ADR-008-owner-nav-information-architecture.md)

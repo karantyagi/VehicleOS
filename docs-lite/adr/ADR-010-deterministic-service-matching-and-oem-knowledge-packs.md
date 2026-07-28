@@ -3,7 +3,7 @@
 **Status:** Accepted (2026-07-25)  
 **Amended:** 2026-07-26 — verified aggregator and mirror fallback for manual discovery<br>
 **Deciders:** Product / architecture  
-**Related:** ADR-007 (manual upload) · ADR-009 (record import) · **ADR-011** (import enrichment + shop memory) · [`phase-1-intelligence-scope.md`](../../../workspace/strategy/phase-1-intelligence-scope.md) · [`record-import-data-pipeline.md`](../../../workspace/strategy/record-import-data-pipeline.md) · [`assistant-reminder-decision-engine.md`](../../../workspace/strategy/assistant-reminder-decision-engine.md)
+**Related:** ADR-007 (manual upload) · ADR-009 (record import) · **ADR-011** (import enrichment + shop memory). Internal planning sources summarized by this ADR: `phase-1-intelligence-scope.md`, `record-import-data-pipeline.md`, and `assistant-reminder-decision-engine.md`.
 
 ---
 

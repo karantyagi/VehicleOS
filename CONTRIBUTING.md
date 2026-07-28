@@ -70,14 +70,22 @@ pnpm --filter @vehicleos/web dev         # http://localhost:3000
 
 ### Pre-PR verification
 
-Run builds for apps you changed:
+Run the repository quality gates, then build the apps you changed:
 
 ```bash
+pnpm docs:check-links
+pnpm typecheck
+pnpm test
 pnpm --filter @vehicleos/marketing build
 pnpm --filter @vehicleos/web build
 ```
 
 CI runs the same checks on pull requests to `master`. The required check name is **CI**.
+
+On Windows, `pnpm verify:windows` runs the complete sequence with the workspace-local
+Node `20.20.2` runtime and Corepack-managed pnpm `9.12.3`. Pass
+`-NodeHome <path>` directly to `scripts/verify-windows.ps1` only when the portable
+runtime is stored elsewhere.
 
 ### CD (Vercel preview + production)
 

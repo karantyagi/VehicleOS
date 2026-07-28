@@ -3,9 +3,9 @@
 **Status:** Proposed (outline — implement post build-freeze + ENCODE round 1)  
 **Date:** 2026-07-27  
 **Deciders:** Product / architecture  
-**Program doc:** [`oem-pack-factory-agent-program.md`](../../../workspace/strategy/oem-pack-factory-agent-program.md)  
-**Task queue:** [`task-queue.md`](../../../workspace/strategy/task-queue.md) § **O — FACTORY-AGENT**  
-**Related:** ADR-010 (deterministic runtime) · ADR-012 (catalog vs runtime) · [`oem-knowledge-pack-factory.md`](../../../workspace/strategy/oem-knowledge-pack-factory.md) PROC-KB Q7/Q10
+**Internal program source:** `oem-pack-factory-agent-program.md`
+**Internal task queue:** `task-queue.md` § **O — FACTORY-AGENT**
+**Related:** ADR-010 (deterministic runtime) · ADR-012 (catalog vs runtime) · internal `oem-knowledge-pack-factory.md` PROC-KB Q7/Q10
 
 ---
 
@@ -131,7 +131,7 @@ intake → manual_discovery → pdf_fetch → extract → normalize
 
 ## Implementation checklist
 
-Full subtasks: [`task-queue.md`](../../../workspace/strategy/task-queue.md) § **O**.
+Full subtasks are tracked in the internal `task-queue.md` § **O**.
 
 | ID | Task |
 |----|------|

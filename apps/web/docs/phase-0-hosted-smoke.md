@@ -27,4 +27,4 @@ Note **P0/P1** in task-queue **Next up** or paste to Cursor with screenshot + UR
 
 ## Done
 
-Mark **P0-2** ✅ in [`build-personal-real-car-program.md`](../../../../workspace/strategy/build-personal-real-car-program.md) when all rows pass.
+Record **P0-2** as complete in the implementing PR when all rows pass.
