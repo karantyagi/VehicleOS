@@ -22,4 +22,27 @@ describe("resolveIntervalForEntry", () => {
     expect(resolved.intervalMiles).toBe(3_000);
     expect(resolved.overlayLabel).toBe("Techron every 3k mi");
   });
+
+  it("uses mileage only for a confirmed tire rotation interval", () => {
+    const resolved = resolveIntervalForEntry({
+      entryId: "mm-sub-1",
+      oemIntervalMonths: 12,
+      oemIntervalMiles: 7_500,
+      ownerContextMemory: {
+        intervalOverlays: {
+          "mm-sub-1": {
+            intervalMiles: 6_000,
+            intervalMonths: null,
+            basis: "mileage",
+            tireRotationConditions: ["uneven_tread"],
+            label: "Every 6,000 mi",
+            confirmedAt: "2026-07-28T00:00:00.000Z",
+          },
+        },
+      },
+    });
+
+    expect(resolved.intervalMiles).toBe(6_000);
+    expect(resolved.intervalMonths).toBeNull();
+  });
 });

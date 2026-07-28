@@ -40,6 +40,7 @@ export type NowQueueItem = {
   draftReasonSource?: "heuristic" | "llm";
   suggestedIntervalMiles?: number;
   suggestedIntervalMonths?: number;
+  intervalKind?: "general" | "tire_rotation";
 };
 
 export type EvidenceVaultEntry = {

@@ -331,7 +331,13 @@ export {
   type DrivingStyle,
   type ScheduleProjectionContext,
 } from "./schedule/resolve-schedule-projection-context.js";
-export type { OwnerContextMemory, MaintenancePatternMemory, IntervalOverlayMemory } from "./owner-context/types.js";
+export type {
+  OwnerContextMemory,
+  MaintenancePatternMemory,
+  IntervalOverlayMemory,
+  IntervalBasis,
+  TireRotationConditionId,
+} from "./owner-context/types.js";
 export {
   hasOwnerContextMemory,
   normalizeOwnerContextMemory,

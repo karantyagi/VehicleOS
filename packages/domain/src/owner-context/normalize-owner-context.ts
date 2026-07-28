@@ -1,4 +1,18 @@
-import type { IntervalOverlayMemory, MaintenancePatternMemory, OwnerContextMemory } from "./types.js";
+import type {
+  IntervalBasis,
+  IntervalOverlayMemory,
+  MaintenancePatternMemory,
+  OwnerContextMemory,
+  TireRotationConditionId,
+} from "./types.js";
+
+const INTERVAL_BASES = new Set<IntervalBasis>(["mileage", "time", "mixed"]);
+const TIRE_ROTATION_CONDITIONS = new Set<TireRotationConditionId>([
+  "uneven_tread",
+  "pressure_or_tpms",
+  "pull_vibration_or_cupping",
+  "special_tire_setup",
+]);
 
 const normalizeString = (value: unknown): string | undefined => {
   if (typeof value !== "string") return undefined;
@@ -53,9 +67,25 @@ const normalizeIntervalOverlays = (
     const intervalMiles =
       typeof overlay.intervalMiles === "number" ? overlay.intervalMiles : undefined;
     if (intervalMonths === undefined && intervalMiles === undefined) continue;
+    const basis =
+      typeof overlay.basis === "string" && INTERVAL_BASES.has(overlay.basis as IntervalBasis)
+        ? (overlay.basis as IntervalBasis)
+        : undefined;
+    const tireRotationConditions = Array.isArray(overlay.tireRotationConditions)
+      ? overlay.tireRotationConditions.filter(
+          (condition): condition is TireRotationConditionId =>
+            typeof condition === "string" &&
+            TIRE_ROTATION_CONDITIONS.has(condition as TireRotationConditionId),
+        )
+      : undefined;
     normalized[entryId.trim()] = {
       intervalMonths: intervalMonths ?? null,
       intervalMiles: intervalMiles ?? null,
+      basis,
+      tireRotationConditions:
+        tireRotationConditions && tireRotationConditions.length > 0
+          ? [...new Set(tireRotationConditions)]
+          : undefined,
       label,
       confirmedAt,
     };

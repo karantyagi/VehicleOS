@@ -161,6 +161,66 @@ describe("detectIntervalProposalForEntry", () => {
 
     expect(proposal).toBeNull();
   });
+
+  it("proposes tire rotations from mileage history and ignores elapsed time", () => {
+    const proposal = detectIntervalProposalForEntry({
+      entry: {
+        entryId: "mm-sub-1",
+        canonicalServiceId: "generic.tire_rotation",
+        serviceName: "Rotate tires (Maintenance Minder sub 1)",
+        intervalMiles: 7_500,
+        intervalMonths: 12,
+        sourceDocumentId: "doc-1",
+        manualTitle: "Manual",
+        recordedAt: "2026-01-01T00:00:00.000Z",
+      },
+      timeline: [10_000, 16_000, 22_000].map((mileage, index) => ({
+        serviceId: `rotation-${index + 1}`,
+        shop: "Tire shop",
+        serviceDate: ["2024-01-01", "2024-07-01", "2025-01-01"][index]!,
+        mileage,
+        lineItems: ["Tire rotation"],
+        total: "$0",
+        evidenceIds: [],
+      })),
+    });
+
+    expect(proposal?.intervalKind).toBe("tire_rotation");
+    expect(proposal?.intervalMiles).toBe(6_000);
+    expect(proposal?.intervalMonths).toBeNull();
+    expect(formatIntervalProposalTaskReason(proposal!)).toContain(
+      "Use miles driven for rotation reminders",
+    );
+    expect(formatIntervalProposalTaskReason(proposal!)).toContain(
+      "OEM guidance (7,500 mi / 12 mo) stays on file",
+    );
+  });
+
+  it("does not create a tire proposal from time spacing alone", () => {
+    const proposal = detectIntervalProposalForEntry({
+      entry: {
+        entryId: "mm-sub-1",
+        canonicalServiceId: "generic.tire_rotation",
+        serviceName: "Rotate tires",
+        intervalMiles: 7_500,
+        intervalMonths: 12,
+        sourceDocumentId: "doc-1",
+        manualTitle: "Manual",
+        recordedAt: "2026-01-01T00:00:00.000Z",
+      },
+      timeline: [10_000, 17_500, 25_000].map((mileage, index) => ({
+        serviceId: `rotation-${index + 1}`,
+        shop: "Tire shop",
+        serviceDate: ["2024-01-01", "2024-07-01", "2025-01-01"][index]!,
+        mileage,
+        lineItems: ["Tire rotation"],
+        total: "$0",
+        evidenceIds: [],
+      })),
+    });
+
+    expect(proposal).toBeNull();
+  });
 });
 
 describe("detectIntervalProposals", () => {
