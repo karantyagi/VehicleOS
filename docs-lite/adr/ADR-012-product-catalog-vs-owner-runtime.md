@@ -3,7 +3,7 @@
 **Status:** Accepted (2026-07-25)  
 **Amended:** 2026-07-26 — creator-side manual source providers and provenance<br>
 **Deciders:** Product / architecture  
-**Related:** ADR-010 (service matching) · ADR-011 (import enrichment) · [`product-data-vs-owner-intelligence.md`](../../../workspace/strategy/product-data-vs-owner-intelligence.md) · [`oem-knowledge-pack-factory.md`](../../../workspace/strategy/oem-knowledge-pack-factory.md)
+**Related:** ADR-010 (service matching) · ADR-011 (import enrichment). Internal planning sources summarized by this ADR: `product-data-vs-owner-intelligence.md` and `oem-knowledge-pack-factory.md`.
 
 ---
 
@@ -11,7 +11,7 @@
 
 VehicleOS must not conflate **creator product data** (OEM schedules, aliases, shop packs) with **per-owner runtime intelligence** (timeline, reminders, confirmed memory). Owners should not upload OEM manuals for supported cars; schedule truth is product infrastructure copied in at vehicle create.
 
-Strategy SoT: [`product-data-vs-owner-intelligence.md`](../../../workspace/strategy/product-data-vs-owner-intelligence.md).
+Internal strategy source: `product-data-vs-owner-intelligence.md`. This ADR is the public canonical decision record.
 
 ---
 
@@ -85,7 +85,7 @@ Postgres reference tables for catalog are optional; JSON catalog is valid until 
 
 ## Consequences
 
-- PROC-KB is **product work**, not owner intelligence — see [`oem-knowledge-pack-factory.md`](../../../workspace/strategy/oem-knowledge-pack-factory.md).
+- PROC-KB is **product work**, not owner intelligence — see the internal `oem-knowledge-pack-factory.md` plan.
 - Manual-source providers populate Plane A candidates offline; only
   versioned, validated Schedule Packs cross the hydrate bridge.
 - Early access ships with **verified packs only**; marketing catalog lists in-review rows as waitlist.

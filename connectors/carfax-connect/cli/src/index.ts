@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import Ajv from "ajv";
-import addFormats from "ajv-formats";
+import { Ajv } from "ajv";
+import addFormatsModule, { type FormatsPlugin } from "ajv-formats";
 import schema from "../../schema/vehicleos-import.v1.schema.json" with { type: "json" };
+
+const addFormats = addFormatsModule as unknown as FormatsPlugin;
 
 type ImportFile = {
   version: "1";

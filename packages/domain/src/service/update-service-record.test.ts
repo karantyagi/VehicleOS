@@ -7,6 +7,7 @@ describe("SERVICE_UPDATED projection", () => {
     const serviceId = "svc-1";
     const state = foldEvents(vehicleId, [
       {
+        id: "event-1",
         aggregateType: "vehicle",
         aggregateId: vehicleId,
         eventType: EVENT_TYPES.SERVICE_RECORDED,
@@ -27,6 +28,7 @@ describe("SERVICE_UPDATED projection", () => {
         createdAt: "2026-07-15T12:00:00.000Z",
       },
       {
+        id: "event-2",
         aggregateType: "vehicle",
         aggregateId: vehicleId,
         eventType: EVENT_TYPES.SERVICE_UPDATED,
@@ -55,6 +57,7 @@ describe("SERVICE_UPDATED projection", () => {
     const base = createEmptyVehicleState(vehicleId);
     const next = foldEvents(vehicleId, [
       {
+        id: "event-1",
         aggregateType: "vehicle",
         aggregateId: vehicleId,
         eventType: EVENT_TYPES.SERVICE_UPDATED,

@@ -1,7 +1,7 @@
 # Dogfood seed — Karan TLX (2021 Acura)
 
 Creator dogfood profile mined from ChatGPT exports + CARFAX Car Care PDF.  
-Strategy doc: [`creator-playbook-proc-0.md`](../../../../workspace/strategy/creator-playbook-proc-0.md)
+Internal strategy source: `creator-playbook-proc-0.md`. This README is the public seed reference.
 
 ## Files
 

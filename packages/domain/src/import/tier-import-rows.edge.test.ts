@@ -10,6 +10,7 @@ describe("tierImportRows edge cases", () => {
         serviceDate: "2025-01-01",
         mileage: Number.NaN,
         lineItems: ["Tires rotated"],
+        total: "$0.00",
       },
     ]);
 
@@ -25,6 +26,7 @@ describe("tierImportRows edge cases", () => {
         serviceDate: "2025-01-01",
         mileage: 1000,
         lineItems: ["Service visit", "Tires rotated"],
+        total: "$0.00",
       },
     ]);
 
@@ -39,6 +41,7 @@ describe("tierImportRows edge cases", () => {
         serviceDate: "2025-01-01",
         mileage: 1000,
         lineItems: ["Inspection"],
+        total: "$0.00",
       },
     ]);
 

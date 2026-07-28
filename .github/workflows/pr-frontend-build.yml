@@ -54,7 +54,10 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm docs:check-links
+      - run: pnpm typecheck
       - run: pnpm --filter @vehicleos/domain test
+      - run: pnpm --filter @vehicleos/knowledge test
       - run: pnpm --filter @vehicleos/server test
       - run: pnpm --filter @vehicleos/api test
       - run: pnpm --filter @vehicleos/worker test

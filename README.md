@@ -79,6 +79,10 @@ Receipt upload → extraction → `service.recorded` event → projection update
 2. Run `pnpm install`.
 3. Run `pnpm dev` to start dev targets (`marketing`, `web`, `api`, `worker`).
 
+Before a PR, run `pnpm docs:check-links`, `pnpm typecheck`, and `pnpm test`.
+Windows contributors can run the complete pinned build sequence with
+`pnpm verify:windows`.
+
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for branch naming, PR workflow, and CI expectations.
 
 ## Deployment (recommended)

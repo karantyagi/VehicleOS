@@ -1,5 +1,5 @@
 import { buildApp } from "./app.js";
-import { closePool } from "./db/pool.js";
+import { closePool } from "@vehicleos/server";
 
 const port = Number(process.env.PORT ?? 4000);
 
