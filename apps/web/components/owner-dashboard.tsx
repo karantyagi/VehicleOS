@@ -148,6 +148,20 @@ export function OwnerDashboard() {
 
   useReminderNotifications(reminders);
 
+  useEffect(() => {
+    if (garage.isLoading || typeof window === "undefined") return;
+
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("addVehicle") !== "1") return;
+
+    url.searchParams.delete("addVehicle");
+    window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+
+    if (garage.isAddingVehicle) return;
+    const result = garage.startAddVehicle();
+    if (!result.ok) notify(result.reason, "error");
+  }, [garage.isAddingVehicle, garage.isLoading, garage.startAddVehicle]);
+
   const inSetupFlow =
     isLoading ||
     garage.isLoading ||
