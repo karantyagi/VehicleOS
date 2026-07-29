@@ -3,6 +3,8 @@ import type { CatalogDomainEvent, VehicleProjectionState } from "@vehicleos/doma
 import {
   buildOwnerReminderViews,
   buildOwnerServiceScheduleBoard,
+  buildOwnerDueItems,
+  buildOwnerHistoryTimeline,
   computeVerificationMaturity,
   enrichTimelineForDisplay,
   projectMaintenanceDeviations,
@@ -64,6 +66,15 @@ export const buildVehicleStateView = (
     ...scheduleProjectionBase,
     today,
   });
+  const ownerDueItems = buildOwnerDueItems({
+    board: serviceScheduleBoard,
+    ownershipRecords: state.ownershipRecords,
+    today,
+  });
+  const ownerHistoryTimeline = buildOwnerHistoryTimeline({
+    timeline: state.timeline,
+    ownershipRecords: state.ownershipRecords,
+  });
   const scheduleRowsForReminders = [...scheduleNear.rows, ...scheduleExtended.rows];
   const reminders = buildOwnerReminderViews({
     items: state.nowQueue,
@@ -102,6 +113,8 @@ export const buildVehicleStateView = (
       },
     },
     serviceScheduleBoard,
+    ownerDueItems,
+    ownerHistoryTimeline,
     ownershipRenewals: projectOwnershipRenewals({
       ownershipRecords: state.ownershipRecords,
       today,

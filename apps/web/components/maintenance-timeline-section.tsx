@@ -6,9 +6,8 @@ import { MaintenanceTimelineConsole } from "@/components/maintenance-timeline-co
 import { OwnerServiceScheduleBoardView } from "@/components/owner-service-schedule-board";
 import { Button } from "@/components/ui/button";
 import type {
-  OwnerServiceScheduleBoard,
+  OwnerDueItemsView,
   OwnershipRecordEntry,
-  OwnershipRenewalProjection,
   ScheduleProjectionRow,
   ServiceHistoryTab,
   TimelineEntry,
@@ -18,11 +17,10 @@ import { cn } from "@/lib/utils";
 type MaintenanceTimelineSectionProps = {
   timeline: TimelineEntry[];
   ownershipRecords: OwnershipRecordEntry[];
-  ownershipRenewals?: OwnershipRenewalProjection[];
+  ownerDueItems?: OwnerDueItemsView | null;
   scheduleNear: ScheduleProjectionRow[];
   scheduleExtended: ScheduleProjectionRow[];
   scheduleFull: ScheduleProjectionRow[];
-  serviceScheduleBoard?: OwnerServiceScheduleBoard | null;
   currentMileage?: number;
   effectiveMilesPerYear: number;
   hasKnowledgeSchedule?: boolean;
@@ -54,11 +52,10 @@ const TAB_ITEMS = [
 export function MaintenanceTimelineSection({
   timeline,
   ownershipRecords,
-  ownershipRenewals = [],
+  ownerDueItems = null,
   scheduleNear,
   scheduleExtended,
   scheduleFull,
-  serviceScheduleBoard = null,
   currentMileage = 0,
   effectiveMilesPerYear,
   hasKnowledgeSchedule = false,
@@ -149,10 +146,9 @@ export function MaintenanceTimelineSection({
           ) : null}
 
           {tab === "schedule" ? (
-            serviceScheduleBoard ? (
+            ownerDueItems ? (
               <OwnerServiceScheduleBoardView
-                board={serviceScheduleBoard}
-                ownershipRenewals={ownershipRenewals}
+                dueItems={ownerDueItems}
                 currentMileage={currentMileage}
                 hasKnowledgeSchedule={hasKnowledgeSchedule}
               />

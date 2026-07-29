@@ -1,5 +1,8 @@
 import type { MaintenanceRecommendation } from "../policy/types.js";
 import type { OwnershipRecordEntry, VehicleProjectionState } from "../projections/types.js";
+import { buildOwnerDueItems, isOwnerDueItemActionable } from "../owner-care/build-owner-due-items.js";
+import { dueItemToRecommendation } from "../owner-care/due-item-to-recommendation.js";
+import { buildOwnerServiceScheduleBoard } from "../schedule/build-owner-service-schedule-board.js";
 
 export type OwnershipRenewalStatus = "overdue" | "due_soon";
 
@@ -105,29 +108,24 @@ export const evaluateOwnershipRenewalDue = (input: {
   today?: string;
   leadDays?: number;
 }): MaintenanceRecommendation | null => {
-  const renewals = projectOwnershipRenewals({
+  const today = input.today ?? new Date().toISOString().slice(0, 10);
+  const board = buildOwnerServiceScheduleBoard({
+    knowledgeSchedule: input.state.knowledgeSchedule,
+    timeline: input.state.timeline,
+    currentMileage: input.state.currentMileage,
+    today,
+  });
+  const dueView = buildOwnerDueItems({
+    board,
     ownershipRecords: input.state.ownershipRecords,
-    today: input.today,
+    today,
     leadDays: input.leadDays,
   });
-
-  const next = renewals[0];
-  if (!next) return null;
-
-  const deadlineLabel =
-    next.status === "overdue"
-      ? `Registration expired ${next.expirationDate}`
-      : `Registration expires ${next.expirationDate}`;
-
-  return {
-    recommendationId: crypto.randomUUID(),
-    title: next.title,
-    reason: `${deadlineLabel} — ${next.agency}. Renew before the deadline to avoid lapses.`,
-    confidence: 0.97,
-    evidenceIds: [],
-    ruleId: renewalRuleId(next.eventType),
-    dueBy: next.expirationDate,
-  };
+  const nextOwnership = dueView.items.find(
+    (item) => item.kind === "ownership" && isOwnerDueItemActionable(item),
+  );
+  if (!nextOwnership) return null;
+  return dueItemToRecommendation(nextOwnership);
 };
 
 export const isRenewalRuleId = (ruleId: string | undefined): boolean =>

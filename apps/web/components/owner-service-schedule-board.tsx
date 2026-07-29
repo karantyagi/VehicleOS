@@ -2,21 +2,24 @@
 
 import { useMemo, useState } from "react";
 import { AlertCircle, CalendarClock, ChevronDown, ChevronUp } from "lucide-react";
-import type { OwnerServiceScheduleBoard, OwnerServiceScheduleRow, OwnerServiceVerdict } from "@vehicleos/domain";
+import type {
+  OwnerDueItem,
+  OwnerDueItemsView,
+  OwnerServiceScheduleRow,
+  OwnerServiceVerdict,
+  OwnershipRenewalProjection,
+} from "@vehicleos/domain";
 import { EmptyState } from "@/components/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { OwnershipRenewalProjection } from "@/lib/console-types";
 import { isoDateToLocalDate } from "@/lib/date-input";
 import { cn } from "@/lib/utils";
 
 type OwnerServiceScheduleBoardProps = {
-  board: OwnerServiceScheduleBoard | null;
-  ownershipRenewals?: OwnershipRenewalProjection[];
+  dueItems: OwnerDueItemsView | null;
   currentMileage: number;
   hasKnowledgeSchedule?: boolean;
-  today?: string;
 };
 
 type GroupFilter = "All" | "Engine" | "Fluids" | "Filters" | "Brakes" | "Tires" | "Other";
@@ -118,15 +121,12 @@ function MileageTimeline({
         x1={nowX}
         y1={6}
         x2={nowX}
-        y2={trackY + 8}
+        y2={height - 8}
         stroke="hsl(var(--primary))"
-        strokeWidth={1.5}
-        strokeDasharray="3 2"
+        strokeWidth={2}
+        strokeDasharray="3 3"
       />
-      <text x={nowX} y={10} textAnchor="middle" fill="hsl(var(--primary))" fontSize={9} fontWeight={600}>
-        now
-      </text>
-      {nextMileage !== null && nextMileage <= TIMELINE_MAX_MI ? (
+      {nextMileage ? (
         <g>
           <circle
             cx={x(nextMileage)}
@@ -157,7 +157,7 @@ function MileageTimeline({
   );
 }
 
-function ServiceItemCard({ row, currentMileage }: { row: OwnerServiceScheduleRow; currentMileage: number }) {
+function MaintenanceDueCard({ row, currentMileage }: { row: OwnerServiceScheduleRow; currentMileage: number }) {
   const defaultOpen = row.verdict === "overdue" || row.verdict === "due_soon";
   const [open, setOpen] = useState(defaultOpen);
 
@@ -171,6 +171,9 @@ function ServiceItemCard({ row, currentMileage }: { row: OwnerServiceScheduleRow
       >
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+              OEM
+            </span>
             {row.mmCode ? (
               <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                 MM {row.mmCode}
@@ -192,11 +195,7 @@ function ServiceItemCard({ row, currentMileage }: { row: OwnerServiceScheduleRow
 
       {open ? (
         <div className="space-y-4 border-t border-border/60 px-4 pb-4 pt-3 sm:px-5 sm:pb-5">
-          <MileageTimeline
-            events={row.historyEvents}
-            nextMileage={row.dueMileage}
-            currentMileage={currentMileage}
-          />
+          <MileageTimeline events={row.historyEvents} nextMileage={row.dueMileage} currentMileage={currentMileage} />
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
@@ -250,7 +249,7 @@ function ServiceItemCard({ row, currentMileage }: { row: OwnerServiceScheduleRow
   );
 }
 
-function OwnershipRenewalCard({ renewal }: { renewal: OwnershipRenewalProjection }) {
+function OwnershipDueCard({ renewal }: { renewal: OwnershipRenewalProjection }) {
   const [open, setOpen] = useState(renewal.status === "overdue" || renewal.status === "due_soon");
   const verdict: OwnerServiceVerdict = renewal.status === "overdue" ? "overdue" : "due_soon";
 
@@ -280,59 +279,78 @@ function OwnershipRenewalCard({ renewal }: { renewal: OwnershipRenewalProjection
       {open ? (
         <div className="border-t border-border/60 px-4 pb-4 pt-3 text-sm text-muted-foreground sm:px-5 sm:pb-5">
           <p>{renewal.description}</p>
-          <p className="mt-2 text-xs uppercase tracking-wide">Shows in History after RMV import or manual renewal record</p>
+          <p className="mt-2 text-xs uppercase tracking-wide">Past RMV records appear in History</p>
         </div>
       ) : null}
     </article>
   );
 }
 
+function OwnerDueItemCard({
+  item,
+  currentMileage,
+}: {
+  item: OwnerDueItem;
+  currentMileage: number;
+}) {
+  if (item.kind === "ownership" && item.ownershipRenewal) {
+    return <OwnershipDueCard renewal={item.ownershipRenewal} />;
+  }
+  if (item.kind === "maintenance" && item.maintenanceRow) {
+    return <MaintenanceDueCard row={item.maintenanceRow} currentMileage={currentMileage} />;
+  }
+  return null;
+}
+
 export function OwnerServiceScheduleBoardView({
-  board,
-  ownershipRenewals = [],
+  dueItems,
   currentMileage,
   hasKnowledgeSchedule = false,
 }: OwnerServiceScheduleBoardProps) {
   const [group, setGroup] = useState<GroupFilter>("All");
 
-  const filteredRows = useMemo(() => {
-    if (!board) return [];
-    if (group === "All") return board.rows;
-    return board.rows.filter((row) => inferGroup(row) === group);
-  }, [board, group]);
+  const maintenanceRows = useMemo(
+    () =>
+      (dueItems?.items ?? [])
+        .filter((item): item is OwnerDueItem & { maintenanceRow: OwnerServiceScheduleRow } =>
+          item.kind === "maintenance" && Boolean(item.maintenanceRow),
+        )
+        .map((item) => item.maintenanceRow),
+    [dueItems],
+  );
 
-  const actionCount = (board?.summary.overdue ?? 0) + (board?.summary.dueSoon ?? 0) + ownershipRenewals.length;
+  const filteredItems = useMemo(() => {
+    if (!dueItems) return [];
+    if (group === "All") return dueItems.items;
 
-  if (!board || board.rows.length === 0) {
-    if (ownershipRenewals.length === 0) {
-      return (
-        <EmptyState
-          icon={CalendarClock}
-          title={hasKnowledgeSchedule ? "Building your service schedule" : "No OEM schedule yet"}
-          description={
-            hasKnowledgeSchedule
-              ? "Verified OEM intervals are loaded. Import CARFAX or confirm a service record to anchor due dates."
-              : "Supported vehicles load verified OEM intervals automatically at setup."
-          }
-        />
-      );
-    }
+    const allowedGroups = new Set(
+      maintenanceRows.filter((row) => inferGroup(row) === group).map((row) => row.entryId),
+    );
 
+    return dueItems.items.filter((item) => {
+      if (item.kind === "ownership") {
+        return item.verdict === "overdue" || item.verdict === "due_soon";
+      }
+      return item.maintenanceRow ? allowedGroups.has(item.maintenanceRow.entryId) : false;
+    });
+  }, [dueItems, group, maintenanceRows]);
+
+  const summary = dueItems?.summary;
+  const actionCount = (summary?.overdue ?? 0) + (summary?.dueSoon ?? 0);
+  const hasMaintenanceRows = maintenanceRows.length > 0;
+  const hasOwnershipDue = (summary?.ownershipOverdue ?? 0) + (summary?.ownershipDueSoon ?? 0) > 0;
+
+  if (!dueItems || dueItems.items.length === 0) {
     return (
-      <div className="space-y-6">
-        <div className="history-surface p-4 sm:p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">RMV renewals</p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Registration and inspection due dates from your RMV import — mixed with OEM service schedule below once
-            CARFAX is loaded.
-          </p>
-        </div>
-        <div className="space-y-3">
-          {ownershipRenewals.map((renewal) => (
-            <OwnershipRenewalCard key={renewal.recordId} renewal={renewal} />
-          ))}
-        </div>
-      </div>
+      <EmptyState
+        icon={CalendarClock}
+        title={hasKnowledgeSchedule ? "Building your service schedule" : "No OEM schedule yet"}
+        description={
+          hasKnowledgeSchedule
+            ? "Verified OEM intervals are loaded. Import CARFAX or confirm a service record to anchor due dates."
+            : "Supported vehicles load verified OEM intervals automatically at setup."
+        }
+      />
     );
   }
 
@@ -346,16 +364,16 @@ export function OwnerServiceScheduleBoardView({
         </div>
         <div>
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Action now</p>
-          <p className="mt-1 text-2xl font-semibold tabular-nums text-destructive">{board.summary.overdue}</p>
+          <p className="mt-1 text-2xl font-semibold tabular-nums text-destructive">{summary?.overdue ?? 0}</p>
         </div>
         <div>
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Due soon</p>
-          <p className="mt-1 text-2xl font-semibold tabular-nums text-primary">{board.summary.dueSoon}</p>
+          <p className="mt-1 text-2xl font-semibold tabular-nums text-primary">{summary?.dueSoon ?? 0}</p>
         </div>
         <div>
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Current / monitor</p>
           <p className="mt-1 text-2xl font-semibold tabular-nums">
-            {board.summary.current + board.summary.monitor}
+            {(summary?.current ?? 0) + (summary?.monitor ?? 0)}
           </p>
         </div>
       </div>
@@ -364,56 +382,63 @@ export function OwnerServiceScheduleBoardView({
         <div className="flex gap-3 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm">
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden />
           <p className="text-foreground">
-            {board.summary.overdue > 0
-              ? `${board.summary.overdue} service${board.summary.overdue === 1 ? "" : "s"} overdue`
+            {summary?.maintenanceOverdue
+              ? `${summary.maintenanceOverdue} service${summary.maintenanceOverdue === 1 ? "" : "s"} overdue`
               : null}
-            {board.summary.overdue > 0 && board.summary.dueSoon > 0 ? " · " : null}
-            {board.summary.dueSoon > 0
-              ? `${board.summary.dueSoon} due within your nudge window`
+            {summary?.maintenanceOverdue && summary?.maintenanceDueSoon ? " · " : null}
+            {summary?.maintenanceDueSoon
+              ? `${summary.maintenanceDueSoon} due within your nudge window`
               : null}
-            {ownershipRenewals.length > 0
-              ? `${board.summary.overdue > 0 || board.summary.dueSoon > 0 ? " · " : ""}${ownershipRenewals.length} RMV renewal${ownershipRenewals.length === 1 ? "" : "s"} due`
+            {hasOwnershipDue
+              ? `${summary?.maintenanceOverdue || summary?.maintenanceDueSoon ? " · " : ""}${(summary?.ownershipOverdue ?? 0) + (summary?.ownershipDueSoon ?? 0)} RMV renewal${(summary?.ownershipOverdue ?? 0) + (summary?.ownershipDueSoon ?? 0) === 1 ? "" : "s"} due`
               : null}
             . Expand rows for CARFAX evidence and next due dates.
           </p>
         </div>
       ) : null}
 
-      <div className="flex flex-wrap gap-2">
-        {GROUP_FILTERS.map((filter) => {
-          const count =
-            filter === "All"
-              ? board.rows.length
-              : board.rows.filter((row) => inferGroup(row) === filter).length;
-          if (filter !== "All" && count === 0) return null;
-          return (
-            <Button
-              key={filter}
-              type="button"
-              size="sm"
-              variant={group === filter ? "secondary" : "ghost"}
-              className="h-8 rounded-full px-3 text-xs"
-              onClick={() => setGroup(filter)}
-            >
-              {filter}
-              {filter !== "All" ? ` (${count})` : ""}
-            </Button>
-          );
-        })}
-      </div>
+      {hasMaintenanceRows ? (
+        <div className="flex flex-wrap gap-2">
+          {GROUP_FILTERS.map((filter) => {
+            const count =
+              filter === "All"
+                ? maintenanceRows.length
+                : maintenanceRows.filter((row) => inferGroup(row) === filter).length;
+            if (filter !== "All" && count === 0) return null;
+            return (
+              <Button
+                key={filter}
+                type="button"
+                size="sm"
+                variant={group === filter ? "secondary" : "ghost"}
+                className="h-8 rounded-full px-3 text-xs"
+                onClick={() => setGroup(filter)}
+              >
+                {filter}
+                {filter !== "All" ? ` (${count})` : ""}
+              </Button>
+            );
+          })}
+        </div>
+      ) : hasOwnershipDue ? (
+        <div className="history-surface p-4 sm:p-5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">RMV renewals</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Registration and inspection due dates from your RMV import — unified with OEM maintenance below when
+            loaded.
+          </p>
+        </div>
+      ) : null}
 
       <div className="space-y-3">
-        {ownershipRenewals.map((renewal) => (
-          <OwnershipRenewalCard key={renewal.recordId} renewal={renewal} />
-        ))}
-        {filteredRows.map((row) => (
-          <ServiceItemCard key={row.entryId} row={row} currentMileage={currentMileage} />
+        {filteredItems.map((item) => (
+          <OwnerDueItemCard key={item.id} item={item} currentMileage={currentMileage} />
         ))}
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Schedule assumes {board.effectiveMilesPerYear.toLocaleString()} mi/year for mileage-only OEM intervals.
-        Due dates use your imported history when available — deterministic, not AI-generated.
+        Schedule assumes {(dueItems.effectiveMilesPerYear ?? 12_000).toLocaleString()} mi/year for mileage-only OEM
+        intervals. Due dates use your imported history when available — deterministic, not AI-generated.
       </p>
     </div>
   );

@@ -29,9 +29,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import type { OwnerHistoryItem } from "@vehicleos/domain";
+import { buildOwnerHistoryTimeline } from "@vehicleos/domain";
 import type { OwnershipRecordEntry, TimelineEntry } from "@/lib/console-types";
 import { RMV_EVENT_LABELS } from "@/lib/record-import-types";
 import { isoDateToLocalDate, todayIsoDate } from "@/lib/date-input";
+
 import { cn } from "@/lib/utils";
 
 type ServiceDraft = {
@@ -140,44 +143,53 @@ const ownershipSourceLabel = (source: OwnershipRecordEntry["source"]): string =>
   return "CARFAX";
 };
 
+const historyItemToCard = (
+  item: OwnerHistoryItem,
+  entries: TimelineEntry[],
+  ownershipRecords: OwnershipRecordEntry[],
+): HistoryCard => {
+  if (item.kind === "service") {
+    const entry = entries.find((candidate) => candidate.serviceId === item.id);
+    return {
+      id: item.id,
+      kind: "service",
+      date: item.date,
+      mileage: item.mileage,
+      title: formatServiceDate(item.date),
+      subtitle: entry ? formatShopLine(entry) : item.shop ?? "Service visit",
+      preview:
+        item.lineItems.length === 1
+          ? item.lineItems[0]
+          : `${item.lineItems[0]} · +${item.lineItems.length - 1}`,
+      lineItems: item.lineItems,
+      costDisplay: formatCostDisplay(item.total),
+      serviceEntry: entry,
+    };
+  }
+
+  const record = ownershipRecords.find((candidate) => candidate.recordId === item.id);
+  return {
+    id: item.id,
+    kind: "ownership",
+    date: item.date,
+    mileage: item.mileage,
+    title: formatServiceDate(item.date),
+    subtitle: `${item.agency ?? record?.agency ?? "RMV"} · ${RMV_EVENT_LABELS[item.eventType ?? record?.eventType ?? "other"]}`,
+    preview: item.lineItems[0] ?? RMV_EVENT_LABELS[item.eventType ?? record?.eventType ?? "other"],
+    lineItems: item.lineItems,
+    costDisplay: "$—",
+    ownershipEntry: record,
+  };
+};
+
 const buildHistoryCards = (
   entries: TimelineEntry[],
   ownershipRecords: OwnershipRecordEntry[],
-): HistoryCard[] => {
-  const serviceCards: HistoryCard[] = entries.map((entry) => ({
-    id: entry.serviceId,
-    kind: "service",
-    date: entry.serviceDate,
-    mileage: entry.mileage,
-    title: formatServiceDate(entry.serviceDate),
-    subtitle: formatShopLine(entry),
-    preview:
-      entry.lineItems.length === 1
-        ? entry.lineItems[0]
-        : `${entry.lineItems[0]} · +${entry.lineItems.length - 1}`,
-    lineItems: entry.lineItems,
-    costDisplay: formatCostDisplay(entry.total),
-    serviceEntry: entry,
-  }));
-
-  const ownershipCards: HistoryCard[] = ownershipRecords.map((record) => {
-    const lineItems = [record.description, ...record.details].filter(Boolean);
-    return {
-      id: record.recordId,
-      kind: "ownership",
-      date: record.recordDate,
-      mileage: record.mileage,
-      title: formatServiceDate(record.recordDate),
-      subtitle: `${record.agency} · ${RMV_EVENT_LABELS[record.eventType]}`,
-      preview: lineItems[0] ?? RMV_EVENT_LABELS[record.eventType],
-      lineItems,
-      costDisplay: "$—",
-      ownershipEntry: record,
-    };
-  });
-
-  return [...serviceCards, ...ownershipCards].sort((a, b) => b.date.localeCompare(a.date));
-};
+): HistoryCard[] =>
+  buildOwnerHistoryTimeline({
+    timeline: entries,
+    ownershipRecords,
+  }).map((item) => historyItemToCard(item, entries, ownershipRecords));
 
 const groupCardsByYear = (cards: HistoryCard[]): [number, HistoryCard[]][] => {
   const groups = new Map<number, HistoryCard[]>();
