@@ -43,6 +43,70 @@ describe("match-service-name", () => {
     expect(findMatchingServices(timeline, "Front brake pads").length).toBe(0);
   });
 
+  it("keeps transmission fluid separate from rear differential fluid", () => {
+    const transmissionService =
+      "Replace transmission and transfer fluid (Maintenance Minder sub 3)";
+    const rearDifferentialService =
+      "Replace rear differential fluid — SH-AWD (Maintenance Minder sub 6)";
+
+    expect(
+      serviceNamePattern(transmissionService).test(
+        "Rear differential fluid flushed/changed",
+      ),
+    ).toBe(false);
+    expect(
+      serviceNamePattern(rearDifferentialService).test(
+        "Rear differential fluid flushed/changed",
+      ),
+    ).toBe(true);
+    expect(
+      serviceNamePattern(rearDifferentialService).test(
+        "Transmission fluid changed",
+      ),
+    ).toBe(false);
+  });
+
+  it("does not fall back when another known canonical service matches", () => {
+    const registry = compileServiceAliasRegistry([
+      {
+        bundleId: "brake-services",
+        aliases: [
+          {
+            canonicalServiceId: "generic.brake_fluid",
+            phrase: "Brake fluid flushed",
+            matchKind: "contains",
+            priority: 50,
+          },
+          {
+            canonicalServiceId: "generic.front_brake_pads",
+            phrase: "Front brake pads replaced",
+            matchKind: "contains",
+            priority: 50,
+          },
+        ],
+      },
+    ]);
+    const timeline = [
+      timelineRow({
+        lineItems: ["Front brake pads replaced"],
+      }),
+    ];
+
+    expect(
+      findMatchingServices(timeline, "Replace brake fluid", {
+        canonicalServiceId: "generic.brake_fluid",
+        serviceAliasRegistry: registry,
+      }),
+    ).toHaveLength(0);
+  });
+
+  it("does not treat differential gear oil as engine oil service", () => {
+    const differentialService = "Inspect front and rear differential gear oil";
+
+    expect(serviceNamePattern(differentialService).test("Oil and filter changed")).toBe(false);
+    expect(serviceNamePattern(differentialService).test("Differential gear oil changed")).toBe(true);
+  });
+
   it("returns chronologically last match", () => {
     const timeline = [
       timelineRow({ serviceId: "a", serviceDate: "2024-01-01", lineItems: ["Oil and filter changed"] }),

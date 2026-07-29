@@ -1,4 +1,4 @@
-import { positioningContent } from "../../lib/site-config";
+import { positioningContent } from "../../lib/positioning-content";
 import { PositioningGapSection } from "../components/positioning-gap-section";
 
 function PositioningStrip() {

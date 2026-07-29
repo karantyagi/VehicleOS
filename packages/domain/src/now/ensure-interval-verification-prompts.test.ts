@@ -50,6 +50,50 @@ const seedOilHistory = async (eventStore: InMemoryEventStore) => {
   }
 };
 
+const seedTireRotationHistory = async (eventStore: InMemoryEventStore) => {
+  await eventStore.append({
+    aggregateType: "vehicle",
+    aggregateId: vehicleId,
+    eventType: EVENT_TYPES.KNOWLEDGE_SCHEDULE_RECORDED,
+    eventVersion: EVENT_VERSIONS[EVENT_TYPES.KNOWLEDGE_SCHEDULE_RECORDED],
+    payload: {
+      vehicleId,
+      documentId: "doc-tires",
+      manualTitle: "Manual",
+      recordedAt: "2026-01-01T00:00:00.000Z",
+      entries: [
+        {
+          entryId: "mm-sub-1",
+          canonicalServiceId: "generic.tire_rotation",
+          serviceName: "Rotate tires",
+          intervalMiles: 7_500,
+          intervalMonths: 12,
+          sourceDocumentId: "doc-tires",
+        },
+      ],
+    },
+  });
+
+  for (const [index, mileage] of [10_000, 16_000, 22_000].entries()) {
+    await eventStore.append({
+      aggregateType: "vehicle",
+      aggregateId: vehicleId,
+      eventType: EVENT_TYPES.SERVICE_RECORDED,
+      eventVersion: EVENT_VERSIONS[EVENT_TYPES.SERVICE_RECORDED],
+      payload: {
+        vehicleId,
+        serviceId: `rotation-${index + 1}`,
+        shop: "Tire shop",
+        serviceDate: ["2024-01-01", "2024-07-01", "2025-01-01"][index]!,
+        mileage,
+        lineItems: ["Tire rotation"],
+        total: "$0",
+        evidenceIds: [],
+      },
+    });
+  }
+};
+
 describe("ensureIntervalVerificationPrompts", () => {
   it("creates VERIFY_OWNER_INTERVAL tasks for stable owner cadence", async () => {
     const eventStore = new InMemoryEventStore();
@@ -66,6 +110,22 @@ describe("ensureIntervalVerificationPrompts", () => {
     expect(pending[0]?.verificationCode).toBe("VERIFY_OWNER_INTERVAL");
     expect(pending[0]?.ruleId).toBe(intervalRuleIdForEntry("engine-oil"));
     expect(pending[0]?.suggestedIntervalMiles).toBe(3_000);
+  });
+
+  it("marks tire rotation prompts as mileage-only", async () => {
+    const eventStore = new InMemoryEventStore();
+    await seedTireRotationHistory(eventStore);
+
+    const result = await ensureIntervalVerificationPrompts({
+      eventStore,
+      vehicleId,
+    });
+
+    const pending = result.nowQueue.filter((item) => item.status === "pending");
+    expect(pending).toHaveLength(1);
+    expect(pending[0]?.intervalKind).toBe("tire_rotation");
+    expect(pending[0]?.suggestedIntervalMiles).toBe(6_000);
+    expect(pending[0]?.suggestedIntervalMonths).toBeUndefined();
   });
 
   it("skips when overlay already confirmed", async () => {

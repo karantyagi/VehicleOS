@@ -82,6 +82,7 @@ const detectOwnerHabitProposal = (input: {
   return {
     entryId: input.entryId,
     serviceName: input.serviceName,
+    intervalKind: "general",
     intervalMiles: observed,
     intervalMonths: null,
     oemIntervalMiles: null,

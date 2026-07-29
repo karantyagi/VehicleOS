@@ -107,6 +107,7 @@ export const applyEvent = (
         draftReasonSource: event.payload.draftReasonSource,
         suggestedIntervalMiles: event.payload.suggestedIntervalMiles,
         suggestedIntervalMonths: event.payload.suggestedIntervalMonths,
+        intervalKind: event.payload.intervalKind,
         snoozeCount: 0,
       };
 

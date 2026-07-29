@@ -14,7 +14,9 @@ import {
   recordOwnershipFromServiceNote,
   resolveScheduleProjectionContext,
   type MaintenanceDeviationReasonId,
+  type IntervalBasis,
   type OwnerContextMemory,
+  type TireRotationConditionId,
 } from "@vehicleos/domain";
 import { assertVehicleCreateAllowed } from "./catalog-handlers.js";
 import {
@@ -57,9 +59,18 @@ type TaskDecisionBody = {
   ownerIntervalOverlay?: {
     intervalMiles?: number | null;
     intervalMonths?: number | null;
+    basis?: IntervalBasis;
+    tireRotationConditions?: TireRotationConditionId[];
     label?: string;
   };
 };
+
+const TIRE_ROTATION_CONDITIONS = new Set<TireRotationConditionId>([
+  "uneven_tread",
+  "pressure_or_tpms",
+  "pull_vibration_or_cupping",
+  "special_tire_setup",
+]);
 
 type AuthContext = {
   userId: string;
@@ -629,11 +640,40 @@ export const decideOnTask = async (
       return jsonResponse(400, { error: "Could not resolve maintenance item for this verification." });
     }
 
-    const intervalMiles = body.ownerIntervalOverlay.intervalMiles ?? task.suggestedIntervalMiles ?? null;
-    const intervalMonths = body.ownerIntervalOverlay.intervalMonths ?? task.suggestedIntervalMonths ?? null;
+    const isTireRotation =
+      task.intervalKind === "tire_rotation" || /rotate tires|tire rotation/i.test(task.title);
+    const hasIntervalMiles = Object.prototype.hasOwnProperty.call(
+      body.ownerIntervalOverlay,
+      "intervalMiles",
+    );
+    const hasIntervalMonths = Object.prototype.hasOwnProperty.call(
+      body.ownerIntervalOverlay,
+      "intervalMonths",
+    );
+    const intervalMiles = hasIntervalMiles
+      ? body.ownerIntervalOverlay.intervalMiles ?? null
+      : task.suggestedIntervalMiles ?? null;
+    const intervalMonths = isTireRotation
+      ? null
+      : hasIntervalMonths
+        ? body.ownerIntervalOverlay.intervalMonths ?? null
+        : task.suggestedIntervalMonths ?? null;
     if (intervalMiles === null && intervalMonths === null) {
       return jsonResponse(400, { error: "Choose an interval to confirm." });
     }
+    const basis: IntervalBasis = isTireRotation
+      ? "mileage"
+      : body.ownerIntervalOverlay.basis ??
+        (intervalMiles !== null && intervalMonths !== null
+          ? "mixed"
+          : intervalMiles !== null
+            ? "mileage"
+            : "time");
+    const tireRotationConditions = isTireRotation
+      ? [...new Set(body.ownerIntervalOverlay.tireRotationConditions ?? [])].filter((condition) =>
+          TIRE_ROTATION_CONDITIONS.has(condition),
+        )
+      : undefined;
 
     const label =
       body.ownerIntervalOverlay.label ??
@@ -645,6 +685,11 @@ export const decideOnTask = async (
       overlay: {
         intervalMiles,
         intervalMonths,
+        basis,
+        tireRotationConditions:
+          tireRotationConditions && tireRotationConditions.length > 0
+            ? tireRotationConditions
+            : undefined,
         label,
         confirmedAt: new Date().toISOString(),
       },

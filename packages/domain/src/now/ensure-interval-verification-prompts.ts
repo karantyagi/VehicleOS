@@ -93,6 +93,7 @@ export const ensureIntervalVerificationPrompts = async (
         ruleId,
         suggestedIntervalMiles: proposal.intervalMiles ?? undefined,
         suggestedIntervalMonths: proposal.intervalMonths ?? undefined,
+        intervalKind: proposal.intervalKind,
       },
       correlationId,
     });

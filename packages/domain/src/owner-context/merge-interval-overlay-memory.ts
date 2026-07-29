@@ -32,6 +32,24 @@ export const resolveIntervalForEntry = (input: {
     };
   }
 
+  if (overlay.basis === "mileage") {
+    return {
+      intervalMonths: null,
+      intervalMiles: overlay.intervalMiles ?? input.oemIntervalMiles,
+      usesOwnerOverlay: true,
+      overlayLabel: overlay.label,
+    };
+  }
+
+  if (overlay.basis === "time") {
+    return {
+      intervalMonths: overlay.intervalMonths ?? input.oemIntervalMonths,
+      intervalMiles: null,
+      usesOwnerOverlay: true,
+      overlayLabel: overlay.label,
+    };
+  }
+
   return {
     intervalMonths: overlay.intervalMonths ?? input.oemIntervalMonths,
     intervalMiles: overlay.intervalMiles ?? input.oemIntervalMiles,
