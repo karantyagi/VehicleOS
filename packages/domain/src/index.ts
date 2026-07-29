@@ -248,6 +248,13 @@ export {
   type OwnershipRenewalStatus,
 } from "./ownership/evaluate-ownership-renewals.js";
 export {
+  INSPECTION_RENEWAL_RULE_ID,
+  OTHER_RENEWAL_RULE_ID,
+  REGISTRATION_RENEWAL_GENERIC_RULE_ID,
+  REGISTRATION_RENEWAL_MA_RULE_ID,
+  resolveRenewalRuleId,
+} from "./ownership/resolve-renewal-rule-id.js";
+export {
   deriveOwnershipRecordsFromLineItems,
   type DerivedOwnershipRecord,
 } from "./ownership/derive-ownership-from-line-items.js";

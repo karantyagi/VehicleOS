@@ -78,7 +78,7 @@ describe("evaluate-ownership-renewals", () => {
       today: "2026-06-15",
     });
 
-    expect(recommendation?.ruleId).toBe("renewal.policy.registration.v1");
+    expect(recommendation?.ruleId).toBe("registration.renewal.ma.v1");
     expect(recommendation?.dueBy).toBe("2026-07-21");
     expect(recommendation?.title).toBe("Registration renewal");
   });

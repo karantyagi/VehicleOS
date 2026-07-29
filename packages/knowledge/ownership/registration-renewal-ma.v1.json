@@ -1,0 +1,9 @@
+{
+  "itemClass": "registration.renewal.ma.v1",
+  "displayName": "Massachusetts registration renewal",
+  "agency": "Massachusetts RMV (myRMV)",
+  "ruleId": "registration.renewal.ma.v1",
+  "leadDays": 60,
+  "description": "Static renewal reminder from RMV registration expiration on file — not OEM schedule truth.",
+  "source": "ownership_records"
+}

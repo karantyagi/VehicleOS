@@ -9,7 +9,6 @@ import {
   enrichTimelineForDisplay,
   projectMaintenanceDeviations,
   projectMaintenanceSchedule,
-  projectOwnershipRenewals,
   resolveScheduleProjectionContext,
   splitOwnerQueues,
 } from "@vehicleos/domain";
@@ -79,6 +78,7 @@ export const buildVehicleStateView = (
   const reminders = buildOwnerReminderViews({
     items: state.nowQueue,
     scheduleRows: scheduleRowsForReminders,
+    dueItems: ownerDueItems,
     today,
   });
   const { verifications } = splitOwnerQueues(state.nowQueue);
@@ -112,13 +112,8 @@ export const buildVehicleStateView = (
         full: scheduleFull.horizonEnd,
       },
     },
-    serviceScheduleBoard,
     ownerDueItems,
     ownerHistoryTimeline,
-    ownershipRenewals: projectOwnershipRenewals({
-      ownershipRecords: state.ownershipRecords,
-      today,
-    }),
     maintenanceDeviations: projectMaintenanceDeviations({
       scheduleRows: scheduleExtended.rows,
       ownerContextMemory: profile?.ownerContextMemory,

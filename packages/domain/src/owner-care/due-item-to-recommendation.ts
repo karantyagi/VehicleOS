@@ -1,11 +1,6 @@
 import type { MaintenanceRecommendation } from "../policy/types.js";
+import { resolveRenewalRuleId } from "../ownership/resolve-renewal-rule-id.js";
 import type { OwnerDueItem } from "./build-owner-due-items.js";
-
-const renewalRuleId = (eventType: NonNullable<OwnerDueItem["ownershipRenewal"]>["eventType"]): string => {
-  if (eventType === "inspection") return "renewal.policy.inspection.v1";
-  if (eventType === "registration") return "renewal.policy.registration.v1";
-  return "renewal.policy.other.v1";
-};
 
 export const dueItemToRecommendation = (item: OwnerDueItem): MaintenanceRecommendation => {
   if (item.kind === "ownership" && item.ownershipRenewal) {
@@ -21,7 +16,10 @@ export const dueItemToRecommendation = (item: OwnerDueItem): MaintenanceRecommen
       reason: `${deadlineLabel} — ${renewal.agency}. Renew before the deadline to avoid lapses.`,
       confidence: 0.97,
       evidenceIds: [],
-      ruleId: renewalRuleId(renewal.eventType),
+      ruleId: resolveRenewalRuleId({
+        eventType: renewal.eventType,
+        agency: renewal.agency,
+      }),
       dueBy: renewal.expirationDate,
     };
   }

@@ -21,6 +21,7 @@ describe("dogfood fixtures", () => {
     const elantra = getDogfoodFixtureProfile("ayush-elantra");
     expect(elantra.carfaxUrl).toBe("/dogfood/ayush-elantra/carfax-history.v1.json");
     expect(elantra.rmvUrl).toBe("/dogfood/ayush-elantra/rmv-records.v1.json");
+    expect(elantra.rmvDemoUrl).toBe("/dogfood/ayush-elantra/rmv-records-demo.v1.json");
   });
 
   it("falls back to default profile for unknown ids", () => {

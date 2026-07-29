@@ -5,9 +5,10 @@ Friend-car dogfood profile from CARFAX Car Care PDF (Jul 27, 2026) + myRMV extra
 | File | Purpose |
 |------|---------|
 | `owner-profile.v1.json` | VIN, YMM, mileage, owner context |
-| `load-seed.ts` | CLI loader (profile + CARFAX import + schedule refresh) |
+| `load-seed.ts` | CLI loader (profile + CARFAX + RMV import + schedule refresh) |
 | `../../../connectors/carfax-connect/examples/ayush-elantra-carfax-history.v1.json` | Service history source |
-| `../../../connectors/rmv-connect/examples/ayush-elantra-myrmv-import.v1.json` | RMV records source |
+| `../../../connectors/rmv-connect/examples/ayush-elantra-myrmv-import.v1.json` | RMV records (production — reg expires 2028-01-31) |
+| `../../../connectors/rmv-connect/examples/ayush-elantra-myrmv-import-demo.v1.json` | Demo RMV (reg expires 2026-09-15 — renewal visible on Schedule) |
 | `../../../apps/web/public/dogfood/ayush-elantra/*.v1.json` | Hosted-app **Load dogfood JSON** buttons |
 | `../oem-extracts/hyundai-elantra-2022/oem-schedule.v1.json` | OEM schedule extract (2022 manual) |
 
@@ -19,7 +20,8 @@ Friend-car dogfood profile from CARFAX Car Care PDF (Jul 27, 2026) + myRMV extra
 
 1. Onboarding → pick **2022 Hyundai Elantra SEL**
 2. **Record import → CARFAX** → Load dogfood CARFAX JSON → confirm
-3. **Record import → RMV** → Load dogfood RMV JSON → confirm
+3. **Record import → RMV** → Load dogfood RMV JSON → confirm  
+   - For **Schedule renewal demo**: use **Load demo RMV (renewal visible)** instead (expires 2026-09-15)
 4. Schedule hydrates from catalog pack automatically at vehicle create
 
 Or paste/upload `.v1.json` files from `public/dogfood/ayush-elantra/`.
@@ -28,6 +30,12 @@ Or paste/upload `.v1.json` files from `public/dogfood/ayush-elantra/`.
 
 ```bash
 USE_IN_MEMORY_EVENT_STORE=true pnpm dogfood:load-ayush-elantra
+```
+
+Demo RMV (renewal on Schedule):
+
+```bash
+DOGFOOD_RMV_DEMO=true USE_IN_MEMORY_EVENT_STORE=true pnpm dogfood:load-ayush-elantra
 ```
 
 ```bash

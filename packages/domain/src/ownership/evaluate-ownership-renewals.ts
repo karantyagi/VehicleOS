@@ -3,6 +3,9 @@ import type { OwnershipRecordEntry, VehicleProjectionState } from "../projection
 import { buildOwnerDueItems, isOwnerDueItemActionable } from "../owner-care/build-owner-due-items.js";
 import { dueItemToRecommendation } from "../owner-care/due-item-to-recommendation.js";
 import { buildOwnerServiceScheduleBoard } from "../schedule/build-owner-service-schedule-board.js";
+import { isRenewalRuleId } from "./resolve-renewal-rule-id.js";
+
+export { isRenewalRuleId, resolveRenewalRuleId } from "./resolve-renewal-rule-id.js";
 
 export type OwnershipRenewalStatus = "overdue" | "due_soon";
 
@@ -55,12 +58,6 @@ const renewalTitle = (record: OwnershipRecordEntry): string => {
   if (record.eventType === "inspection") return "Vehicle inspection renewal";
   if (record.eventType === "registration") return "Registration renewal";
   return "Ownership renewal";
-};
-
-const renewalRuleId = (eventType: OwnershipRecordEntry["eventType"]): string => {
-  if (eventType === "inspection") return "renewal.policy.inspection.v1";
-  if (eventType === "registration") return "renewal.policy.registration.v1";
-  return "renewal.policy.other.v1";
 };
 
 export const projectOwnershipRenewals = (input: {
@@ -127,6 +124,3 @@ export const evaluateOwnershipRenewalDue = (input: {
   if (!nextOwnership) return null;
   return dueItemToRecommendation(nextOwnership);
 };
-
-export const isRenewalRuleId = (ruleId: string | undefined): boolean =>
-  Boolean(ruleId?.startsWith("renewal.policy."));

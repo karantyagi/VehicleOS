@@ -6,6 +6,7 @@ export type DogfoodFixtureProfile = {
   description: string;
   carfaxUrl: string;
   rmvUrl: string;
+  rmvDemoUrl?: string;
   oemScheduleUrl: string;
 };
 
@@ -25,6 +26,7 @@ export const DOGFOOD_FIXTURE_PROFILES: DogfoodFixtureProfile[] = [
     description: "~34k mi",
     carfaxUrl: "/dogfood/ayush-elantra/carfax-history.v1.json",
     rmvUrl: "/dogfood/ayush-elantra/rmv-records.v1.json",
+    rmvDemoUrl: "/dogfood/ayush-elantra/rmv-records-demo.v1.json",
     oemScheduleUrl: "/dogfood/ayush-elantra/oem-schedule.v1.json",
   },
 ];

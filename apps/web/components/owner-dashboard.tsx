@@ -42,6 +42,7 @@ import { draftLineItems, type MaintenanceRecordDraft } from "@/components/mainte
 import type {
   MaintenanceScheduleView,
   OwnerDueItemsView,
+  OwnerHistoryItem,
   OwnershipRecordEntry,
   PipelinePhase,
   OwnerReminderItem,
@@ -76,6 +77,7 @@ export function OwnerDashboard() {
   const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
   const [ownershipRecords, setOwnershipRecords] = useState<OwnershipRecordEntry[]>([]);
   const [ownerDueItems, setOwnerDueItems] = useState<OwnerDueItemsView | null>(null);
+  const [ownerHistoryTimeline, setOwnerHistoryTimeline] = useState<OwnerHistoryItem[] | null>(null);
   const [serviceHistoryTab, setServiceHistoryTab] = useState<ServiceHistoryTab>("schedule");
   const [nowQueue, setNowQueue] = useState<QueueItem[]>([]);
   const [reminders, setReminders] = useState<OwnerReminderItem[]>([]);
@@ -187,6 +189,7 @@ export function OwnerDashboard() {
         verifications?: QueueItem[];
         ownershipRecords?: OwnershipRecordEntry[];
         ownerDueItems?: OwnerDueItemsView | null;
+        ownerHistoryTimeline?: OwnerHistoryItem[] | null;
         quoteAnalyses?: QuoteAnalysisView[];
         evidenceVault?: EvidenceVaultItem[];
         knowledgeSchedule?: { serviceName: string; intervalMiles?: number; manualTitle: string }[];
@@ -198,6 +201,7 @@ export function OwnerDashboard() {
       setTimeline(body.timeline);
       setOwnershipRecords(body.ownershipRecords ?? []);
       setOwnerDueItems(body.ownerDueItems ?? null);
+      setOwnerHistoryTimeline(body.ownerHistoryTimeline ?? null);
       applyQueueState(body);
       setQuoteAnalyses(body.quoteAnalyses ?? []);
       setEvidenceVault(body.evidenceVault ?? []);
@@ -223,6 +227,7 @@ export function OwnerDashboard() {
     setTimeline([]);
     setOwnershipRecords([]);
     setOwnerDueItems(null);
+    setOwnerHistoryTimeline(null);
     setNowQueue([]);
     setReminders([]);
     setVerifications([]);
@@ -715,6 +720,7 @@ export function OwnerDashboard() {
             timeline={timeline}
             ownershipRecords={ownershipRecords}
             ownerDueItems={ownerDueItems}
+            ownerHistoryTimeline={ownerHistoryTimeline}
             scheduleNear={maintenanceSchedule.near}
             scheduleExtended={maintenanceSchedule.extended}
             scheduleFull={maintenanceSchedule.full}

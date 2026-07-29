@@ -7,6 +7,7 @@ import { OwnerServiceScheduleBoardView } from "@/components/owner-service-schedu
 import { Button } from "@/components/ui/button";
 import type {
   OwnerDueItemsView,
+  OwnerHistoryItem,
   OwnershipRecordEntry,
   ScheduleProjectionRow,
   ServiceHistoryTab,
@@ -18,6 +19,7 @@ type MaintenanceTimelineSectionProps = {
   timeline: TimelineEntry[];
   ownershipRecords: OwnershipRecordEntry[];
   ownerDueItems?: OwnerDueItemsView | null;
+  ownerHistoryTimeline?: OwnerHistoryItem[] | null;
   scheduleNear: ScheduleProjectionRow[];
   scheduleExtended: ScheduleProjectionRow[];
   scheduleFull: ScheduleProjectionRow[];
@@ -53,6 +55,7 @@ export function MaintenanceTimelineSection({
   timeline,
   ownershipRecords,
   ownerDueItems = null,
+  ownerHistoryTimeline = null,
   scheduleNear,
   scheduleExtended,
   scheduleFull,
@@ -94,6 +97,8 @@ export function MaintenanceTimelineSection({
       {historyOnly ? (
         <MaintenanceTimelineConsole
           entries={timeline}
+          ownershipRecords={ownershipRecords}
+          ownerHistoryTimeline={ownerHistoryTimeline}
           disabled={disabled}
           defaultMileage={defaultMileage}
           onOpenEvidence={onOpenEvidence}
@@ -132,6 +137,7 @@ export function MaintenanceTimelineSection({
             <MaintenanceTimelineConsole
               entries={timeline}
               ownershipRecords={ownershipRecords}
+              ownerHistoryTimeline={ownerHistoryTimeline}
               disabled={disabled}
               defaultMileage={defaultMileage}
               vehicleId={vehicleId}

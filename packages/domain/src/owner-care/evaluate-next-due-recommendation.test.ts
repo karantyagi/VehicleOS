@@ -48,6 +48,6 @@ describe("evaluateNextDueRecommendation", () => {
       today: "2026-07-01",
     });
 
-    expect(recommendation?.ruleId).toBe("renewal.policy.registration.v1");
+    expect(recommendation?.ruleId).toBe("registration.renewal.ma.v1");
   });
 });

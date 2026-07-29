@@ -49,6 +49,7 @@ type ServiceDraft = {
 type OwnerServiceHistoryTimelineProps = {
   entries: TimelineEntry[];
   ownershipRecords?: OwnershipRecordEntry[];
+  historyItems?: OwnerHistoryItem[] | null;
   disabled?: boolean;
   defaultMileage?: number;
   vehicleId?: string;
@@ -185,11 +186,17 @@ const historyItemToCard = (
 const buildHistoryCards = (
   entries: TimelineEntry[],
   ownershipRecords: OwnershipRecordEntry[],
-): HistoryCard[] =>
-  buildOwnerHistoryTimeline({
-    timeline: entries,
-    ownershipRecords,
-  }).map((item) => historyItemToCard(item, entries, ownershipRecords));
+  historyItems?: OwnerHistoryItem[] | null,
+): HistoryCard[] => {
+  const items =
+    historyItems ??
+    buildOwnerHistoryTimeline({
+      timeline: entries,
+      ownershipRecords,
+    });
+
+  return items.map((item) => historyItemToCard(item, entries, ownershipRecords));
+};
 
 const groupCardsByYear = (cards: HistoryCard[]): [number, HistoryCard[]][] => {
   const groups = new Map<number, HistoryCard[]>();
@@ -219,6 +226,7 @@ const sumServiceCosts = (entries: TimelineEntry[]): string => sumEntryCosts(entr
 export function OwnerServiceHistoryTimeline({
   entries,
   ownershipRecords = [],
+  historyItems = null,
   disabled = false,
   defaultMileage = 0,
   vehicleId,
@@ -229,8 +237,8 @@ export function OwnerServiceHistoryTimeline({
   requireEditConfirmation = false,
 }: OwnerServiceHistoryTimelineProps) {
   const historyCards = useMemo(
-    () => buildHistoryCards(entries, ownershipRecords),
-    [entries, ownershipRecords],
+    () => buildHistoryCards(entries, ownershipRecords, historyItems),
+    [entries, ownershipRecords, historyItems],
   );
   const yearGroups = useMemo(() => groupCardsByYear(historyCards), [historyCards]);
   const latestCard = historyCards[0] ?? null;

@@ -311,7 +311,7 @@ export function RecordImportPanel({
     [loadJsonText, onError],
   );
 
-  const loadDogfoodFixture = async () => {
+  const loadDogfoodFixture = async (options?: { rmvDemo?: boolean }) => {
     setIsLoadingDogfood(true);
     setParseError("");
     const profile = getDogfoodFixtureProfile(selectedDogfoodId);
@@ -323,9 +323,13 @@ export function RecordImportPanel({
         ]);
         return;
       }
-      const draft = await fetchDogfoodJson<VehicleOsRmvImportV1>(profile.rmvUrl);
+      const rmvUrl =
+        options?.rmvDemo && profile.rmvDemoUrl ? profile.rmvDemoUrl : profile.rmvUrl;
+      const draft = await fetchDogfoodJson<VehicleOsRmvImportV1>(rmvUrl);
       applyRmvDraft(draft, [
-        `Dogfood RMV JSON loaded (${profile.label}) — review records before confirming.`,
+        options?.rmvDemo
+          ? `Demo RMV JSON loaded (${profile.label}) — registration expires soon for Schedule testing.`
+          : `Dogfood RMV JSON loaded (${profile.label}) — review records before confirming.`,
       ]);
     } catch (error) {
       onError(error instanceof Error ? error.message : "Could not load dogfood fixture.");
@@ -755,6 +759,18 @@ export function RecordImportPanel({
                     ? "Load dogfood CARFAX JSON"
                     : "Load dogfood RMV JSON"}
               </Button>
+              {activeCategory === "rmv" &&
+              getDogfoodFixtureProfile(selectedDogfoodId).rmvDemoUrl ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={disabled || isLoadingDogfood}
+                  onClick={() => void loadDogfoodFixture({ rmvDemo: true })}
+                >
+                  Load demo RMV (renewal visible)
+                </Button>
+              ) : null}
               <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
               <label className="cursor-pointer">
                 <FileUp className="mr-2 h-4 w-4" aria-hidden />

@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { OwnershipRecordEntry, TimelineEntry } from "@/lib/console-types";
+import type { OwnerHistoryItem, OwnershipRecordEntry, TimelineEntry } from "@/lib/console-types";
 import { downloadCsv, filterByQuery, sortRows } from "@/lib/data-grid-utils";
 import { useConsoleListKeyboard } from "@/lib/use-console-list-keyboard";
 import { useAppUiStore } from "@/lib/store/app-ui-store";
@@ -51,6 +51,7 @@ type ServiceDraft = {
 type MaintenanceTimelineConsoleProps = {
   entries: TimelineEntry[];
   ownershipRecords?: OwnershipRecordEntry[];
+  ownerHistoryTimeline?: OwnerHistoryItem[] | null;
   disabled?: boolean;
   defaultMileage?: number;
   vehicleId?: string;
@@ -80,6 +81,7 @@ const formatShopLine = (entry: TimelineEntry): string => {
 export function MaintenanceTimelineConsole({
   entries,
   ownershipRecords = [],
+  ownerHistoryTimeline = null,
   disabled = false,
   defaultMileage = 0,
   vehicleId,
@@ -310,6 +312,7 @@ export function MaintenanceTimelineConsole({
       <OwnerServiceHistoryTimeline
         entries={entries}
         ownershipRecords={ownershipRecords}
+        historyItems={ownerHistoryTimeline}
         disabled={disabled}
         defaultMileage={defaultMileage}
         vehicleId={vehicleId}
