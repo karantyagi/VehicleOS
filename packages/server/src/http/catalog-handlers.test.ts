@@ -15,8 +15,8 @@ describe("listSupportedVehicles", () => {
     const result = listSupportedVehicles({ verifiedOnly: true, limit: 1 });
 
     expect(result.status).toBe(200);
-    // Interview verified fleet: 28 catalog rows across 6 models (see build-interview-fleet.mjs)
-    expect(result.body.total).toBe(28);
+    // Interview verified fleet: 29 catalog rows across 6 models + 2022 Elantra dogfood
+    expect(result.body.total).toBe(29);
   });
 });
 
@@ -46,6 +46,20 @@ describe("assertVehicleCreateAllowed", () => {
     expect(result).toEqual({
       ok: true,
       packId: "honda-accord-2024-ex",
+    });
+  });
+
+  it("allows Ayush dogfood 2022 Hyundai Elantra SEL", () => {
+    const result = assertVehicleCreateAllowed({
+      year: 2022,
+      make: "Hyundai",
+      model: "Elantra",
+      trim: "SEL",
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      packId: "hyundai-elantra-2022-sel",
     });
   });
 
