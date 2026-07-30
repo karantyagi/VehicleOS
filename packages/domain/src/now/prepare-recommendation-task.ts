@@ -10,7 +10,6 @@ import type { VehicleProjectionState } from "../projections/types.js";
 import {
   addDays,
   formatOwnerDeadline,
-  formatSnoozeEscalation,
   resolveReminderUrgency,
   type ReminderUrgency,
 } from "./format-owner-deadline.js";
@@ -74,7 +73,6 @@ export const buildTimeFirstTaskCopy = (input: {
   recommendation: MaintenanceRecommendation;
   scheduleRows: ScheduleProjectionRow[];
   today?: string;
-  snoozeCount?: number;
 }): TimeFirstTaskCopy => {
   const today = input.today ?? new Date().toISOString().slice(0, 10);
   const scheduleRow = matchScheduleRowForRule(input.recommendation.ruleId, input.scheduleRows);
@@ -85,8 +83,7 @@ export const buildTimeFirstTaskCopy = (input: {
 
   const deadlineLabel = formatOwnerDeadline(dueBy, today);
   const why = buildWhySnippet({ scheduleRow, contextReason: input.recommendation.reason });
-  const escalation = formatSnoozeEscalation(input.snoozeCount ?? 0);
-  const reasonParts = [deadlineLabel, why, escalation].filter(Boolean);
+  const reasonParts = [deadlineLabel, why].filter(Boolean);
   const reason = `${reasonParts.join(" ")}`.trim();
 
   const urgency = isRenewalRuleId(input.recommendation.ruleId)

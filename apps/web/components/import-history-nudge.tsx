@@ -30,11 +30,11 @@ export function ImportHistoryNudge({ vehicleId, timelineEmpty, onImport }: Impor
   return (
     <Alert className="flex flex-col gap-3 border-primary/20 bg-primary/5 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-foreground">
-        Schedule is live — add CARFAX from Import history to sharpen dates.
+        Schedule is live — add CARFAX from Add records to sharpen dates.
       </p>
       <div className="flex shrink-0 flex-wrap gap-2">
         <Button type="button" size="sm" onClick={onImport}>
-          Import history
+          Add records
         </Button>
         <Button type="button" size="sm" variant="ghost" onClick={dismiss}>
           Not now

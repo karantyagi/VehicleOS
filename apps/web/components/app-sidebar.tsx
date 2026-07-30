@@ -2,10 +2,10 @@
 
 import {
   Archive,
-  BellRing,
   BookOpen,
   Clock3,
   FileInput,
+  Home,
   ListChecks,
   MessageSquareQuote,
   Mic,
@@ -18,7 +18,7 @@ import { useAppUiStore } from "@/lib/store/app-ui-store";
 import { cn } from "@/lib/utils";
 
 const SECTION_ICONS: Record<AppSection, typeof ListChecks> = {
-  reminders: BellRing,
+  reminders: Home,
   now: ListChecks,
   timeline: Clock3,
   imports: FileInput,

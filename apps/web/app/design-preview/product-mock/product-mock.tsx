@@ -246,7 +246,7 @@ export function ProductMock() {
                 Scheduled
               </button>
               <button type="button" className="secondary">
-                Snooze
+                Fix this
               </button>
               <button type="button" className="secondary">
                 Done
@@ -307,7 +307,7 @@ export function ProductMock() {
                 Approve
               </button>
               <button type="button" className="secondary">
-                Snooze
+                Not needed
               </button>
             </div>
           </div>

@@ -26,6 +26,8 @@ type MaintenanceTimelineSectionProps = {
   effectiveMilesPerYear: number;
   hasKnowledgeSchedule?: boolean;
   activeTab?: ServiceHistoryTab;
+  addRequestKey?: number;
+  onAddRequestHandled?: () => void;
   onTabChange?: (tab: ServiceHistoryTab) => void;
   disabled?: boolean;
   defaultMileage?: number;
@@ -63,6 +65,8 @@ export function MaintenanceTimelineSection({
   effectiveMilesPerYear,
   hasKnowledgeSchedule = false,
   activeTab,
+  addRequestKey,
+  onAddRequestHandled,
   onTabChange,
   disabled = false,
   defaultMileage = 0,
@@ -148,6 +152,8 @@ export function MaintenanceTimelineSection({
                 ownerSimple={ownerSimple}
                 ownerHistoryItems={historyItems ?? undefined}
                 onGoToImport={onGoToImport}
+                addRequestKey={addRequestKey}
+                onAddRequestHandled={onAddRequestHandled}
               />
               {!ownerSimple && ownershipRecords.length > 0 ? (
                 <div className="space-y-3 border-t border-border/70 pt-6">

@@ -65,6 +65,8 @@ type MaintenanceTimelineConsoleProps = {
   ownerSimple?: boolean;
   ownerHistoryItems?: OwnerHistoryItem[];
   onGoToImport?: () => void;
+  addRequestKey?: number;
+  onAddRequestHandled?: () => void;
 };
 
 const entryToDraft = (entry: TimelineEntry): ServiceDraft => ({
@@ -93,6 +95,8 @@ export function MaintenanceTimelineConsole({
   ownerSimple = false,
   ownerHistoryItems,
   onGoToImport,
+  addRequestKey,
+  onAddRequestHandled,
 }: MaintenanceTimelineConsoleProps) {
   const selectedId = useAppUiStore((s) => s.selectedTimelineId);
   const setSelectedId = useAppUiStore((s) => s.setSelectedTimelineId);
@@ -318,6 +322,8 @@ export function MaintenanceTimelineConsole({
         onAddService={onAddService}
         requireEditConfirmation={requireEditConfirmation}
         onGoToImport={onGoToImport}
+        addRequestKey={addRequestKey}
+        onAddRequestHandled={onAddRequestHandled}
       />
     );
   }

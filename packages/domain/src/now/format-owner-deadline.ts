@@ -25,6 +25,21 @@ const formatFriendlyDate = (isoDate: string): string => {
 };
 
 export type ReminderUrgency = "overdue" | "due_now" | "due_soon" | "upcoming" | "snoozed";
+export type AttentionWindow = "overdue" | "this_week" | "next_week" | "this_month" | "later";
+
+export const resolveAttentionWindow = (
+  dueBy: string | null,
+  today: string,
+): AttentionWindow => {
+  if (!dueBy) return "this_month";
+
+  const days = daysBetween(today, dueBy);
+  if (days < 0) return "overdue";
+  if (days <= 7) return "this_week";
+  if (days <= 14) return "next_week";
+  if (days <= 30) return "this_month";
+  return "later";
+};
 
 export const resolveReminderUrgency = (input: {
   dueBy: string | null;
@@ -32,11 +47,6 @@ export const resolveReminderUrgency = (input: {
   status: string;
   snoozeUntil?: string | null;
 }): ReminderUrgency => {
-  if (input.status === "snoozed") {
-    if (input.snoozeUntil && input.snoozeUntil > input.today) return "snoozed";
-    return "due_now";
-  }
-
   if (!input.dueBy) return "upcoming";
 
   const days = daysBetween(input.today, input.dueBy);

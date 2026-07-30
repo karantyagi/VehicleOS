@@ -102,12 +102,12 @@ const stepMeta = (
 ): { title: string; description?: string } => {
   if (step === "setup") {
     return mode === "additional"
-      ? { title: "Add a vehicle", description: "~2 min · separate timeline and reminders." }
-      : { title: "Your car", description: "~2 min · then reminders start." };
+      ? { title: "Add a vehicle", description: "~2 min · separate maintenance history and attention." }
+      : { title: "Your car", description: "~2 min · then Home shows what matters." };
   }
   return mode === "additional"
     ? { title: "Ready", description: "Switch to this vehicle anytime in the menu." }
-    : { title: "You're set", description: "OEM schedule loaded. Add CARFAX anytime from Import history." };
+    : { title: "You're set", description: "OEM schedule loaded. Add CARFAX anytime from Add records." };
 };
 
 export function OnboardingWizard({
@@ -383,7 +383,7 @@ export function OnboardingWizard({
               <FormField
                 label="Owned since"
                 htmlFor="ob-owned-since"
-                hint="For calendar reminders"
+                hint="For calendar planning"
                 className="sm:col-span-2"
               >
                 <DateField
@@ -441,10 +441,10 @@ export function OnboardingWizard({
                 Verified OEM schedule loaded ({oemEntriesLoaded} items).
               </p>
             ) : (
-              <p className="text-muted-foreground">Reminders will use your OEM schedule.</p>
+              <p className="text-muted-foreground">Home will use your OEM schedule to show what needs attention.</p>
             )}
             <p className="text-xs text-muted-foreground">
-              Optional: Import history in the sidebar sharpens dates when you&apos;re ready.
+              Optional: Add records in the sidebar sharpens dates when you&apos;re ready.
             </p>
           </div>
         ) : null}
@@ -468,7 +468,7 @@ export function OnboardingWizard({
           ) : null}
           {step === "ready" && createdVehicle ? (
             <Button type="button" disabled={isBusy} onClick={finishSetup}>
-              {mode === "additional" ? "Done" : "Go to reminders"}
+              {mode === "additional" ? "Done" : "Go to Home"}
             </Button>
           ) : null}
         </FormActions>

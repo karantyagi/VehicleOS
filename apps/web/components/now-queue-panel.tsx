@@ -58,7 +58,7 @@ const queueStatusLabel = (status: string): string => {
 type NowQueuePanelProps = {
   items: QueueItem[];
   disabled?: boolean;
-  onDecide: (taskId: string, decision: "approve" | "dismiss" | "snooze") => void;
+  onDecide: (taskId: string, decision: "approve" | "dismiss") => void;
 };
 
 export function NowQueuePanel({ items, disabled = false, onDecide }: NowQueuePanelProps) {
@@ -68,7 +68,7 @@ export function NowQueuePanel({ items, disabled = false, onDecide }: NowQueuePan
   return (
     <div className="space-y-4">
       <p className="text-[13px] leading-relaxed text-muted-foreground">
-        Items awaiting Owner verification — resolve conflicts or confirm; dismiss or snooze when done.
+        Items awaiting Owner verification — resolve conflicts, confirm, or dismiss.
       </p>
 
       {pending.length === 0 ? (
@@ -109,17 +109,6 @@ export function NowQueuePanel({ items, disabled = false, onDecide }: NowQueuePan
                   >
                     Dismiss
                   </Button>
-                  {item.taskKind !== "verification" ? (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="ghost"
-                      disabled={disabled}
-                      onClick={() => onDecide(item.taskId, "snooze")}
-                    >
-                      Snooze
-                    </Button>
-                  ) : null}
                 </div>
               </li>
             );

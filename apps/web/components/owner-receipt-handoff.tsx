@@ -12,7 +12,7 @@ type OwnerReceiptHandoffProps = {
   apiBase: string;
   currentMileage: number;
   disabled?: boolean;
-  onHandedOff: () => void;
+  onHandedOff: (result: { needsReview: boolean }) => void;
   onError: (message: string) => void;
   onRouteOwnership?: () => void;
 };
@@ -58,6 +58,8 @@ export function OwnerReceiptHandoff({
       const body = (await response.json()) as {
         error?: string;
         redirect?: string;
+        conflict?: boolean;
+        queued?: boolean;
         captureIntent?: { reason: string; route: string };
       };
 
@@ -72,7 +74,7 @@ export function OwnerReceiptHandoff({
       }
 
       setUploadedReceipt(null);
-      onHandedOff();
+      onHandedOff({ needsReview: body.conflict === true || body.queued === true });
     } catch (error) {
       onError(error instanceof Error ? error.message : "Could not hand off receipt");
     } finally {

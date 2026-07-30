@@ -4,8 +4,9 @@ import { isRenewalRuleId } from "../ownership/resolve-renewal-rule-id.js";
 import type { OwnerDueItemsView } from "../owner-care/build-owner-due-items.js";
 import {
   formatOwnerDeadline,
-  formatSnoozeEscalation,
+  resolveAttentionWindow,
   resolveReminderUrgency,
+  type AttentionWindow,
   type ReminderUrgency,
 } from "./format-owner-deadline.js";
 import { matchScheduleRowForRule } from "./prepare-recommendation-task.js";
@@ -19,6 +20,7 @@ export type OwnerReminderView = {
   deadlineLabel: string;
   dueBy: string | null;
   urgency: ReminderUrgency;
+  attentionWindow: AttentionWindow;
   snoozeCount: number;
   snoozeUntil: string | null;
   escalation: string | null;
@@ -35,9 +37,7 @@ export const splitOwnerQueues = (items: NowQueueItem[]): {
 
 export const isActiveReminder = (item: NowQueueItem, today: string): boolean => {
   if (item.taskKind === "verification") return false;
-  if (item.status === "pending") return true;
-  if (item.status === "snoozed" && item.snoozeUntil && item.snoozeUntil <= today) return true;
-  return false;
+  return item.status === "pending" || item.status === "snoozed";
 };
 
 const resolveDueBy = (input: {
@@ -89,24 +89,18 @@ export const buildOwnerReminderView = (input: {
     status: input.item.status,
     snoozeUntil,
   });
+  const attentionWindow = resolveAttentionWindow(dueBy, input.today);
   const deadlineLabel = formatOwnerDeadline(dueBy, input.today);
-  const escalation = formatSnoozeEscalation(snoozeCount);
+  const escalation = null;
 
   let reason = input.item.reason;
   if (!reason.includes(deadlineLabel)) {
     reason = `${deadlineLabel}. ${reason}`.trim();
   }
-  if (escalation && !reason.includes(escalation.slice(0, 20))) {
-    reason = `${reason} ${escalation}`.trim();
-  }
-
   const effectiveStatus: OwnerReminderView["effectiveStatus"] =
-    input.item.status === "snoozed" && snoozeUntil && snoozeUntil > input.today
-      ? "snoozed"
-      : input.item.status === "pending" ||
-          (input.item.status === "snoozed" && snoozeUntil && snoozeUntil <= input.today)
-        ? "pending"
-        : "done";
+    input.item.status === "pending" || input.item.status === "snoozed"
+      ? "pending"
+      : "done";
 
   return {
     taskId: input.item.taskId,
@@ -117,6 +111,7 @@ export const buildOwnerReminderView = (input: {
     deadlineLabel,
     dueBy,
     urgency,
+    attentionWindow,
     snoozeCount,
     snoozeUntil,
     escalation,
@@ -150,13 +145,17 @@ export const buildOwnerReminderViews = (input: {
       }),
     )
     .sort((a, b) => {
-      const urgencyOrder: Record<ReminderUrgency, number> = {
+      const windowOrder: Record<AttentionWindow, number> = {
         overdue: 0,
-        due_now: 1,
-        due_soon: 2,
-        upcoming: 3,
-        snoozed: 4,
+        this_week: 1,
+        next_week: 2,
+        this_month: 3,
+        later: 4,
       };
-      return urgencyOrder[a.urgency] - urgencyOrder[b.urgency];
+      const windowDelta = windowOrder[a.attentionWindow] - windowOrder[b.attentionWindow];
+      if (windowDelta !== 0) return windowDelta;
+      const dueDelta = (a.dueBy ?? "9999-12-31").localeCompare(b.dueBy ?? "9999-12-31");
+      if (dueDelta !== 0) return dueDelta;
+      return a.title.localeCompare(b.title);
     });
 };

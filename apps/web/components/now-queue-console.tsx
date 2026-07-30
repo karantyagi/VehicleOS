@@ -23,7 +23,7 @@ type NowQueueConsoleProps = {
   vehicleId?: string;
   apiBase?: string;
   currentMileage?: number;
-  onDecide: (taskId: string, decision: "approve" | "dismiss" | "snooze") => void;
+  onDecide: (taskId: string, decision: "approve" | "dismiss") => void;
   onOdometerSaved?: () => void;
   onVerificationResolved?: () => void;
   onError?: (message: string) => void;

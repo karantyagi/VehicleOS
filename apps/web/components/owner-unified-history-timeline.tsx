@@ -36,6 +36,8 @@ type OwnerUnifiedHistoryTimelineProps = {
   onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
   requireEditConfirmation?: boolean;
   onGoToImport?: () => void;
+  addRequestKey?: number;
+  onAddRequestHandled?: () => void;
 };
 
 const formatDate = (iso: string): string => {
@@ -89,6 +91,8 @@ export function OwnerUnifiedHistoryTimeline({
   onAddService,
   requireEditConfirmation = false,
   onGoToImport,
+  addRequestKey = 0,
+  onAddRequestHandled,
 }: OwnerUnifiedHistoryTimelineProps) {
   const yearGroups = useMemo(() => groupByYear(items), [items]);
   const serviceItems = useMemo(() => items.filter((item) => item.kind === "service"), [items]);
@@ -129,6 +133,14 @@ export function OwnerUnifiedHistoryTimeline({
     setConfirmAdd(false);
   };
 
+  useEffect(() => {
+    if (addRequestKey <= 0) return;
+    startAdding();
+    onAddRequestHandled?.();
+    // The incrementing key represents an explicit owner action.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addRequestKey, onAddRequestHandled]);
+
   const saveAdding = async () => {
     if (!onAddService || !addDraft || draftLineItems(addDraft).length === 0) return;
     setIsAddingSaving(true);
@@ -159,7 +171,7 @@ export function OwnerUnifiedHistoryTimeline({
           ) : null}
           {onGoToImport ? (
             <Button type="button" size="sm" variant="outline" disabled={disabled} onClick={onGoToImport}>
-              Import history
+              Add records
             </Button>
           ) : null}
         </div>

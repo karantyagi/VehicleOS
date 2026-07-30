@@ -118,8 +118,10 @@ export {
 export {
   formatOwnerDeadline,
   formatSnoozeEscalation,
+  resolveAttentionWindow,
   resolveReminderUrgency,
   addDays,
+  type AttentionWindow,
   type ReminderUrgency,
 } from "./now/format-owner-deadline.js";
 export {

@@ -29,6 +29,7 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, minimal = false, 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploaded, setUploaded] = useState<UploadedReceipt | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadFailed, setUploadFailed] = useState(false);
 
   const previewUrl = useMemo(() => {
     if (!selectedFile || !selectedFile.type.startsWith("image/")) return undefined;
@@ -43,6 +44,7 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, minimal = false, 
 
   const uploadFile = async (file: File) => {
     setIsUploading(true);
+    setUploadFailed(false);
     onError("");
     try {
       const formData = new FormData();
@@ -67,6 +69,7 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, minimal = false, 
       onUploaded(next);
     } catch (error) {
       setUploaded(null);
+      setUploadFailed(true);
       onUploaded(null);
       onError(error instanceof Error ? error.message : "Upload failed");
     } finally {
@@ -77,6 +80,7 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, minimal = false, 
   const clearFile = () => {
     setSelectedFile(null);
     setUploaded(null);
+    setUploadFailed(false);
     onUploaded(null);
     if (inputRef.current) inputRef.current.value = "";
   };
@@ -84,6 +88,7 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, minimal = false, 
   const handlePick = (file: File) => {
     setSelectedFile(file);
     setUploaded(null);
+    setUploadFailed(false);
     onUploaded(null);
     void uploadFile(file);
   };
@@ -138,6 +143,18 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, minimal = false, 
           <Button type="button" variant="ghost" size="sm" className="mt-2" disabled={disabled || isUploading} onClick={clearFile}>
             Remove file
           </Button>
+          {uploadFailed ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="ml-2 mt-2"
+              disabled={disabled || isUploading}
+              onClick={() => void uploadFile(selectedFile)}
+            >
+              Retry upload
+            </Button>
+          ) : null}
         </div>
       ) : null}
     </div>

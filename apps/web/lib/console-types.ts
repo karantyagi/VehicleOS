@@ -43,6 +43,7 @@ export type OwnerReminderItem = {
   deadlineLabel: string;
   dueBy: string | null;
   urgency: "overdue" | "due_now" | "due_soon" | "upcoming" | "snoozed";
+  attentionWindow: "overdue" | "this_week" | "next_week" | "this_month" | "later";
   snoozeCount: number;
   snoozeUntil: string | null;
   escalation: string | null;

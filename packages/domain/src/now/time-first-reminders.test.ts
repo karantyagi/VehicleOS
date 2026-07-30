@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { formatOwnerDeadline, formatSnoozeEscalation } from "./format-owner-deadline.js";
+import {
+  formatOwnerDeadline,
+  formatSnoozeEscalation,
+  resolveAttentionWindow,
+} from "./format-owner-deadline.js";
 import { buildOwnerReminderViews, isActiveReminder } from "./build-owner-reminders.js";
 import type { NowQueueItem } from "../projections/types.js";
 import type { ServiceTimelineEntry } from "../projections/types.js";
@@ -19,6 +23,16 @@ describe("formatSnoozeEscalation", () => {
   });
 });
 
+describe("resolveAttentionWindow", () => {
+  it("separates the owner planning horizons", () => {
+    expect(resolveAttentionWindow("2026-07-23", "2026-07-24")).toBe("overdue");
+    expect(resolveAttentionWindow("2026-07-30", "2026-07-24")).toBe("this_week");
+    expect(resolveAttentionWindow("2026-08-05", "2026-07-24")).toBe("next_week");
+    expect(resolveAttentionWindow("2026-08-18", "2026-07-24")).toBe("this_month");
+    expect(resolveAttentionWindow("2026-09-30", "2026-07-24")).toBe("later");
+  });
+});
+
 describe("buildOwnerReminderViews", () => {
   const baseItem: NowQueueItem = {
     taskId: "task-1",
@@ -31,7 +45,7 @@ describe("buildOwnerReminderViews", () => {
     dueBy: "2026-07-30",
   };
 
-  it("surfaces snoozed items when snooze period ends", () => {
+  it("keeps legacy snoozed items visible as unresolved owner attention", () => {
     const snoozed: NowQueueItem = {
       ...baseItem,
       status: "snoozed",
@@ -39,7 +53,7 @@ describe("buildOwnerReminderViews", () => {
       snoozeCount: 2,
     };
     expect(isActiveReminder(snoozed, "2026-07-24")).toBe(true);
-    expect(isActiveReminder(snoozed, "2026-07-20")).toBe(false);
+    expect(isActiveReminder(snoozed, "2026-07-20")).toBe(true);
 
     const views = buildOwnerReminderViews({
       items: [snoozed],
@@ -47,7 +61,9 @@ describe("buildOwnerReminderViews", () => {
       today: "2026-07-24",
     });
     expect(views).toHaveLength(1);
-    expect(views[0]?.escalation).toMatch(/twice/i);
+    expect(views[0]?.effectiveStatus).toBe("pending");
+    expect(views[0]?.attentionWindow).toBe("this_week");
+    expect(views[0]?.escalation).toBeNull();
   });
 
   it("hides stale knowledge reminders when CARFAX oil baseline is within interval", () => {

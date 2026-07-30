@@ -1,7 +1,6 @@
 "use client";
 
-import { BellRing } from "lucide-react";
-import { useState } from "react";
+import { CalendarCheck2, CheckCircle2, Wrench } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,141 +8,189 @@ import type { OwnerReminderItem } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
 const urgencyLabel: Record<OwnerReminderItem["urgency"], string> = {
-  overdue: "Overdue · act now",
+  overdue: "Overdue",
   due_now: "Due now",
-  due_soon: "This week",
+  due_soon: "Due soon",
   upcoming: "Upcoming",
-  snoozed: "Snoozed",
+  snoozed: "Due",
 };
 
 const urgencyVariant = (urgency: OwnerReminderItem["urgency"]) => {
   if (urgency === "overdue") return "destructive" as const;
   if (urgency === "due_now") return "warning" as const;
   if (urgency === "due_soon") return "oem" as const;
-  if (urgency === "snoozed") return "secondary" as const;
   return "outline" as const;
 };
 
-const SNOOZE_OPTIONS = [
-  { label: "1 week", days: 7 },
-  { label: "2 weeks", days: 14 },
-  { label: "3 weeks", days: 21 },
-  { label: "1 month", days: 30 },
-] as const;
+type AttentionGroup = {
+  id: "this_week" | "next_week" | "this_month" | "later";
+  title: string;
+  description: string;
+  items: OwnerReminderItem[];
+};
 
 type RemindersConsoleProps = {
   items: OwnerReminderItem[];
   disabled?: boolean;
-  onDecide: (taskId: string, decision: "approve" | "dismiss" | "snooze", snoozeDays?: number) => void;
+  onScheduled: (taskId: string) => void;
+  onNotNeeded: (taskId: string) => void;
+  onRecordDone: () => void;
+  onFixData: () => void;
   minimal?: boolean;
 };
 
-export function RemindersConsole({ items, disabled = false, onDecide, minimal = false }: RemindersConsoleProps) {
-  const [snoozePickerTaskId, setSnoozePickerTaskId] = useState<string | null>(null);
+const buildGroups = (items: OwnerReminderItem[]): AttentionGroup[] => {
+  const active = items.filter((item) => item.effectiveStatus === "pending");
+  const groups: AttentionGroup[] = [
+    {
+      id: "this_week",
+      title: "This week",
+      description: "Overdue work stays here until it is handled.",
+      items: active.filter(
+        (item) => item.attentionWindow === "overdue" || item.attentionWindow === "this_week",
+      ),
+    },
+    {
+      id: "next_week",
+      title: "Next week",
+      description: "Visible early when you may need time to make an appointment.",
+      items: active.filter((item) => item.attentionWindow === "next_week"),
+    },
+    {
+      id: "this_month",
+      title: "Later this month",
+      description: "Planning ahead; no need to act today.",
+      items: active.filter((item) => item.attentionWindow === "this_month"),
+    },
+    {
+      id: "later",
+      title: "Later",
+      description: "Long-range items remain in the full maintenance schedule.",
+      items: active.filter((item) => item.attentionWindow === "later"),
+    },
+  ];
+  return groups.filter((group) => group.items.length > 0);
+};
 
-  if (items.length === 0) {
+export function RemindersConsole({
+  items,
+  disabled = false,
+  onScheduled,
+  onNotNeeded,
+  onRecordDone,
+  onFixData,
+  minimal = false,
+}: RemindersConsoleProps) {
+  const groups = buildGroups(items);
+
+  if (groups.length === 0) {
     return (
       <EmptyState
-        icon={BellRing}
-        title="Nothing due"
-        description={minimal ? undefined : "Your assistant is watching the schedule. You'll get calendar nudges here when something needs action."}
+        icon={CheckCircle2}
+        title="All clear this week"
+        description={minimal ? undefined : "Nothing needs action. Your maintenance schedule is still available anytime."}
       />
     );
   }
 
   return (
-    <ul className="space-y-3">
-      {items.map((item) => {
-        const isOverdue = item.urgency === "overdue";
-        const isSnoozePickerOpen = snoozePickerTaskId === item.taskId;
-
-        return (
-          <li
-            key={item.taskId}
-            className={cn(
-              "rounded-xl border border-border bg-card p-4 shadow-sm",
-              isOverdue && "border-red-500/45 bg-red-500/[0.06] shadow-[inset_3px_0_0_hsl(var(--destructive))]",
-            )}
-          >
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <div className="min-w-0 space-y-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3
-                    className={cn(
-                      "font-semibold leading-tight",
-                      isOverdue && "text-red-800 dark:text-red-200",
-                    )}
-                  >
-                    {item.title}
-                  </h3>
-                  {!minimal || isOverdue || item.urgency === "due_now" ? (
-                    <Badge variant={urgencyVariant(item.urgency)}>{urgencyLabel[item.urgency]}</Badge>
-                  ) : null}
-                </div>
-                <p className={cn("text-sm font-medium", isOverdue ? "text-red-700 dark:text-red-300" : "text-foreground")}>
-                  {item.deadlineLabel}
-                </p>
-                <p className="text-sm text-muted-foreground">{item.reason}</p>
-                {!minimal && item.escalation ? (
-                  <p className={cn("text-sm", isOverdue ? "text-red-700 dark:text-red-300" : "text-amber-700 dark:text-amber-300")}>
-                    {item.escalation}
-                  </p>
-                ) : null}
-                {!minimal && item.snoozeUntil && item.effectiveStatus === "snoozed" ? (
-                  <p className="text-xs text-muted-foreground">Snoozed until {item.snoozeUntil}</p>
-                ) : null}
-              </div>
-            </div>
-            <div className="mt-4 space-y-2">
-              <div className="flex flex-wrap gap-2">
-                <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
-                  {minimal ? "Done" : "Mark scheduled"}
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={isSnoozePickerOpen ? "default" : "secondary"}
-                  disabled={disabled}
-                  aria-expanded={isSnoozePickerOpen}
-                  onClick={() => setSnoozePickerTaskId(isSnoozePickerOpen ? null : item.taskId)}
+    <div className="space-y-6">
+      {groups.map((group) => {
+        const content = (
+          <ul className="mt-3 space-y-3">
+            {group.items.map((item) => {
+              const isOverdue = item.urgency === "overdue";
+              return (
+                <li
+                  key={item.taskId}
+                  className={cn(
+                    "rounded-xl border border-border bg-card p-4 shadow-sm",
+                    isOverdue &&
+                      "border-red-500/45 bg-red-500/[0.06] shadow-[inset_3px_0_0_hsl(var(--destructive))]",
+                  )}
                 >
-                  Snooze
-                </Button>
-                {!minimal ? (
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    disabled={disabled}
-                    onClick={() => onDecide(item.taskId, "dismiss")}
-                  >
-                    Dismiss
-                  </Button>
-                ) : null}
-              </div>
-              {isSnoozePickerOpen ? (
-                <div className="flex flex-wrap gap-2 rounded-lg border border-border/70 bg-muted/30 p-2">
-                  {SNOOZE_OPTIONS.map((option) => (
+                  <div className="min-w-0 space-y-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3
+                        className={cn(
+                          "font-semibold leading-tight",
+                          isOverdue && "text-red-800 dark:text-red-200",
+                        )}
+                      >
+                        {item.title}
+                      </h3>
+                      <Badge variant={urgencyVariant(item.urgency)}>{urgencyLabel[item.urgency]}</Badge>
+                    </div>
+                    <p
+                      className={cn(
+                        "text-sm font-medium",
+                        isOverdue ? "text-red-700 dark:text-red-300" : "text-foreground",
+                      )}
+                    >
+                      {item.deadlineLabel}
+                    </p>
+                    <p className="text-sm text-muted-foreground">{item.reason}</p>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
                     <Button
-                      key={option.days}
                       type="button"
                       size="sm"
-                      variant="outline"
                       disabled={disabled}
-                      onClick={() => {
-                        onDecide(item.taskId, "snooze", option.days);
-                        setSnoozePickerTaskId(null);
-                      }}
+                      onClick={() => onScheduled(item.taskId)}
                     >
-                      {option.label}
+                      <CalendarCheck2 className="mr-1.5 h-4 w-4" aria-hidden />
+                      Scheduled
                     </Button>
-                  ))}
-                </div>
-              ) : null}
+                    <Button type="button" size="sm" variant="secondary" disabled={disabled} onClick={onRecordDone}>
+                      <CheckCircle2 className="mr-1.5 h-4 w-4" aria-hidden />
+                      Done
+                    </Button>
+                    <Button type="button" size="sm" variant="outline" disabled={disabled} onClick={onFixData}>
+                      <Wrench className="mr-1.5 h-4 w-4" aria-hidden />
+                      Fix this
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      disabled={disabled}
+                      onClick={() => onNotNeeded(item.taskId)}
+                    >
+                      Not needed
+                    </Button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        );
+
+        if (group.id === "later") {
+          return (
+            <details key={group.id} className="rounded-xl border border-border/70 bg-muted/20 px-4 py-3">
+              <summary className="cursor-pointer text-sm font-semibold text-foreground">
+                {group.title} · {group.items.length}
+              </summary>
+              {!minimal ? <p className="mt-1 text-xs text-muted-foreground">{group.description}</p> : null}
+              {content}
+            </details>
+          );
+        }
+
+        return (
+          <section key={group.id} aria-labelledby={`attention-${group.id}`}>
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 id={`attention-${group.id}`} className="text-base font-semibold tracking-tight text-foreground">
+                {group.title}
+              </h2>
+              <span className="text-xs tabular-nums text-muted-foreground">{group.items.length}</span>
             </div>
-          </li>
+            {!minimal ? <p className="mt-1 text-xs text-muted-foreground">{group.description}</p> : null}
+            {content}
+          </section>
         );
       })}
-    </ul>
+    </div>
   );
 }

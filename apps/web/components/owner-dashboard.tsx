@@ -27,7 +27,6 @@ import { ManualKnowledgePanel } from "./manual-knowledge-panel";
 import { MaintenanceTimelineSection } from "./maintenance-timeline-section";
 import { NowQueueConsole } from "./now-queue-console";
 import { RemindersConsole } from "./reminders-console";
-import { useReminderNotifications } from "@/lib/use-reminder-notifications";
 import { OwnerServiceNotePanel } from "./owner-service-note-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 import { useVehicleConsole } from "@/lib/vehicle-console-context";
@@ -79,6 +78,7 @@ export function OwnerDashboard() {
   const [ownerDueItems, setOwnerDueItems] = useState<OwnerDueItemsView | null>(null);
   const [ownerHistoryTimeline, setOwnerHistoryTimeline] = useState<OwnerHistoryItem[]>([]);
   const [serviceHistoryTab, setServiceHistoryTab] = useState<ServiceHistoryTab>("schedule");
+  const [historyAddRequest, setHistoryAddRequest] = useState(0);
   const [nowQueue, setNowQueue] = useState<QueueItem[]>([]);
   const [reminders, setReminders] = useState<OwnerReminderItem[]>([]);
   const [verifications, setVerifications] = useState<QueueItem[]>([]);
@@ -145,8 +145,6 @@ export function OwnerDashboard() {
       pipelineLabel,
     });
   }, [vehicle, timeline, reminders, verifications, isBusy, pipelinePhase, setSnapshot]);
-
-  useReminderNotifications(reminders);
 
   const inSetupFlow =
     isLoading ||
@@ -311,7 +309,7 @@ export function OwnerDashboard() {
     feedback(
       isAdditional
         ? "Vehicle added."
-        : "You're set — reminders start from here.",
+        : "You're set — Home will show what needs attention.",
     );
     await loadVehicleState(created);
   };
@@ -356,7 +354,7 @@ export function OwnerDashboard() {
           "This service visit is already on file (same date, mileage, and shop). Receipt saved to Evidence vault — no duplicate row added.",
         );
       } else {
-        feedback("Service recorded — check Reminders for your next action.");
+        feedback("Service recorded — Home has your next action.");
       }
       setUploadedReceipt(null);
       setCaptureError("");
@@ -477,18 +475,14 @@ export function OwnerDashboard() {
     }
   };
 
-  const decide = async (
-    taskId: string,
-    decision: "approve" | "dismiss" | "snooze",
-    snoozeDays?: number,
-  ) => {
+  const decide = async (taskId: string, decision: "approve" | "dismiss") => {
     if (!vehicle) return;
     setIsBusy(true);
     try {
       const response = await fetch(`${apiBase}/api/tasks/${taskId}/decide`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ vehicleId: vehicle.id, decision, snoozeDays }),
+        body: JSON.stringify({ vehicleId: vehicle.id, decision }),
       });
       if (!response.ok) throw new Error("decide failed");
       const body = (await response.json()) as {
@@ -497,10 +491,8 @@ export function OwnerDashboard() {
         verifications?: QueueItem[];
       };
       applyQueueState(body);
-      if (decision === "snooze") {
-        feedback(`Snoozed${snoozeDays ? ` for ${snoozeDays} days` : ""}.`);
-      } else if (decision === "approve") {
-        feedback("Marked done.");
+      if (decision === "approve") {
+        feedback("Marked scheduled.");
       } else {
         feedback("Dismissed.");
       }
@@ -529,7 +521,7 @@ export function OwnerDashboard() {
       }
       applyQueueState(body);
       if (body.created && body.recommendation) {
-        feedback(`New reminder: ${body.recommendation.title}`);
+        feedback(`Needs attention: ${body.recommendation.title}`);
         setActiveSection("reminders");
       } else if (body.skippedReason === "already_pending") {
         feedback("That reminder is already on your list.");
@@ -656,13 +648,57 @@ export function OwnerDashboard() {
       ) : null}
 
       {activeSection === "reminders" ? (
-        <PanelCard
-          hideHeader={!isDeveloper}
-          title="Reminders"
-          description="Calendar-first nudges — act this week, snooze, or mark scheduled. The assistant handles mileage math."
-        >
-          <RemindersConsole items={reminders} disabled={isBusy} onDecide={decide} minimal={!isDeveloper} />
-        </PanelCard>
+        <div className="space-y-6">
+          <PanelCard
+            hideHeader={!isDeveloper}
+            title="What needs attention"
+            description="This week leads. Next week and this month stay visible for planning."
+          >
+            <RemindersConsole
+              items={reminders}
+              disabled={isBusy}
+              onScheduled={(taskId) => void decide(taskId, "approve")}
+              onNotNeeded={(taskId) => void decide(taskId, "dismiss")}
+              onRecordDone={() => {
+                setServiceHistoryTab("history");
+                setHistoryAddRequest((current) => current + 1);
+                setActiveSection("timeline");
+                feedback("Add the completed service so the schedule can update from the record.");
+              }}
+              onFixData={() => {
+                setServiceHistoryTab("history");
+                setActiveSection("timeline");
+                feedback("Review or edit the history that anchors this maintenance item.");
+              }}
+              minimal={!isDeveloper}
+            />
+          </PanelCard>
+
+          {pendingVerificationCount > 0 ? (
+            <PanelCard
+              title={pendingVerificationCount === 1 ? "One thing to verify" : `${pendingVerificationCount} things to verify`}
+              description="The assistant only asks when it cannot settle a record safely."
+            >
+              <NowQueueConsole
+                items={verifications.length > 0 ? verifications : nowQueue}
+                disabled={isBusy}
+                vehicleId={vehicle.id}
+                apiBase={apiBase}
+                currentMileage={vehicle.currentMileage}
+                onDecide={decide}
+                ownerSimple
+                onOdometerSaved={() => {
+                  if (vehicle) void loadVehicleState(vehicle);
+                }}
+                onVerificationResolved={() => {
+                  if (vehicle) void loadVehicleState(vehicle);
+                  feedback("Saved. The assistant will use this context going forward.");
+                }}
+                onError={(message) => feedback(message)}
+              />
+            </PanelCard>
+          ) : null}
+        </div>
       ) : null}
 
       {activeSection === "now" ? (
@@ -688,7 +724,7 @@ export function OwnerDashboard() {
               }}
               onVerificationResolved={() => {
                 if (vehicle) void loadVehicleState(vehicle);
-                feedback("Pattern saved — your assistant will use this in future reminders.");
+                feedback("Pattern saved — your assistant will use this in future attention windows.");
               }}
               onError={(message) => feedback(message)}
             />
@@ -713,6 +749,8 @@ export function OwnerDashboard() {
             effectiveMilesPerYear={maintenanceSchedule.effectiveMilesPerYear}
             hasKnowledgeSchedule={knowledgeSchedule.length > 0}
             activeTab={serviceHistoryTab}
+            addRequestKey={historyAddRequest}
+            onAddRequestHandled={() => setHistoryAddRequest(0)}
             onTabChange={setServiceHistoryTab}
             ownerSimple={!isDeveloper}
             disabled={isBusy}
@@ -734,7 +772,7 @@ export function OwnerDashboard() {
       {activeSection === "imports" ? (
         <PanelCard
           hideHeader={!isDeveloper}
-          title="Import history"
+          title="Add records"
           description="Optional — upload CARFAX or RMV PDFs to sharpen baselines and owner-specific context."
         >
           <RecordImportPanel

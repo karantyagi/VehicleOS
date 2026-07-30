@@ -23,4 +23,5 @@ Upload a maintenance receipt, extract structured service data, update vehicle st
 6. Projection updates the vehicle timeline and current service state.
 7. Rules engine calculates the next maintenance need.
 8. System creates a proposed task with explanation and supporting evidence.
-9. User approves, dismisses, or snoozes the task.
+9. Home shows the unresolved action by time horizon.
+10. The owner marks it Scheduled, records it Done, fixes the source data, or marks it Not needed.
