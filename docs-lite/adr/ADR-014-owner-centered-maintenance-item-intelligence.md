@@ -3,6 +3,8 @@
 **Status:** Accepted (2026-07-30)  
 **Deciders:** Product / architecture  
 **Related:** ADR-002 (event-sourced domain model) · ADR-010 (deterministic service matching and OEM packs) · ADR-012 (catalog vs owner runtime)
+**Implementation:** Rotate Tires pilot on
+`agent/maintenance-reminder-recommendation-pilot`
 
 ---
 

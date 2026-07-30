@@ -5,14 +5,17 @@
 **Pilot:** Rotate Tires  
 **Last updated:** 2026-07-30
 
-This queue records the adopted direction. It does not mark documentation as
-shipped product behavior.
+This queue records the adopted direction and implementation status on
+`agent/maintenance-reminder-recommendation-pilot`. `Implemented` becomes
+`Done` after merge to `master`.
 
 ---
 
 ## Status key
 
 - **Done** - present on `master`
+- **Implemented** - built and verified on the pilot branch
+- **Partial** - useful slice built; listed acceptance work remains
 - **Next** - Rotate Tires pilot implementation
 - **Phase 2** - shared rollout after the pilot
 - **Later** - intentionally deferred
@@ -27,31 +30,31 @@ shipped product behavior.
 | MI-01 | Owner interval overlay persistence | Done | `OwnerContextMemory.intervalOverlays` |
 | MI-02 | Editable interval form for generated verification tasks | Done | `interval-confirm-form.tsx` |
 | MI-03 | Tire inspect-sooner context inputs | Done | tread, TPMS, vibration/cupping, special setup checkboxes |
-| MI-04 | Per-item recommendation and four-axis rationale component | Not built | Current UI has a reason string and task-scoped form only |
+| MI-04 | Per-item recommendation and four-axis rationale component | Implemented | `MaintenanceItemIntelligence`, `maintenance-intelligence-summary.tsx` |
 
 ---
 
-## Rotate Tires pilot - Next
+## Rotate Tires pilot
 
-| ID | Deliverable | Acceptance signal |
-|---|---|---|
-| MI-10 | Split service facts, descriptive insight, recommendation, and owner decision | Each layer can render independently |
-| MI-11 | Remove the three-record gate from Rotate Tires insights | 0/1/2/3+ record tests all produce honest states |
-| MI-12 | Convert the 15% stability check from suppression to confidence evidence | Variable gaps render as `Recent gaps vary` |
-| MI-13 | Add shared public `MaintenanceItemInsight` contract | Includes four axes, source, status, confidence, provenance |
-| MI-14 | Add representative `RotateTiresPolicy` | Mileage-first; time does not silently control |
-| MI-15 | Add collapsed/expanded Rotate Tires item | Collapsed by default; concise status; chevron |
-| MI-16 | Add assistant recommendation block | Miles, rationale, qualitative confidence, evidence note |
-| MI-17 | Make owner mileage entry always available | Any valid mileage can be saved without a generated task |
-| MI-18 | Show OEM / Assistant / Owner interval source and restore OEM | Active source is visible and auditable |
-| MI-19 | Add correction actions | Record rotation, correct last service, update mileage |
-| MI-20 | Add four-axis `Why this reminder` view | Actual operands, evidence state, and provenance |
-| MI-21 | Add TLX dogfood/eval cases | Last gaps 7,360 / 7,982 / 5,594; average 6,979; variable confidence |
-| MI-22 | Add copy/trust regression tests | No one-gap `average`; no unsupported `habit`; no silent source switch |
-| MI-23 | Add structured action-recommendation contract | What/when/how/where/time/cost/why/owner fit |
-| MI-24 | Add TLX Costco action plan | Derive current tire set, provider history, and observed `$0` cost |
-| MI-25 | Add benefit confirmation memory | Observed `$0` never becomes a guaranteed entitlement silently |
-| MI-26 | Add provider/action confidence | Timing, provider, cost, and booking confidence stay separate |
+| ID | Deliverable | Status | Acceptance signal |
+|---|---|---|---|
+| MI-10 | Split service facts, descriptive insight, recommendation, and owner decision | Implemented | Each layer renders independently |
+| MI-11 | Remove the three-record gate from Rotate Tires insights | Implemented | 0/1/2/3+ states; proposal starts with one observed gap |
+| MI-12 | Convert the 15% stability check from suppression to confidence evidence | Implemented | Variable gaps remain visible and reduce confidence |
+| MI-13 | Add shared public `MaintenanceItemIntelligence` contract | Implemented | Four axes, source, status, confidence, and evidence IDs |
+| MI-14 | Add representative Rotate Tires policy | Implemented | Mileage-first; time does not silently control |
+| MI-15 | Add collapsed/expanded Rotate Tires item | Implemented | Collapsed by default; concise status; chevron |
+| MI-16 | Add assistant recommendation block | Implemented | Miles, rationale, qualitative confidence, evidence note |
+| MI-17 | Make owner mileage entry always available | Implemented | Valid mileage can be saved without a generated task |
+| MI-18 | Show OEM / Assistant / Owner interval source and restore OEM | Implemented | Active source is visible and auditable |
+| MI-19 | Add correction actions | Next | Add/repair service and update odometer from the item |
+| MI-20 | Add four-axis `Why this reminder` view | Implemented | Actual operands and evidence states |
+| MI-21 | Add TLX dogfood/eval cases | Implemented | Gaps 7,360 / 7,982 / 5,594; average 6,979; 7,000 recommendation |
+| MI-22 | Add copy/trust regression tests | Partial | One-gap and variable-gap tests added; component copy tests remain |
+| MI-23 | Add structured action-recommendation contract | Implemented | What/when/how/where/time/cost/why/owner fit |
+| MI-24 | Add TLX Costco action plan | Implemented | Current tire set, provider history, and observed `$0` cost |
+| MI-25 | Add benefit confirmation memory | Implemented | Observed `$0` requires owner confirmation |
+| MI-26 | Add provider/action confidence | Implemented | Timing, provider, cost, and booking confidence stay separate |
 
 ---
 
@@ -59,18 +62,18 @@ shipped product behavior.
 
 | ID | Deliverable | Interim UI |
 |---|---|---|
-| MI-30 | Render every maintenance item as a collapsed row | Existing deterministic due state remains |
-| MI-31 | Add four rationale axes for every item | Missing axis shows `Missing`; unfinished evaluator shows `Upcoming` |
-| MI-32 | Add per-item recommendation status | `Assistant recommendation · Phase 2 · upcoming · in development` |
-| MI-33 | Replace generic reminder reasons with structured `Why now` operands | Active interval + baseline + current position + remaining/overdue |
+| MI-30 | Render every maintenance item as a collapsed row | Implemented |
+| MI-31 | Add four rationale axes for every item | Implemented contract and UI; item-specific evaluators remain Phase 2 |
+| MI-32 | Add per-item recommendation status | Implemented placeholder: `Phase 2 · upcoming · in development` |
+| MI-33 | Replace generic reminder reasons with structured `Why now` operands | Implemented |
 | MI-34 | Implement oil-change evaluator | Phase 2 |
 | MI-35 | Implement brake evaluator | Phase 2 |
 | MI-36 | Implement fluids evaluators, beginning with rear differential | Phase 2 |
 | MI-37 | Implement filter and inspection evaluators | Phase 2 |
 | MI-38 | Calibrate qualitative confidence across item policies | Private tuned logic + public methodology/evals |
 | MI-39 | Notification deep links open the relevant expanded item | Phase 2 |
-| MI-40 | Add provider catalog and verified action links | No inferred URLs |
-| MI-41 | Add time-versus-money option ranking | Owner preferences and current provider evidence |
+| MI-40 | Add provider catalog and verified action links | Partial: official Costco entry point only |
+| MI-41 | Add time-versus-money option ranking | Phase 2: pilot emits one evidence-backed plan |
 | MI-42 | Add offer/discount ingestion | Expiry, eligibility, source, and freshness required |
 
 ---

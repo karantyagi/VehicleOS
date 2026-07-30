@@ -2,8 +2,9 @@
 
 **Status:** Product specification for the Rotate Tires pilot  
 **Decision:** [ADR-014](../../docs-lite/adr/ADR-014-owner-centered-maintenance-item-intelligence.md)  
-**Implementation:** Documentation only; see the
-[delivery queue](./maintenance-item-intelligence-queue.md)
+**Implementation:** Rotate Tires pilot implemented on
+`agent/maintenance-reminder-recommendation-pilot`; see the
+[delivery queue](./maintenance-item-intelligence-queue.md).
 
 ---
 
@@ -204,31 +205,35 @@ source is always visible.
 
 ### Current build status
 
-The requested per-item component is **not fully built**.
+Implemented for the Rotate Tires pilot:
 
-Already present:
+- an always-available mileage interval input plus one-click Assistant and OEM
+  choices;
+- zero-, one-, two-, and three-plus-record insight states;
+- qualitative confidence with variable history retained;
+- a reusable collapsed/expanded item and reminder component;
+- deterministic `Why this reminder` operands and four rationale axes;
+- a structured Costco action plan with provider, location, expected cost,
+  owner-fit rationale, evidence IDs, and separate confidence;
+- owner confirmation memory for the inferred `$0` benefit;
+- the verified official [Costco Tire Center](https://tires.costco.com/) entry
+  point.
 
-- `IntervalProposal` with suggested miles/months, evidence text, and numeric
-  confidence;
-- an editable interval form for `VERIFY_OWNER_INTERVAL`;
-- owner interval overlay memory;
-- tire-specific inspect-sooner checkboxes;
-- deterministic reminder and schedule projections.
+Implemented as shared Phase 2 scaffolding:
+
+- all maintenance items are collapsed by default;
+- unfinished item evaluators say `Phase 2 · upcoming · in development`;
+- registration and inspection reminders separate `why due` from the upcoming
+  action plan.
 
 Still missing:
 
-- an always-available interval control on every item;
-- facts/insight/recommendation separation;
-- zero-, one-, and two-record insight states;
-- qualitative owner-facing confidence;
-- the four-axis rationale contract;
-- a reusable collapsed/expanded per-item recommendation component;
-- `Phase 2 · upcoming · in development` coverage for unfinished item policies;
-- specific `Why now` operands on reminder rows.
-- structured how/where/time/cost action recommendations;
-- provider and offer evidence;
-- explicit service-benefit and preferred-provider memory;
-- verified booking links.
+- item-level correction actions for the last service and odometer;
+- provider alternatives and time-versus-money ranking;
+- a general provider catalog, live appointment availability, and offer
+  ingestion;
+- item evaluators beyond Rotate Tires;
+- UI-level copy regression tests.
 
 ---
 
@@ -264,7 +269,8 @@ Confidence is compositional:
 - timing: `Medium` because recent gaps vary;
 - provider: `High` because the last three rotations used the same location;
 - cost: `Medium` until the included benefit is owner-confirmed;
-- booking: `Not verified` until a provider URL is cataloged.
+- booking: `Medium` because the official provider entry point is verified but
+  appointment availability is not.
 
 ---
 
