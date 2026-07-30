@@ -15,7 +15,8 @@ describe("listSupportedVehicles", () => {
     const result = listSupportedVehicles({ verifiedOnly: true, limit: 1 });
 
     expect(result.status).toBe(200);
-    expect(result.body.total).toBeGreaterThanOrEqual(50);
+    // Interview verified fleet: 29 catalog rows across 6 models + 2022 Elantra dogfood
+    expect(result.body.total).toBe(29);
   });
 });
 
@@ -34,7 +35,35 @@ describe("assertVehicleCreateAllowed", () => {
     });
   });
 
-  it("allows promoted Kia K5 after Phase C", () => {
+  it("allows interview fleet Honda Accord", () => {
+    const result = assertVehicleCreateAllowed({
+      year: 2025,
+      make: "Honda",
+      model: "Accord",
+      trim: "EX",
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      packId: "honda-accord-2024-ex",
+    });
+  });
+
+  it("allows Ayush dogfood 2022 Hyundai Elantra SEL", () => {
+    const result = assertVehicleCreateAllowed({
+      year: 2022,
+      make: "Hyundai",
+      model: "Elantra",
+      trim: "SEL",
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      packId: "hyundai-elantra-2022-sel",
+    });
+  });
+
+  it("waitlists culled catalog vehicle (Kia K5)", () => {
     const result = assertVehicleCreateAllowed({
       year: 2024,
       make: "Kia",
@@ -42,10 +71,11 @@ describe("assertVehicleCreateAllowed", () => {
       trim: "LXS",
     });
 
-    expect(result).toEqual({
-      ok: true,
-      packId: "kia-k5-2024-lxs",
-    });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.status).toBe(422);
+    expect(result.body.waitlistEligible).toBe(true);
+    expect(result.body.code).toBe("waitlist_required");
   });
 
   it("rejects unknown vehicle", () => {
