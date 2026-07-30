@@ -114,6 +114,10 @@ Vercel + Supabase is the default hosted stack for BUILD freeze. Railway/Fly are 
 - ADRs: `docs-lite/adr/`
 - System architecture: `docs/01-architecture/system-architecture.md`
 - MVP spec: `docs/03-mvp-spec/mvp-technical-spec.md`
+- Maintenance item intelligence:
+  `docs/03-mvp-spec/maintenance-item-intelligence.md`
+- Maintenance intelligence delivery queue:
+  `docs/03-mvp-spec/maintenance-item-intelligence-queue.md`
 - Marketing sitemap: `docs/05-marketing-site/sitemap.md`
 
 <details>
