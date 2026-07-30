@@ -112,46 +112,6 @@ describe("recordServiceAndRecommend", () => {
 });
 
 describe("decideTask", () => {
-  it("records snooze metadata", async () => {
-    const eventStore = new InMemoryEventStore();
-    const policyEngine = new StubPolicyEngine();
-    const vehicleId = crypto.randomUUID();
-
-    const { task, state: initialState } = await recordServiceAndRecommend({
-      eventStore,
-      policyEngine,
-      input: {
-        vehicleId,
-        shop: "Jiffy Lube",
-        serviceDate: "2026-01-12",
-        mileage: 41_800,
-        lineItems: ["Inspection"],
-        total: "$0.00",
-        evidenceIds: ["evidence-1"],
-      },
-    });
-
-    expect(task).not.toBeNull();
-    expect(initialState.nowQueue[0]?.status).toBe("pending");
-
-    await decideTask({
-      eventStore,
-      vehicleId,
-      taskId: task!.taskId,
-      decision: "snooze",
-      snoozeDays: 14,
-    });
-
-    const events = (await eventStore.loadAll()).filter(
-      (event) => "vehicleId" in event.payload && event.payload.vehicleId === vehicleId,
-    );
-    const finalState = foldEvents(vehicleId, events);
-
-    expect(finalState.nowQueue[0]?.status).toBe("snoozed");
-    expect(finalState.nowQueue[0]?.snoozeCount).toBe(1);
-    expect(finalState.nowQueue[0]?.snoozeUntil).toBeTruthy();
-  });
-
   it("updates queue status when task is approved", async () => {
     const eventStore = new InMemoryEventStore();
     const policyEngine = new StubPolicyEngine();

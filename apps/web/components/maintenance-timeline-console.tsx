@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { OwnerHistoryItem, TimelineEntry } from "@/lib/console-types";
+import type { OwnerHistoryItem, QueueItem, TimelineEntry } from "@/lib/console-types";
 import { downloadCsv, filterByQuery, sortRows } from "@/lib/data-grid-utils";
 import { useConsoleListKeyboard } from "@/lib/use-console-list-keyboard";
 import { useAppUiStore } from "@/lib/store/app-ui-store";
@@ -64,6 +64,8 @@ type MaintenanceTimelineConsoleProps = {
   requireEditConfirmation?: boolean;
   ownerSimple?: boolean;
   ownerHistoryItems?: OwnerHistoryItem[];
+  verifications?: QueueItem[];
+  onReviewVerification?: (taskId: string) => void;
   onGoToImport?: () => void;
   addRequestKey?: number;
   addRequestTaskId?: string | null;
@@ -95,6 +97,8 @@ export function MaintenanceTimelineConsole({
   requireEditConfirmation = false,
   ownerSimple = false,
   ownerHistoryItems,
+  verifications = [],
+  onReviewVerification,
   onGoToImport,
   addRequestKey,
   addRequestTaskId,
@@ -321,12 +325,16 @@ export function MaintenanceTimelineConsole({
         disabled={disabled}
         defaultMileage={defaultMileage}
         onUpdateService={onUpdateService}
+        onMergeService={onMergeService}
         onAddService={onAddService}
         requireEditConfirmation={requireEditConfirmation}
         onGoToImport={onGoToImport}
         addRequestKey={addRequestKey}
         addRequestTaskId={addRequestTaskId}
         onAddRequestHandled={onAddRequestHandled}
+        focusedRecordId={selectedId}
+        verifications={verifications}
+        onReviewVerification={onReviewVerification}
       />
     );
   }

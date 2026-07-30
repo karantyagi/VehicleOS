@@ -103,6 +103,16 @@ export const mergeServiceRecords = async (deps: {
   if (!target || !merged) {
     throw new Error("Service record not found.");
   }
+  const isProposedPair = findPossibleServiceDuplicates(state.timeline).some(
+    (candidate) =>
+      (candidate.firstServiceId === target.serviceId &&
+        candidate.secondServiceId === merged.serviceId) ||
+      (candidate.firstServiceId === merged.serviceId &&
+        candidate.secondServiceId === target.serviceId),
+  );
+  if (!isProposedPair) {
+    throw new Error("These records are not a conservative duplicate candidate.");
+  }
   const lineItems = uniqueText(
     input.lineItems ?? [...target.lineItems, ...merged.lineItems],
   );

@@ -115,6 +115,9 @@ export {
   isActiveReminder,
   splitOwnerQueues,
   type OwnerReminderView,
+  type OwnerVerificationSeverity,
+  type OwnerVerificationTarget,
+  type OwnerVerificationView,
 } from "./now/build-owner-reminders.js";
 export {
   formatOwnerDeadline,
@@ -131,10 +134,8 @@ export {
   type TimeFirstTaskCopy,
 } from "./now/prepare-recommendation-task.js";
 export {
-  DEFAULT_SNOOZE_DAYS,
   STALE_ODOMETER_DAYS,
   STALE_ODOMETER_RULE_ID,
-  computeSnoozeUntil,
   ensureStaleOdometerPrompt,
   isOdometerStale,
   resolveLastMileageTouchDate,

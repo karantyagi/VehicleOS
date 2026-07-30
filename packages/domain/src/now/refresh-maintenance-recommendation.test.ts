@@ -54,7 +54,7 @@ describe("refreshMaintenanceRecommendation", () => {
     expect(result.nowQueue.some((item) => item.status === "pending")).toBe(true);
   });
 
-  it.each(["pending", "snoozed", "scheduled", "dismissed"] as const)(
+  it.each(["pending", "scheduled", "dismissed"] as const)(
     "does not recreate the same rule when its latest owner state is %s",
     async (status) => {
       const eventStore = new InMemoryEventStore();

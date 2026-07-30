@@ -25,13 +25,27 @@ export type QueueItem = {
     | "VERIFY_MAINTENANCE_TIMING"
     | "VERIFY_OWNER_INTERVAL";
   dueBy?: string | null;
-  snoozeUntil?: string | null;
-  snoozeCount?: number;
   suggestedReasonId?: "winter_salt" | "noise_symptom" | "dealer_recommended" | "aggressive_driving" | "deferred_intentionally" | "other";
   draftReasonSource?: "heuristic" | "llm";
   suggestedIntervalMiles?: number;
   suggestedIntervalMonths?: number;
   intervalKind?: "general" | "tire_rotation";
+  severity?: "blocking" | "advisory";
+  target?: {
+    surface: "home" | "history" | "schedule" | "imports" | "vehicle";
+    recordId: string | null;
+    field:
+      | "mileage"
+      | "service_date"
+      | "vehicle_profile"
+      | "import_rows"
+      | "maintenance_timing"
+      | "owner_interval"
+      | null;
+    label: string;
+  };
+  resolvedAt?: string | null;
+  resolution?: "schedule" | "complete" | "approve" | "dismiss" | null;
 };
 
 export type OwnerReminderItem = {

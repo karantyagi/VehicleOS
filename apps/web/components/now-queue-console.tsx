@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronUp, ListChecks } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { DeviationPatternForm } from "@/components/deviation-pattern-form";
@@ -26,8 +26,10 @@ type NowQueueConsoleProps = {
   onDecide: (taskId: string, decision: "approve" | "dismiss") => void;
   onOdometerSaved?: () => void;
   onVerificationResolved?: () => void;
+  onReviewTarget?: (item: QueueItem) => void;
   onError?: (message: string) => void;
   ownerSimple?: boolean;
+  focusTaskId?: string | null;
 };
 
 export function NowQueueConsole({
@@ -39,14 +41,27 @@ export function NowQueueConsole({
   onDecide,
   onOdometerSaved,
   onVerificationResolved,
+  onReviewTarget,
   onError,
   ownerSimple = false,
+  focusTaskId = null,
 }: NowQueueConsoleProps) {
   const selectedId = useAppUiStore((s) => s.selectedNowTaskId);
   const setSelectedId = useAppUiStore((s) => s.setSelectedNowTaskId);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("status-asc");
   const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!focusTaskId) return;
+    setExpandedTaskId(focusTaskId);
+    const frame = window.requestAnimationFrame(() => {
+      document
+        .getElementById(`verification-${focusTaskId}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [focusTaskId]);
 
   const pending = useMemo(
     () => items.filter((item) => item.taskKind === "verification" && item.status === "pending"),
@@ -88,16 +103,32 @@ export function NowQueueConsole({
           const isExpanded = expandedTaskId === item.taskId;
 
           return (
-            <li key={item.taskId} className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+            <li
+              id={`verification-${item.taskId}`}
+              key={item.taskId}
+              className={cn(
+                "overflow-hidden rounded-xl border bg-card shadow-sm",
+                item.severity === "blocking" ? "border-amber-300/80 dark:border-amber-800/70" : "border-border",
+                focusTaskId === item.taskId && "ring-2 ring-primary/50 ring-offset-2 ring-offset-background",
+              )}
+            >
               <button
                 type="button"
                 className="flex w-full items-start gap-3 p-4 text-left"
                 aria-expanded={isExpanded}
                 onClick={() => setExpandedTaskId(isExpanded ? null : item.taskId)}
               >
-                <h3 className="min-w-0 flex-1 font-semibold leading-tight">
-                  {item.title}
-                </h3>
+                <span className="min-w-0 flex-1 space-y-1.5">
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className="font-semibold leading-tight">{item.title}</span>
+                    {item.severity === "blocking" ? (
+                      <Badge variant="warning">Needs confirmation</Badge>
+                    ) : null}
+                  </span>
+                  {item.target?.label ? (
+                    <span className="block text-xs text-muted-foreground">{item.target.label}</span>
+                  ) : null}
+                </span>
                 <span className="shrink-0 pt-0.5 text-muted-foreground">
                   {isExpanded ? (
                     <ChevronUp className="h-4 w-4" aria-hidden />
@@ -153,6 +184,17 @@ export function NowQueueConsole({
                   ) : null}
                   {!showDeviationForm && !showIntervalForm ? (
                     <div className="flex flex-wrap gap-2">
+                      {item.target && item.target.surface !== "home" && !showOdometerForm ? (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          disabled={disabled}
+                          onClick={() => onReviewTarget?.(item)}
+                        >
+                          Review {item.target.label.toLowerCase()}
+                        </Button>
+                      ) : null}
                       <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
                         Confirm
                       </Button>
@@ -163,7 +205,7 @@ export function NowQueueConsole({
                         disabled={disabled}
                         onClick={() => onDecide(item.taskId, "dismiss")}
                       >
-                        Dismiss
+                        Keep existing
                       </Button>
                     </div>
                   ) : showDeviationForm ? (
@@ -175,7 +217,7 @@ export function NowQueueConsole({
                         disabled={disabled}
                         onClick={() => onDecide(item.taskId, "dismiss")}
                       >
-                        Dismiss
+                        Keep existing
                       </Button>
                     </div>
                   ) : null}

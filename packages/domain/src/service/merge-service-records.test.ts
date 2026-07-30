@@ -114,4 +114,35 @@ describe("service record reconciliation", () => {
       total: "$84.00",
     });
   });
+
+  it("rejects an arbitrary pair that was not proposed as a duplicate", async () => {
+    const eventStore = new InMemoryEventStore();
+    const rows: [string, Partial<ServiceTimelineEntry>][] = [
+      ["first", {}],
+      ["second", { serviceDate: "2024-12-20", mileage: 39_100, lineItems: ["Tires rotated"] }],
+    ];
+    for (const [serviceId, overrides] of rows) {
+      await eventStore.append({
+        aggregateType: "vehicle",
+        aggregateId: "veh-1",
+        eventType: EVENT_TYPES.SERVICE_RECORDED,
+        eventVersion: EVENT_VERSIONS[EVENT_TYPES.SERVICE_RECORDED],
+        payload: {
+          vehicleId: "veh-1",
+          ...timelineRow(serviceId, overrides),
+        },
+      });
+    }
+
+    await expect(
+      mergeServiceRecords({
+        eventStore,
+        input: {
+          vehicleId: "veh-1",
+          targetServiceId: "first",
+          mergedServiceId: "second",
+        },
+      }),
+    ).rejects.toThrow("not a conservative duplicate candidate");
+  });
 });

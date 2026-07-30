@@ -9,7 +9,7 @@ pnpm --filter @vehicleos/api test
 Coverage:
 
 - Vehicle create → receipt ingest → `service.recorded` → recommendation → task
-- Task approve/dismiss/snooze via `task.decided`
+- Task schedule/approve/dismiss via `task.decided`
 - Projection correctness for timeline + Owner verification
 
 Postgres persistence is optional for CI (in-memory `EventStore` + vehicle repo). Local Postgres:

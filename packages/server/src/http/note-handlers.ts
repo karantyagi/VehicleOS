@@ -64,7 +64,7 @@ export const submitOwnerServiceNote = async (
     const isCompletable =
       task &&
       task.taskKind !== "verification" &&
-      (task.status === "pending" || task.status === "snoozed");
+      task.status === "pending";
     if (!isCompletable) {
       return jsonResponse(400, { error: "That Home item is no longer waiting for completion." });
     }

@@ -54,7 +54,7 @@ export const featuresContent = {
     {
       id: "reminders",
       title: "Calendar-first reminders",
-      detail: "Act this week or snooze 1–4 weeks — the assistant escalates if you defer.",
+      detail: "This week leads; next week and this month stay available when you want to plan ahead.",
     },
     {
       id: "import",
@@ -100,7 +100,7 @@ export const coreLoopSteps = [
   { label: "Pick car", detail: "Supported YMM at setup" },
   { label: "Hydrate", detail: "Verified OEM schedule loads" },
   { label: "Project", detail: "What's due — calendar-first" },
-  { label: "Remind", detail: "Nudge — snooze or act" },
+  { label: "Act", detail: "Schedule, record, or correct" },
   { label: "Enrich", detail: "Optional CARFAX / RMV import" },
   { label: "Verify", detail: "You confirm only on conflict" },
 ] as const;
@@ -131,7 +131,7 @@ export const versionLadder = {
       phase: "Now · early access",
       title: "Reminds what's upcoming",
       detail: "Projects from OEM schedules and your history. Nudges before something slips.",
-      bullets: ["Calendar-first reminders", "Snooze 1–4 weeks", "Owner verify only on conflict"],
+      bullets: ["This-week attention", "Next-week and monthly planning", "Owner verify only on conflict"],
     },
     {
       id: "v2",
@@ -232,7 +232,7 @@ export const statusRows: StatusRow[] = [
   { item: "Hosted app — onboarding + assistant workspace", status: "shipped" },
   { item: "OEM packs + hydrate on vehicle create", status: "shipped" },
   { item: "CARFAX / RMV import + tiered review", status: "shipped" },
-  { item: "Calendar reminders + snooze", status: "shipped" },
+  { item: "Time-first owner attention", status: "shipped" },
   { item: "Event-sourced domain + CI golden path", status: "shipped" },
   { item: "v2 — how / where / cost recommendations", status: "planned" },
   { item: "LLM PDF extraction", status: "planned" },

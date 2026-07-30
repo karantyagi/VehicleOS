@@ -1,4 +1,8 @@
-import { EVENT_TYPES, type CatalogDomainEvent } from "../events/catalog.js";
+import {
+  EVENT_TYPES,
+  type CatalogDomainEvent,
+  type TaskDecision,
+} from "../events/catalog.js";
 import {
   createEmptyVehicleState,
   type NowQueueItem,
@@ -8,15 +12,15 @@ import {
 
 export { createEmptyVehicleState };
 
-const taskStatusFromDecision = (
-  decision: "schedule" | "complete" | "approve" | "dismiss" | "snooze",
-): NowQueueItem["status"] => {
-  if (decision === "schedule") return "scheduled";
-  if (decision === "complete") return "completed";
-  if (decision === "approve") return "approved";
-  if (decision === "dismiss") return "dismissed";
-  return "snoozed";
+const TASK_STATUS_BY_DECISION: Record<TaskDecision, NowQueueItem["status"]> = {
+  schedule: "scheduled",
+  complete: "completed",
+  approve: "approved",
+  dismiss: "dismissed",
 };
+
+const taskStatusFromDecision = (decision: TaskDecision): NowQueueItem["status"] =>
+  TASK_STATUS_BY_DECISION[decision];
 
 export const applyEvent = (
   state: VehicleProjectionState,
@@ -128,7 +132,6 @@ export const applyEvent = (
         suggestedIntervalMiles: event.payload.suggestedIntervalMiles,
         suggestedIntervalMonths: event.payload.suggestedIntervalMonths,
         intervalKind: event.payload.intervalKind,
-        snoozeCount: 0,
       };
 
       return {
@@ -143,15 +146,6 @@ export const applyEvent = (
         ...state,
         nowQueue: state.nowQueue.map((item) => {
           if (item.taskId !== event.payload.taskId) return item;
-
-          if (event.payload.decision === "snooze") {
-            return {
-              ...item,
-              status: taskStatusFromDecision(event.payload.decision),
-              snoozeUntil: event.payload.snoozeUntil ?? null,
-              snoozeCount: (item.snoozeCount ?? 0) + 1,
-            };
-          }
 
           return {
             ...item,

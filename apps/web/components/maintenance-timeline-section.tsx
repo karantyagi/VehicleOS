@@ -9,6 +9,7 @@ import type {
   OwnerDueItemsView,
   OwnerHistoryItem,
   OwnershipRecordEntry,
+  QueueItem,
   ScheduleProjectionRow,
   ServiceHistoryTab,
   TimelineEntry,
@@ -21,6 +22,7 @@ type MaintenanceTimelineSectionProps = {
   ownershipRecords: OwnershipRecordEntry[];
   ownerDueItems?: OwnerDueItemsView | null;
   ownerHistoryTimeline?: OwnerHistoryItem[];
+  verifications?: QueueItem[];
   scheduleNear: ScheduleProjectionRow[];
   scheduleExtended: ScheduleProjectionRow[];
   scheduleFull: ScheduleProjectionRow[];
@@ -40,6 +42,7 @@ type MaintenanceTimelineSectionProps = {
     mergedServiceId: string,
     lineItems: string[],
   ) => Promise<void>;
+  onReviewVerification?: (taskId: string) => void;
   onAddService?: (draft: import("@/components/maintenance-record-fields").MaintenanceRecordDraft) => Promise<void>;
   requireEditConfirmation?: boolean;
   onGoToImport?: () => void;
@@ -66,6 +69,7 @@ export function MaintenanceTimelineSection({
   ownershipRecords,
   ownerDueItems = null,
   ownerHistoryTimeline,
+  verifications = [],
   scheduleNear,
   scheduleExtended,
   scheduleFull,
@@ -81,6 +85,7 @@ export function MaintenanceTimelineSection({
   onOpenEvidence,
   onUpdateService,
   onMergeService,
+  onReviewVerification,
   onAddService,
   requireEditConfirmation = false,
   onGoToImport,
@@ -120,6 +125,8 @@ export function MaintenanceTimelineSection({
           requireEditConfirmation={requireEditConfirmation}
           ownerSimple={ownerSimple}
           ownerHistoryItems={historyItems ?? undefined}
+          verifications={verifications}
+          onReviewVerification={onReviewVerification}
           onGoToImport={onGoToImport}
         />
       ) : (
@@ -161,6 +168,8 @@ export function MaintenanceTimelineSection({
                 requireEditConfirmation={requireEditConfirmation}
                 ownerSimple={ownerSimple}
                 ownerHistoryItems={historyItems ?? undefined}
+                verifications={verifications}
+                onReviewVerification={onReviewVerification}
                 onGoToImport={onGoToImport}
                 addRequestKey={addRequestKey}
                 addRequestTaskId={addRequestTaskId}

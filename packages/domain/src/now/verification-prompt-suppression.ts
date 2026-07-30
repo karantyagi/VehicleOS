@@ -10,7 +10,6 @@ export const hasHandledVerificationPromptForRule = (input: {
     if (item.taskKind !== "verification" || item.ruleId !== input.ruleId) return false;
 
     if (item.status === "pending") return true;
-    if (item.status === "snoozed") return true;
     return (
       item.status === "dismissed" ||
       item.status === "approved" ||

@@ -81,7 +81,11 @@ export const buildVehicleStateView = (
     dueItems: ownerDueItems,
     today,
   });
-  const verifications = buildOwnerVerificationViews(state.nowQueue);
+  const verifications = buildOwnerVerificationViews(state.nowQueue, {
+    events,
+    timeline: state.timeline,
+    scheduleRows: scheduleExtended.rows,
+  });
   const pendingVerificationCount = verifications.filter((item) => item.status === "pending").length;
 
   return {

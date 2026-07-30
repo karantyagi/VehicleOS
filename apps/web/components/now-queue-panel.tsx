@@ -51,7 +51,6 @@ const queueStatusLabel = (status: string): string => {
   if (status === "pending") return "awaiting verification";
   if (status === "approved") return "approved";
   if (status === "dismissed") return "dismissed";
-  if (status === "snoozed") return "snoozed";
   return status;
 };
 

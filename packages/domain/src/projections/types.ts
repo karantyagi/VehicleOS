@@ -34,8 +34,6 @@ export type NowQueueItem = {
     | "VERIFY_MAINTENANCE_TIMING"
     | "VERIFY_OWNER_INTERVAL";
   dueBy?: string | null;
-  snoozeUntil?: string | null;
-  snoozeCount?: number;
   suggestedReasonId?: "winter_salt" | "noise_symptom" | "dealer_recommended" | "aggressive_driving" | "deferred_intentionally" | "other";
   draftReasonSource?: "heuristic" | "llm";
   suggestedIntervalMiles?: number;

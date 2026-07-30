@@ -143,7 +143,6 @@ export const refreshMaintenanceRecommendation = async (
     (item) =>
       item.ruleId === recommendation.ruleId &&
       (item.status === "pending" ||
-        item.status === "snoozed" ||
         item.status === "scheduled" ||
         (item.status === "dismissed" &&
           !hasRecommendationInputChangedAfterDismissal(events, item.taskId))),

@@ -106,7 +106,7 @@ Condition & setup   SH-AWD applicability confirmed
 Assistant recommendation
 Phase 2 · upcoming · in development
 
-[Done]   [Snooze]
+[Schedule]   [Done]   [Fix this]   [Not needed]
 ```
 
 `Phase 2 · upcoming · in development` appears only after expansion. Owners

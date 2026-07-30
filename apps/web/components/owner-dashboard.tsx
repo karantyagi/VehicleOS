@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import { PanelCard } from "@/components/panel-card";
 import { Badge } from "@/components/ui/badge";
@@ -63,6 +64,7 @@ const emptyReceiptForm = {
 };
 
 export function OwnerDashboard() {
+  const router = useRouter();
   const apiBase = getApiBase();
   const { setSnapshot } = useVehicleConsole();
   const garage = useGarage();
@@ -70,6 +72,7 @@ export function OwnerDashboard() {
   const activeSection = useAppUiStore((state) => state.activeSection);
   const consoleMode = useAppUiStore((state) => state.consoleMode);
   const setActiveSection = useAppUiStore((state) => state.setActiveSection);
+  const setSelectedTimelineId = useAppUiStore((state) => state.setSelectedTimelineId);
   const setSetupFlowActive = useAppUiStore((state) => state.setSetupFlowActive);
   const isDeveloper = consoleMode === "developer";
   const sectionMeta = APP_SECTIONS.find((section) => section.id === activeSection) ?? APP_SECTIONS[0];
@@ -84,6 +87,7 @@ export function OwnerDashboard() {
   const [nowQueue, setNowQueue] = useState<QueueItem[]>([]);
   const [reminders, setReminders] = useState<OwnerReminderItem[]>([]);
   const [verifications, setVerifications] = useState<QueueItem[]>([]);
+  const [focusedVerificationTaskId, setFocusedVerificationTaskId] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [form, setForm] = useState(emptyReceiptForm);
@@ -564,6 +568,9 @@ export function OwnerDashboard() {
         verifications?: QueueItem[];
       };
       applyQueueState(body);
+      if (focusedVerificationTaskId === taskId) {
+        setFocusedVerificationTaskId(null);
+      }
       if (decision === "schedule") {
         feedback("Marked scheduled.");
       } else if (decision === "approve") {
@@ -616,7 +623,37 @@ export function OwnerDashboard() {
   };
 
   const pendingReminderCount = reminders.filter((item) => item.effectiveStatus === "pending").length;
-  const pendingVerificationCount = verifications.filter((item) => item.status === "pending").length;
+  const pendingVerifications = verifications.filter((item) => item.status === "pending");
+  const blockingVerifications = pendingVerifications.filter((item) => item.severity !== "advisory");
+  const advisoryVerifications = pendingVerifications.filter((item) => item.severity === "advisory");
+  const pendingVerificationCount = pendingVerifications.length;
+
+  const openVerificationTask = (taskId: string) => {
+    setFocusedVerificationTaskId(taskId);
+    setActiveSection("reminders");
+  };
+
+  const reviewVerificationTarget = (item: QueueItem) => {
+    const target = item.target;
+    if (!target || target.surface === "home") {
+      openVerificationTask(item.taskId);
+      return;
+    }
+    if (target.surface === "vehicle") {
+      router.push("/garage?tab=car");
+      return;
+    }
+    if (target.surface === "imports") {
+      setActiveSection("imports");
+      return;
+    }
+
+    setServiceHistoryTab(target.surface === "history" ? "history" : "schedule");
+    setActiveSection("timeline");
+    if (target.surface === "history" && target.recordId) {
+      setSelectedTimelineId(target.recordId);
+    }
+  };
 
   const headerAction =
     isDeveloper && (activeSection === "reminders" || activeSection === "now") ? (
@@ -724,6 +761,37 @@ export function OwnerDashboard() {
 
       {activeSection === "reminders" ? (
         <div className="space-y-6">
+          {blockingVerifications.length > 0 ? (
+            <PanelCard
+              title={
+                blockingVerifications.length === 1
+                  ? "The assistant needs your confirmation"
+                  : `${blockingVerifications.length} details need your confirmation`
+              }
+              description="A record cannot be settled safely until you confirm it."
+            >
+              <NowQueueConsole
+                items={blockingVerifications}
+                disabled={isBusy}
+                vehicleId={vehicle.id}
+                apiBase={apiBase}
+                currentMileage={vehicle.currentMileage}
+                onDecide={decide}
+                onReviewTarget={reviewVerificationTarget}
+                focusTaskId={focusedVerificationTaskId}
+                ownerSimple
+                onOdometerSaved={() => {
+                  if (vehicle) void loadVehicleState(vehicle);
+                }}
+                onVerificationResolved={() => {
+                  if (vehicle) void loadVehicleState(vehicle);
+                  feedback("Saved. The assistant will use this context going forward.");
+                }}
+                onError={(message) => feedback(message)}
+              />
+            </PanelCard>
+          ) : null}
+
           <PanelCard
             hideHeader={!isDeveloper}
             title="What needs attention"
@@ -750,18 +818,24 @@ export function OwnerDashboard() {
             />
           </PanelCard>
 
-          {pendingVerificationCount > 0 ? (
+          {advisoryVerifications.length > 0 ? (
             <PanelCard
-              title={pendingVerificationCount === 1 ? "One thing to verify" : `${pendingVerificationCount} things to verify`}
-              description="The assistant only asks when it cannot settle a record safely."
+              title={
+                advisoryVerifications.length === 1
+                  ? "One detail to confirm"
+                  : `${advisoryVerifications.length} details to confirm`
+              }
+              description="This improves future timing, but it does not block today's maintenance record."
             >
               <NowQueueConsole
-                items={verifications.length > 0 ? verifications : nowQueue}
+                items={advisoryVerifications}
                 disabled={isBusy}
                 vehicleId={vehicle.id}
                 apiBase={apiBase}
                 currentMileage={vehicle.currentMileage}
                 onDecide={decide}
+                onReviewTarget={reviewVerificationTarget}
+                focusTaskId={focusedVerificationTaskId}
                 ownerSimple
                 onOdometerSaved={() => {
                   if (vehicle) void loadVehicleState(vehicle);
@@ -794,6 +868,7 @@ export function OwnerDashboard() {
               apiBase={apiBase}
               currentMileage={vehicle.currentMileage}
               onDecide={decide}
+              onReviewTarget={reviewVerificationTarget}
               ownerSimple={!isDeveloper}
               onOdometerSaved={() => {
                 if (vehicle) void loadVehicleState(vehicle);
@@ -819,6 +894,7 @@ export function OwnerDashboard() {
             ownershipRecords={ownershipRecords}
             ownerDueItems={ownerDueItems}
             ownerHistoryTimeline={ownerHistoryTimeline}
+            verifications={verifications}
             scheduleNear={maintenanceSchedule.near}
             scheduleExtended={maintenanceSchedule.extended}
             scheduleFull={maintenanceSchedule.full}
@@ -835,6 +911,7 @@ export function OwnerDashboard() {
             onOpenEvidence={openEvidence}
             onUpdateService={updateServiceRecord}
             onMergeService={mergeServiceRecords}
+            onReviewVerification={openVerificationTask}
             onAddService={addMaintenanceRecord}
             requireEditConfirmation={!isDeveloper}
             onGoToImport={() => setActiveSection("imports")}

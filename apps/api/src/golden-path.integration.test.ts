@@ -540,7 +540,7 @@ Cabin air filter $59.00`,
     expect(noteBody.reminders.some((item) => item.taskId === task!.taskId)).toBe(false);
   });
 
-  it("rejects legacy snooze and direct completion decisions", async () => {
+  it("rejects direct completion decisions", async () => {
     const app = await appPromise;
     const client = createAuthClient(app);
 
@@ -559,15 +559,13 @@ Cabin air filter $59.00`,
     const task = refreshBody.nowQueue.find((item) => item.status === "pending");
     expect(task).toBeTruthy();
 
-    for (const decision of ["snooze", "complete"]) {
-      const decisionResponse = await client.inject({
-        method: "POST",
-        url: `/api/tasks/${task!.taskId}/decide`,
-        payload: { vehicleId: vehicle.id, decision },
-      });
+    const decisionResponse = await client.inject({
+      method: "POST",
+      url: `/api/tasks/${task!.taskId}/decide`,
+      payload: { vehicleId: vehicle.id, decision: "complete" },
+    });
 
-      expect(decisionResponse.statusCode).toBe(400);
-    }
+    expect(decisionResponse.statusCode).toBe(400);
 
     const stateResponse = await client.inject({
       method: "GET",

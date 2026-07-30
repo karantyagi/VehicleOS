@@ -11,9 +11,9 @@ VehicleOS is intended to work quietly in the background and involve the owner on
 1. an in-app list of unresolved maintenance actions; and
 2. an early browser-notification delivery mechanism.
 
-It also models `snoozed` as a task status. That conflates maintenance truth, whether the owner still owes an action, and whether the assistant may interrupt the owner.
+An earlier implementation also modeled a per-item delivery delay as a maintenance-task status. That conflated maintenance truth, whether the owner still owed an action, and whether the assistant could interrupt the owner.
 
-A complete notification product has not been designed. It requires channel and permission handling, quiet hours, time zones, frequency policy, deduplication, delivery records, retries, escalation, critical-deadline behavior, accessibility, and user research. Adding more snooze behavior before those decisions would harden the wrong abstraction.
+A complete notification product has not been designed. It requires channel and permission handling, quiet hours, time zones, frequency policy, deduplication, delivery records, retries, escalation, critical-deadline behavior, accessibility, and user research. Adding delivery-delay behavior before those decisions would harden the wrong abstraction.
 
 ## Decision
 
@@ -39,9 +39,22 @@ For the current phase, the owner web app is the complete review and action surfa
 
 The exact navigation copy and time-bucket UI are implementation work, not part of this ADR.
 
-### 3. Remove snooze from the current owner workflow
+### 3. Place owner verification contextually
 
-Do not offer **Snooze** or **Remind me later** in the owner UI until notification delivery is designed.
+Owner verification protects maintenance truth when the assistant cannot safely choose a date, mileage, imported row, vehicle fact, or maintenance pattern.
+
+- Do not add a permanent owner navigation destination for rare verification work.
+- Show blocking questions above maintenance attention on **Home** and advisory questions below it.
+- Add a count to **Home** only while questions are unresolved.
+- Mark the affected history record with **Needs confirmation** and deep-link review to the exact record or field.
+- Keep resolved decisions as a collapsed audit trail in Maintenance history.
+- Keep the dedicated **Owner verification** workspace available in developer mode.
+
+The owner-facing copy is **The assistant needs your confirmation**, not an internal queue or review-system label. Nothing is shown when there is nothing to verify.
+
+### 4. Keep per-item delay controls out of the current owner workflow
+
+Do not offer an owner-facing control that temporarily hides unresolved attention until notification delivery is designed.
 
 The current owner actions should converge on:
 
@@ -54,11 +67,11 @@ Scheduled and completed are distinct persisted task outcomes. **Done** completes
 originating Home item only after a maintenance record is saved successfully. **Fix
 this** leaves the item unresolved while corrected history is reprojected.
 
-Existing snooze events remain readable for event-history compatibility. The web cleanup must stop creating new owner snooze decisions and resurface unresolved historical snoozes as attention items.
+The production event store was audited on 2026-07-30 and contained no historical delay decisions or related metadata. The obsolete task status, decision payload fields, projection behavior, API compatibility, and UI compatibility were therefore removed without a data migration.
 
-### 4. Defer notification control as its own product subsystem
+### 5. Defer notification control as its own product subsystem
 
-Push, email, browser delivery, mute/snooze controls, reminder cadence, and escalation are explicitly deferred. They must be designed together behind a notification-control boundary before implementation.
+Push, email, browser delivery, mute/defer controls, reminder cadence, and escalation are explicitly deferred. They must be designed together behind a notification-control boundary before implementation.
 
 At minimum, the later design must cover:
 
@@ -72,7 +85,7 @@ At minimum, the later design must cover:
 
 The existing browser notification hook is a prototype, not the notification-system contract.
 
-### 5. Keep mobile capture-first
+### 6. Keep mobile capture-first
 
 The current mobile scope is intentionally narrow:
 
@@ -96,18 +109,17 @@ The mobile phase does not duplicate the web review desk, full history, schedule,
 ### Negative
 
 - Owners cannot temporarily mute an individual in-app attention item in this phase.
-- Existing snooze contracts remain as compatibility debt for previously recorded events.
 - The web app remains the place an owner must open to review unresolved attention.
 
 ## Alternatives considered
 
-### Keep the current snooze button
+### Keep the previous per-item delay control
 
-Rejected for the current phase. Without a delivery policy, snooze mainly hides unresolved work and has unclear behavior for overdue items.
+Rejected for the current phase. Without a delivery policy, a delay control mainly hides unresolved work and has unclear behavior for overdue items.
 
-### Delete all snooze events and contracts immediately
+### Retain obsolete compatibility contracts
 
-Rejected. Event history is append-only, and existing dogfood data must remain readable. Compatibility can remain while the owner-facing action is removed.
+Rejected after the production audit found no stored events requiring compatibility. Carrying unreachable states would add lifecycle branches and testing cost without protecting any data.
 
 ### Build push notifications now
 
