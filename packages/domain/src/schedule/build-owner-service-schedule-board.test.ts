@@ -224,12 +224,13 @@ describe("buildOwnerServiceScheduleBoard — 2021 TLX dogfood", () => {
     expect(rotation?.intelligence?.whyNow).toContain("7,219 mi remaining");
     expect(rotation?.intelligence?.intervalRecommendation).toMatchObject({
       status: "active",
-      recommendedMiles: 7_000,
-      projectedDueMileage: 65_819,
-      recentGapsMiles: [7_360, 7_982, 5_594],
-      recentAverageMiles: 6_979,
+      recommendedMiles: 6_000,
+      projectedDueMileage: 64_819,
+      recentGapsMiles: [5_853, 7_982, 5_594],
+      recentAverageMiles: 6_476,
+      recentMedianMiles: 5_853,
       confidence: "medium",
-      evidenceNote: "3 recent gaps · variable",
+      evidenceNote: "3 current-tire intervals · variable",
       activeSource: "oem",
     });
     expect(rotation?.intelligence?.actionRecommendation).toMatchObject({

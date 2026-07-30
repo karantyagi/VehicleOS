@@ -2,6 +2,10 @@ import { findMatchingServices } from "../knowledge/match-service-name.js";
 import type { ServiceAliasRegistry } from "../knowledge/service-alias-registry.js";
 import type { OwnerContextMemory } from "../owner-context/types.js";
 import type { KnowledgeScheduleEntry, ServiceTimelineEntry } from "../projections/types.js";
+import {
+  resolveTireRotationEvidence,
+  sortServiceTimeline,
+} from "./resolve-tire-rotation-evidence.js";
 
 export type IntervalProposal = {
   entryId: string;
@@ -81,26 +85,27 @@ const detectMilesProposal = (input: {
 
 const detectTireMilesProposal = (input: {
   matches: ServiceTimelineEntry[];
+  timeline: ServiceTimelineEntry[];
   oemIntervalMiles: number;
 }): { intervalMiles: number; evidenceSummary: string; confidence: number } | null => {
-  const mileSpacings: number[] = [];
-  for (let index = 1; index < input.matches.length; index += 1) {
-    const previous = input.matches[index - 1]!;
-    const current = input.matches[index]!;
-    if (current.mileage > previous.mileage) {
-      mileSpacings.push(current.mileage - previous.mileage);
-    }
+  const evidence = resolveTireRotationEvidence({
+    timeline: input.timeline,
+    rotationMatches: input.matches,
+  });
+  const recentSpacings = evidence.recentGapsMiles;
+  if (
+    recentSpacings.length === 0 ||
+    evidence.recentAverageMiles === null ||
+    evidence.recentMedianMiles === null
+  ) {
+    return null;
   }
-  if (mileSpacings.length === 0) return null;
 
-  const recentSpacings = mileSpacings.slice(-3);
-  const observedAverage = Math.round(
-    recentSpacings.reduce((total, spacing) => total + spacing, 0) /
-      recentSpacings.length,
-  );
+  const observedAverage = evidence.recentAverageMiles;
+  const observedMedian = evidence.recentMedianMiles;
   const intervalMiles = Math.max(
     500,
-    Math.round(observedAverage / 500) * 500,
+    Math.round(observedMedian / 500) * 500,
   );
   if (intervalMiles === input.oemIntervalMiles) return null;
 
@@ -108,8 +113,8 @@ const detectTireMilesProposal = (input: {
   const rangeEnd = Math.max(...recentSpacings);
   const evidenceSummary =
     recentSpacings.length === 1
-      ? `One observed rotation gap: ${recentSpacings[0]!.toLocaleString("en-US")} mi`
-      : `${recentSpacings.length} recent rotation gaps averaged ${observedAverage.toLocaleString("en-US")} mi (range ${rangeStart.toLocaleString("en-US")}–${rangeEnd.toLocaleString("en-US")} mi)`;
+      ? `One ${evidence.scope === "current_tire_set" ? "current-tire interval" : "observed rotation gap"}: ${recentSpacings[0]!.toLocaleString("en-US")} mi`
+      : `${recentSpacings.length} ${evidence.scope === "current_tire_set" ? "current-tire intervals" : "recent rotation gaps"} averaged ${observedAverage.toLocaleString("en-US")} mi (median ${observedMedian.toLocaleString("en-US")} mi; range ${rangeStart.toLocaleString("en-US")}–${rangeEnd.toLocaleString("en-US")} mi)`;
   const stable = isStableSpacing(recentSpacings);
   const confidence =
     recentSpacings.length >= 3
@@ -171,18 +176,21 @@ export const detectIntervalProposalForEntry = (input: {
     /rotate tires|tire rotation/i.test(input.entry.serviceName);
   if (oemIntervalMiles === null && oemIntervalMonths === null) return null;
 
-  const matches = findMatchingServices(input.timeline, input.entry.serviceName, {
-    canonicalServiceId: input.entry.canonicalServiceId ?? null,
-    serviceAliasRegistry: input.serviceAliasRegistry,
-  }).sort((left, right) => left.serviceDate.localeCompare(right.serviceDate));
+  const matches = sortServiceTimeline(
+    findMatchingServices(input.timeline, input.entry.serviceName, {
+      canonicalServiceId: input.entry.canonicalServiceId ?? null,
+      serviceAliasRegistry: input.serviceAliasRegistry,
+    }),
+  );
 
-  if (isTireRotation ? matches.length < 2 : matches.length < 3) return null;
+  if (!isTireRotation && matches.length < 3) return null;
 
   const milesCandidate =
     oemIntervalMiles !== null
       ? isTireRotation
         ? detectTireMilesProposal({
             matches,
+            timeline: input.timeline,
             oemIntervalMiles,
           })
         : detectMilesProposal({

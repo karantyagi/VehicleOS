@@ -16,15 +16,18 @@ The current interval proposal combines three different decisions:
 2. whether recent service gaps are stable enough to call a pattern; and
 3. whether the assistant should propose an owner interval.
 
-`detectIntervalProposalForEntry` currently requires at least three matching
-service records and at least two recent gaps within 15% of their median. If
-either condition fails, the proposal and its evidence both disappear.
+Before this pilot, `detectIntervalProposalForEntry` required at least three
+matching service records and at least two recent gaps within 15% of their
+median. If either condition failed, the proposal and its evidence both
+disappeared.
 
 The 2021 Acura TLX dogfood tire-rotation history shows why that is the wrong
-owner experience. Its last three recorded gaps are 7,360, 7,982, and 5,594
-miles. Their average is 6,979 miles. The last gap is about 24% below the
-three-gap median, so the current stability check suppresses the entire task.
-The data is still useful; only the claim that it is a stable habit is weak.
+owner experience. Earlier logic mixed rotation history from two tire sets and
+produced gaps of 7,360, 7,982, and 5,594 miles. The current Michelin tire set
+was installed at 39,390 miles, so its lifecycle intervals are 5,853, 7,982,
+and 5,594 miles. Their average is 6,476 miles and their median is 5,853 miles.
+The 7,982-mile interval is the high observation. The data is useful, but it is
+not stable enough to call a habit.
 
 CARFAX demonstrates several useful owner controls:
 
@@ -97,14 +100,17 @@ owner's interval control.
 
 ### 2. Evidence language scales honestly from zero records
 
-| Confirmed item records | Allowed owner-facing language |
+| Available evidence | Allowed owner-facing language |
 |---:|---|
-| 0 | "No confirmed rotations yet." Show the OEM baseline and owner control. |
-| 1 | "Last rotated at 58,819 mi." Do not claim a gap or pattern. |
-| 2 | "One observed gap: 5,594 mi." Do not call it an average or habit. |
-| 3+ | Show recent gaps, average, range, and whether they vary. A stable-habit label requires separate evidence. |
+| No tire lifecycle evidence | "No confirmed rotations yet." Show the OEM baseline and owner control. |
+| One rotation, installation unknown | Show the last rotation. Do not claim a gap or pattern. |
+| Two rotations, or installation plus one rotation | Show one observed interval. Do not call it an average or habit. |
+| Two or more observed intervals | Show intervals, median, average, range, and whether they vary. A stable-habit label requires separate evidence. |
 
 An unstable series is an insight: "Recent gaps vary." It is not an error state.
+When a tire installation or replacement is known, it starts a new evidence
+window. Older rotations remain in history but do not determine the cadence for
+the currently installed tire set.
 
 ### 3. Shared contract, item-specific policies
 
@@ -144,7 +150,7 @@ An item recommendation contains:
 - assistant interval, when implemented;
 - short rationale;
 - qualitative confidence: `High`, `Medium`, `Low`, or `Not scored`;
-- evidence note, such as `3 recent gaps · variable`;
+- evidence note, such as `3 current-tire intervals · variable`;
 - recommendation status: `active`, `needs_input`, or `upcoming`;
 - interval source: `OEM`, `Assistant`, or `Owner`.
 
@@ -237,8 +243,11 @@ Rotate Tires is the first complete item policy.
 - Time may be shown as context but does not silently control the rotation
   reminder.
 - All available history produces an appropriately worded insight.
-- Recent average and range are descriptive; variation lowers confidence rather
-  than hiding the result.
+- Current-tire median, average, and range are descriptive; variation lowers
+  confidence rather than hiding the result.
+- A recorded tire installation resets the recommendation evidence window.
+- The representative pilot rounds the current-tire median to a practical
+  500-mile interval. The average remains visible as context.
 - Uneven tread, TPMS/pressure, pulling/vibration/cupping, and special tire setup
   are inspect-sooner signals. They do not silently shorten the saved mileage
   interval.
@@ -251,14 +260,15 @@ TLX dogfood example:
 Rotate tires                                      chevron up
 Last rotated 281 mi ago
 
-Assistant recommends 7,000 mi
-Medium confidence · 3 recent gaps · variable
+Assistant recommends 6,000 mi
+Medium confidence · 3 current-tire intervals · variable
 
-Recent gaps       7,360 · 7,982 · 5,594 mi
-Recent average    6,979 mi
+Current-tire intervals  5,853 · 7,982 · 5,594 mi
+Median                 5,853 mi
+Average                6,476 mi
 OEM               7,500 mi
 
-[Use 7,000 mi]   My interval [ 6,000 ] mi   [Keep OEM]
+[Use 6,000 mi]   My interval [ 6,000 ] mi   [Keep OEM]
 ```
 
 The exact production recommendation formula is intentionally not fixed in this
@@ -358,6 +368,10 @@ an external link by inference.
 - No one-gap result is called an average or habit.
 - Variable history remains visible and lowers confidence instead of
   disappearing.
+- A known tire installation starts the current-tire evidence window; older
+  rotations cannot influence the current tire-set interval recommendation.
+- The TLX pilot recommends 6,000 miles from the 5,853-mile current-tire median
+  and shows the 6,476-mile average as descriptive context.
 - Owner interval entry is reachable without waiting for a verification task.
 - Every item row is collapsed by default.
 - Every expanded item exposes the four rationale axes.

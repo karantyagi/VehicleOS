@@ -47,14 +47,15 @@ This queue records the adopted direction and implementation status on
 | MI-16 | Add assistant recommendation block | Implemented | Miles, rationale, qualitative confidence, evidence note |
 | MI-17 | Make owner mileage entry always available | Implemented | Valid mileage can be saved without a generated task |
 | MI-18 | Show OEM / Assistant / Owner interval source and restore OEM | Implemented | Active source is visible and auditable |
-| MI-19 | Add correction actions | Next | Add/repair service and update odometer from the item |
+| MI-19 | Add correction actions | Phase 2 | Add/repair service and update odometer from the item |
 | MI-20 | Add four-axis `Why this reminder` view | Implemented | Actual operands and evidence states |
-| MI-21 | Add TLX dogfood/eval cases | Implemented | Gaps 7,360 / 7,982 / 5,594; average 6,979; 7,000 recommendation |
-| MI-22 | Add copy/trust regression tests | Partial | One-gap and variable-gap tests added; component copy tests remain |
+| MI-21 | Add TLX dogfood/eval cases | Implemented | Current tire-set intervals 5,853 / 7,982 / 5,594; median 5,853; average 6,476; 6,000 recommendation |
+| MI-22 | Add copy/trust regression tests | Partial | Domain tests cover current-tire reset, one-gap, and variable-gap language; component copy tests remain Phase 2 |
 | MI-23 | Add structured action-recommendation contract | Implemented | What/when/how/where/time/cost/why/owner fit |
 | MI-24 | Add TLX Costco action plan | Implemented | Current tire set, provider history, and observed `$0` cost |
 | MI-25 | Add benefit confirmation memory | Implemented | Observed `$0` requires owner confirmation |
 | MI-26 | Add provider/action confidence | Implemented | Timing, provider, cost, and booking confidence stay separate |
+| MI-27 | Reset tire evidence at the latest installation | Implemented | Older tire-set rotations remain historical but cannot influence the current-set recommendation |
 
 ---
 
@@ -75,6 +76,37 @@ This queue records the adopted direction and implementation status on
 | MI-40 | Add provider catalog and verified action links | Partial: official Costco entry point only |
 | MI-41 | Add time-versus-money option ranking | Phase 2: pilot emits one evidence-backed plan |
 | MI-42 | Add offer/discount ingestion | Expiry, eligibility, source, and freshness required |
+| MI-43 | Add evidence-backed appointment duration and owner-time estimate | Phase 2: never infer wait time from provider type |
+
+### Phase 2 acceptance notes
+
+- **MI-19 - corrections:** expanded items can add or repair the relevant service
+  baseline and update the odometer without leaving the item; recalculation is
+  deterministic and the edit is auditable.
+- **MI-22 - trust copy:** component tests cover collapsed defaults, one-interval
+  wording, variable evidence, OEM/Assistant/Owner source labels, and all
+  `upcoming / in development` states.
+- **MI-34 through MI-37 - item policies:** each policy declares its primary
+  schedule basis, item-specific evidence, safety/inspect-sooner signals, four
+  rationale-axis facts, recommendation state, and eval fixtures. Rotate Tires
+  logic is not copied into unrelated items.
+- **MI-38 - confidence:** public methodology and representative evals remain in
+  `VehicleOS`; tuned weights and production thresholds remain in the private
+  engine.
+- **MI-39 - notification handoff:** a reminder notification opens the exact
+  vehicle and item expanded, then returns focus to the owner’s next action.
+- **MI-40 - providers:** every action link has provider identity, location,
+  source, verification timestamp, and safe fallback when no direct booking URL
+  is verified.
+- **MI-41 - alternatives:** rank only evidence-backed options and show the
+  owner’s time-versus-money tradeoff without assuming dealer, DIY, or mobile
+  service is universally better.
+- **MI-42 - offers and benefits:** distinguish observed past cost,
+  owner-confirmed entitlement, and live offer; never present expired or
+  unverified eligibility as guaranteed.
+- **MI-43 - time estimate:** show travel, wait, appointment duration, and owner
+  effort only when supported; otherwise keep the current concise
+  `time estimate not available yet` state.
 
 ---
 

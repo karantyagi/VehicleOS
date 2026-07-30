@@ -65,10 +65,10 @@ Rules:
 Rotate tires                            ^
 Last rotated 281 mi ago · next at 66,319 mi
 
-Assistant recommends 7,000 mi
-Medium confidence · 3 recent gaps · variable
+Assistant recommends 6,000 mi
+Medium confidence · 3 current-tire intervals · variable
 
-[Use 7,000]   My interval [ 6,000 ] mi   [Keep OEM]
+[Use 6,000]   My interval [ 6,000 ] mi   [Keep OEM]
 
 Recommended plan
 Costco Tire Center · Waltham
@@ -77,11 +77,12 @@ Expected $0 · confirm included benefit
 
 Why this reminder
 Vehicle & OEM       OEM 7,500 mi · verified TLX pack
-Service history     Recent gaps: 7,360 · 7,982 · 5,594 mi
+Service history     Current tire set: 5,853 · 7,982 · 5,594 mi
 Owner use & preferences   Mileage-led · safety and tire life
 Condition & setup   No inspect-sooner signal recorded
 
-Recent average      6,979 mi
+Median              5,853 mi
+Average             6,476 mi
 [Record rotation]   [Correct last service]
 ```
 
@@ -118,13 +119,16 @@ There is no three-history minimum for an insight.
 
 | Evidence | Show | Do not say |
 |---|---|---|
-| No confirmed rotations | OEM baseline; `No confirmed rotations yet` | `Your pattern` |
-| One rotation | Last date/mileage | Gap, average, or habit |
-| Two rotations | One observed gap | Average or habit |
-| Three or more rotations | Gaps, recent average, range, variability | Stable habit unless stability is independently supported |
+| No lifecycle evidence | OEM baseline; `No confirmed rotations yet` | `Your pattern` |
+| One rotation, installation unknown | Last date/mileage | Gap, average, or habit |
+| Two rotations, or installation plus one rotation | One observed interval | Average or habit |
+| Two or more intervals | Intervals, median, average, range, variability | Stable habit unless stability is independently supported |
 
 The current 15% stability signal becomes one confidence input. A failed
 stability check produces `Recent gaps vary`; it does not suppress the insight.
+If the current tire installation is known, it starts a new evidence window.
+Rotations from an older tire set stay visible in history but do not drive the
+current recommendation.
 
 ---
 
@@ -162,9 +166,9 @@ VehicleOS has two recommendation outputs:
 ### Required fields
 
 ```text
-Assistant recommends: 7,000 mi
-Rationale: Recent average is 6,979 mi; OEM is 7,500 mi.
-Confidence: Medium · 3 recent gaps · variable
+Assistant recommends: 6,000 mi
+Rationale: Current-tire median is 5,853 mi; average is 6,476 mi; OEM is 7,500 mi.
+Confidence: Medium · 3 current-tire intervals · variable
 ```
 
 The full component contract needs:
@@ -210,6 +214,9 @@ Implemented for the Rotate Tires pilot:
 - an always-available mileage interval input plus one-click Assistant and OEM
   choices;
 - zero-, one-, two-, and three-plus-record insight states;
+- current-tire lifecycle evidence that resets after a known tire installation;
+- a 6,000-mile recommendation based on the current-tire median, with the
+  average retained as descriptive context;
 - qualitative confidence with variable history retained;
 - a reusable collapsed/expanded item and reminder component;
 - deterministic `Why this reminder` operands and four rationale axes;
@@ -256,7 +263,7 @@ discounts, and owner history decide the ranking.
 
 ```text
 What       Rotate tires
-When       At 65,819 mi · about 6,719 mi remaining
+When       At 64,819 mi · about 5,719 mi remaining if accepted
 How        Tire retailer service
 Where      Costco Tire Center · Waltham
 Cost       Expected $0 · confirm included benefit
@@ -266,7 +273,8 @@ Owner fit  Safety and tire-life priorities
 
 Confidence is compositional:
 
-- timing: `Medium` because recent gaps vary;
+- timing: `Medium` because the three current-tire intervals vary; the
+  7,982-mile interval is the high observation;
 - provider: `High` because the last three rotations used the same location;
 - cost: `Medium` until the included benefit is owner-confirmed;
 - booking: `Medium` because the official provider entry point is verified but

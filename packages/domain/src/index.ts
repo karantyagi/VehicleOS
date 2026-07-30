@@ -184,6 +184,13 @@ export {
   type QualitativeConfidence,
 } from "./schedule/build-maintenance-item-intelligence.js";
 export {
+  findLatestTireInstallation,
+  resolveTireRotationEvidence,
+  sortServiceTimeline,
+  type TireRotationEvidence,
+  type TireRotationEvidenceScope,
+} from "./schedule/resolve-tire-rotation-evidence.js";
+export {
   mergeServiceBenefitMemory,
 } from "./owner-context/merge-service-benefit-memory.js";
 export {

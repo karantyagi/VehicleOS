@@ -3,6 +3,11 @@ import type { ServiceAliasRegistry } from "../knowledge/service-alias-registry.j
 import type { OwnerContextMemory, TireRotationConditionId } from "../owner-context/types.js";
 import type { ServiceTimelineEntry } from "../projections/types.js";
 import type { ScheduleProjectionRow } from "./project-maintenance-schedule.js";
+import {
+  resolveTireRotationEvidence,
+  sortServiceTimeline,
+  type TireRotationEvidence,
+} from "./resolve-tire-rotation-evidence.js";
 
 export type QualitativeConfidence = "high" | "medium" | "low" | "not_scored";
 export type EvidenceState = "available" | "missing" | "upcoming" | "not_applicable";
@@ -26,6 +31,7 @@ export type IntervalRecommendation = {
   projectedDueMileage: number | null;
   recentGapsMiles: number[];
   recentAverageMiles: number | null;
+  recentMedianMiles: number | null;
   evidenceNote: string;
   rationale: string;
   confidence: QualitativeConfidence;
@@ -88,13 +94,6 @@ const COSTCO_TIRE_URL_VERIFIED_AT = "2026-07-30";
 const normalizeProvider = (value: string): string =>
   value.trim().toLowerCase().replace(/\s+/g, " ");
 
-const sortTimeline = (entries: ServiceTimelineEntry[]): ServiceTimelineEntry[] =>
-  [...entries].sort((left, right) => {
-    const dateDelta = left.serviceDate.localeCompare(right.serviceDate);
-    if (dateDelta !== 0) return dateDelta;
-    return left.mileage - right.mileage;
-  });
-
 const roundToNearest = (value: number, increment: number): number =>
   Math.max(increment, Math.round(value / increment) * increment);
 
@@ -110,15 +109,6 @@ const formatPriority = (value: string): string =>
     .trim()
     .replace(/[_-]+/g, " ")
     .replace(/\s+/g, " ");
-
-const buildMileageGaps = (matches: ServiceTimelineEntry[]): number[] => {
-  const gaps: number[] = [];
-  for (let index = 1; index < matches.length; index += 1) {
-    const gap = matches[index]!.mileage - matches[index - 1]!.mileage;
-    if (gap > 0) gaps.push(gap);
-  }
-  return gaps;
-};
 
 const isStable = (values: number[]): boolean => {
   const center = average(values);
@@ -167,38 +157,12 @@ const parseMoney = (value: string): number | null => {
   return Number.isFinite(parsed) ? parsed : null;
 };
 
-const latestTirePurchase = (
-  timeline: ServiceTimelineEntry[],
-): ServiceTimelineEntry | null => {
-  const purchases = sortTimeline(
-    timeline.filter((entry) =>
-      entry.lineItems.some((lineItem) =>
-        /four tires (?:replaced|installed|purchased)|tires? (?:replaced|installed|purchased)/i.test(
-          lineItem,
-        ),
-      ),
-    ),
-  );
-  return purchases.at(-1) ?? null;
-};
-
-const isAtOrAfter = (
-  entry: ServiceTimelineEntry,
-  baseline: ServiceTimelineEntry,
-): boolean =>
-  entry.serviceDate > baseline.serviceDate ||
-  (entry.serviceDate === baseline.serviceDate && entry.mileage >= baseline.mileage);
-
 const buildActionRecommendation = (input: {
-  matches: ServiceTimelineEntry[];
-  timeline: ServiceTimelineEntry[];
+  tireEvidence: TireRotationEvidence;
   ownerContextMemory?: OwnerContextMemory | null;
 }): ActionRecommendation => {
-  const purchase = latestTirePurchase(input.timeline);
-  const eligibleRotations = purchase
-    ? input.matches.filter((entry) => isAtOrAfter(entry, purchase))
-    : input.matches;
-  const recentRotations = eligibleRotations.slice(-3);
+  const purchase = input.tireEvidence.currentTireInstallation;
+  const recentRotations = input.tireEvidence.rotationEvents.slice(-3);
   const lastRotation = recentRotations.at(-1) ?? null;
   const providerName = lastRotation?.shop ?? purchase?.shop ?? null;
   const providerLocation =
@@ -339,6 +303,7 @@ const upcomingIntervalRecommendation = (
   projectedDueMileage: null,
   recentGapsMiles: [],
   recentAverageMiles: null,
+  recentMedianMiles: null,
   evidenceNote: "Item-specific interval intelligence · Phase 2",
   rationale: "The deterministic OEM reminder remains active.",
   confidence: "not_scored",
@@ -381,7 +346,7 @@ export const buildMaintenanceItemIntelligence = (
   const isTireRotation =
     input.canonicalServiceId === TIRE_ROTATION_SERVICE_ID ||
     /rotate tires|tire rotation/i.test(input.row.serviceName);
-  const matches = sortTimeline(
+  const matches = sortServiceTimeline(
     findMatchingServices(input.timeline, input.row.serviceName, {
       canonicalServiceId: input.canonicalServiceId ?? null,
       serviceAliasRegistry: input.serviceAliasRegistry,
@@ -453,11 +418,16 @@ export const buildMaintenanceItemIntelligence = (
     };
   }
 
-  const recentGaps = buildMileageGaps(matches).slice(-3);
-  const recentAverageMiles = average(recentGaps);
+  const tireEvidence = resolveTireRotationEvidence({
+    timeline: input.timeline,
+    rotationMatches: matches,
+  });
+  const recentGaps = tireEvidence.recentGapsMiles;
+  const recentAverageMiles = tireEvidence.recentAverageMiles;
+  const recentMedianMiles = tireEvidence.recentMedianMiles;
   const recommendedMiles =
-    recentAverageMiles !== null
-      ? roundToNearest(recentAverageMiles, 500)
+    recentMedianMiles !== null
+      ? roundToNearest(recentMedianMiles, 500)
       : input.row.oemInterval.miles;
   const stable = isStable(recentGaps);
   const intervalConfidence: QualitativeConfidence =
@@ -466,17 +436,20 @@ export const buildMaintenanceItemIntelligence = (
       : recentGaps.length >= 2
         ? "medium"
         : "low";
+  const usesCurrentTireSet = tireEvidence.scope === "current_tire_set";
   const evidenceNote =
     recentGaps.length === 0
-      ? matches.length === 0
+      ? tireEvidence.lifecycleEvents.length === 0
         ? "OEM baseline · no confirmed rotations"
-        : "Last rotation only · no observed gap yet"
+        : tireEvidence.currentTireInstallation && matches.length === 0
+          ? "Current tire installation only · no observed rotation gap yet"
+          : "Last rotation only · no observed gap yet"
       : recentGaps.length === 1
-        ? `One observed gap · ${formatMiles(recentGaps[0]!)}`
-        : `${recentGaps.length} recent gaps · ${stable ? "consistent" : "variable"}`;
+        ? `${usesCurrentTireSet ? "One current-tire interval" : "One observed gap"} · ${formatMiles(recentGaps[0]!)}`
+        : `${recentGaps.length} ${usesCurrentTireSet ? "current-tire intervals" : "recent gaps"} · ${stable ? "consistent" : "variable"}`;
   const rationale =
-    recentAverageMiles !== null
-      ? `Recent average ${formatMiles(recentAverageMiles)} · OEM ${formatOemInterval(input.row)}`
+    recentAverageMiles !== null && recentMedianMiles !== null
+      ? `${usesCurrentTireSet ? "Current tire-set" : "Recent"} median ${formatMiles(recentMedianMiles)} · average ${formatMiles(recentAverageMiles)} · OEM ${formatOemInterval(input.row)}`
       : `Using the OEM ${formatOemInterval(input.row)} baseline until more rotation history is recorded`;
 
   return {
@@ -488,11 +461,12 @@ export const buildMaintenanceItemIntelligence = (
       status: "active",
       recommendedMiles,
       projectedDueMileage:
-        recommendedMiles !== null && lastMatch
-          ? lastMatch.mileage + recommendedMiles
+        recommendedMiles !== null && tireEvidence.lastLifecycleMileage !== null
+          ? tireEvidence.lastLifecycleMileage + recommendedMiles
           : null,
       recentGapsMiles: recentGaps,
       recentAverageMiles,
+      recentMedianMiles,
       evidenceNote,
       rationale,
       confidence: intervalConfidence,
@@ -500,8 +474,7 @@ export const buildMaintenanceItemIntelligence = (
       activeLabel: input.row.overlayLabel ?? formatOemInterval(input.row),
     },
     actionRecommendation: buildActionRecommendation({
-      matches,
-      timeline: input.timeline,
+      tireEvidence,
       ownerContextMemory: input.ownerContextMemory,
     }),
   };
