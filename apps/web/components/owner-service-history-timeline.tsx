@@ -7,7 +7,6 @@ import {
   ChevronRight,
   ChevronUp,
   Clock3,
-  FileBadge2,
   FileJson,
   Mic,
   PenLine,
@@ -29,12 +28,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { OwnerHistoryItem } from "@vehicleos/domain";
-import { buildOwnerHistoryTimeline } from "@vehicleos/domain";
-import type { OwnershipRecordEntry, TimelineEntry } from "@/lib/console-types";
-import { RMV_EVENT_LABELS } from "@/lib/record-import-types";
+import type { TimelineEntry } from "@/lib/console-types";
 import { isoDateToLocalDate, todayIsoDate } from "@/lib/date-input";
-
 import { cn } from "@/lib/utils";
 
 type ServiceDraft = {
@@ -48,13 +43,8 @@ type ServiceDraft = {
 
 type OwnerServiceHistoryTimelineProps = {
   entries: TimelineEntry[];
-  ownershipRecords?: OwnershipRecordEntry[];
-  historyItems?: OwnerHistoryItem[] | null;
   disabled?: boolean;
   defaultMileage?: number;
-  vehicleId?: string;
-  apiBase?: string;
-  onCaptureError?: (message: string) => void;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
   onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
   requireEditConfirmation?: boolean;
@@ -122,127 +112,32 @@ const sourceIcon = (entry: TimelineEntry): ElementType => {
   return FileJson;
 };
 
-type HistoryCardKind = "service" | "ownership";
-
-type HistoryCard = {
-  id: string;
-  kind: HistoryCardKind;
-  date: string;
-  mileage: number | null;
-  title: string;
-  subtitle: string;
-  preview: string;
-  lineItems: string[];
-  costDisplay: string;
-  serviceEntry?: TimelineEntry;
-  ownershipEntry?: OwnershipRecordEntry;
-};
-
-const ownershipSourceLabel = (source: OwnershipRecordEntry["source"]): string => {
-  if (source === "rmv_import") return "RMV import";
-  if (source === "owner_note") return "Owner noted";
-  return "CARFAX";
-};
-
-const historyItemToCard = (
-  item: OwnerHistoryItem,
-  entries: TimelineEntry[],
-  ownershipRecords: OwnershipRecordEntry[],
-): HistoryCard => {
-  if (item.kind === "service") {
-    const entry = entries.find((candidate) => candidate.serviceId === item.id);
-    return {
-      id: item.id,
-      kind: "service",
-      date: item.date,
-      mileage: item.mileage,
-      title: formatServiceDate(item.date),
-      subtitle: entry ? formatShopLine(entry) : item.shop ?? "Service visit",
-      preview:
-        item.lineItems.length === 1
-          ? item.lineItems[0]
-          : `${item.lineItems[0]} · +${item.lineItems.length - 1}`,
-      lineItems: item.lineItems,
-      costDisplay: formatCostDisplay(item.total),
-      serviceEntry: entry,
-    };
-  }
-
-  const record = ownershipRecords.find((candidate) => candidate.recordId === item.id);
-  return {
-    id: item.id,
-    kind: "ownership",
-    date: item.date,
-    mileage: item.mileage,
-    title: formatServiceDate(item.date),
-    subtitle: `${item.agency ?? record?.agency ?? "RMV"} · ${RMV_EVENT_LABELS[item.eventType ?? record?.eventType ?? "other"]}`,
-    preview: item.lineItems[0] ?? RMV_EVENT_LABELS[item.eventType ?? record?.eventType ?? "other"],
-    lineItems: item.lineItems,
-    costDisplay: "$—",
-    ownershipEntry: record,
-  };
-};
-
-const buildHistoryCards = (
-  entries: TimelineEntry[],
-  ownershipRecords: OwnershipRecordEntry[],
-  historyItems?: OwnerHistoryItem[] | null,
-): HistoryCard[] => {
-  const items =
-    historyItems ??
-    buildOwnerHistoryTimeline({
-      timeline: entries,
-      ownershipRecords,
-    });
-
-  return items.map((item) => historyItemToCard(item, entries, ownershipRecords));
-};
-
-const groupCardsByYear = (cards: HistoryCard[]): [number, HistoryCard[]][] => {
-  const groups = new Map<number, HistoryCard[]>();
-  for (const card of cards) {
-    const year = Number(card.date.slice(0, 4)) || 0;
+const groupEntriesByYear = (entries: TimelineEntry[]): [number, TimelineEntry[]][] => {
+  const groups = new Map<number, TimelineEntry[]>();
+  for (const entry of entries) {
+    const year = Number(entry.serviceDate.slice(0, 4)) || 0;
     const bucket = groups.get(year) ?? [];
-    bucket.push(card);
+    bucket.push(entry);
     groups.set(year, bucket);
   }
   return [...groups.entries()].sort(([a], [b]) => b - a);
 };
 
-const cardIcon = (card: HistoryCard): ElementType => {
-  if (card.kind === "ownership") return FileBadge2;
-  const entry = card.serviceEntry;
-  if (!entry) return FileJson;
-  if (isDiyShop(entry.shop)) return Wrench;
-  if (entry.source === "receipt") return Receipt;
-  if (entry.source === "voice") return Mic;
-  if (entry.source === "owner_note") return PenLine;
-  if (entry.source === "dealer") return Building2;
-  return FileJson;
-};
-
-const sumServiceCosts = (entries: TimelineEntry[]): string => sumEntryCosts(entries);
-
 export function OwnerServiceHistoryTimeline({
   entries,
-  ownershipRecords = [],
-  historyItems = null,
   disabled = false,
   defaultMileage = 0,
-  vehicleId,
-  apiBase,
-  onCaptureError,
   onUpdateService,
   onAddService,
   requireEditConfirmation = false,
 }: OwnerServiceHistoryTimelineProps) {
-  const historyCards = useMemo(
-    () => buildHistoryCards(entries, ownershipRecords, historyItems),
-    [entries, ownershipRecords, historyItems],
+  const sortedEntries = useMemo(
+    () => [...entries].sort((a, b) => b.serviceDate.localeCompare(a.serviceDate)),
+    [entries],
   );
-  const yearGroups = useMemo(() => groupCardsByYear(historyCards), [historyCards]);
-  const latestCard = historyCards[0] ?? null;
-  const totalCost = useMemo(() => sumServiceCosts(entries), [entries]);
+  const yearGroups = useMemo(() => groupEntriesByYear(sortedEntries), [sortedEntries]);
+  const latestEntry = sortedEntries[0] ?? null;
+  const totalCost = useMemo(() => sumEntryCosts(entries), [entries]);
 
   const [expandedYears, setExpandedYears] = useState<Set<number>>(() => new Set());
   const [expandedCards, setExpandedCards] = useState<Set<string>>(() => new Set());
@@ -377,18 +272,13 @@ export function OwnerServiceHistoryTimeline({
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-lg font-semibold tracking-tight text-foreground">Add maintenance record</p>
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              Dealer visit, DIY, RMV event, habit (Techron), or a decision you want on file.
-            </p>
+            <p className="mt-0.5 text-sm text-muted-foreground">Dealer visit, DIY work, or anything you want on file.</p>
             <div className="mt-3">
               <MaintenanceRecordFields
                 idPrefix="add-maintenance"
                 draft={addDraft}
                 disabled={disabled}
                 isSaving={isAddingSaving}
-                vehicleId={vehicleId}
-                apiBase={apiBase}
-                onCaptureError={onCaptureError}
                 saveLabel={requireEditConfirmation && !confirmAdd ? "Review save" : "Save record"}
                 confirmMessage={
                   requireEditConfirmation && confirmAdd ? "Tap save again to confirm this maintenance record." : null
@@ -404,7 +294,7 @@ export function OwnerServiceHistoryTimeline({
     );
   };
 
-  if (historyCards.length === 0 && !isAdding) {
+  if (entries.length === 0 && !isAdding) {
     return (
       <div className="space-y-4">
         <EmptyState icon={Clock3} title="No maintenance records yet" />
@@ -533,16 +423,11 @@ export function OwnerServiceHistoryTimeline({
     );
   };
 
-  const renderCardGlyph = (card: HistoryCard) => {
-    const Icon = cardIcon(card);
+  const renderSourceGlyph = (entry: TimelineEntry) => {
+    const Icon = sourceIcon(entry);
     return (
       <span
-        className={cn(
-          "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
-          card.kind === "ownership"
-            ? "bg-primary/10 text-primary"
-            : "bg-history-highlight/10 text-history-highlight",
-        )}
+        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-history-highlight/10 text-history-highlight"
         aria-hidden
       >
         <Icon className="h-4 w-4" />
@@ -563,25 +448,26 @@ export function OwnerServiceHistoryTimeline({
         )}
       </div>
 
-      {isAdding && historyCards.length === 0 ? (
+      {isAdding && entries.length === 0 ? (
         <ul className="history-accent-rail space-y-2.5">{renderAddPanel()}</ul>
       ) : null}
 
-      {latestCard ? (
+      {latestEntry ? (
         <section className="history-surface p-4 sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-history-highlight">
-                {latestCard.kind === "ownership" ? "Latest on file" : "Latest maintenance"}
+                Latest maintenance
               </p>
               <div className="mt-2 flex items-start gap-3">
-                {renderCardGlyph(latestCard)}
+                {renderSourceGlyph(latestEntry)}
                 <div className="min-w-0">
-                  <p className="text-lg font-semibold tracking-tight text-foreground">{latestCard.title}</p>
-                  <p className="mt-0.5 text-sm text-muted-foreground">{latestCard.subtitle}</p>
+                  <p className="text-lg font-semibold tracking-tight text-foreground">
+                    {formatServiceDate(latestEntry.serviceDate)}
+                  </p>
+                  <p className="mt-0.5 text-sm text-muted-foreground">{formatShopLine(latestEntry)}</p>
                   <p className="mt-1 text-sm tabular-nums text-muted-foreground">
-                    {latestCard.mileage !== null ? `${latestCard.mileage.toLocaleString()} mi · ` : ""}
-                    {latestCard.costDisplay}
+                    {latestEntry.mileage.toLocaleString()} mi · {formatCostDisplay(latestEntry.total)}
                   </p>
                 </div>
               </div>
@@ -589,10 +475,10 @@ export function OwnerServiceHistoryTimeline({
             <dl className="flex shrink-0 gap-5 text-sm tabular-nums">
               <div>
                 <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">Records</dt>
-                <dd className="mt-0.5 font-semibold text-foreground">{historyCards.length}</dd>
+                <dd className="mt-0.5 font-semibold text-foreground">{entries.length}</dd>
               </div>
               <div>
-                <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">Service spend</dt>
+                <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">Total</dt>
                 <dd className="mt-0.5 font-semibold text-foreground">{totalCost}</dd>
               </div>
             </dl>
@@ -603,16 +489,13 @@ export function OwnerServiceHistoryTimeline({
       <div className="relative space-y-6">
         <div className="pointer-events-none absolute bottom-0 left-[0.4375rem] top-2 w-px bg-gradient-to-b from-history-highlight/35 via-history-highlight/12 to-transparent" />
 
-        {isAdding && historyCards.length > 0 ? (
+        {isAdding && entries.length > 0 ? (
           <ul className="history-accent-rail relative space-y-2.5 pl-6">{renderAddPanel()}</ul>
         ) : null}
 
-        {yearGroups.map(([year, yearCards]) => {
+        {yearGroups.map(([year, yearEntries]) => {
           const isYearOpen = expandedYears.has(year);
-          const yearServiceEntries = yearCards
-            .filter((card) => card.kind === "service" && card.serviceEntry)
-            .map((card) => card.serviceEntry as TimelineEntry);
-          const yearCost = sumEntryCosts(yearServiceEntries);
+          const yearCost = sumEntryCosts(yearEntries);
 
           return (
             <section key={year} className="relative">
@@ -636,21 +519,22 @@ export function OwnerServiceHistoryTimeline({
                 )}
                 <span className="text-base font-semibold tracking-tight text-foreground">{year}</span>
                 <span className="text-sm tabular-nums text-muted-foreground group-hover:text-history-highlight/85">
-                  {yearCards.length} record{yearCards.length === 1 ? "" : "s"}
-                  {yearServiceEntries.length > 0 ? ` · ${yearCost}` : ""}
+                  {yearEntries.length} record{yearEntries.length === 1 ? "" : "s"} · {yearCost}
                 </span>
               </button>
 
               {isYearOpen ? (
                 <ul className="history-accent-rail mt-2 space-y-2.5">
-                  {yearCards.map((card) => {
-                    const entry = card.serviceEntry;
-                    const isEditing = entry ? editingId === entry.serviceId : false;
-                    const isExpanded = isEditing || expandedCards.has(card.id);
+                  {yearEntries.map((entry) => {
+                    const isEditing = editingId === entry.serviceId;
+                    const isExpanded = isEditing || expandedCards.has(entry.serviceId);
+                    const serviceCount = entry.lineItems.length;
+                    const previewItem = entry.lineItems[0];
+                    const costDisplay = formatCostDisplay(entry.total);
 
                     return (
                       <li
-                        key={card.id}
+                        key={entry.serviceId}
                         className={cn(
                           "overflow-hidden rounded-xl border bg-card/90 shadow-sm",
                           isEditing || isExpanded ? "history-interactive-active" : "border-border/70 history-interactive",
@@ -662,39 +546,46 @@ export function OwnerServiceHistoryTimeline({
                               type="button"
                               className="flex min-w-0 flex-1 items-start gap-3 text-left"
                               aria-expanded={isExpanded}
-                              onClick={() => toggleCard(card.id)}
+                              onClick={() => toggleCard(entry.serviceId)}
                             >
-                              {renderCardGlyph(card)}
+                              {renderSourceGlyph(entry)}
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-start justify-between gap-2">
-                                  <p className="text-lg font-semibold tracking-tight text-foreground">{card.title}</p>
+                                  <p className="text-lg font-semibold tracking-tight text-foreground">
+                                    {formatServiceDate(entry.serviceDate)}
+                                  </p>
                                   {isExpanded ? (
                                     <ChevronUp className="mt-1 h-4 w-4 shrink-0 text-history-highlight" aria-hidden />
                                   ) : (
                                     <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-history-highlight/70" aria-hidden />
                                   )}
                                 </div>
-                                <p className="mt-0.5 text-sm text-muted-foreground">{card.subtitle}</p>
+                                <p className="mt-0.5 text-sm text-muted-foreground">{formatShopLine(entry)}</p>
                                 <p className="mt-0.5 text-sm tabular-nums text-muted-foreground">
-                                  {card.mileage !== null ? `${card.mileage.toLocaleString()} mi · ` : ""}
-                                  {card.costDisplay}
+                                  {entry.mileage.toLocaleString()} mi · {costDisplay}
                                 </p>
                                 {!isExpanded ? (
-                                  <p className="mt-2 truncate text-sm text-muted-foreground">{card.preview}</p>
+                                  <p className="mt-2 truncate text-sm text-muted-foreground">
+                                    {serviceCount === 1
+                                      ? previewItem
+                                      : `${previewItem}${serviceCount > 1 ? ` · +${serviceCount - 1}` : ""}`}
+                                  </p>
                                 ) : null}
                               </div>
                             </button>
-                          ) : entry ? (
+                          ) : (
                             <div className="flex min-w-0 flex-1 items-start gap-3">
-                              {renderCardGlyph(card)}
+                              {renderSourceGlyph(entry)}
                               <div className="min-w-0 flex-1">
-                                <p className="text-lg font-semibold tracking-tight text-foreground">{card.title}</p>
-                                <p className="mt-0.5 text-sm text-muted-foreground">{card.subtitle}</p>
+                                <p className="text-lg font-semibold tracking-tight text-foreground">
+                                  {formatServiceDate(entry.serviceDate)}
+                                </p>
+                                <p className="mt-0.5 text-sm text-muted-foreground">{formatShopLine(entry)}</p>
                               </div>
                             </div>
-                          ) : null}
+                          )}
 
-                          {onUpdateService && entry && !isEditing ? (
+                          {onUpdateService && !isEditing ? (
                             <Button
                               type="button"
                               size="icon"
@@ -714,27 +605,20 @@ export function OwnerServiceHistoryTimeline({
 
                         {!isEditing && isExpanded ? (
                           <div className="border-t border-border/60 px-3.5 pb-3.5 pt-3 sm:px-4 sm:pb-4">
-                            {card.kind === "ownership" && card.ownershipEntry ? (
-                              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                                {ownershipSourceLabel(card.ownershipEntry.source)}
-                              </p>
-                            ) : null}
-                            <ul className="mt-1.5 space-y-1.5 text-sm text-foreground/85">
-                              {card.lineItems.map((item) => (
+                            <ul className="space-y-1.5 text-sm text-foreground/85">
+                              {entry.lineItems.map((item) => (
                                 <li key={item} className="leading-snug">
                                   {item}
                                 </li>
                               ))}
                             </ul>
-                            {card.kind === "service" ? (
-                              <p className="mt-3 text-sm tabular-nums font-medium text-muted-foreground">
-                                {card.costDisplay}
-                              </p>
-                            ) : null}
+                            <p className="mt-3 text-sm tabular-nums font-medium text-muted-foreground">
+                              {costDisplay}
+                            </p>
                           </div>
                         ) : null}
 
-                        {isEditing && entry ? renderEditForm(entry) : null}
+                        {isEditing ? renderEditForm(entry) : null}
                       </li>
                     );
                   })}

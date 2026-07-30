@@ -39,7 +39,7 @@ export function FeaturesSection() {
           <a className="btn btn-primary" href={featuresContent.ctaSecondary.href}>
             {featuresContent.ctaSecondary.label}
           </a>
-          <a className="btn btn-secondary" href={featuresContent.cta.href} target="_blank" rel="noopener noreferrer">
+          <a className="btn btn-secondary" href={featuresContent.cta.href}>
             {featuresContent.cta.label}
           </a>
         </div>

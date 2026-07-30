@@ -1,19 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { VehicleCatalogCombobox } from "@/components/vehicle-catalog-combobox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   fetchCatalogVehicles,
-  findCatalogVehicleRow,
   formatCatalogTrimOptionLabel,
   listCatalogMakes,
   listCatalogModels,
@@ -52,8 +41,6 @@ const emptyManualDraft = (): VehicleDraft => ({
   trim: "",
 });
 
-const fieldControlClassName = "vos-field-control h-10 bg-card text-foreground";
-
 export function VehicleSupportCheck() {
   const [catalog, setCatalog] = useState<CatalogVehicleRow[]>([]);
   const [catalogError, setCatalogError] = useState("");
@@ -71,12 +58,8 @@ export function VehicleSupportCheck() {
   const [requestSuccess, setRequestSuccess] = useState<RequestSuccess | null>(null);
 
   const selectedRow = useMemo(
-    () =>
-      findCatalogVehicleRow(catalog, {
-        packId: selectedPackId,
-        year: typeof year === "number" ? year : undefined,
-      }),
-    [catalog, selectedPackId, year],
+    () => catalog.find((row) => row.packId === selectedPackId) ?? null,
+    [catalog, selectedPackId],
   );
 
   const makes = useMemo(() => listCatalogMakes(catalog), [catalog]);
@@ -160,13 +143,6 @@ export function VehicleSupportCheck() {
     resetRequestState();
   };
 
-  const applyCatalogRow = (row: CatalogVehicleRow) => {
-    setMake(row.make);
-    setModel(row.model);
-    setYear(row.year);
-    setSelectedPackId(row.packId);
-  };
-
   const submitRequest = async (vehicle: VehicleDraft) => {
     setRequestError("");
     setIsSubmitting(true);
@@ -212,12 +188,11 @@ export function VehicleSupportCheck() {
     <div className="support-request support-request-inline">
       <label className="support-field support-field-full">
         <span>Your email</span>
-        <Input
+        <input
           type="email"
           autoComplete="email"
           placeholder="you@email.com"
           value={contactEmail}
-          className={fieldControlClassName}
           onChange={(event) => setContactEmail(event.target.value)}
         />
       </label>
@@ -272,116 +247,82 @@ export function VehicleSupportCheck() {
       {mode === "pick" ? (
         <>
           <div className="support-check-form">
-            <div className="support-field support-field-full">
-              <span>Quick find</span>
-              <VehicleCatalogCombobox
-                vehicles={catalog}
-                selectedPackId={selectedPackId}
-                selectedYear={typeof year === "number" ? year : undefined}
-                placeholder="e.g. 2021 Acura TLX or Honda Accord 2022"
-                onSelect={applyCatalogRow}
-              />
-            </div>
-
-            <div className="support-field">
-              <Label htmlFor="marketing-vehicle-make" className="text-inherit">
-                Make
-              </Label>
-              <Select
-                value={make || undefined}
+            <label className="support-field">
+              <span>Make</span>
+              <select
+                value={make}
                 disabled={makes.length === 0}
-                onValueChange={(value) => {
-                  setMake(value);
+                aria-label="Vehicle make"
+                onChange={(event) => {
+                  setMake(event.target.value);
                   setModel("");
                   setYear("");
                   setSelectedPackId("");
                 }}
               >
-                <SelectTrigger id="marketing-vehicle-make" className={fieldControlClassName} aria-label="Vehicle make">
-                  <SelectValue placeholder="Select make" />
-                </SelectTrigger>
-                <SelectContent>
-                  {makes.map((entry) => (
-                    <SelectItem key={entry} value={entry}>
-                      {entry}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="support-field">
-              <Label htmlFor="marketing-vehicle-model" className="text-inherit">
-                Model
-              </Label>
-              <Select
-                value={model || undefined}
+                <option value="">Select make</option>
+                {makes.map((entry) => (
+                  <option key={entry} value={entry}>
+                    {entry}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="support-field">
+              <span>Model</span>
+              <select
+                value={model}
                 disabled={!make || models.length === 0}
-                onValueChange={(value) => {
-                  setModel(value);
+                aria-label="Vehicle model"
+                onChange={(event) => {
+                  setModel(event.target.value);
                   setYear("");
                   setSelectedPackId("");
                 }}
               >
-                <SelectTrigger id="marketing-vehicle-model" className={fieldControlClassName} aria-label="Vehicle model">
-                  <SelectValue placeholder="Select model" />
-                </SelectTrigger>
-                <SelectContent>
-                  {models.map((entry) => (
-                    <SelectItem key={entry} value={entry}>
-                      {entry}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="support-field">
-              <Label htmlFor="marketing-vehicle-year" className="text-inherit">
-                Year
-              </Label>
-              <Select
-                value={typeof year === "number" ? String(year) : undefined}
+                <option value="">Select model</option>
+                {models.map((entry) => (
+                  <option key={entry} value={entry}>
+                    {entry}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="support-field">
+              <span>Year</span>
+              <select
+                value={year}
                 disabled={!model || years.length === 0}
-                onValueChange={(value) => {
-                  setYear(Number(value));
+                aria-label="Vehicle year"
+                onChange={(event) => {
+                  setYear(Number(event.target.value));
                   setSelectedPackId("");
                 }}
               >
-                <SelectTrigger id="marketing-vehicle-year" className={fieldControlClassName} aria-label="Vehicle year">
-                  <SelectValue placeholder="Select year" />
-                </SelectTrigger>
-                <SelectContent>
-                  {years.map((entry) => (
-                    <SelectItem key={entry} value={String(entry)}>
-                      {entry}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="support-field">
-              <Label htmlFor="marketing-vehicle-trim" className="text-inherit">
-                Trim
-              </Label>
-              <Select
-                value={selectedPackId || undefined}
+                <option value="">Select year</option>
+                {years.map((entry) => (
+                  <option key={entry} value={entry}>
+                    {entry}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="support-field">
+              <span>Trim</span>
+              <select
+                value={selectedPackId}
                 disabled={!year || trimRows.length === 0}
-                onValueChange={setSelectedPackId}
+                aria-label="Vehicle trim"
+                onChange={(event) => setSelectedPackId(event.target.value)}
               >
-                <SelectTrigger id="marketing-vehicle-trim" className={fieldControlClassName} aria-label="Vehicle trim">
-                  <SelectValue placeholder="Select trim" />
-                </SelectTrigger>
-                <SelectContent>
-                  {trimRows.map((row) => (
-                    <SelectItem key={row.packId} value={row.packId}>
-                      {formatCatalogTrimOptionLabel(row)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                <option value="">Select trim</option>
+                {trimRows.map((row) => (
+                  <option key={row.packId} value={row.packId}>
+                    {formatCatalogTrimOptionLabel(row)}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
 
           <p className="support-check-alt">
@@ -402,7 +343,7 @@ export function VehicleSupportCheck() {
                 <strong>Yes — you&apos;re good to go</strong>
                 <p>Sign in and set up your car. Your maintenance schedule is ready.</p>
                 <div className="support-result-actions">
-                  <a className="btn btn-primary support-result-cta" href={siteConfig.appUrl} target="_blank" rel="noopener noreferrer">
+                  <a className="btn btn-primary support-result-cta" href={siteConfig.appUrl}>
                     Get early access
                   </a>
                 </div>
@@ -425,12 +366,11 @@ export function VehicleSupportCheck() {
           <div className="support-check-form">
             <label className="support-field">
               <span>Year</span>
-              <Input
+              <input
                 type="number"
                 min={1980}
                 max={new Date().getFullYear() + 1}
                 value={manualDraft.year}
-                className={fieldControlClassName}
                 onChange={(event) =>
                   setManualDraft({ ...manualDraft, year: Number(event.target.value) })
                 }
@@ -438,28 +378,25 @@ export function VehicleSupportCheck() {
             </label>
             <label className="support-field">
               <span>Make</span>
-              <Input
+              <input
                 value={manualDraft.make}
                 placeholder="Hyundai"
-                className={fieldControlClassName}
                 onChange={(event) => setManualDraft({ ...manualDraft, make: event.target.value })}
               />
             </label>
             <label className="support-field">
               <span>Model</span>
-              <Input
+              <input
                 value={manualDraft.model}
                 placeholder="Elantra"
-                className={fieldControlClassName}
                 onChange={(event) => setManualDraft({ ...manualDraft, model: event.target.value })}
               />
             </label>
             <label className="support-field">
               <span>Trim</span>
-              <Input
+              <input
                 value={manualDraft.trim}
                 placeholder="Limited"
-                className={fieldControlClassName}
                 onChange={(event) => setManualDraft({ ...manualDraft, trim: event.target.value })}
               />
             </label>

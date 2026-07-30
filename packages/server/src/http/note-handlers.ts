@@ -1,9 +1,7 @@
-import { mergeReceiptExtractWithHints, recordOwnershipFromServiceNote } from "@vehicleos/domain";
-import type { IngestChannel, ServiceRecordSource } from "@vehicleos/domain";
+import type { ServiceRecordSource } from "@vehicleos/domain";
 import type { ApiServices } from "../services/index.js";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
 import { recommendationContextFromVehicle } from "./recommendation-context-from-vehicle.js";
-import { vehicleStateOptionsFromVehicle } from "./vehicle-state-options-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
 
 type OwnerNoteBody = {
@@ -13,11 +11,8 @@ type OwnerNoteBody = {
   mileage: number;
   lineItems?: string[];
   total?: string;
-  source?: Extract<ServiceRecordSource, "owner_note" | "dealer" | "receipt" | "voice">;
+  source?: Extract<ServiceRecordSource, "owner_note" | "dealer">;
   note?: string;
-  storageKey?: string;
-  channel?: IngestChannel;
-  voiceTranscript?: string;
 };
 
 type AuthContext = {
@@ -49,71 +44,18 @@ export const submitOwnerServiceNote = async (
   }
 
   const lineItems = body.lineItems?.map((line) => line.trim()).filter(Boolean) ?? [];
-  const ownerNote = body.note?.trim() || body.voiceTranscript?.trim();
-  if (ownerNote) {
-    const prefixed = ownerNote.startsWith("Note:") ? ownerNote : `Note: ${ownerNote}`;
-    if (!lineItems.some((line) => line.toLowerCase() === prefixed.toLowerCase())) {
-      lineItems.push(prefixed);
-    }
+  if (lineItems.length === 0 && body.note?.trim()) {
+    lineItems.push(body.note.trim());
   }
 
   if (lineItems.length === 0) {
     return jsonResponse(400, { error: "Add at least one line item or note" });
   }
 
-  let source: ServiceRecordSource = "owner_note";
-  if (body.source === "dealer") source = "dealer";
-  else if (body.source === "receipt") source = "receipt";
-  else if (body.source === "voice") source = "voice";
-
+  const source = body.source === "dealer" ? "dealer" : "owner_note";
   const shop =
     body.shop?.trim() ||
-    (source === "dealer" ? "Dealer service" : source === "voice" ? "Voice note" : "Owner noted");
-
-  let evidenceIds: string[] = [];
-  let documentId: string | undefined;
-  let correlationId: string | undefined;
-
-  const hintText = [body.note, body.voiceTranscript, ...lineItems].filter(Boolean).join("\n");
-
-  if (body.storageKey?.trim()) {
-    const channel = body.channel ?? (source === "voice" ? "voice" : "receipt_upload");
-    const extractResult = await services.goldenPath.queueReceiptExtract({
-      vehicleId,
-      storageKey: body.storageKey.trim(),
-      channel,
-      hintText,
-      shop,
-      serviceDate: body.serviceDate,
-      mileage: body.mileage,
-      lineItems,
-      total: body.total?.trim(),
-    });
-
-    if (extractResult.queued) {
-      return jsonResponse(202, {
-        queued: true,
-        documentId: extractResult.documentId,
-        message: "Receipt queued for assistant extraction (ENG-2 worker). Confirm fields manually for now.",
-      });
-    }
-
-    documentId = extractResult.documentId;
-    correlationId = extractResult.correlationId;
-    evidenceIds = [documentId];
-
-    const merged = mergeReceiptExtractWithHints(extractResult.extracted, {
-      shop,
-      serviceDate: body.serviceDate,
-      mileage: body.mileage,
-      lineItems,
-      total: body.total?.trim(),
-    });
-
-    if (merged.lineItems.length > 0) {
-      lineItems.splice(0, lineItems.length, ...merged.lineItems);
-    }
-  }
+    (source === "dealer" ? "Dealer service" : "Owner noted");
 
   const result = await services.goldenPath.confirmService({
     vehicleId,
@@ -123,30 +65,10 @@ export const submitOwnerServiceNote = async (
     mileage: body.mileage,
     lineItems,
     total: body.total?.trim() || "$0.00",
-    evidenceIds,
-    documentId,
-    correlationId,
+    evidenceIds: [],
     source,
     ...recommendationContextFromVehicle(vehicle),
   });
-
-  if (!result.conflict) {
-    await recordOwnershipFromServiceNote({
-      eventStore: services.eventStore,
-      input: {
-        vehicleId,
-        lineItems,
-        recordDate: body.serviceDate,
-        mileage: body.mileage,
-      },
-    });
-  }
-
-  const snapshot = await services.goldenPath.getVehicleState(
-    vehicleId,
-    vehicleStateOptionsFromVehicle(vehicle),
-  );
-  const view = buildVehicleStateView(snapshot.state, vehicle, snapshot.events);
 
   if (result.conflict) {
     return jsonResponse(409, {
@@ -154,11 +76,11 @@ export const submitOwnerServiceNote = async (
       conflictId: result.conflictId,
       verificationTask: {
         taskId: result.taskId,
-        title: view.nowQueue.at(-1)?.title,
-        reason: view.nowQueue.at(-1)?.reason,
-        verificationCode: view.nowQueue.at(-1)?.verificationCode,
+        title: result.state.nowQueue.at(-1)?.title,
+        reason: result.state.nowQueue.at(-1)?.reason,
+        verificationCode: result.state.nowQueue.at(-1)?.verificationCode,
       },
-      ...view,
+      ...buildVehicleStateView(result.state, vehicle),
     });
   }
 
@@ -166,6 +88,6 @@ export const submitOwnerServiceNote = async (
     duplicateSkipped: result.result.skippedDuplicate ?? false,
     recommendation: result.result.recommendation,
     task: result.result.task,
-    ...view,
+    ...buildVehicleStateView(result.result.state, vehicle),
   });
 };

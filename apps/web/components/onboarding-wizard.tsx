@@ -5,7 +5,6 @@ import { DrivingStyleFields } from "@/components/driving-style-fields";
 import { DateField } from "@/components/date-field";
 import { FormActions, FormField } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { VehicleYmmPicker } from "@/components/vehicle-ymm-picker";
@@ -14,14 +13,11 @@ import { getApiBase } from "../lib/api-base";
 import {
   buildOwnerContextWithPrimaryCity,
   parseStatedMilesPerYear,
-  STATED_MILES_INVALID_MESSAGE,
-  STATED_MILES_REQUIRED_MESSAGE,
   type DriverHabitsDraft,
 } from "@/lib/driver-habits";
 import { todayIsoDate } from "@/lib/date-input";
 import {
   fetchVerifiedCatalogVehicles,
-  findCatalogVehicleRow,
   formatCatalogVehicleLabel,
   type CatalogVehicleRow,
 } from "@/lib/supported-vehicle-catalog";
@@ -151,10 +147,7 @@ export function OnboardingWizard({
         if (cancelled) return;
         setCatalog(rows);
         if (!prefillDogfood) return;
-        const defaultRow = findCatalogVehicleRow(rows, {
-          packId: DOGFOOD_PACK_ID,
-          year: 2021,
-        });
+        const defaultRow = rows.find((row) => row.packId === DOGFOOD_PACK_ID);
         if (defaultRow) {
           setForm((current) =>
             current.packId ? current : vehicleFormFromCatalog(defaultRow, true),
@@ -182,12 +175,8 @@ export function OnboardingWizard({
   };
 
   const selectedVehicle = useMemo(
-    () =>
-      findCatalogVehicleRow(catalog, {
-        packId: form.packId,
-        year: form.year || undefined,
-      }),
-    [catalog, form.packId, form.year],
+    () => catalog.find((row) => row.packId === form.packId) ?? null,
+    [catalog, form.packId],
   );
 
   const selectVehicle = (row: CatalogVehicleRow | null) => {
@@ -219,13 +208,8 @@ export function OnboardingWizard({
     setError("");
 
     const parsedMiles = parseStatedMilesPerYear(milesInput);
-    if (parsedMiles === null) {
-      setError(STATED_MILES_REQUIRED_MESSAGE);
-      setIsBusy(false);
-      return null;
-    }
     if (parsedMiles === "invalid") {
-      setError(STATED_MILES_INVALID_MESSAGE);
+      setError("Annual miles: 1,000–80,000.");
       setIsBusy(false);
       return null;
     }
@@ -366,26 +350,14 @@ export function OnboardingWizard({
                 <VehicleYmmPicker
                   vehicles={catalog}
                   value={form.packId}
-                  selectedYear={form.year || undefined}
                   disabled={isCatalogLoading || catalog.length === 0}
                   onSelect={selectVehicle}
                 />
               </FormField>
 
               {selectedVehicle ? (
-                <p className="sm:col-span-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  <span>
-                    OEM schedule loads for {formatCatalogVehicleLabel(selectedVehicle)}.
-                  </span>
-                  {selectedVehicle.scheduleDepth === "verified" ? (
-                    <Badge variant="oem" className="text-[10px]">
-                      Verified OEM schedule
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="text-[10px]">
-                      Schedule preview
-                    </Badge>
-                  )}
+                <p className="sm:col-span-2 text-xs text-muted-foreground">
+                  OEM schedule loads for {formatCatalogVehicleLabel(selectedVehicle)}.
                 </p>
               ) : null}
 

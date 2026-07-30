@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { MaintenanceScheduleConsole } from "@/components/maintenance-schedule-console";
 import { MaintenanceTimelineConsole } from "@/components/maintenance-timeline-console";
-import { OwnerServiceScheduleBoardView } from "@/components/owner-service-schedule-board";
+import { OwnershipRecordsConsole } from "@/components/ownership-records-console";
 import { Button } from "@/components/ui/button";
 import type {
   OwnerDueItemsView,
@@ -19,20 +19,16 @@ type MaintenanceTimelineSectionProps = {
   timeline: TimelineEntry[];
   ownershipRecords: OwnershipRecordEntry[];
   ownerDueItems?: OwnerDueItemsView | null;
-  ownerHistoryTimeline?: OwnerHistoryItem[] | null;
+  ownerHistoryTimeline?: OwnerHistoryItem[];
   scheduleNear: ScheduleProjectionRow[];
   scheduleExtended: ScheduleProjectionRow[];
   scheduleFull: ScheduleProjectionRow[];
-  currentMileage?: number;
   effectiveMilesPerYear: number;
   hasKnowledgeSchedule?: boolean;
   activeTab?: ServiceHistoryTab;
   onTabChange?: (tab: ServiceHistoryTab) => void;
   disabled?: boolean;
   defaultMileage?: number;
-  vehicleId?: string;
-  apiBase?: string;
-  onCaptureError?: (message: string) => void;
   onOpenEvidence?: (documentId: string) => void;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
   onAddService?: (draft: import("@/components/maintenance-record-fields").MaintenanceRecordDraft) => Promise<void>;
@@ -55,20 +51,16 @@ export function MaintenanceTimelineSection({
   timeline,
   ownershipRecords,
   ownerDueItems = null,
-  ownerHistoryTimeline = null,
+  ownerHistoryTimeline,
   scheduleNear,
   scheduleExtended,
   scheduleFull,
-  currentMileage = 0,
   effectiveMilesPerYear,
   hasKnowledgeSchedule = false,
   activeTab,
   onTabChange,
   disabled = false,
   defaultMileage = 0,
-  vehicleId,
-  apiBase,
-  onCaptureError,
   onOpenEvidence,
   onUpdateService,
   onAddService,
@@ -92,13 +84,13 @@ export function MaintenanceTimelineSection({
     setInternalTab(next);
   };
 
+  const historyItems = ownerHistoryTimeline ?? null;
+
   return (
     <div className="space-y-4">
       {historyOnly ? (
         <MaintenanceTimelineConsole
           entries={timeline}
-          ownershipRecords={ownershipRecords}
-          ownerHistoryTimeline={ownerHistoryTimeline}
           disabled={disabled}
           defaultMileage={defaultMileage}
           onOpenEvidence={onOpenEvidence}
@@ -106,6 +98,8 @@ export function MaintenanceTimelineSection({
           onAddService={onAddService}
           requireEditConfirmation={requireEditConfirmation}
           ownerSimple={ownerSimple}
+          ownerHistoryItems={historyItems ?? undefined}
+          onGoToImport={onGoToImport}
         />
       ) : (
         <>
@@ -134,46 +128,48 @@ export function MaintenanceTimelineSection({
           </div>
 
           {tab === "history" ? (
-            <MaintenanceTimelineConsole
-              entries={timeline}
-              ownershipRecords={ownershipRecords}
-              ownerHistoryTimeline={ownerHistoryTimeline}
-              disabled={disabled}
-              defaultMileage={defaultMileage}
-              vehicleId={vehicleId}
-              apiBase={apiBase}
-              onCaptureError={onCaptureError}
-              onOpenEvidence={onOpenEvidence}
-              onUpdateService={onUpdateService}
-              onAddService={onAddService}
-              requireEditConfirmation={requireEditConfirmation}
-              ownerSimple={ownerSimple}
-            />
+            <div className="space-y-6">
+              <MaintenanceTimelineConsole
+                entries={timeline}
+                disabled={disabled}
+                defaultMileage={defaultMileage}
+                onOpenEvidence={onOpenEvidence}
+                onUpdateService={onUpdateService}
+                onAddService={onAddService}
+                requireEditConfirmation={requireEditConfirmation}
+                ownerSimple={ownerSimple}
+                ownerHistoryItems={historyItems ?? undefined}
+                onGoToImport={onGoToImport}
+              />
+              {!ownerSimple && ownershipRecords.length > 0 ? (
+                <div className="space-y-3 border-t border-border/70 pt-6">
+                  <p className="text-sm font-medium text-foreground">RMV / DMV ownership records</p>
+                  <OwnershipRecordsConsole
+                    entries={ownershipRecords}
+                    disabled={disabled}
+                    onGoToImport={onGoToImport}
+                  />
+                </div>
+              ) : null}
+            </div>
           ) : null}
 
           {tab === "schedule" ? (
-            ownerDueItems ? (
-              <OwnerServiceScheduleBoardView
-                dueItems={ownerDueItems}
-                currentMileage={currentMileage}
-                hasKnowledgeSchedule={hasKnowledgeSchedule}
-              />
-            ) : (
-              <MaintenanceScheduleConsole
-                nearRows={scheduleNear}
-                extendedRows={scheduleExtended}
-                fullRows={scheduleFull}
-                effectiveMilesPerYear={effectiveMilesPerYear}
-                hasKnowledgeSchedule={hasKnowledgeSchedule}
-                ownerSimple={ownerSimple}
-                maintenancePatterns={maintenancePatterns}
-                observedMilesPerYear={observedMilesPerYear}
-                statedMilesPerYear={statedMilesPerYear}
-                dueSoonDays={dueSoonDays}
-              />
-            )
+            <MaintenanceScheduleConsole
+              nearRows={scheduleNear}
+              extendedRows={scheduleExtended}
+              fullRows={scheduleFull}
+              effectiveMilesPerYear={effectiveMilesPerYear}
+              hasKnowledgeSchedule={hasKnowledgeSchedule}
+              ownerSimple={ownerSimple}
+              maintenancePatterns={maintenancePatterns}
+              observedMilesPerYear={observedMilesPerYear}
+              statedMilesPerYear={statedMilesPerYear}
+              dueSoonDays={dueSoonDays}
+              ownerDueItems={ownerDueItems}
+              currentMileage={defaultMileage}
+            />
           ) : null}
-
         </>
       )}
     </div>

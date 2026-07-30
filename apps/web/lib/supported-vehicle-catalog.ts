@@ -11,7 +11,6 @@ export type CatalogVehicleRow = {
   qaStatus: string;
   supportTier: string | null;
   scheduleSourceLine?: string | null;
-  scheduleDepth?: "verified" | "preview";
 };
 
 export type CatalogVehicleFilter = {
@@ -177,7 +176,6 @@ export const findCatalogVehicleRow = (
   if (packId) {
     const matches = rows.filter((row) => row.packId === packId);
     if (matches.length === 0) return null;
-    // Shared OEM packs list the same packId for multiple model years — anchor to earliest year.
     return [...matches].sort((a, b) => a.year - b.year)[0] ?? null;
   }
 

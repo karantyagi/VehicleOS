@@ -4,7 +4,6 @@ import { ChevronRight, ChevronUp, FileJson } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { RMV_EVENT_LABELS, type VehicleOsRmvRecord } from "@/lib/record-import-types";
 import { isoDateToLocalDate } from "@/lib/date-input";
@@ -68,12 +67,13 @@ function RmvReviewCard({
       )}
     >
       <div className="flex items-start gap-3 p-3">
-        <Checkbox
+        <input
+          type="checkbox"
           checked={row.included}
           disabled={disabled || isImporting || row.alreadyOnFile}
           aria-label={`Include ${RMV_EVENT_LABELS[row.eventType]} on ${row.recordDate}`}
-          className="mt-1"
-          onCheckedChange={(checked) => onRowChange(row.id, { included: checked === true })}
+          className="mt-1 h-4 w-4 rounded border-border"
+          onChange={(event) => onRowChange(row.id, { included: event.target.checked })}
         />
         <div className="min-w-0 flex-1 space-y-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -248,7 +248,7 @@ export function RmvImportReview({
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            Ownership records appear on History (past) and Schedule (renewals) — same cards as maintenance.
+            Ownership records stay on the Ownership tab — they do not appear on your maintenance timeline.
           </p>
           <div className="max-h-96 space-y-2 overflow-y-auto pr-1">
             {importRows.map((row) => (

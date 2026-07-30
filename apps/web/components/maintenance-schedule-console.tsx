@@ -4,10 +4,11 @@ import { useMemo, useState } from "react";
 import { CalendarClock } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { OwnerMaintenanceScheduleTimeline } from "@/components/owner-maintenance-schedule-timeline";
+import { OwnerServiceScheduleBoardView } from "@/components/owner-service-schedule-board";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { ScheduleProjectionRow } from "@/lib/console-types";
+import type { OwnerDueItemsView, ScheduleProjectionRow } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
 type ScheduleHorizonView = "near" | "extended" | "full";
@@ -23,6 +24,8 @@ type MaintenanceScheduleConsoleProps = {
   observedMilesPerYear?: number | null;
   statedMilesPerYear?: number | null;
   dueSoonDays?: number;
+  ownerDueItems?: OwnerDueItemsView | null;
+  currentMileage?: number;
 };
 
 const emptyScheduleCopy = (hasKnowledgeSchedule: boolean) => {
@@ -91,6 +94,8 @@ export function MaintenanceScheduleConsole({
   observedMilesPerYear,
   statedMilesPerYear,
   dueSoonDays,
+  ownerDueItems = null,
+  currentMileage = 0,
 }: MaintenanceScheduleConsoleProps) {
   const [horizon, setHorizon] = useState<ScheduleHorizonView>("near");
 
@@ -144,6 +149,16 @@ export function MaintenanceScheduleConsole({
         icon={CalendarClock}
         title={emptyCopy.title}
         description={emptyCopy.description}
+      />
+    );
+  }
+
+  if (ownerSimple && ownerDueItems) {
+    return (
+      <OwnerServiceScheduleBoardView
+        dueItems={ownerDueItems}
+        currentMileage={currentMileage}
+        hasKnowledgeSchedule={hasKnowledgeSchedule}
       />
     );
   }
