@@ -97,7 +97,12 @@ export type MaintenanceRecommendationCreatedPayload = {
   ruleId: string;
 };
 
-export type TaskStatus = "pending" | "approved" | "dismissed" | "snoozed";
+export type TaskStatus =
+  | "pending"
+  | "scheduled"
+  | "completed"
+  | "approved"
+  | "dismissed";
 
 export type TaskCreatedPayload = {
   vehicleId: string;
@@ -157,15 +162,13 @@ export type QuoteAnalyzedPayload = {
   analyzedAt: string;
 };
 
-export type TaskDecision = "approve" | "dismiss" | "snooze";
+export type TaskDecision = "schedule" | "complete" | "approve" | "dismiss";
 
 export type TaskDecidedPayload = {
   vehicleId: string;
   taskId: string;
   decision: TaskDecision;
   decidedAt: string;
-  snoozeUntil?: string;
-  snoozeDays?: number;
 };
 
 export type KnowledgeScheduleRow = {

@@ -5,7 +5,7 @@ export type LoginValueCard = {
   body: string;
 };
 
-/** OEM-first arc: pain → schedule wedge → reminders → quiet background → you execute */
+/** OEM-first arc: pain → schedule wedge → attention → quiet background → you execute */
 export const LOGIN_VALUE_CARDS: LoginValueCard[] = [
   {
     id: "pain",
@@ -19,13 +19,13 @@ export const LOGIN_VALUE_CARDS: LoginValueCard[] = [
   },
   {
     id: "reminders",
-    title: "Nudged before it's late",
-    body: "Oil, tires, inspection — calendar reminders with a plain-English why.",
+    title: "Know what needs attention",
+    body: "Oil, tires, inspection — this week first, with a plain-English why.",
   },
   {
     id: "quiet",
     title: "Quiet unless you need it",
-    body: "No daily logbook. Snooze when life gets busy.",
+    body: "No daily logbook and no premature notification prompts.",
   },
   {
     id: "execute",

@@ -1,14 +1,21 @@
 # ADR-014 - Owner-centered reminders and action recommendations
 
-**Status:** Accepted (2026-07-30)  
-**Deciders:** Product / architecture  
-**Related:** ADR-002 (event-sourced domain model) · ADR-010 (deterministic service matching and OEM packs) · ADR-012 (catalog vs owner runtime)
+**Status:** Accepted (2026-07-30)
+
+**Deciders:** Product / architecture
+
+**Related:** ADR-002 (event-sourced domain model) · ADR-010 (deterministic service matching and OEM packs) · ADR-012 (catalog vs owner runtime) · ADR-015 (owner attention vs notification delivery)
+
 **Implementation:** Rotate Tires pilot on
 `agent/maintenance-reminder-recommendation-pilot`
 
 ---
 
 ## Context
+
+In this ADR, **reminder** means the deterministic in-app attention item. It does
+not mean push, email, browser, or other notification delivery; ADR-015 owns that
+separate boundary.
 
 The current interval proposal combines three different decisions:
 

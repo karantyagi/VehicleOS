@@ -47,7 +47,7 @@ const emptyScheduleCopy = (hasKnowledgeSchedule: boolean) => {
   return {
     title: "No OEM schedule yet",
     description:
-      "Supported vehicles load verified OEM intervals at setup automatically. Unsupported trims join the waitlist — you can still track history and reminders from receipts.",
+      "Supported vehicles load verified OEM intervals at setup automatically. Unsupported trims join the waitlist — you can still track history and attention from receipts.",
   };
 };
 

@@ -267,11 +267,11 @@ export const formatIntervalProposalTaskReason = (proposal: IntervalProposal): st
     }
     const oemReference =
       oemParts.length > 0 ? ` OEM guidance (${oemParts.join(" / ")}) stays on file.` : "";
-    return `${proposal.evidenceSummary}. Assistant recommends ${proposal.intervalMiles?.toLocaleString("en-US")} mi. Edit or save this mileage for future reminders.${oemReference}`;
+    return `${proposal.evidenceSummary}. Assistant recommends ${proposal.intervalMiles?.toLocaleString("en-US")} mi. Edit or save this mileage for future rotation timing.${oemReference}`;
   }
 
   if (proposal.oemIntervalMiles === null && proposal.oemIntervalMonths === null) {
-    return `${proposal.evidenceSummary}. Confirm this cadence for reminders?`;
+    return `${proposal.evidenceSummary}. Confirm this maintenance cadence?`;
   }
 
   const oemParts: string[] = [];
@@ -283,5 +283,5 @@ export const formatIntervalProposalTaskReason = (proposal: IntervalProposal): st
   }
 
   const oemLabel = oemParts.length > 0 ? `OEM ${oemParts.join(" / ")}` : "the OEM interval";
-  return `${proposal.evidenceSummary}. Use this instead of ${oemLabel} for reminders? Confirm or keep the OEM interval.`;
+  return `${proposal.evidenceSummary}. Use this instead of ${oemLabel} for maintenance timing? Confirm or keep the OEM interval.`;
 };

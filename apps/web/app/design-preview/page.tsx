@@ -50,7 +50,7 @@ export default function ProductDesignPreviewPage() {
           </p>
         </article>
         <article className="feature-card accent-rules">
-          <h2>Smart reminders</h2>
+          <h2>Quiet attention</h2>
           <p>
             What&apos;s due before it&apos;s urgent — with time to plan, not panic.
           </p>

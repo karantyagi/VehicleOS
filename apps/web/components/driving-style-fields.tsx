@@ -83,7 +83,7 @@ export function DrivingStyleFields({
       <FormField
         label="Home city"
         htmlFor="home-city"
-        hint={isOnboarding ? undefined : "Required — where the car is usually parked; shapes seasonal reminders and shop lookups"}
+        hint={isOnboarding ? undefined : "Required — where the car is usually parked; shapes seasonal planning and shop lookups"}
       >
         <Input
           id="home-city"

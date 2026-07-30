@@ -514,7 +514,7 @@ function OwnershipDueCard({ renewal }: { renewal: OwnershipRenewalProjection }) 
       {open ? (
         <div className="space-y-3 border-t border-border/60 px-4 pb-4 pt-3 text-sm text-muted-foreground sm:px-5 sm:pb-5">
           <section className="rounded-lg border border-border/70 bg-background/75 p-3.5">
-            <p className="font-semibold text-foreground">Why this reminder</p>
+            <p className="font-semibold text-foreground">Why this needs attention</p>
             <p className="mt-1">
               {renewal.title} expires {formatDate(renewal.expirationDate)}. The date comes from your {renewal.agency} record.
             </p>

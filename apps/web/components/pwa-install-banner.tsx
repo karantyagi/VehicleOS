@@ -25,7 +25,7 @@ export function PwaInstallBanner({ enabled = true, minimal = false }: PwaInstall
   const description = minimal
     ? undefined
     : platform === "ios"
-      ? `Install ${pwaConfig.shortName} for receipt capture and reminders without the browser chrome. Tap Share, then Add to Home Screen.`
+      ? `Install ${pwaConfig.shortName} for quick receipt and voice capture without the browser chrome. Tap Share, then Add to Home Screen.`
       : canNativeInstall
         ? `Install ${pwaConfig.shortName} for quick receipt capture and a full-screen assistant workspace.`
         : `Use Chrome menu → Install app, or Add to Home Screen, for a full-screen ${pwaConfig.shortName} icon.`;

@@ -3,10 +3,10 @@
 import {
   CarFront,
   Archive,
-  BellRing,
   BookOpen,
   Clock3,
   FileInput,
+  Home,
   ListChecks,
   MessageSquareQuote,
   Mic,
@@ -40,7 +40,7 @@ import { useAppSectionNavigation } from "@/lib/use-app-section-navigation";
 import { cn } from "@/lib/utils";
 
 const SECTION_ICONS = {
-  reminders: BellRing,
+  reminders: Home,
   now: ListChecks,
   timeline: Clock3,
   imports: FileInput,

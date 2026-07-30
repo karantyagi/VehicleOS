@@ -59,12 +59,12 @@ export function OwnershipRecordsConsole({
         <EmptyState
           icon={FileBadge2}
           title="No ownership records yet"
-          description="Import registration and title events from Import history → RMV / DMV. These stay separate from your maintenance timeline."
+          description="Import registration and title events from Add records → RMV / DMV. These stay separate from your maintenance timeline."
         />
         {onGoToImport ? (
           <div className="flex justify-center">
             <Button type="button" variant="outline" size="sm" disabled={disabled} onClick={onGoToImport}>
-              Go to Import history
+              Go to Add records
             </Button>
           </div>
         ) : null}
@@ -149,8 +149,8 @@ export function OwnershipRecordsConsole({
       {renewals.some((renewal) => renewal.recordId === selected.recordId) ? (
         <p className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm text-foreground">
           {renewals.find((renewal) => renewal.recordId === selected.recordId)?.status === "overdue"
-            ? "Registration expired — renewal reminder is in your queue."
-            : "Registration expiring soon — renewal reminder is in your queue."}
+            ? "Registration expired — renewal needs attention on Home."
+            : "Registration expiring soon — renewal needs attention on Home."}
         </p>
       ) : null}
       <p className="text-muted-foreground">{selected.recordDate}</p>

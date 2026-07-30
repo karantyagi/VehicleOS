@@ -53,8 +53,7 @@ type VehicleBody = {
 
 type TaskDecisionBody = {
   vehicleId: string;
-  decision: "approve" | "dismiss" | "snooze";
-  snoozeDays?: number;
+  decision: "schedule" | "approve" | "dismiss";
   maintenancePatternReason?: MaintenanceDeviationReasonId;
   ownerIntervalOverlay?: {
     intervalMiles?: number | null;
@@ -538,9 +537,12 @@ export const decideOnTask = async (
 ): Promise<JsonResponse> => {
   if (!auth?.userId) return unauthorized();
 
-  const { vehicleId, decision, snoozeDays } = body;
+  const { vehicleId, decision } = body;
   if (!vehicleId || !decision) {
     return jsonResponse(400, { error: "vehicleId and decision are required" });
+  }
+  if (!["schedule", "approve", "dismiss"].includes(decision)) {
+    return jsonResponse(400, { error: "Unsupported task decision" });
   }
 
   const owned = await assertVehicleOwner(services, vehicleId, auth.userId);
@@ -550,6 +552,12 @@ export const decideOnTask = async (
     ...vehicleStateOptionsFromVehicle(owned.vehicle),
   });
   const task = snapshot.state.nowQueue.find((item) => item.taskId === taskId);
+  if (!task) {
+    return jsonResponse(404, { error: "Task not found" });
+  }
+  if (decision === "schedule" && task.taskKind === "verification") {
+    return jsonResponse(400, { error: "Verification tasks cannot be scheduled" });
+  }
 
   if (
     decision === "approve" &&
@@ -603,7 +611,6 @@ export const decideOnTask = async (
       vehicleId,
       taskId,
       decision,
-      snoozeDays,
     });
 
     await services.goldenPath.refreshMaintenanceRecommendation({
@@ -706,7 +713,6 @@ export const decideOnTask = async (
       vehicleId,
       taskId,
       decision,
-      snoozeDays,
     });
 
     await services.goldenPath.refreshMaintenanceRecommendation({
@@ -737,7 +743,6 @@ export const decideOnTask = async (
     vehicleId,
     taskId,
     decision,
-    snoozeDays,
   });
 
   const view = buildVehicleStateView(nextSnapshot.state, owned.vehicle, nextSnapshot.events);

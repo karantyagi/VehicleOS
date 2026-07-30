@@ -67,7 +67,7 @@ export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPa
     }
 
     if (!draft.primaryCity.trim()) {
-      notify("Home city is required — it anchors seasonal reminders and shop lookups.", "error");
+      notify("Home city is required — it anchors seasonal planning and shop lookups.", "error");
       return;
     }
 

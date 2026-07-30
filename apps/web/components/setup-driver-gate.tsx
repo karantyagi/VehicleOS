@@ -65,7 +65,7 @@ export function SetupDriverGate({ vehicleId, vehicleLabel, onComplete }: SetupDr
         <p className="text-xs font-medium uppercase tracking-wide text-primary">Finish setup</p>
         <CardTitle>Your driving profile</CardTitle>
         <CardDescription>
-          {vehicleLabel} is saved — home city unlocks calendar reminders.
+          {vehicleLabel} is saved — home city sharpens seasonal planning.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -78,7 +78,7 @@ export function SetupDriverGate({ vehicleId, vehicleLabel, onComplete }: SetupDr
         />
         <FormActions>
           <Button type="button" disabled={isSaving || !draft.primaryCity.trim()} onClick={() => void saveAndContinue()}>
-            {isSaving ? "Saving…" : "Unlock reminders"}
+            {isSaving ? "Saving…" : "Finish setup"}
           </Button>
         </FormActions>
       </CardContent>

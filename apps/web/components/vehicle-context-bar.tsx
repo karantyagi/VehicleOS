@@ -1,6 +1,6 @@
 "use client";
 
-import { BellRing, ListChecks } from "lucide-react";
+import { CircleAlert, ListChecks } from "lucide-react";
 import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -45,8 +45,8 @@ export function VehicleContextBar() {
           {showSwitcher ? <VehicleGarageSwitcher compact className="min-w-[12rem] max-w-full" /> : null}
           {!isDeveloper && snapshot && snapshot.pendingReminderCount > 0 ? (
             <Badge variant="default" className="gap-1 tabular-nums">
-              <BellRing className="h-3 w-3" aria-hidden />
-              {snapshot.pendingReminderCount} due
+              <CircleAlert className="h-3 w-3" aria-hidden />
+              {snapshot.pendingReminderCount} need attention
             </Badge>
           ) : null}
           {!isDeveloper && snapshot && snapshot.pendingVerificationCount > 0 ? (
@@ -67,8 +67,8 @@ export function VehicleContextBar() {
             </Link>
             <span className="tabular-nums text-muted-foreground">{snapshot.mileage.toLocaleString()} mi</span>
             <Badge variant={snapshot.pendingReminderCount > 0 ? "default" : "secondary"} className="gap-1 tabular-nums">
-              <BellRing className="h-3 w-3" aria-hidden />
-              {snapshot.pendingReminderCount} reminder{snapshot.pendingReminderCount === 1 ? "" : "s"}
+              <CircleAlert className="h-3 w-3" aria-hidden />
+              {snapshot.pendingReminderCount} attention item{snapshot.pendingReminderCount === 1 ? "" : "s"}
             </Badge>
             {snapshot.pendingVerificationCount > 0 ? (
               <Badge variant="warning" className="gap-1 tabular-nums">

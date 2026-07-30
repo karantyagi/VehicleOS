@@ -13,6 +13,7 @@ type VoiceMemoryPanelProps = {
   apiBase: string;
   defaultMileage: number;
   disabled?: boolean;
+  minimal?: boolean;
   onSubmitted: (body: {
     timeline: unknown[];
     nowQueue: unknown[];
@@ -34,6 +35,7 @@ export function VoiceMemoryPanel({
   apiBase,
   defaultMileage,
   disabled = false,
+  minimal = false,
   onSubmitted,
   onError,
 }: VoiceMemoryPanelProps) {
@@ -94,18 +96,25 @@ export function VoiceMemoryPanel({
       const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/voice`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          transcript,
-          storageKey: nextStorageKey,
-          shop: form.shop,
-          serviceDate: form.serviceDate,
-          mileage: Number(form.mileage),
-          lineItems: form.lineItems
-            .split("\n")
-            .map((line) => line.trim())
-            .filter(Boolean),
-          total: form.total,
-        }),
+        body: JSON.stringify(
+          minimal
+            ? {
+                transcript,
+                storageKey: nextStorageKey,
+              }
+            : {
+                transcript,
+                storageKey: nextStorageKey,
+                shop: form.shop,
+                serviceDate: form.serviceDate,
+                mileage: Number(form.mileage),
+                lineItems: form.lineItems
+                  .split("\n")
+                  .map((line) => line.trim())
+                  .filter(Boolean),
+                total: form.total,
+              },
+        ),
       });
 
       const body = (await response.json()) as {
@@ -144,7 +153,9 @@ export function VoiceMemoryPanel({
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Speak a service note — Vehicle OS transcribes it, stores the artifact, and records the service.
+        {minimal
+          ? "Say what happened. Include the service, approximate date, and mileage when you know them."
+          : "Speak a service note — Vehicle OS transcribes it, stores the artifact, and records the service."}
       </p>
 
       {!speech.isSupported ? (
@@ -188,54 +199,58 @@ export function VoiceMemoryPanel({
         />
       </FormField>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <FormField label="Shop" htmlFor="voice-shop">
-          <Input
-            id="voice-shop"
-            value={form.shop}
-            disabled={disabled || isSubmitting}
-            onChange={(event) => setForm({ ...form, shop: event.target.value })}
-          />
-        </FormField>
-        <FormField label="Service date" htmlFor="voice-date">
-          <Input
-            id="voice-date"
-            value={form.serviceDate}
-            disabled={disabled || isSubmitting}
-            onChange={(event) => setForm({ ...form, serviceDate: event.target.value })}
-          />
-        </FormField>
-        <FormField label="Mileage" htmlFor="voice-mileage">
-          <Input
-            id="voice-mileage"
-            type="number"
-            value={form.mileage}
-            disabled={disabled || isSubmitting}
-            onChange={(event) => setForm({ ...form, mileage: Number(event.target.value) })}
-          />
-        </FormField>
-        <FormField label="Total" htmlFor="voice-total">
-          <Input
-            id="voice-total"
-            value={form.total}
-            disabled={disabled || isSubmitting}
-            onChange={(event) => setForm({ ...form, total: event.target.value })}
-          />
-        </FormField>
-      </div>
+      {!minimal ? (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField label="Shop" htmlFor="voice-shop">
+            <Input
+              id="voice-shop"
+              value={form.shop}
+              disabled={disabled || isSubmitting}
+              onChange={(event) => setForm({ ...form, shop: event.target.value })}
+            />
+          </FormField>
+          <FormField label="Service date" htmlFor="voice-date">
+            <Input
+              id="voice-date"
+              value={form.serviceDate}
+              disabled={disabled || isSubmitting}
+              onChange={(event) => setForm({ ...form, serviceDate: event.target.value })}
+            />
+          </FormField>
+          <FormField label="Mileage" htmlFor="voice-mileage">
+            <Input
+              id="voice-mileage"
+              type="number"
+              value={form.mileage}
+              disabled={disabled || isSubmitting}
+              onChange={(event) => setForm({ ...form, mileage: Number(event.target.value) })}
+            />
+          </FormField>
+          <FormField label="Total" htmlFor="voice-total">
+            <Input
+              id="voice-total"
+              value={form.total}
+              disabled={disabled || isSubmitting}
+              onChange={(event) => setForm({ ...form, total: event.target.value })}
+            />
+          </FormField>
+        </div>
+      ) : null}
 
-      <FormField label="Line items" htmlFor="voice-lines">
-        <Textarea
-          id="voice-lines"
-          rows={2}
-          value={form.lineItems}
-          disabled={disabled || isSubmitting}
-          onChange={(event) => setForm({ ...form, lineItems: event.target.value })}
-        />
-      </FormField>
+      {!minimal ? (
+        <FormField label="Line items" htmlFor="voice-lines">
+          <Textarea
+            id="voice-lines"
+            rows={2}
+            value={form.lineItems}
+            disabled={disabled || isSubmitting}
+            onChange={(event) => setForm({ ...form, lineItems: event.target.value })}
+          />
+        </FormField>
+      ) : null}
 
       <Button type="button" disabled={disabled || isSubmitting || isUploading} onClick={() => void submitVoiceMemory()}>
-        {isSubmitting ? "Saving voice memory…" : "Confirm voice note → run loop"}
+        {isSubmitting ? "Saving voice note…" : minimal ? "Save voice note" : "Confirm voice note → run loop"}
       </Button>
     </div>
   );

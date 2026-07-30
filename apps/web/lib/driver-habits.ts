@@ -27,7 +27,8 @@ export const STATED_MILES_REQUIRED_MESSAGE = `Enter annual miles driven (${STATE
 
 export const STATED_MILES_INVALID_MESSAGE = `Annual miles driven: ${STATED_MILES_RANGE_LABEL}.`;
 
-export const STATED_MILES_ONBOARDING_HINT = "Reminds when mileage-based services are due.";
+export const STATED_MILES_ONBOARDING_HINT =
+  "Helps estimate when mileage-based services need attention.";
 
 export const DRIVING_STYLE_OPTIONS: {
   id: DrivingStyle;
@@ -47,7 +48,7 @@ export const DRIVING_STYLE_OPTIONS: {
   {
     id: "aggressive",
     label: "Sporty",
-    description: "Hard acceleration and braking — earlier reminders on brakes, tires, and fluids.",
+    description: "Hard acceleration and braking — earlier attention windows for brakes, tires, and fluids.",
   },
 ];
 

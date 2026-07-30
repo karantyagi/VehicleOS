@@ -81,7 +81,7 @@ export function VehicleSettingsPanel({
   const saveVehicle = async () => {
     if (!vehicle) return;
     if (!form.ownedSince.trim()) {
-      setError("Owned since is required — it anchors calendar reminders when receipts are missing.");
+      setError("Owned since is required — it anchors calendar planning when receipts are missing.");
       return;
     }
     setIsSaving(true);

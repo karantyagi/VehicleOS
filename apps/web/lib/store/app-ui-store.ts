@@ -18,8 +18,8 @@ export type AppSection =
 export const APP_SECTIONS: { id: AppSection; label: string; description: string }[] = [
   {
     id: "reminders",
-    label: "Reminders",
-    description: "Calendar-first nudges — act this week or snooze",
+    label: "Home",
+    description: "What needs attention this week, next week, and this month",
   },
   {
     id: "now",
@@ -33,8 +33,8 @@ export const APP_SECTIONS: { id: AppSection; label: string; description: string 
   },
   {
     id: "imports",
-    label: "Import history",
-    description: "Optional — CARFAX and RMV PDFs to sharpen baselines and memory",
+    label: "Add records",
+    description: "Import CARFAX or RMV history; capture receipts and voice notes on mobile",
   },
   {
     id: "receipts",
@@ -67,9 +67,9 @@ export const ASSISTANT_WORKSPACE_GROUP_LABEL = "Assistant workspace";
 
 export const SECTION_SHORTCUTS: Record<AppSection, string> = {
   reminders: "1",
-  now: "2",
-  timeline: "3",
-  imports: "4",
+  timeline: "2",
+  imports: "3",
+  now: "4",
   receipts: "5",
   evidence: "6",
   context: "7",

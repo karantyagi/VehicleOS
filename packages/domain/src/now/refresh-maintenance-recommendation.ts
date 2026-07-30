@@ -43,6 +43,34 @@ const loadVehicleEvents = async (
   );
 };
 
+const RECOMMENDATION_INPUT_EVENT_TYPES = new Set<CatalogDomainEvent["eventType"]>([
+  EVENT_TYPES.SERVICE_RECORDED,
+  EVENT_TYPES.SERVICE_UPDATED,
+  EVENT_TYPES.SERVICE_MERGED,
+  EVENT_TYPES.KNOWLEDGE_SCHEDULE_RECORDED,
+]);
+
+const hasRecommendationInputChangedAfterDismissal = (
+  events: CatalogDomainEvent[],
+  taskId: string,
+): boolean => {
+  let dismissalIndex = -1;
+  events.forEach((event, index) => {
+    if (
+      event.eventType === EVENT_TYPES.TASK_DECIDED &&
+      event.payload.taskId === taskId &&
+      event.payload.decision === "dismiss"
+    ) {
+      dismissalIndex = index;
+    }
+  });
+  if (dismissalIndex < 0) return false;
+
+  return events
+    .slice(dismissalIndex + 1)
+    .some((event) => RECOMMENDATION_INPUT_EVENT_TYPES.has(event.eventType));
+};
+
 const dismissStaleKnowledgeReminders = async (input: {
   eventStore: EventStore;
   vehicleId: string;
@@ -75,7 +103,7 @@ const dismissStaleKnowledgeReminders = async (input: {
 export const refreshMaintenanceRecommendation = async (
   input: RefreshMaintenanceRecommendationInput,
 ): Promise<RefreshMaintenanceRecommendationResult> => {
-  const events = await loadVehicleEvents(input.eventStore, input.vehicleId);
+  let events = await loadVehicleEvents(input.eventStore, input.vehicleId);
   let state = foldEvents(input.vehicleId, events);
   const dismissedStaleCount = await dismissStaleKnowledgeReminders({
     eventStore: input.eventStore,
@@ -85,8 +113,8 @@ export const refreshMaintenanceRecommendation = async (
   });
 
   if (dismissedStaleCount > 0) {
-    const nextEvents = await loadVehicleEvents(input.eventStore, input.vehicleId);
-    state = foldEvents(input.vehicleId, nextEvents);
+    events = await loadVehicleEvents(input.eventStore, input.vehicleId);
+    state = foldEvents(input.vehicleId, events);
   }
 
   const evaluated = input.policyEngine.evaluate({
@@ -111,11 +139,16 @@ export const refreshMaintenanceRecommendation = async (
     };
   }
 
-  const hasPendingSameRule = state.nowQueue.some(
-    (item) => item.status === "pending" && item.ruleId === recommendation.ruleId,
+  const hasBlockingSameRule = state.nowQueue.some(
+    (item) =>
+      item.ruleId === recommendation.ruleId &&
+      (item.status === "pending" ||
+        item.status === "scheduled" ||
+        (item.status === "dismissed" &&
+          !hasRecommendationInputChangedAfterDismissal(events, item.taskId))),
   );
 
-  if (hasPendingSameRule) {
+  if (hasBlockingSameRule) {
     return {
       created: false,
       dismissedStaleCount,

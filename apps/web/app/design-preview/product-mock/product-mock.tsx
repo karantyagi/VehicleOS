@@ -246,7 +246,7 @@ export function ProductMock() {
                 Scheduled
               </button>
               <button type="button" className="secondary">
-                Snooze
+                Fix this
               </button>
               <button type="button" className="secondary">
                 Done
@@ -307,7 +307,7 @@ export function ProductMock() {
                 Approve
               </button>
               <button type="button" className="secondary">
-                Snooze
+                Not needed
               </button>
             </div>
           </div>
@@ -370,7 +370,7 @@ export function ProductMock() {
       <div className="page-header">
         <h1>Mobile app mock</h1>
         <p>
-          Glanceable · notification-first · tap / photo / voice.{" "}
+          Glanceable · attention-first · tap / photo / voice.{" "}
           <Link href="/design-preview/web-mock">See web app mock →</Link>
           {" · "}
           <Link href="/design-preview">All previews</Link>

@@ -1,8 +1,11 @@
 # Maintenance item intelligence delivery queue
 
-**Scope:** Owner-facing maintenance items and reminder rationale  
-**Decision:** [ADR-014](../../docs-lite/adr/ADR-014-owner-centered-maintenance-item-intelligence.md)  
-**Pilot:** Rotate Tires  
+**Scope:** Owner-facing maintenance items and reminder rationale
+
+**Decision:** [ADR-014](../../docs-lite/adr/ADR-014-owner-centered-maintenance-item-intelligence.md)
+
+**Pilot:** Rotate Tires
+
 **Last updated:** 2026-07-30
 
 This queue records the adopted direction and implementation status on

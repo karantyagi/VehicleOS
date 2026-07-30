@@ -2,6 +2,7 @@ import { getServiceAliasRegistry } from "../adapters/service-alias-registry.js";
 import type { CatalogDomainEvent, VehicleProjectionState } from "@vehicleos/domain";
 import {
   buildOwnerReminderViews,
+  buildOwnerVerificationViews,
   buildOwnerServiceScheduleBoard,
   buildOwnerDueItems,
   buildOwnerHistoryTimeline,
@@ -10,7 +11,6 @@ import {
   projectMaintenanceDeviations,
   projectMaintenanceSchedule,
   resolveScheduleProjectionContext,
-  splitOwnerQueues,
 } from "@vehicleos/domain";
 import type { VehicleRecord } from "../repositories/vehicle-repository.js";
 
@@ -81,7 +81,11 @@ export const buildVehicleStateView = (
     dueItems: ownerDueItems,
     today,
   });
-  const { verifications } = splitOwnerQueues(state.nowQueue);
+  const verifications = buildOwnerVerificationViews(state.nowQueue, {
+    events,
+    timeline: state.timeline,
+    scheduleRows: scheduleExtended.rows,
+  });
   const pendingVerificationCount = verifications.filter((item) => item.status === "pending").length;
 
   return {

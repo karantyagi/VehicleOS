@@ -1,9 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { formatOwnerDeadline, formatSnoozeEscalation } from "./format-owner-deadline.js";
-import { buildOwnerReminderViews, isActiveReminder } from "./build-owner-reminders.js";
+import {
+  formatOwnerDeadline,
+  resolveAttentionWindow,
+} from "./format-owner-deadline.js";
+import {
+  buildOwnerReminderViews,
+  buildOwnerVerificationViews,
+} from "./build-owner-reminders.js";
 import type { NowQueueItem } from "../projections/types.js";
 import type { ServiceTimelineEntry } from "../projections/types.js";
 import { projectMaintenanceSchedule } from "../schedule/project-maintenance-schedule.js";
+import { EVENT_TYPES, type CatalogDomainEvent } from "../events/catalog.js";
 
 describe("formatOwnerDeadline", () => {
   it("uses calendar language not mileage", () => {
@@ -12,10 +19,13 @@ describe("formatOwnerDeadline", () => {
   });
 });
 
-describe("formatSnoozeEscalation", () => {
-  it("escalates after repeated snoozes", () => {
-    expect(formatSnoozeEscalation(0)).toBeNull();
-    expect(formatSnoozeEscalation(2)).toMatch(/snoozed this twice/i);
+describe("resolveAttentionWindow", () => {
+  it("separates the owner planning horizons", () => {
+    expect(resolveAttentionWindow("2026-07-23", "2026-07-24")).toBe("overdue");
+    expect(resolveAttentionWindow("2026-07-30", "2026-07-24")).toBe("this_week");
+    expect(resolveAttentionWindow("2026-08-05", "2026-07-24")).toBe("next_week");
+    expect(resolveAttentionWindow("2026-08-18", "2026-07-24")).toBe("this_month");
+    expect(resolveAttentionWindow("2026-09-30", "2026-07-24")).toBe("later");
   });
 });
 
@@ -30,25 +40,6 @@ describe("buildOwnerReminderViews", () => {
     ruleId: "schedule.policy.oil_change.v1",
     dueBy: "2026-07-30",
   };
-
-  it("surfaces snoozed items when snooze period ends", () => {
-    const snoozed: NowQueueItem = {
-      ...baseItem,
-      status: "snoozed",
-      snoozeUntil: "2026-07-24",
-      snoozeCount: 2,
-    };
-    expect(isActiveReminder(snoozed, "2026-07-24")).toBe(true);
-    expect(isActiveReminder(snoozed, "2026-07-20")).toBe(false);
-
-    const views = buildOwnerReminderViews({
-      items: [snoozed],
-      scheduleRows: [],
-      today: "2026-07-24",
-    });
-    expect(views).toHaveLength(1);
-    expect(views[0]?.escalation).toMatch(/twice/i);
-  });
 
   it("hides stale knowledge reminders when CARFAX oil baseline is within interval", () => {
     const timelineRow = (overrides: Partial<ServiceTimelineEntry>): ServiceTimelineEntry => ({
@@ -105,5 +96,109 @@ describe("buildOwnerReminderViews", () => {
 
     expect(scheduleRows[0]?.status).toBe("upcoming");
     expect(views).toHaveLength(0);
+  });
+});
+
+describe("owner verification presentation", () => {
+  it("classifies blocking conflicts separately from advisory prompts", () => {
+    const views = buildOwnerVerificationViews([
+      {
+        taskId: "verify-date",
+        recommendationId: "conflict-1",
+        title: "Verify service date",
+        reason: "The incoming service date conflicts with history.",
+        status: "pending",
+        taskKind: "verification",
+        verificationCode: "VERIFY_DATE",
+      },
+      {
+        taskId: "verify-stale-mileage",
+        recommendationId: "mileage-1",
+        title: "What's your current mileage?",
+        reason: "Mileage has not been updated recently.",
+        status: "pending",
+        taskKind: "verification",
+        verificationCode: "VERIFY_ODOMETER",
+        ruleId: "assistant.policy.odometer_stale.v1",
+      },
+    ]);
+
+    expect(views[0]?.severity).toBe("blocking");
+    expect(views[0]?.target.field).toBe("service_date");
+    expect(views[1]?.severity).toBe("advisory");
+    expect(views[1]?.target.surface).toBe("vehicle");
+  });
+
+  it("targets the exact history record and keeps resolution metadata", () => {
+    const verification: NowQueueItem = {
+      taskId: "verify-timing",
+      recommendationId: "timing-1",
+      title: "Oil change done early",
+      reason: "Confirm why this service was completed early.",
+      status: "approved",
+      taskKind: "verification",
+      verificationCode: "VERIFY_MAINTENANCE_TIMING",
+      ruleId: "deviation.policy.engine-oil.v1",
+    };
+    const timeline: ServiceTimelineEntry[] = [
+      {
+        serviceId: "service-oil",
+        shop: "Dealer",
+        serviceDate: "2026-06-10",
+        mileage: 58_000,
+        lineItems: ["Oil and filter changed"],
+        total: "$110",
+        evidenceIds: [],
+        source: "dealer",
+      },
+    ];
+    const decisionEvent: CatalogDomainEvent = {
+      id: "event-1",
+      aggregateType: "task",
+      aggregateId: verification.taskId,
+      eventType: EVENT_TYPES.TASK_DECIDED,
+      eventVersion: 1,
+      payload: {
+        vehicleId: "vehicle-1",
+        taskId: verification.taskId,
+        decision: "approve",
+        decidedAt: "2026-07-30T12:00:00.000Z",
+      },
+      createdAt: "2026-07-30T12:00:00.000Z",
+    };
+
+    const views = buildOwnerVerificationViews([verification], {
+      events: [decisionEvent],
+      timeline,
+      scheduleRows: [
+        {
+          entryId: "engine-oil",
+          serviceName: "Oil and filter change",
+          systemGroup: "Engine",
+          dueDate: "2027-06-10",
+          dueMileage: 65_500,
+          status: "upcoming",
+          serviceBaseline: {
+            performedDate: "2026-06-10",
+            performedMileage: 58_000,
+            baselineSource: "receipt",
+          },
+          oemInterval: { months: 12, miles: 7_500 },
+          oemSource: { manualTitle: "Owner manual", page: "527", ruleId: "oil-rule" },
+          dueDateConfidence: "oem_calendar",
+          isStubSchedule: false,
+          oemTiming: "early",
+          overdueWithoutHistory: false,
+        },
+      ],
+    });
+
+    expect(views[0]?.target).toMatchObject({
+      surface: "history",
+      recordId: "service-oil",
+      field: "maintenance_timing",
+    });
+    expect(views[0]?.resolution).toBe("approve");
+    expect(views[0]?.resolvedAt).toBe("2026-07-30T12:00:00.000Z");
   });
 });

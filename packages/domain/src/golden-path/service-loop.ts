@@ -9,7 +9,6 @@ import type { PolicyEngine } from "../policy/policy-engine.js";
 import type { EventStore } from "../ports/event-store.js";
 import type { ServiceRecordSource, TaskDecision } from "../events/catalog.js";
 import type { DrivingStyle } from "../schedule/resolve-schedule-projection-context.js";
-import { computeSnoozeUntil } from "../now/ensure-stale-odometer-prompt.js";
 import {
   buildTimeFirstTaskCopy,
   projectScheduleRowsForRecommendations,
@@ -191,11 +190,8 @@ export const decideTask = async (deps: {
   vehicleId: string;
   taskId: string;
   decision: TaskDecision;
-  snoozeDays?: number;
 }): Promise<CatalogDomainEvent> => {
   const decidedAt = new Date().toISOString();
-  const today = decidedAt.slice(0, 10);
-  const snoozeDays = deps.snoozeDays ?? 14;
 
   const decided = await deps.eventStore.append({
     aggregateType: "task",
@@ -207,12 +203,6 @@ export const decideTask = async (deps: {
       taskId: deps.taskId,
       decision: deps.decision,
       decidedAt,
-      ...(deps.decision === "snooze"
-        ? {
-            snoozeDays,
-            snoozeUntil: computeSnoozeUntil(today, snoozeDays),
-          }
-        : {}),
     },
   });
 

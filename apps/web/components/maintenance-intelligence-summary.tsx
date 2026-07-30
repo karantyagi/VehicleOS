@@ -47,7 +47,7 @@ export function MaintenanceIntelligenceSummary({
       {showWhy ? (
         <section className="rounded-lg border border-border/70 bg-background/75 p-3.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-foreground">Why this reminder</p>
+          <p className="text-sm font-semibold text-foreground">Why this needs attention</p>
           <Badge variant="outline" className="font-normal">
             {confidenceLabel[intelligence.reminderConfidence]}
           </Badge>

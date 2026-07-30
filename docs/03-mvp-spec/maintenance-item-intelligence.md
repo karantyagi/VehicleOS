@@ -1,7 +1,9 @@
 # Maintenance item intelligence
 
-**Status:** Product specification for the Rotate Tires pilot  
-**Decision:** [ADR-014](../../docs-lite/adr/ADR-014-owner-centered-maintenance-item-intelligence.md)  
+**Status:** Product specification for the Rotate Tires pilot
+
+**Decision:** [ADR-014](../../docs-lite/adr/ADR-014-owner-centered-maintenance-item-intelligence.md)
+
 **Implementation:** Rotate Tires pilot implemented on
 `agent/maintenance-reminder-recommendation-pilot`; see the
 [delivery queue](./maintenance-item-intelligence-queue.md).
@@ -104,7 +106,7 @@ Condition & setup   SH-AWD applicability confirmed
 Assistant recommendation
 Phase 2 · upcoming · in development
 
-[Done]   [Snooze]
+[Schedule]   [Done]   [Fix this]   [Not needed]
 ```
 
 `Phase 2 · upcoming · in development` appears only after expansion. Owners

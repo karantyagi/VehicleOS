@@ -268,7 +268,6 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
       vehicleId: string;
       taskId: string;
       decision: TaskDecision;
-      snoozeDays?: number;
     }) {
       await decideTask({ eventStore, ...input });
       return getVehicleState(input.vehicleId);

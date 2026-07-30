@@ -2,11 +2,10 @@ import { EVENT_TYPES, EVENT_VERSIONS } from "../events/catalog.js";
 import { foldEvents } from "../projections/apply.js";
 import type { EventStore } from "../ports/event-store.js";
 import type { VehicleProjectionState } from "../projections/types.js";
-import { addDays, formatIsoDate } from "./format-owner-deadline.js";
+import { formatIsoDate } from "./format-owner-deadline.js";
 
 export const STALE_ODOMETER_RULE_ID = "assistant.policy.odometer_stale.v1";
 export const STALE_ODOMETER_DAYS = 30;
-export const DEFAULT_SNOOZE_DAYS = 14;
 
 const loadVehicleEvents = async (
   eventStore: EventStore,
@@ -74,14 +73,14 @@ export const ensureStaleOdometerPrompt = async (
   const events = await loadVehicleEvents(input.eventStore, input.vehicleId);
   const state = foldEvents(input.vehicleId, events);
 
-  const hasPendingPrompt = state.nowQueue.some(
+  const hasUnresolvedPrompt = state.nowQueue.some(
     (item) =>
       item.status === "pending" &&
       item.taskKind === "verification" &&
       item.ruleId === STALE_ODOMETER_RULE_ID,
   );
 
-  if (hasPendingPrompt || !isOdometerStale({ state, vehicleCreatedAt: input.vehicleCreatedAt, today: input.today })) {
+  if (hasUnresolvedPrompt || !isOdometerStale({ state, vehicleCreatedAt: input.vehicleCreatedAt, today: input.today })) {
     return { created: false, nowQueue: state.nowQueue };
   }
 
@@ -99,7 +98,7 @@ export const ensureStaleOdometerPrompt = async (
       taskId,
       recommendationId: correlationId,
       title: "What's your current mileage?",
-      reason: `Haven't updated mileage since ${lastTouch}. Enter your odometer — takes a few seconds — so calendar reminders stay accurate.`,
+      reason: `Haven't updated mileage since ${lastTouch}. Enter your odometer — takes a few seconds — so maintenance timing stays accurate.`,
       status: "pending",
       taskKind: "verification",
       verificationCode: "VERIFY_ODOMETER",
@@ -114,8 +113,5 @@ export const ensureStaleOdometerPrompt = async (
     nowQueue: foldEvents(input.vehicleId, nextEvents).nowQueue,
   };
 };
-
-export const computeSnoozeUntil = (today: string, snoozeDays: number): string =>
-  addDays(today, snoozeDays);
 
 export const todayIsoDate = (): string => formatIsoDate(new Date());
