@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Check, Clock3, Pencil, X } from "lucide-react";
 import { OwnerServiceHistoryTimeline } from "@/components/owner-service-history-timeline";
+import { OwnerUnifiedHistoryTimeline } from "@/components/owner-unified-history-timeline";
 import { EmptyState } from "@/components/empty-state";
 import { ConsoleDetailPanel, ConsoleDetailPlaceholder, ConsoleSplit } from "@/components/console-split";
 import { DataGridToolbar } from "@/components/data-grid-toolbar";
@@ -12,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { OwnerHistoryItem, OwnershipRecordEntry, TimelineEntry } from "@/lib/console-types";
+import type { OwnerHistoryItem, TimelineEntry } from "@/lib/console-types";
 import { downloadCsv, filterByQuery, sortRows } from "@/lib/data-grid-utils";
 import { useConsoleListKeyboard } from "@/lib/use-console-list-keyboard";
 import { useAppUiStore } from "@/lib/store/app-ui-store";
@@ -50,18 +51,15 @@ type ServiceDraft = {
 
 type MaintenanceTimelineConsoleProps = {
   entries: TimelineEntry[];
-  ownershipRecords?: OwnershipRecordEntry[];
-  ownerHistoryTimeline?: OwnerHistoryItem[] | null;
   disabled?: boolean;
   defaultMileage?: number;
-  vehicleId?: string;
-  apiBase?: string;
-  onCaptureError?: (message: string) => void;
   onOpenEvidence?: (documentId: string) => void;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
   onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
   requireEditConfirmation?: boolean;
   ownerSimple?: boolean;
+  ownerHistoryItems?: OwnerHistoryItem[];
+  onGoToImport?: () => void;
 };
 
 const entryToDraft = (entry: TimelineEntry): ServiceDraft => ({
@@ -80,18 +78,15 @@ const formatShopLine = (entry: TimelineEntry): string => {
 
 export function MaintenanceTimelineConsole({
   entries,
-  ownershipRecords = [],
-  ownerHistoryTimeline = null,
   disabled = false,
   defaultMileage = 0,
-  vehicleId,
-  apiBase,
-  onCaptureError,
   onOpenEvidence,
   onUpdateService,
   onAddService,
   requireEditConfirmation = false,
   ownerSimple = false,
+  ownerHistoryItems,
+  onGoToImport,
 }: MaintenanceTimelineConsoleProps) {
   const selectedId = useAppUiStore((s) => s.selectedTimelineId);
   const setSelectedId = useAppUiStore((s) => s.setSelectedTimelineId);
@@ -307,17 +302,26 @@ export function MaintenanceTimelineConsole({
     void saveAdding();
   };
 
+  if (ownerSimple && ownerHistoryItems) {
+    return (
+      <OwnerUnifiedHistoryTimeline
+        items={ownerHistoryItems}
+        disabled={disabled}
+        defaultMileage={defaultMileage}
+        onUpdateService={onUpdateService}
+        onAddService={onAddService}
+        requireEditConfirmation={requireEditConfirmation}
+        onGoToImport={onGoToImport}
+      />
+    );
+  }
+
   if (ownerSimple) {
     return (
       <OwnerServiceHistoryTimeline
         entries={entries}
-        ownershipRecords={ownershipRecords}
-        historyItems={ownerHistoryTimeline}
         disabled={disabled}
         defaultMileage={defaultMileage}
-        vehicleId={vehicleId}
-        apiBase={apiBase}
-        onCaptureError={onCaptureError}
         onUpdateService={onUpdateService}
         onAddService={onAddService}
         requireEditConfirmation={requireEditConfirmation}
@@ -440,9 +444,6 @@ export function MaintenanceTimelineConsole({
         draft={addDraft}
         disabled={disabled}
         isSaving={isAddingSaving}
-        vehicleId={vehicleId}
-        apiBase={apiBase}
-        onCaptureError={onCaptureError}
         saveLabel={requireEditConfirmation && !confirmAdd ? "Review save" : "Save record"}
         confirmMessage={
           requireEditConfirmation && confirmAdd ? "Save again to confirm this maintenance record." : null

@@ -17,11 +17,8 @@ export async function POST(request: Request, context: RouteContext) {
     mileage: number;
     lineItems?: string[];
     total?: string;
-    source?: "owner_note" | "dealer" | "receipt" | "voice";
+    source?: "owner_note" | "dealer";
     note?: string;
-    storageKey?: string;
-    channel?: "receipt_upload" | "voice" | "photo" | "manual";
-    voiceTranscript?: string;
   };
 
   const result = await submitOwnerServiceNote(

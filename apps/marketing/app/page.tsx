@@ -84,7 +84,7 @@ export default function HomePage() {
             <a href="#loop">How it works</a>
             <a href="#demo">Demo</a>
             <a href="#architecture">Engineering</a>
-            <a className="nav-cta" href={siteConfig.appUrl} target="_blank" rel="noopener noreferrer">
+            <a className="nav-cta" href={siteConfig.appUrl}>
               Open app
             </a>
           </nav>
@@ -123,7 +123,7 @@ export default function HomePage() {
                 <a className="btn btn-primary" href="#supported">
                   Check your car
                 </a>
-                <a className="btn btn-secondary" href={siteConfig.appUrl} target="_blank" rel="noopener noreferrer">
+                <a className="btn btn-secondary" href={siteConfig.appUrl}>
                   Get early access
                 </a>
               </div>
@@ -175,7 +175,7 @@ export default function HomePage() {
               <a className="btn btn-primary" href={earlyAccessContent.ctaSecondary.href}>
                 {earlyAccessContent.ctaSecondary.label}
               </a>
-              <a className="btn btn-secondary" href={earlyAccessContent.cta.href} target="_blank" rel="noopener noreferrer">
+              <a className="btn btn-secondary" href={earlyAccessContent.cta.href}>
                 {earlyAccessContent.cta.label}
               </a>
             </div>
@@ -315,7 +315,7 @@ export default function HomePage() {
             <h2>Stop planning. Start showing up.</h2>
             <p>Free early access · pick your car — verified OEM schedule loads at {siteConfig.appUrl.replace("https://", "")}.</p>
             <div className="cta-row">
-              <a className="btn btn-primary" href={siteConfig.appUrl} target="_blank" rel="noopener noreferrer">
+              <a className="btn btn-primary" href={siteConfig.appUrl}>
                 Open the app
               </a>
               <a className="btn btn-secondary" href="#architecture">
@@ -342,9 +342,7 @@ export default function HomePage() {
                 <a href="#features">Features</a>
               </li>
               <li>
-                <a href={siteConfig.appUrl} target="_blank" rel="noopener noreferrer">
-                  App
-                </a>
+                <a href={siteConfig.appUrl}>App</a>
               </li>
               <li>
                 <a href="#positioning">Compare</a>

@@ -2,7 +2,6 @@ import {
   loadSupportedVehicleCatalog,
   loadTier2000SourceByPackId,
   resolvePackIdForVehicle,
-  resolveScheduleDepthForPack,
   resolveScheduleSourceLineForPack,
 } from "@vehicleos/knowledge";
 import { jsonResponse, type JsonResponse } from "./json-response.js";
@@ -52,7 +51,6 @@ export const filterSupportedVehicleRows = <
     powertrain?: string | null;
     packId: string;
     qaStatus: string;
-    scheduleDepth?: "verified" | "preview";
   },
 >(
   rows: T[],
@@ -63,12 +61,7 @@ export const filterSupportedVehicleRows = <
   const year = options.year;
   const q = options.q ? normalizeSearch(options.q) : "";
 
-  let filtered = rows.filter((row) => {
-    if (!options.verifiedOnly) return true;
-    if (row.qaStatus !== "auto_verified") return false;
-    const depth = row.scheduleDepth ?? resolveScheduleDepthForPack(row.packId);
-    return depth === "verified";
-  });
+  let filtered = rows.filter((row) => !options.verifiedOnly || row.qaStatus === "auto_verified");
 
   if (make) filtered = filtered.filter((row) => normalizeSearch(row.make) === make);
   if (model) filtered = filtered.filter((row) => normalizeSearch(row.model) === model);
@@ -193,7 +186,7 @@ export const checkVehicleSupport = (query: VehicleSupportQuery = {}): JsonRespon
 
 export const listSupportedVehicles = (
   options: ListSupportedVehiclesOptions = {},
-) => {
+): JsonResponse => {
   const catalog = loadSupportedVehicleCatalog();
   const rows = filterSupportedVehicleRows(catalog.vehicles, options);
   const registryByPackId = getTier2000SourceByPackId();
@@ -214,7 +207,6 @@ export const listSupportedVehicles = (
         catalog.vehicles,
         registryByPackId,
       ),
-      scheduleDepth: row.scheduleDepth ?? resolveScheduleDepthForPack(row.packId),
     })),
     total: filterSupportedVehicleRows(catalog.vehicles, {
       ...options,

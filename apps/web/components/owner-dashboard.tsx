@@ -41,9 +41,9 @@ import { VerificationMaturityPanel } from "./verification-maturity-panel";
 import { draftLineItems, type MaintenanceRecordDraft } from "@/components/maintenance-record-fields";
 import type {
   MaintenanceScheduleView,
+  OwnershipRecordEntry,
   OwnerDueItemsView,
   OwnerHistoryItem,
-  OwnershipRecordEntry,
   PipelinePhase,
   OwnerReminderItem,
   QueueItem,
@@ -77,7 +77,7 @@ export function OwnerDashboard() {
   const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
   const [ownershipRecords, setOwnershipRecords] = useState<OwnershipRecordEntry[]>([]);
   const [ownerDueItems, setOwnerDueItems] = useState<OwnerDueItemsView | null>(null);
-  const [ownerHistoryTimeline, setOwnerHistoryTimeline] = useState<OwnerHistoryItem[] | null>(null);
+  const [ownerHistoryTimeline, setOwnerHistoryTimeline] = useState<OwnerHistoryItem[]>([]);
   const [serviceHistoryTab, setServiceHistoryTab] = useState<ServiceHistoryTab>("schedule");
   const [nowQueue, setNowQueue] = useState<QueueItem[]>([]);
   const [reminders, setReminders] = useState<OwnerReminderItem[]>([]);
@@ -148,20 +148,6 @@ export function OwnerDashboard() {
 
   useReminderNotifications(reminders);
 
-  useEffect(() => {
-    if (garage.isLoading || typeof window === "undefined") return;
-
-    const url = new URL(window.location.href);
-    if (url.searchParams.get("addVehicle") !== "1") return;
-
-    url.searchParams.delete("addVehicle");
-    window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
-
-    if (garage.isAddingVehicle) return;
-    const result = garage.startAddVehicle();
-    if (!result.ok) notify(result.reason, "error");
-  }, [garage.isAddingVehicle, garage.isLoading, garage.startAddVehicle]);
-
   const inSetupFlow =
     isLoading ||
     garage.isLoading ||
@@ -202,8 +188,8 @@ export function OwnerDashboard() {
         reminders?: OwnerReminderItem[];
         verifications?: QueueItem[];
         ownershipRecords?: OwnershipRecordEntry[];
-        ownerDueItems?: OwnerDueItemsView | null;
-        ownerHistoryTimeline?: OwnerHistoryItem[] | null;
+        ownerDueItems?: OwnerDueItemsView;
+        ownerHistoryTimeline?: OwnerHistoryItem[];
         quoteAnalyses?: QuoteAnalysisView[];
         evidenceVault?: EvidenceVaultItem[];
         knowledgeSchedule?: { serviceName: string; intervalMiles?: number; manualTitle: string }[];
@@ -215,7 +201,7 @@ export function OwnerDashboard() {
       setTimeline(body.timeline);
       setOwnershipRecords(body.ownershipRecords ?? []);
       setOwnerDueItems(body.ownerDueItems ?? null);
-      setOwnerHistoryTimeline(body.ownerHistoryTimeline ?? null);
+      setOwnerHistoryTimeline(body.ownerHistoryTimeline ?? []);
       applyQueueState(body);
       setQuoteAnalyses(body.quoteAnalyses ?? []);
       setEvidenceVault(body.evidenceVault ?? []);
@@ -241,7 +227,7 @@ export function OwnerDashboard() {
     setTimeline([]);
     setOwnershipRecords([]);
     setOwnerDueItems(null);
-    setOwnerHistoryTimeline(null);
+    setOwnerHistoryTimeline([]);
     setNowQueue([]);
     setReminders([]);
     setVerifications([]);
@@ -417,54 +403,12 @@ export function OwnerDashboard() {
     if (!vehicle) return;
     const lineItems = draftLineItems(draft);
     if (lineItems.length === 0) {
-      feedback("Add at least one line item or decision note.");
-      return;
-    }
-
-    const mileage = Number(draft.mileage);
-    if (!Number.isFinite(mileage)) {
-      feedback("Enter a valid mileage.");
+      feedback("Add at least one line item.");
       return;
     }
 
     setIsBusy(true);
     try {
-      const useVoice = Boolean(draft.voiceStorageKey && draft.voiceTranscript.trim());
-      const useReceiptEvidence = Boolean(draft.evidenceStorageKey);
-
-      if (useVoice) {
-        const response = await fetch(`${apiBase}/api/vehicles/${vehicle.id}/voice`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            transcript: draft.voiceTranscript.trim(),
-            storageKey: draft.voiceStorageKey,
-            shop: draft.shop.trim() || undefined,
-            shopLocation: draft.shopLocation.trim() || undefined,
-            serviceDate: draft.serviceDate,
-            mileage,
-            lineItems,
-            total: draft.total.trim() || undefined,
-          }),
-        });
-        const body = (await response.json()) as {
-          timeline?: TimelineEntry[];
-          currentMileage?: number;
-          error?: string;
-          conflict?: boolean;
-        };
-        if (!response.ok && response.status !== 409) {
-          throw new Error(body.error ?? "Could not save voice maintenance record.");
-        }
-        if (body.timeline) setTimeline(body.timeline);
-        if (typeof body.currentMileage === "number") {
-          setVehicle((current) => (current ? { ...current, currentMileage: body.currentMileage! } : current));
-        }
-        feedback(body.conflict ? "Saved — assistant flagged a conflict for review." : "Maintenance record saved.");
-        void loadVehicleState(vehicle);
-        return;
-      }
-
       const response = await fetch(`${apiBase}/api/vehicles/${vehicle.id}/notes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -472,14 +416,10 @@ export function OwnerDashboard() {
           shop: draft.shop.trim() || undefined,
           shopLocation: draft.shopLocation.trim() || undefined,
           serviceDate: draft.serviceDate,
-          mileage,
+          mileage: Number(draft.mileage),
           lineItems,
           total: draft.total.trim() || undefined,
-          note: draft.ownerNote.trim() || undefined,
-          voiceTranscript: draft.voiceTranscript.trim() || undefined,
-          source: useReceiptEvidence ? "receipt" : "owner_note",
-          storageKey: draft.evidenceStorageKey,
-          channel: useReceiptEvidence ? "receipt_upload" : "manual",
+          source: "owner_note",
         }),
       });
       const body = (await response.json()) as {
@@ -728,7 +668,7 @@ export function OwnerDashboard() {
         <PanelCard
           hideHeader={!isDeveloper}
           title="Maintenance"
-          description="Forward OEM schedule and full vehicle history — maintenance, RMV, and registration."
+          description="Forward OEM schedule and unified service + RMV history."
         >
           <MaintenanceTimelineSection
             timeline={timeline}
@@ -738,7 +678,6 @@ export function OwnerDashboard() {
             scheduleNear={maintenanceSchedule.near}
             scheduleExtended={maintenanceSchedule.extended}
             scheduleFull={maintenanceSchedule.full}
-            currentMileage={vehicle.currentMileage}
             effectiveMilesPerYear={maintenanceSchedule.effectiveMilesPerYear}
             hasKnowledgeSchedule={knowledgeSchedule.length > 0}
             activeTab={serviceHistoryTab}
@@ -746,9 +685,6 @@ export function OwnerDashboard() {
             ownerSimple={!isDeveloper}
             disabled={isBusy}
             defaultMileage={vehicle.currentMileage}
-            vehicleId={vehicle.id}
-            apiBase={apiBase}
-            onCaptureError={(message) => feedback(message)}
             onOpenEvidence={openEvidence}
             onUpdateService={updateServiceRecord}
             onAddService={addMaintenanceRecord}
@@ -782,10 +718,6 @@ export function OwnerDashboard() {
               if (body.maintenanceSchedule) {
                 setMaintenanceSchedule(body.maintenanceSchedule as MaintenanceScheduleView);
               }
-              const importedDueItems = (body as { ownerDueItems?: OwnerDueItemsView | null }).ownerDueItems;
-              if (importedDueItems) {
-                setOwnerDueItems(importedDueItems);
-              }
               const skipped = body.skippedCount ?? 0;
               if (body.importedCount === 0 && skipped > 0) {
                 feedback(`All ${skipped} row(s) already on your timeline — nothing new imported.`);
@@ -812,7 +744,7 @@ export function OwnerDashboard() {
                 setServiceHistoryTab("history");
                 setActiveSection("timeline");
                 feedback(
-                  `${body.importedCount} new ownership record(s) imported (${skipped} duplicate(s) skipped). Check History.`,
+                  `${body.importedCount} new ownership record(s) imported (${skipped} duplicate(s) skipped).`,
                 );
               } else if (body.importedCount > 0) {
                 setServiceHistoryTab("history");

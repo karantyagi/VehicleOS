@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CarfaxImportReview, type CarfaxReviewRow } from "@/components/carfax-import-review";
-import { DogfoodFixturePicker } from "@/components/dogfood-fixture-picker";
 import { RmvImportReview, type RmvReviewRow } from "@/components/rmv-import-review";
 import {
   parseVehicleOsImportJson,
@@ -30,12 +29,7 @@ import {
   type ShopLocationHint,
   ownershipRecordFingerprint,
 } from "@vehicleos/domain";
-import {
-  DEFAULT_DOGFOOD_FIXTURE_ID,
-  fetchDogfoodJson,
-  getDogfoodFixtureProfile,
-  type DogfoodFixtureId,
-} from "@/lib/dogfood-fixtures";
+import { DOGFOOD_FIXTURES, fetchDogfoodJson } from "@/lib/extraction-status";
 import type { OwnershipRecordEntry, TimelineEntry } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
@@ -197,7 +191,6 @@ export function RecordImportPanel({
   const [isImporting, setIsImporting] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
   const [isLoadingDogfood, setIsLoadingDogfood] = useState(false);
-  const [selectedDogfoodId, setSelectedDogfoodId] = useState<DogfoodFixtureId>(DEFAULT_DOGFOOD_FIXTURE_ID);
   const [pdfFileName, setPdfFileName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -311,26 +304,17 @@ export function RecordImportPanel({
     [loadJsonText, onError],
   );
 
-  const loadDogfoodFixture = async (options?: { rmvDemo?: boolean }) => {
+  const loadDogfoodFixture = async () => {
     setIsLoadingDogfood(true);
     setParseError("");
-    const profile = getDogfoodFixtureProfile(selectedDogfoodId);
     try {
       if (activeCategory === "carfax") {
-        const draft = await fetchDogfoodJson<VehicleOsImportV1>(profile.carfaxUrl);
-        await applyCarfaxDraft(draft, [
-          `Dogfood CARFAX JSON loaded (${profile.label}) — review rows before confirming.`,
-        ]);
+        const draft = await fetchDogfoodJson<VehicleOsImportV1>(DOGFOOD_FIXTURES.carfax);
+        await applyCarfaxDraft(draft, ["Dogfood CARFAX JSON loaded — review rows before confirming."]);
         return;
       }
-      const rmvUrl =
-        options?.rmvDemo && profile.rmvDemoUrl ? profile.rmvDemoUrl : profile.rmvUrl;
-      const draft = await fetchDogfoodJson<VehicleOsRmvImportV1>(rmvUrl);
-      applyRmvDraft(draft, [
-        options?.rmvDemo
-          ? `Demo RMV JSON loaded (${profile.label}) — registration expires soon for Schedule testing.`
-          : `Dogfood RMV JSON loaded (${profile.label}) — review records before confirming.`,
-      ]);
+      const draft = await fetchDogfoodJson<VehicleOsRmvImportV1>(DOGFOOD_FIXTURES.rmv);
+      applyRmvDraft(draft, ["Dogfood RMV JSON loaded — review records before confirming."]);
     } catch (error) {
       onError(error instanceof Error ? error.message : "Could not load dogfood fixture.");
     } finally {
@@ -738,40 +722,21 @@ export function RecordImportPanel({
               Recommended for dogfood
             </Badge>
           </div>
-          <div className="space-y-3">
-            <DogfoodFixturePicker
-              value={selectedDogfoodId}
-              onValueChange={setSelectedDogfoodId}
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
               disabled={disabled || isLoadingDogfood}
-              id="record-import-dogfood-fixture"
-            />
-            <div className="flex flex-wrap gap-2">
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                disabled={disabled || isLoadingDogfood}
-                onClick={() => void loadDogfoodFixture()}
-              >
-                {isLoadingDogfood
-                  ? "Loading…"
-                  : activeCategory === "carfax"
-                    ? "Load dogfood CARFAX JSON"
-                    : "Load dogfood RMV JSON"}
-              </Button>
-              {activeCategory === "rmv" &&
-              getDogfoodFixtureProfile(selectedDogfoodId).rmvDemoUrl ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={disabled || isLoadingDogfood}
-                  onClick={() => void loadDogfoodFixture({ rmvDemo: true })}
-                >
-                  Load demo RMV (renewal visible)
-                </Button>
-              ) : null}
-              <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
+              onClick={() => void loadDogfoodFixture()}
+            >
+              {isLoadingDogfood
+                ? "Loading…"
+                : activeCategory === "carfax"
+                  ? "Load dogfood CARFAX JSON"
+                  : "Load dogfood RMV JSON"}
+            </Button>
+            <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
               <label className="cursor-pointer">
                 <FileUp className="mr-2 h-4 w-4" aria-hidden />
                 Choose JSON file
@@ -788,7 +753,6 @@ export function RecordImportPanel({
                 />
               </label>
             </Button>
-            </div>
           </div>
           <Textarea
             id="record-import-json"

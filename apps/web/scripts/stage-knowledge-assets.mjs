@@ -18,7 +18,7 @@ const copyDir = (name) => {
 rmSync(stageRoot, { recursive: true, force: true });
 mkdirSync(stageRoot, { recursive: true });
 
-for (const dir of ["packs", "catalog", "aliases", "schemas", "sources"]) {
+for (const dir of ["packs", "catalog", "aliases", "sources"]) {
   copyDir(dir);
 }
 
