@@ -42,6 +42,8 @@ describe("buildOwnerDueItems", () => {
           oemSource: { manualTitle: "2022 Elantra", page: "9-9", ruleId: "oil.v1" },
           dueDateConfidence: "oem_calendar",
           isStubSchedule: false,
+          oemTiming: "late",
+          overdueWithoutHistory: false,
         },
       ],
       summary: {
