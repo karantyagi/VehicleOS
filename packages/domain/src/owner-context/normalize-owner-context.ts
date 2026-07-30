@@ -3,6 +3,7 @@ import type {
   IntervalOverlayMemory,
   MaintenancePatternMemory,
   OwnerContextMemory,
+  ServiceBenefitMemory,
   TireRotationConditionId,
 } from "./types.js";
 
@@ -109,6 +110,37 @@ const normalizeShopLocations = (value: unknown): Record<string, string> | undefi
   return Object.fromEntries(entries);
 };
 
+const normalizeServiceBenefits = (
+  value: unknown,
+): Record<string, ServiceBenefitMemory> | undefined => {
+  if (!value || typeof value !== "object") return undefined;
+
+  const normalized: Record<string, ServiceBenefitMemory> = {};
+  for (const [serviceId, benefitValue] of Object.entries(value as Record<string, unknown>)) {
+    if (!serviceId.trim() || !benefitValue || typeof benefitValue !== "object") continue;
+    const benefit = benefitValue as Record<string, unknown>;
+    const providerName = normalizeString(benefit.providerName);
+    const providerLocation = normalizeString(benefit.providerLocation);
+    const benefitLabel = normalizeString(benefit.benefitLabel);
+    const confirmedAt = normalizeString(benefit.confirmedAt);
+    const expectedCost =
+      typeof benefit.expectedCost === "number" && Number.isFinite(benefit.expectedCost)
+        ? benefit.expectedCost
+        : undefined;
+    if (!providerName || !benefitLabel || !confirmedAt) continue;
+    normalized[serviceId.trim()] = {
+      providerName,
+      ...(providerLocation ? { providerLocation } : {}),
+      benefitLabel,
+      expectedCost: expectedCost ?? null,
+      currency: "USD",
+      confirmedAt,
+    };
+  }
+
+  return Object.keys(normalized).length > 0 ? normalized : undefined;
+};
+
 export const normalizeOwnerContextMemory = (value: unknown): OwnerContextMemory => {
   if (!value || typeof value !== "object") return {};
 
@@ -123,6 +155,7 @@ export const normalizeOwnerContextMemory = (value: unknown): OwnerContextMemory 
     shopLocations: normalizeShopLocations(record.shopLocations),
     maintenancePatterns: normalizeMaintenancePatterns(record.maintenancePatterns),
     intervalOverlays: normalizeIntervalOverlays(record.intervalOverlays),
+    serviceBenefits: normalizeServiceBenefits(record.serviceBenefits),
   };
 };
 
@@ -135,6 +168,7 @@ export const hasOwnerContextMemory = (value: OwnerContextMemory | null | undefin
       (value.ownerStatedPriorities?.length ?? 0) > 0 ||
       Object.keys(value.shopLocations ?? {}).length > 0 ||
       Object.keys(value.maintenancePatterns ?? {}).length > 0 ||
-      Object.keys(value.intervalOverlays ?? {}).length > 0,
+      Object.keys(value.intervalOverlays ?? {}).length > 0 ||
+      Object.keys(value.serviceBenefits ?? {}).length > 0,
   );
 };

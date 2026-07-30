@@ -43,6 +43,7 @@ const loadCarfaxTimelineAsImported = (): ServiceTimelineEntry[] => {
   ) as {
     services: Array<{
       shop: string;
+      shopLocation?: string;
       serviceDate: string;
       mileage: number;
       lineItems: string[];
@@ -53,6 +54,7 @@ const loadCarfaxTimelineAsImported = (): ServiceTimelineEntry[] => {
   return carfax.services.map((service, serviceIndex) => ({
     serviceId: `carfax-import-${serviceIndex}`,
     shop: service.shop,
+    shopLocation: service.shopLocation,
     serviceDate: service.serviceDate,
     mileage: service.mileage,
     lineItems: service.lineItems,
@@ -200,6 +202,101 @@ describe("buildOwnerServiceScheduleBoard — 2021 TLX dogfood", () => {
     );
     expect(iraDriveBeltEvents).toHaveLength(1);
     expect(iraDriveBeltEvents?.[0]?.lineItem).toBe("Drive belts checked");
+  });
+
+  it("builds the TLX Rotate Tires interval and Costco action recommendation", () => {
+    const board = buildOwnerServiceScheduleBoard({
+      knowledgeSchedule,
+      timeline: loadCarfaxTimelineAsImported(),
+      currentMileage: 59_100,
+      effectiveMilesPerYear: 10_000,
+      today: "2026-07-30",
+      ownerContextMemory: {
+        primaryCity: "Boston",
+        lastTireProduct: "Michelin Pilot Sport All Season 4 255/40ZR19",
+        ownerStatedPriorities: ["safety", "maximize_tire_life"],
+      },
+      serviceAliasRegistry: aliasRegistry,
+    });
+
+    const rotation = board.rows.find((row) => row.entryId === "mm-sub-1");
+    expect(rotation?.intelligence?.itemKind).toBe("tire_rotation");
+    expect(rotation?.intelligence?.whyNow).toContain("7,219 mi remaining");
+    expect(rotation?.intelligence?.intervalRecommendation).toMatchObject({
+      status: "active",
+      recommendedMiles: 7_000,
+      projectedDueMileage: 65_819,
+      recentGapsMiles: [7_360, 7_982, 5_594],
+      recentAverageMiles: 6_979,
+      confidence: "medium",
+      evidenceNote: "3 recent gaps · variable",
+      activeSource: "oem",
+    });
+    expect(rotation?.intelligence?.actionRecommendation).toMatchObject({
+      status: "active",
+      method: "tire_retailer",
+      providerName: "Costco Tire Center",
+      providerLocation: "Waltham, MA",
+      expectedCost: {
+        amount: 0,
+        label: "Expected $0",
+        basis: "observed_history",
+        requiresConfirmation: true,
+      },
+      confidence: {
+        provider: "high",
+        cost: "medium",
+        booking: "medium",
+      },
+      nextAction: {
+        label: "Open Costco Tire Center",
+        url: "https://tires.costco.com/",
+      },
+    });
+    expect(rotation?.intelligence?.actionRecommendation.whyThisOption).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining("current tire set was installed at Costco"),
+        expect.stringContaining("last 3 rotations"),
+      ]),
+    );
+  });
+
+  it("does not require three histories before showing a Rotate Tires recommendation", () => {
+    const rotationVisits = loadCarfaxTimelineAsImported()
+      .filter((entry) => entry.lineItems.some((lineItem) => /tires rotated/i.test(lineItem)))
+      .sort((left, right) => left.mileage - right.mileage);
+
+    const oneRecordBoard = buildOwnerServiceScheduleBoard({
+      knowledgeSchedule,
+      timeline: rotationVisits.slice(0, 1),
+      currentMileage: 6_000,
+      effectiveMilesPerYear: 10_000,
+      today: "2026-07-30",
+      serviceAliasRegistry: aliasRegistry,
+    });
+    const oneRecord = oneRecordBoard.rows.find((row) => row.entryId === "mm-sub-1");
+    expect(oneRecord?.intelligence?.intervalRecommendation.status).toBe("active");
+    expect(oneRecord?.intelligence?.intervalRecommendation.evidenceNote).toBe(
+      "Last rotation only · no observed gap yet",
+    );
+    expect(oneRecord?.intelligence?.intervalRecommendation.confidence).toBe("low");
+
+    const twoRecordBoard = buildOwnerServiceScheduleBoard({
+      knowledgeSchedule,
+      timeline: rotationVisits.slice(0, 2),
+      currentMileage: 11_000,
+      effectiveMilesPerYear: 10_000,
+      today: "2026-07-30",
+      serviceAliasRegistry: aliasRegistry,
+    });
+    const twoRecords = twoRecordBoard.rows.find((row) => row.entryId === "mm-sub-1");
+    expect(twoRecords?.intelligence?.intervalRecommendation.status).toBe("active");
+    expect(twoRecords?.intelligence?.intervalRecommendation.evidenceNote).toContain(
+      "One observed gap",
+    );
+    expect(twoRecords?.intelligence?.intervalRecommendation.evidenceNote).not.toContain(
+      "average",
+    );
   });
 
   it("uses needs_baseline when no history imported", () => {

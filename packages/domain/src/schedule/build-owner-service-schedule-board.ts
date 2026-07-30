@@ -3,6 +3,10 @@ import type { ServiceAliasRegistry } from "../knowledge/service-alias-registry.j
 import type { OwnerContextMemory } from "../owner-context/types.js";
 import type { KnowledgeScheduleEntry, ServiceTimelineEntry } from "../projections/types.js";
 import {
+  buildMaintenanceItemIntelligence,
+  type MaintenanceItemIntelligence,
+} from "./build-maintenance-item-intelligence.js";
+import {
   projectMaintenanceSchedule,
   type ScheduleProjectionRow,
   type ScheduleProjectionStatus,
@@ -29,6 +33,7 @@ export type OwnerServiceScheduleRow = ScheduleProjectionRow & {
   historyEvents: OwnerServiceHistoryEvent[];
   gapNote: string | null;
   milesSinceLast: number | null;
+  intelligence?: MaintenanceItemIntelligence;
 };
 
 export type BuildOwnerServiceScheduleBoardInput = {
@@ -246,6 +251,15 @@ export const buildOwnerServiceScheduleBoard = (
         milesSinceLast,
         verdict,
       });
+      const intelligence = buildMaintenanceItemIntelligence({
+        row,
+        timeline: input.timeline,
+        currentMileage: input.currentMileage,
+        effectiveMilesPerYear: projection.effectiveMilesPerYear,
+        ownerContextMemory: input.ownerContextMemory,
+        canonicalServiceId: scheduleEntry?.canonicalServiceId ?? null,
+        serviceAliasRegistry: input.serviceAliasRegistry,
+      });
 
       return {
         ...row,
@@ -256,6 +270,7 @@ export const buildOwnerServiceScheduleBoard = (
         historyEvents,
         gapNote,
         milesSinceLast,
+        intelligence,
       };
     })
     .sort((left, right) => {

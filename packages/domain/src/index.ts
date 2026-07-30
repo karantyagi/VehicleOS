@@ -174,6 +174,19 @@ export {
   type OwnerServiceVerdict,
 } from "./schedule/build-owner-service-schedule-board.js";
 export {
+  buildMaintenanceItemIntelligence,
+  type ActionRecommendation,
+  type EvidenceState,
+  type IntervalRecommendation,
+  type MaintenanceItemIntelligence,
+  type MaintenanceRationaleAxis,
+  type MaintenanceRationaleAxisId,
+  type QualitativeConfidence,
+} from "./schedule/build-maintenance-item-intelligence.js";
+export {
+  mergeServiceBenefitMemory,
+} from "./owner-context/merge-service-benefit-memory.js";
+export {
   buildOwnerDueItems,
   isOwnerDueItemActionable,
   type OwnerDueItem,
@@ -361,6 +374,7 @@ export type {
   MaintenancePatternMemory,
   IntervalOverlayMemory,
   IntervalBasis,
+  ServiceBenefitMemory,
   TireRotationConditionId,
 } from "./owner-context/types.js";
 export {
