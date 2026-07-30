@@ -53,6 +53,11 @@ export const updateVehicleService = async (
     return jsonResponse(200, {
       timeline: view.timeline,
       currentMileage: view.currentMileage,
+      nowQueue: view.nowQueue,
+      reminders: view.reminders,
+      verifications: view.verifications,
+      pendingReminderCount: view.pendingReminderCount,
+      pendingVerificationCount: view.pendingVerificationCount,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not update service record.";
@@ -94,6 +99,11 @@ export const mergeVehicleServices = async (
     return jsonResponse(200, {
       timeline: view.timeline,
       currentMileage: view.currentMileage,
+      nowQueue: view.nowQueue,
+      reminders: view.reminders,
+      verifications: view.verifications,
+      pendingReminderCount: view.pendingReminderCount,
+      pendingVerificationCount: view.pendingVerificationCount,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not merge service records.";

@@ -111,13 +111,13 @@ export {
 export {
   buildOwnerReminderView,
   buildOwnerReminderViews,
+  buildOwnerVerificationViews,
   isActiveReminder,
   splitOwnerQueues,
   type OwnerReminderView,
 } from "./now/build-owner-reminders.js";
 export {
   formatOwnerDeadline,
-  formatSnoozeEscalation,
   resolveAttentionWindow,
   resolveReminderUrgency,
   addDays,

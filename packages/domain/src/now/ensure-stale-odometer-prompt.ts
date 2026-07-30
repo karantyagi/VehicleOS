@@ -74,14 +74,14 @@ export const ensureStaleOdometerPrompt = async (
   const events = await loadVehicleEvents(input.eventStore, input.vehicleId);
   const state = foldEvents(input.vehicleId, events);
 
-  const hasPendingPrompt = state.nowQueue.some(
+  const hasUnresolvedPrompt = state.nowQueue.some(
     (item) =>
-      item.status === "pending" &&
+      (item.status === "pending" || item.status === "snoozed") &&
       item.taskKind === "verification" &&
       item.ruleId === STALE_ODOMETER_RULE_ID,
   );
 
-  if (hasPendingPrompt || !isOdometerStale({ state, vehicleCreatedAt: input.vehicleCreatedAt, today: input.today })) {
+  if (hasUnresolvedPrompt || !isOdometerStale({ state, vehicleCreatedAt: input.vehicleCreatedAt, today: input.today })) {
     return { created: false, nowQueue: state.nowQueue };
   }
 
@@ -99,7 +99,7 @@ export const ensureStaleOdometerPrompt = async (
       taskId,
       recommendationId: correlationId,
       title: "What's your current mileage?",
-      reason: `Haven't updated mileage since ${lastTouch}. Enter your odometer — takes a few seconds — so calendar reminders stay accurate.`,
+      reason: `Haven't updated mileage since ${lastTouch}. Enter your odometer — takes a few seconds — so maintenance timing stays accurate.`,
       status: "pending",
       taskKind: "verification",
       verificationCode: "VERIFY_ODOMETER",

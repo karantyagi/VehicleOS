@@ -22,6 +22,7 @@ export type MaintenanceRecordDraft = {
   evidenceFileName?: string;
   voiceStorageKey?: string;
   voiceFileName?: string;
+  attentionTaskId?: string;
 };
 
 export const emptyMaintenanceRecordDraft = (defaultMileage: number): MaintenanceRecordDraft => ({

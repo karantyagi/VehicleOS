@@ -189,7 +189,7 @@ describe("detectIntervalProposalForEntry", () => {
     expect(proposal?.intervalMiles).toBe(6_000);
     expect(proposal?.intervalMonths).toBeNull();
     expect(formatIntervalProposalTaskReason(proposal!)).toContain(
-      "Use miles driven for rotation reminders",
+      "Use miles driven for rotation timing",
     );
     expect(formatIntervalProposalTaskReason(proposal!)).toContain(
       "OEM guidance (7,500 mi / 12 mo) stays on file",

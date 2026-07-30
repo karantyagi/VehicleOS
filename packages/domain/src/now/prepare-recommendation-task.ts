@@ -87,7 +87,7 @@ export const buildTimeFirstTaskCopy = (input: {
   const reason = `${reasonParts.join(" ")}`.trim();
 
   const urgency = isRenewalRuleId(input.recommendation.ruleId)
-    ? resolveReminderUrgency({ dueBy, today, status: "pending", snoozeUntil: null })
+    ? resolveReminderUrgency({ dueBy, today })
     : scheduleRow?.status === "overdue"
       ? "overdue"
       : scheduleRow?.status === "due_soon"

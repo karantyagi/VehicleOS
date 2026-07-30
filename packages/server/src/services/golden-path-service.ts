@@ -267,8 +267,7 @@ export const createGoldenPathService = (deps: GoldenPathDeps) => {
     async decideOnTask(input: {
       vehicleId: string;
       taskId: string;
-      decision: TaskDecision;
-      snoozeDays?: number;
+      decision: Exclude<TaskDecision, "snooze">;
     }) {
       await decideTask({ eventStore, ...input });
       return getVehicleState(input.vehicleId);

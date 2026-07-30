@@ -19,6 +19,7 @@ export async function POST(request: Request, context: RouteContext) {
     total?: string;
     source?: "owner_note" | "dealer";
     note?: string;
+    completedTaskId?: string;
   };
 
   const result = await submitOwnerServiceNote(

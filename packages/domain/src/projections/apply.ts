@@ -9,8 +9,10 @@ import {
 export { createEmptyVehicleState };
 
 const taskStatusFromDecision = (
-  decision: "approve" | "dismiss" | "snooze",
+  decision: "schedule" | "complete" | "approve" | "dismiss" | "snooze",
 ): NowQueueItem["status"] => {
+  if (decision === "schedule") return "scheduled";
+  if (decision === "complete") return "completed";
   if (decision === "approve") return "approved";
   if (decision === "dismiss") return "dismissed";
   return "snoozed";

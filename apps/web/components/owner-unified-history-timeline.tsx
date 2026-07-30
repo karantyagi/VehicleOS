@@ -37,6 +37,7 @@ type OwnerUnifiedHistoryTimelineProps = {
   requireEditConfirmation?: boolean;
   onGoToImport?: () => void;
   addRequestKey?: number;
+  addRequestTaskId?: string | null;
   onAddRequestHandled?: () => void;
 };
 
@@ -92,6 +93,7 @@ export function OwnerUnifiedHistoryTimeline({
   requireEditConfirmation = false,
   onGoToImport,
   addRequestKey = 0,
+  addRequestTaskId = null,
   onAddRequestHandled,
 }: OwnerUnifiedHistoryTimelineProps) {
   const yearGroups = useMemo(() => groupByYear(items), [items]);
@@ -126,20 +128,23 @@ export function OwnerUnifiedHistoryTimeline({
     });
   };
 
-  const startAdding = () => {
+  const startAdding = (attentionTaskId?: string | null) => {
     if (!onAddService || disabled) return;
     setIsAdding(true);
-    setAddDraft(emptyMaintenanceRecordDraft(defaultMileage));
+    setAddDraft({
+      ...emptyMaintenanceRecordDraft(defaultMileage),
+      ...(attentionTaskId ? { attentionTaskId } : {}),
+    });
     setConfirmAdd(false);
   };
 
   useEffect(() => {
     if (addRequestKey <= 0) return;
-    startAdding();
+    startAdding(addRequestTaskId);
     onAddRequestHandled?.();
     // The incrementing key represents an explicit owner action.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addRequestKey, onAddRequestHandled]);
+  }, [addRequestKey, addRequestTaskId, onAddRequestHandled]);
 
   const saveAdding = async () => {
     if (!onAddService || !addDraft || draftLineItems(addDraft).length === 0) return;
@@ -164,7 +169,7 @@ export function OwnerUnifiedHistoryTimeline({
         />
         <div className="flex flex-wrap justify-center gap-2">
           {onAddService ? (
-            <Button type="button" size="sm" disabled={disabled} onClick={startAdding}>
+            <Button type="button" size="sm" disabled={disabled} onClick={() => startAdding()}>
               <Plus className="mr-1.5 h-4 w-4" aria-hidden />
               Add maintenance record
             </Button>
@@ -186,7 +191,7 @@ export function OwnerUnifiedHistoryTimeline({
           Service visits and RMV/DMV ownership events in one timeline.
         </p>
         {onAddService && !isAdding ? (
-          <Button type="button" size="sm" variant="outline" disabled={disabled} onClick={startAdding}>
+          <Button type="button" size="sm" variant="outline" disabled={disabled} onClick={() => startAdding()}>
             <Plus className="mr-1.5 h-4 w-4" aria-hidden />
             Add maintenance
           </Button>

@@ -13,6 +13,7 @@ type OwnerNoteBody = {
   total?: string;
   source?: Extract<ServiceRecordSource, "owner_note" | "dealer">;
   note?: string;
+  completedTaskId?: string;
 };
 
 type AuthContext = {
@@ -57,6 +58,18 @@ export const submitOwnerServiceNote = async (
     body.shop?.trim() ||
     (source === "dealer" ? "Dealer service" : "Owner noted");
 
+  if (body.completedTaskId) {
+    const snapshot = await services.goldenPath.getVehicleState(vehicleId);
+    const task = snapshot.state.nowQueue.find((item) => item.taskId === body.completedTaskId);
+    const isCompletable =
+      task &&
+      task.taskKind !== "verification" &&
+      (task.status === "pending" || task.status === "snoozed");
+    if (!isCompletable) {
+      return jsonResponse(400, { error: "That Home item is no longer waiting for completion." });
+    }
+  }
+
   const result = await services.goldenPath.confirmService({
     vehicleId,
     shop,
@@ -84,10 +97,20 @@ export const submitOwnerServiceNote = async (
     });
   }
 
+  const finalSnapshot = body.completedTaskId
+    ? await services.goldenPath.decideOnTask({
+        vehicleId,
+        taskId: body.completedTaskId,
+        decision: "complete",
+      })
+    : null;
+  const finalState = finalSnapshot?.state ?? result.result.state;
+  const finalEvents = finalSnapshot?.events ?? result.result.events;
+
   return jsonResponse(result.result.skippedDuplicate ? 200 : 201, {
     duplicateSkipped: result.result.skippedDuplicate ?? false,
     recommendation: result.result.recommendation,
     task: result.result.task,
-    ...buildVehicleStateView(result.result.state, vehicle),
+    ...buildVehicleStateView(finalState, vehicle, finalEvents),
   });
 };

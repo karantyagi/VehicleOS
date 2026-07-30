@@ -39,14 +39,11 @@ export type OwnerReminderItem = {
   title: string;
   reason: string;
   status: string;
-  effectiveStatus: "pending" | "snoozed" | "done";
+  effectiveStatus: "pending" | "done";
   deadlineLabel: string;
   dueBy: string | null;
-  urgency: "overdue" | "due_now" | "due_soon" | "upcoming" | "snoozed";
+  urgency: "overdue" | "due_now" | "due_soon" | "upcoming";
   attentionWindow: "overdue" | "this_week" | "next_week" | "this_month" | "later";
-  snoozeCount: number;
-  snoozeUntil: string | null;
-  escalation: string | null;
   ruleId?: string;
 };
 

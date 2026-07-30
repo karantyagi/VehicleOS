@@ -12,7 +12,7 @@ This queue records adopted product direction. It does not authorize notification
 |----|----------|--------|------|---------------------|
 | WEB-ATTN-1 | P0 | Implemented | Replace owner-facing **Reminders** framing with a neutral home/attention framing | **Home** answers what needs action this week without promising push delivery |
 | WEB-ATTN-2 | P0 | Implemented | Remove Snooze from the owner web workflow | No new owner snooze action is offered; existing snooze events remain readable and visible as unresolved attention |
-| WEB-ATTN-3 | P0 | Implemented | Define the web action lifecycle | Scheduled, Done, Fix this, and Not needed have distinct paths; Done opens maintenance record creation |
+| WEB-ATTN-3 | P0 | Implemented | Define the web action lifecycle | Scheduled and completed are distinct persisted states; Done completes its Home item only after the service record saves; Fix this reprojects corrected history; Not needed is not recreated by a no-change refresh |
 | WEB-ATTN-4 | P0 | Implemented | Present attention by owner time horizon | This week leads; next week and this month support planning; overdue work remains in This week |
 | WEB-ATTN-5 | P1 | Implemented | Keep maintenance truth available behind the attention summary | Full history, actual due dates, evidence, and long-range schedule remain under Maintenance |
 | WEB-ATTN-6 | P0 | Implemented | Retire automatic browser-notification behavior from the current owner slice | The notification-permission hook and automatic browser delivery were removed |

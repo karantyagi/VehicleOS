@@ -50,6 +50,10 @@ The current owner actions should converge on:
 - **Fix this** — the recommendation or source data is wrong.
 - **Not needed** — the owner deliberately rejects the recommendation.
 
+Scheduled and completed are distinct persisted task outcomes. **Done** completes the
+originating Home item only after a maintenance record is saved successfully. **Fix
+this** leaves the item unresolved while corrected history is reprojected.
+
 Existing snooze events remain readable for event-history compatibility. The web cleanup must stop creating new owner snooze decisions and resurface unresolved historical snoozes as attention items.
 
 ### 4. Defer notification control as its own product subsystem

@@ -6,19 +6,16 @@ export const hasHandledVerificationPromptForRule = (input: {
   ruleId: string;
   today?: string;
 }): boolean => {
-  const today = input.today ?? new Date().toISOString().slice(0, 10);
-
   return input.nowQueue.some((item) => {
     if (item.taskKind !== "verification" || item.ruleId !== input.ruleId) return false;
 
     if (item.status === "pending") return true;
-    if (item.status === "dismissed" || item.status === "approved") return true;
-
-    if (item.status === "snoozed") {
-      if (!item.snoozeUntil) return true;
-      return item.snoozeUntil >= today;
-    }
-
-    return false;
+    if (item.status === "snoozed") return true;
+    return (
+      item.status === "dismissed" ||
+      item.status === "approved" ||
+      item.status === "scheduled" ||
+      item.status === "completed"
+    );
   });
 };

@@ -16,14 +16,11 @@ export type OwnerReminderView = {
   title: string;
   reason: string;
   status: NowQueueItem["status"];
-  effectiveStatus: "pending" | "snoozed" | "done";
+  effectiveStatus: "pending" | "done";
   deadlineLabel: string;
   dueBy: string | null;
   urgency: ReminderUrgency;
   attentionWindow: AttentionWindow;
-  snoozeCount: number;
-  snoozeUntil: string | null;
-  escalation: string | null;
   ruleId?: string;
 };
 
@@ -35,7 +32,14 @@ export const splitOwnerQueues = (items: NowQueueItem[]): {
   verifications: items.filter((item) => item.taskKind === "verification"),
 });
 
-export const isActiveReminder = (item: NowQueueItem, today: string): boolean => {
+export const buildOwnerVerificationViews = (items: NowQueueItem[]): NowQueueItem[] =>
+  splitOwnerQueues(items).verifications.map((item) =>
+    item.status === "snoozed"
+      ? { ...item, status: "pending", snoozeUntil: null }
+      : item,
+  );
+
+export const isActiveReminder = (item: NowQueueItem): boolean => {
   if (item.taskKind === "verification") return false;
   return item.status === "pending" || item.status === "snoozed";
 };
@@ -81,17 +85,12 @@ export const buildOwnerReminderView = (input: {
     scheduleRows: input.scheduleRows,
     dueItems: input.dueItems,
   });
-  const snoozeCount = input.item.snoozeCount ?? 0;
-  const snoozeUntil = input.item.snoozeUntil ?? null;
   const urgency = resolveReminderUrgency({
     dueBy,
     today: input.today,
-    status: input.item.status,
-    snoozeUntil,
   });
   const attentionWindow = resolveAttentionWindow(dueBy, input.today);
   const deadlineLabel = formatOwnerDeadline(dueBy, input.today);
-  const escalation = null;
 
   let reason = input.item.reason;
   if (!reason.includes(deadlineLabel)) {
@@ -112,9 +111,6 @@ export const buildOwnerReminderView = (input: {
     dueBy,
     urgency,
     attentionWindow,
-    snoozeCount,
-    snoozeUntil,
-    escalation,
     ruleId: input.item.ruleId,
   };
 };
@@ -128,7 +124,7 @@ export const buildOwnerReminderViews = (input: {
   const today = input.today ?? new Date().toISOString().slice(0, 10);
   return splitOwnerQueues(input.items).reminders
     .filter((item) => {
-      if (!isActiveReminder(item, today)) return false;
+      if (!isActiveReminder(item)) return false;
       if (isRenewalRuleId(item.ruleId)) return true;
       const row = matchScheduleRowForRule(item.ruleId, input.scheduleRows);
       if (item.ruleId?.startsWith("knowledge.policy.") && row?.status === "upcoming") {

@@ -66,6 +66,7 @@ type MaintenanceTimelineConsoleProps = {
   ownerHistoryItems?: OwnerHistoryItem[];
   onGoToImport?: () => void;
   addRequestKey?: number;
+  addRequestTaskId?: string | null;
   onAddRequestHandled?: () => void;
 };
 
@@ -96,6 +97,7 @@ export function MaintenanceTimelineConsole({
   ownerHistoryItems,
   onGoToImport,
   addRequestKey,
+  addRequestTaskId,
   onAddRequestHandled,
 }: MaintenanceTimelineConsoleProps) {
   const selectedId = useAppUiStore((s) => s.selectedTimelineId);
@@ -323,6 +325,7 @@ export function MaintenanceTimelineConsole({
         requireEditConfirmation={requireEditConfirmation}
         onGoToImport={onGoToImport}
         addRequestKey={addRequestKey}
+        addRequestTaskId={addRequestTaskId}
         onAddRequestHandled={onAddRequestHandled}
       />
     );

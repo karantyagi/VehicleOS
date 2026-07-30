@@ -27,6 +27,7 @@ type MaintenanceTimelineSectionProps = {
   hasKnowledgeSchedule?: boolean;
   activeTab?: ServiceHistoryTab;
   addRequestKey?: number;
+  addRequestTaskId?: string | null;
   onAddRequestHandled?: () => void;
   onTabChange?: (tab: ServiceHistoryTab) => void;
   disabled?: boolean;
@@ -66,6 +67,7 @@ export function MaintenanceTimelineSection({
   hasKnowledgeSchedule = false,
   activeTab,
   addRequestKey,
+  addRequestTaskId,
   onAddRequestHandled,
   onTabChange,
   disabled = false,
@@ -153,6 +155,7 @@ export function MaintenanceTimelineSection({
                 ownerHistoryItems={historyItems ?? undefined}
                 onGoToImport={onGoToImport}
                 addRequestKey={addRequestKey}
+                addRequestTaskId={addRequestTaskId}
                 onAddRequestHandled={onAddRequestHandled}
               />
               {!ownerSimple && ownershipRecords.length > 0 ? (

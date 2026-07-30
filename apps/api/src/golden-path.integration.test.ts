@@ -498,7 +498,90 @@ Cabin air filter $59.00`,
     expect(stateBody.timeline[0]?.source).toBe("owner_note");
   });
 
-  it("refreshes maintenance recommendations into Owner verification", async () => {
+  it("completes a Home item only after its maintenance record is saved", async () => {
+    const app = await appPromise;
+    const client = createAuthClient(app);
+
+    const { vehicle } = await createTestVehicle(client, {
+      vin: "TEST-VIN-DONE",
+      currentMileage: 22_000,
+    });
+
+    const refreshResponse = await client.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/now/refresh`,
+    });
+    const refreshBody = refreshResponse.json() as {
+      nowQueue: { taskId: string; status: string }[];
+    };
+    const task = refreshBody.nowQueue.find((item) => item.status === "pending");
+    expect(task).toBeTruthy();
+
+    const noteResponse = await client.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/notes`,
+      payload: {
+        serviceDate: "2026-03-15",
+        mileage: 22_400,
+        note: "Oil and filter changed",
+        source: "owner_note",
+        completedTaskId: task!.taskId,
+      },
+    });
+
+    expect(noteResponse.statusCode).toBe(201);
+    const noteBody = noteResponse.json() as {
+      nowQueue: { taskId: string; status: string }[];
+      reminders: { taskId: string }[];
+    };
+    expect(noteBody.nowQueue.find((item) => item.taskId === task!.taskId)?.status).toBe(
+      "completed",
+    );
+    expect(noteBody.reminders.some((item) => item.taskId === task!.taskId)).toBe(false);
+  });
+
+  it("rejects legacy snooze and direct completion decisions", async () => {
+    const app = await appPromise;
+    const client = createAuthClient(app);
+
+    const { vehicle } = await createTestVehicle(client, {
+      vin: "TEST-VIN-TASK-DECISIONS",
+      currentMileage: 22_000,
+    });
+
+    const refreshResponse = await client.inject({
+      method: "POST",
+      url: `/api/vehicles/${vehicle.id}/now/refresh`,
+    });
+    const refreshBody = refreshResponse.json() as {
+      nowQueue: { taskId: string; status: string }[];
+    };
+    const task = refreshBody.nowQueue.find((item) => item.status === "pending");
+    expect(task).toBeTruthy();
+
+    for (const decision of ["snooze", "complete"]) {
+      const decisionResponse = await client.inject({
+        method: "POST",
+        url: `/api/tasks/${task!.taskId}/decide`,
+        payload: { vehicleId: vehicle.id, decision },
+      });
+
+      expect(decisionResponse.statusCode).toBe(400);
+    }
+
+    const stateResponse = await client.inject({
+      method: "GET",
+      url: `/api/vehicles/${vehicle.id}/state`,
+    });
+    const stateBody = stateResponse.json() as {
+      nowQueue: { taskId: string; status: string }[];
+    };
+    expect(stateBody.nowQueue.find((item) => item.taskId === task!.taskId)?.status).toBe(
+      "pending",
+    );
+  });
+
+  it("does not recreate a recommendation the owner marked not needed", async () => {
     const app = await appPromise;
     const client = createAuthClient(app);
 
@@ -547,11 +630,6 @@ Cabin air filter $59.00`,
       nowQueue: { status: string; ruleId?: string }[];
     };
 
-    expect(refreshBody.created).toBe(true);
-    expect(
-      refreshBody.nowQueue.some(
-        (item) => item.status === "pending" && item.ruleId?.startsWith("knowledge.policy."),
-      ),
-    ).toBe(true);
+    expect(refreshBody.created).toBe(false);
   });
 });

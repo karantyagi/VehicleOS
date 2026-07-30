@@ -13,8 +13,7 @@ export async function POST(request: Request, context: RouteContext) {
   const user = await getSessionUser();
   const body = (await request.json()) as {
     vehicleId: string;
-    decision: "approve" | "dismiss" | "snooze";
-    snoozeDays?: number;
+    decision: "schedule" | "approve" | "dismiss";
     maintenancePatternReason?: MaintenanceDeviationReasonId;
   };
   const result = await decideOnTask(

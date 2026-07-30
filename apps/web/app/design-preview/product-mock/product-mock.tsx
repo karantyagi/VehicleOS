@@ -370,7 +370,7 @@ export function ProductMock() {
       <div className="page-header">
         <h1>Mobile app mock</h1>
         <p>
-          Glanceable · notification-first · tap / photo / voice.{" "}
+          Glanceable · attention-first · tap / photo / voice.{" "}
           <Link href="/design-preview/web-mock">See web app mock →</Link>
           {" · "}
           <Link href="/design-preview">All previews</Link>

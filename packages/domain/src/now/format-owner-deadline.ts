@@ -24,7 +24,7 @@ const formatFriendlyDate = (isoDate: string): string => {
   });
 };
 
-export type ReminderUrgency = "overdue" | "due_now" | "due_soon" | "upcoming" | "snoozed";
+export type ReminderUrgency = "overdue" | "due_now" | "due_soon" | "upcoming";
 export type AttentionWindow = "overdue" | "this_week" | "next_week" | "this_month" | "later";
 
 export const resolveAttentionWindow = (
@@ -44,8 +44,6 @@ export const resolveAttentionWindow = (
 export const resolveReminderUrgency = (input: {
   dueBy: string | null;
   today: string;
-  status: string;
-  snoozeUntil?: string | null;
 }): ReminderUrgency => {
   if (!input.dueBy) return "upcoming";
 
@@ -67,17 +65,4 @@ export const formatOwnerDeadline = (dueBy: string | null, today: string): string
   if (days <= 14) return "Within the next two weeks";
   if (days <= 30) return "Within the next month";
   return `By ${formatFriendlyDate(dueBy)}`;
-};
-
-export const formatSnoozeEscalation = (snoozeCount: number): string | null => {
-  if (snoozeCount >= 3) {
-    return "You've snoozed this several times — overdue risk is rising. Schedule soon.";
-  }
-  if (snoozeCount >= 2) {
-    return "You snoozed this twice — get it done now to avoid extra wear or cost.";
-  }
-  if (snoozeCount === 1) {
-    return "You snoozed this once — still on your list when you're ready.";
-  }
-  return null;
 };

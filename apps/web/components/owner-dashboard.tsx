@@ -79,6 +79,7 @@ export function OwnerDashboard() {
   const [ownerHistoryTimeline, setOwnerHistoryTimeline] = useState<OwnerHistoryItem[]>([]);
   const [serviceHistoryTab, setServiceHistoryTab] = useState<ServiceHistoryTab>("schedule");
   const [historyAddRequest, setHistoryAddRequest] = useState(0);
+  const [historyCompletionTaskId, setHistoryCompletionTaskId] = useState<string | null>(null);
   const [nowQueue, setNowQueue] = useState<QueueItem[]>([]);
   const [reminders, setReminders] = useState<OwnerReminderItem[]>([]);
   const [verifications, setVerifications] = useState<QueueItem[]>([]);
@@ -381,12 +382,22 @@ export function OwnerDashboard() {
       const body = (await response.json()) as {
         timeline?: TimelineEntry[];
         currentMileage?: number;
+        nowQueue?: QueueItem[];
+        reminders?: OwnerReminderItem[];
+        verifications?: QueueItem[];
         error?: string;
       };
       if (!response.ok) throw new Error(body.error ?? "Could not update service record.");
       if (body.timeline) setTimeline(body.timeline);
       if (typeof body.currentMileage === "number") {
         setVehicle((current) => (current ? { ...current, currentMileage: body.currentMileage! } : current));
+      }
+      if (body.nowQueue) {
+        applyQueueState({
+          nowQueue: body.nowQueue,
+          reminders: body.reminders,
+          verifications: body.verifications,
+        });
       }
       feedback(isDeveloper ? "Service record updated." : "Maintenance history updated.");
     } catch (error) {
@@ -413,12 +424,22 @@ export function OwnerDashboard() {
       const body = (await response.json()) as {
         timeline?: TimelineEntry[];
         currentMileage?: number;
+        nowQueue?: QueueItem[];
+        reminders?: OwnerReminderItem[];
+        verifications?: QueueItem[];
         error?: string;
       };
       if (!response.ok) throw new Error(body.error ?? "Could not merge service records.");
       if (body.timeline) setTimeline(body.timeline);
       if (typeof body.currentMileage === "number") {
         setVehicle((current) => (current ? { ...current, currentMileage: body.currentMileage! } : current));
+      }
+      if (body.nowQueue) {
+        applyQueueState({
+          nowQueue: body.nowQueue,
+          reminders: body.reminders,
+          verifications: body.verifications,
+        });
       }
       feedback("Records merged. The original history remains in VehicleOS's audit log.");
     } catch (error) {
@@ -450,6 +471,7 @@ export function OwnerDashboard() {
           lineItems,
           total: draft.total.trim() || undefined,
           source: "owner_note",
+          completedTaskId: draft.attentionTaskId,
         }),
       });
       const body = (await response.json()) as {
@@ -457,6 +479,9 @@ export function OwnerDashboard() {
         currentMileage?: number;
         error?: string;
         conflict?: boolean;
+        nowQueue?: QueueItem[];
+        reminders?: OwnerReminderItem[];
+        verifications?: QueueItem[];
       };
       if (!response.ok && response.status !== 409) {
         throw new Error(body.error ?? "Could not save maintenance record.");
@@ -465,7 +490,21 @@ export function OwnerDashboard() {
       if (typeof body.currentMileage === "number") {
         setVehicle((current) => (current ? { ...current, currentMileage: body.currentMileage! } : current));
       }
-      feedback(body.conflict ? "Saved — assistant flagged a conflict for review." : "Maintenance record saved.");
+      if (body.nowQueue) {
+        applyQueueState({
+          nowQueue: body.nowQueue,
+          reminders: body.reminders,
+          verifications: body.verifications,
+        });
+      }
+      setHistoryCompletionTaskId(null);
+      feedback(
+        body.conflict
+          ? "Not completed — fix the conflicting record before saving."
+          : draft.attentionTaskId
+            ? "Maintenance recorded and Home updated."
+            : "Maintenance record saved.",
+      );
       void loadVehicleState(vehicle);
     } catch (error) {
       feedback(error instanceof Error ? error.message : "Could not save maintenance record.");
@@ -475,7 +514,10 @@ export function OwnerDashboard() {
     }
   };
 
-  const decide = async (taskId: string, decision: "approve" | "dismiss") => {
+  const decide = async (
+    taskId: string,
+    decision: "schedule" | "approve" | "dismiss",
+  ) => {
     if (!vehicle) return;
     setIsBusy(true);
     try {
@@ -491,10 +533,12 @@ export function OwnerDashboard() {
         verifications?: QueueItem[];
       };
       applyQueueState(body);
-      if (decision === "approve") {
+      if (decision === "schedule") {
         feedback("Marked scheduled.");
+      } else if (decision === "approve") {
+        feedback("Verified.");
       } else {
-        feedback("Dismissed.");
+        feedback("Removed from Home.");
       }
     } finally {
       setIsBusy(false);
@@ -524,7 +568,7 @@ export function OwnerDashboard() {
         feedback(`Needs attention: ${body.recommendation.title}`);
         setActiveSection("reminders");
       } else if (body.skippedReason === "already_pending") {
-        feedback("That reminder is already on your list.");
+        feedback("That item already needs attention on Home.");
       } else {
         feedback("No new maintenance actions due right now.");
       }
@@ -657,9 +701,10 @@ export function OwnerDashboard() {
             <RemindersConsole
               items={reminders}
               disabled={isBusy}
-              onScheduled={(taskId) => void decide(taskId, "approve")}
+              onScheduled={(taskId) => void decide(taskId, "schedule")}
               onNotNeeded={(taskId) => void decide(taskId, "dismiss")}
-              onRecordDone={() => {
+              onRecordDone={(taskId) => {
+                setHistoryCompletionTaskId(taskId);
                 setServiceHistoryTab("history");
                 setHistoryAddRequest((current) => current + 1);
                 setActiveSection("timeline");
@@ -750,6 +795,7 @@ export function OwnerDashboard() {
             hasKnowledgeSchedule={knowledgeSchedule.length > 0}
             activeTab={serviceHistoryTab}
             addRequestKey={historyAddRequest}
+            addRequestTaskId={historyCompletionTaskId}
             onAddRequestHandled={() => setHistoryAddRequest(0)}
             onTabChange={setServiceHistoryTab}
             ownerSimple={!isDeveloper}

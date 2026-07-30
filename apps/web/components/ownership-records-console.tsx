@@ -149,8 +149,8 @@ export function OwnershipRecordsConsole({
       {renewals.some((renewal) => renewal.recordId === selected.recordId) ? (
         <p className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm text-foreground">
           {renewals.find((renewal) => renewal.recordId === selected.recordId)?.status === "overdue"
-            ? "Registration expired — renewal reminder is in your queue."
-            : "Registration expiring soon — renewal reminder is in your queue."}
+            ? "Registration expired — renewal needs attention on Home."
+            : "Registration expiring soon — renewal needs attention on Home."}
         </p>
       ) : null}
       <p className="text-muted-foreground">{selected.recordDate}</p>

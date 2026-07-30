@@ -12,7 +12,6 @@ const urgencyLabel: Record<OwnerReminderItem["urgency"], string> = {
   due_now: "Due now",
   due_soon: "Due soon",
   upcoming: "Upcoming",
-  snoozed: "Due",
 };
 
 const urgencyVariant = (urgency: OwnerReminderItem["urgency"]) => {
@@ -34,7 +33,7 @@ type RemindersConsoleProps = {
   disabled?: boolean;
   onScheduled: (taskId: string) => void;
   onNotNeeded: (taskId: string) => void;
-  onRecordDone: () => void;
+  onRecordDone: (taskId: string) => void;
   onFixData: () => void;
   minimal?: boolean;
 };
@@ -142,7 +141,13 @@ export function RemindersConsole({
                       <CalendarCheck2 className="mr-1.5 h-4 w-4" aria-hidden />
                       Scheduled
                     </Button>
-                    <Button type="button" size="sm" variant="secondary" disabled={disabled} onClick={onRecordDone}>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="secondary"
+                      disabled={disabled}
+                      onClick={() => onRecordDone(item.taskId)}
+                    >
                       <CheckCircle2 className="mr-1.5 h-4 w-4" aria-hidden />
                       Done
                     </Button>

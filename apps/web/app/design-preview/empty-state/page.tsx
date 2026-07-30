@@ -105,7 +105,7 @@ export default function EmptyStateComparisonPage() {
                 <p className="branded-eyebrow">Your car, remembered</p>
                 <h2>Start your ownership timeline</h2>
                 <p>
-                  One place for receipts, reminders, and plain-English answers —
+                  One place for records, maintenance attention, and plain-English answers —
                   you confirm before anything changes.
                 </p>
                 <button type="button" className="btn-primary">

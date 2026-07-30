@@ -1,10 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
   formatOwnerDeadline,
-  formatSnoozeEscalation,
   resolveAttentionWindow,
 } from "./format-owner-deadline.js";
-import { buildOwnerReminderViews, isActiveReminder } from "./build-owner-reminders.js";
+import {
+  buildOwnerReminderViews,
+  buildOwnerVerificationViews,
+  isActiveReminder,
+} from "./build-owner-reminders.js";
+import { hasHandledVerificationPromptForRule } from "./verification-prompt-suppression.js";
 import type { NowQueueItem } from "../projections/types.js";
 import type { ServiceTimelineEntry } from "../projections/types.js";
 import { projectMaintenanceSchedule } from "../schedule/project-maintenance-schedule.js";
@@ -13,13 +17,6 @@ describe("formatOwnerDeadline", () => {
   it("uses calendar language not mileage", () => {
     expect(formatOwnerDeadline("2026-07-30", "2026-07-24")).toBe("By end of this week");
     expect(formatOwnerDeadline("2026-07-20", "2026-07-24")).toBe("Overdue — act now");
-  });
-});
-
-describe("formatSnoozeEscalation", () => {
-  it("escalates after repeated snoozes", () => {
-    expect(formatSnoozeEscalation(0)).toBeNull();
-    expect(formatSnoozeEscalation(2)).toMatch(/snoozed this twice/i);
   });
 });
 
@@ -52,8 +49,7 @@ describe("buildOwnerReminderViews", () => {
       snoozeUntil: "2026-07-24",
       snoozeCount: 2,
     };
-    expect(isActiveReminder(snoozed, "2026-07-24")).toBe(true);
-    expect(isActiveReminder(snoozed, "2026-07-20")).toBe(true);
+    expect(isActiveReminder(snoozed)).toBe(true);
 
     const views = buildOwnerReminderViews({
       items: [snoozed],
@@ -63,7 +59,6 @@ describe("buildOwnerReminderViews", () => {
     expect(views).toHaveLength(1);
     expect(views[0]?.effectiveStatus).toBe("pending");
     expect(views[0]?.attentionWindow).toBe("this_week");
-    expect(views[0]?.escalation).toBeNull();
   });
 
   it("hides stale knowledge reminders when CARFAX oil baseline is within interval", () => {
@@ -121,5 +116,33 @@ describe("buildOwnerReminderViews", () => {
 
     expect(scheduleRows[0]?.status).toBe("upcoming");
     expect(views).toHaveLength(0);
+  });
+});
+
+describe("legacy verification compatibility", () => {
+  const snoozedVerification: NowQueueItem = {
+    taskId: "verify-1",
+    recommendationId: "conflict-1",
+    title: "Verify odometer",
+    reason: "Mileage needs confirmation.",
+    status: "snoozed",
+    taskKind: "verification",
+    ruleId: "assistant.policy.odometer_stale.v1",
+    snoozeUntil: "2025-01-01",
+  };
+
+  it("resurfaces a historical snooze and suppresses a duplicate prompt", () => {
+    const views = buildOwnerVerificationViews([snoozedVerification]);
+
+    expect(views).toHaveLength(1);
+    expect(views[0]?.status).toBe("pending");
+    expect(views[0]?.snoozeUntil).toBeNull();
+    expect(
+      hasHandledVerificationPromptForRule({
+        nowQueue: [snoozedVerification],
+        ruleId: snoozedVerification.ruleId!,
+        today: "2026-07-30",
+      }),
+    ).toBe(true);
   });
 });
