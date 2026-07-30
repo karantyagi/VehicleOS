@@ -12,6 +12,20 @@ export const mergeIntervalOverlayMemory = (input: {
   },
 });
 
+export const removeIntervalOverlayMemory = (input: {
+  memory?: OwnerContextMemory | null;
+  entryId: string;
+}): OwnerContextMemory => {
+  const nextOverlays = { ...(input.memory?.intervalOverlays ?? {}) };
+  delete nextOverlays[input.entryId];
+
+  return {
+    ...(input.memory ?? {}),
+    intervalOverlays:
+      Object.keys(nextOverlays).length > 0 ? nextOverlays : undefined,
+  };
+};
+
 export const resolveIntervalForEntry = (input: {
   entryId: string;
   oemIntervalMonths: number | null;

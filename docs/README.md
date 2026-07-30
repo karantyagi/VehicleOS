@@ -18,4 +18,11 @@ This workspace holds planning and architecture material outside the code reposit
 2. `docs/02-repo-design/repo-structure-and-doc-plan.md`
 3. `docs/03-mvp-spec/mvp-technical-spec.md`
 
+## Active product specifications
+
+- `docs/03-mvp-spec/maintenance-item-intelligence.md` - owner-centered
+  maintenance item and reminder UX
+- `docs/03-mvp-spec/maintenance-item-intelligence-queue.md` - Rotate Tires
+  pilot and Phase 2 delivery queue
+
 The code repository can remain focused on implementation while this workspace keeps longer-form design material nearby but separate.

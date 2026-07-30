@@ -174,6 +174,26 @@ export {
   type OwnerServiceVerdict,
 } from "./schedule/build-owner-service-schedule-board.js";
 export {
+  buildMaintenanceItemIntelligence,
+  type ActionRecommendation,
+  type EvidenceState,
+  type IntervalRecommendation,
+  type MaintenanceItemIntelligence,
+  type MaintenanceRationaleAxis,
+  type MaintenanceRationaleAxisId,
+  type QualitativeConfidence,
+} from "./schedule/build-maintenance-item-intelligence.js";
+export {
+  findLatestTireInstallation,
+  resolveTireRotationEvidence,
+  sortServiceTimeline,
+  type TireRotationEvidence,
+  type TireRotationEvidenceScope,
+} from "./schedule/resolve-tire-rotation-evidence.js";
+export {
+  mergeServiceBenefitMemory,
+} from "./owner-context/merge-service-benefit-memory.js";
+export {
   buildOwnerDueItems,
   isOwnerDueItemActionable,
   type OwnerDueItem,
@@ -361,6 +381,7 @@ export type {
   MaintenancePatternMemory,
   IntervalOverlayMemory,
   IntervalBasis,
+  ServiceBenefitMemory,
   TireRotationConditionId,
 } from "./owner-context/types.js";
 export {
@@ -381,6 +402,7 @@ export {
 } from "./owner-context/draft-deviation-reason.js";
 export {
   mergeIntervalOverlayMemory,
+  removeIntervalOverlayMemory,
   resolveIntervalForEntry,
 } from "./owner-context/merge-interval-overlay-memory.js";
 export { formatIntervalOverlayLabel } from "./owner-context/format-interval-overlay-label.js";

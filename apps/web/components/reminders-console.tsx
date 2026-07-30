@@ -1,8 +1,9 @@
 "use client";
 
-import { BellRing } from "lucide-react";
+import { BellRing, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { EmptyState } from "@/components/empty-state";
+import { MaintenanceIntelligenceSummary } from "@/components/maintenance-intelligence-summary";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { OwnerReminderItem } from "@/lib/console-types";
@@ -40,6 +41,7 @@ type RemindersConsoleProps = {
 
 export function RemindersConsole({ items, disabled = false, onDecide, minimal = false }: RemindersConsoleProps) {
   const [snoozePickerTaskId, setSnoozePickerTaskId] = useState<string | null>(null);
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
 
   if (items.length === 0) {
     return (
@@ -56,17 +58,25 @@ export function RemindersConsole({ items, disabled = false, onDecide, minimal = 
       {items.map((item) => {
         const isOverdue = item.urgency === "overdue";
         const isSnoozePickerOpen = snoozePickerTaskId === item.taskId;
+        const isExpanded = expandedTaskId === item.taskId;
 
         return (
           <li
             key={item.taskId}
             className={cn(
-              "rounded-xl border border-border bg-card p-4 shadow-sm",
+              "overflow-hidden rounded-xl border border-border bg-card shadow-sm",
               isOverdue && "border-red-500/45 bg-red-500/[0.06] shadow-[inset_3px_0_0_hsl(var(--destructive))]",
             )}
           >
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <div className="min-w-0 space-y-1">
+            <button
+              type="button"
+              className="flex w-full items-start gap-3 p-4 text-left"
+              aria-expanded={isExpanded}
+              onClick={() =>
+                setExpandedTaskId(isExpanded ? null : item.taskId)
+              }
+            >
+              <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3
                     className={cn(
@@ -83,7 +93,37 @@ export function RemindersConsole({ items, disabled = false, onDecide, minimal = 
                 <p className={cn("text-sm font-medium", isOverdue ? "text-red-700 dark:text-red-300" : "text-foreground")}>
                   {item.deadlineLabel}
                 </p>
-                <p className="text-sm text-muted-foreground">{item.reason}</p>
+              </div>
+              <span className="shrink-0 pt-1 text-muted-foreground">
+                {isExpanded ? (
+                  <ChevronUp className="h-4 w-4" aria-hidden />
+                ) : (
+                  <ChevronDown className="h-4 w-4" aria-hidden />
+                )}
+              </span>
+            </button>
+
+            {isExpanded ? (
+              <div className="space-y-4 border-t border-border/60 px-4 pb-4 pt-3">
+                {item.intelligence ? (
+                  <MaintenanceIntelligenceSummary intelligence={item.intelligence} />
+                ) : (
+                  <div className="space-y-3">
+                    <section className="rounded-lg border border-border/70 bg-background/75 p-3.5">
+                      <p className="text-sm font-semibold text-foreground">Why this reminder</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{item.reason}</p>
+                    </section>
+                    <section className="rounded-lg border border-border/70 bg-background/75 p-3.5">
+                      <p className="text-sm font-semibold text-foreground">
+                        Recommended way to get it done
+                      </p>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Phase 2 · upcoming · in development for this item.
+                      </p>
+                    </section>
+                  </div>
+                )}
+
                 {!minimal && item.escalation ? (
                   <p className={cn("text-sm", isOverdue ? "text-red-700 dark:text-red-300" : "text-amber-700 dark:text-amber-300")}>
                     {item.escalation}
@@ -92,55 +132,56 @@ export function RemindersConsole({ items, disabled = false, onDecide, minimal = 
                 {!minimal && item.snoozeUntil && item.effectiveStatus === "snoozed" ? (
                   <p className="text-xs text-muted-foreground">Snoozed until {item.snoozeUntil}</p>
                 ) : null}
-              </div>
-            </div>
-            <div className="mt-4 space-y-2">
-              <div className="flex flex-wrap gap-2">
-                <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
-                  {minimal ? "Done" : "Mark scheduled"}
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={isSnoozePickerOpen ? "default" : "secondary"}
-                  disabled={disabled}
-                  aria-expanded={isSnoozePickerOpen}
-                  onClick={() => setSnoozePickerTaskId(isSnoozePickerOpen ? null : item.taskId)}
-                >
-                  Snooze
-                </Button>
-                {!minimal ? (
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    disabled={disabled}
-                    onClick={() => onDecide(item.taskId, "dismiss")}
-                  >
-                    Dismiss
-                  </Button>
-                ) : null}
-              </div>
-              {isSnoozePickerOpen ? (
-                <div className="flex flex-wrap gap-2 rounded-lg border border-border/70 bg-muted/30 p-2">
-                  {SNOOZE_OPTIONS.map((option) => (
+
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
+                    <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
+                      {minimal ? "Done" : "Mark scheduled"}
+                    </Button>
                     <Button
-                      key={option.days}
                       type="button"
                       size="sm"
-                      variant="outline"
+                      variant={isSnoozePickerOpen ? "default" : "secondary"}
                       disabled={disabled}
-                      onClick={() => {
-                        onDecide(item.taskId, "snooze", option.days);
-                        setSnoozePickerTaskId(null);
-                      }}
+                      aria-expanded={isSnoozePickerOpen}
+                      onClick={() => setSnoozePickerTaskId(isSnoozePickerOpen ? null : item.taskId)}
                     >
-                      {option.label}
+                      Snooze
                     </Button>
-                  ))}
+                    {!minimal ? (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        disabled={disabled}
+                        onClick={() => onDecide(item.taskId, "dismiss")}
+                      >
+                        Dismiss
+                      </Button>
+                    ) : null}
+                  </div>
+                  {isSnoozePickerOpen ? (
+                    <div className="flex flex-wrap gap-2 rounded-lg border border-border/70 bg-muted/30 p-2">
+                      {SNOOZE_OPTIONS.map((option) => (
+                        <Button
+                          key={option.days}
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          disabled={disabled}
+                          onClick={() => {
+                            onDecide(item.taskId, "snooze", option.days);
+                            setSnoozePickerTaskId(null);
+                          }}
+                        >
+                          {option.label}
+                        </Button>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
-              ) : null}
-            </div>
+              </div>
+            ) : null}
           </li>
         );
       })}

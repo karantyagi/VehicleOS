@@ -132,12 +132,12 @@ export function IntervalConfirmForm({
     <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-3">
       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         {intervalKind === "tire_rotation"
-          ? "Suggested mileage interval"
+          ? "Assistant recommendation"
           : "Your maintenance cadence"}
       </p>
       <p className="text-xs text-muted-foreground">
         {intervalKind === "tire_rotation"
-          ? "Based on your documented rotation history. Edit the average before saving; OEM guidance stays on file for reference."
+          ? "Based on your documented mileage gaps. Edit it before saving; OEM guidance stays on file."
           : "Review the assistant suggestion before saving. The OEM schedule stays on file for reference."}
       </p>
       <div className="grid gap-3 sm:grid-cols-2">

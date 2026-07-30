@@ -22,6 +22,15 @@ export type IntervalOverlayMemory = {
   confirmedAt: string;
 };
 
+export type ServiceBenefitMemory = {
+  providerName: string;
+  providerLocation?: string;
+  benefitLabel: string;
+  expectedCost?: number | null;
+  currency?: "USD";
+  confirmedAt: string;
+};
+
 export type OwnerContextMemory = {
   /** Where the car is usually garaged — static until owner confirms an update. */
   primaryCity?: string;
@@ -35,6 +44,8 @@ export type OwnerContextMemory = {
   maintenancePatterns?: Record<string, MaintenancePatternMemory>;
   /** Verified owner intervals (e.g. Techron every 3k mi) keyed by entryId or custom slug. */
   intervalOverlays?: Record<string, IntervalOverlayMemory>;
+  /** Owner-confirmed provider benefits keyed by canonical service ID. */
+  serviceBenefits?: Record<string, ServiceBenefitMemory>;
 };
 
 export const EMPTY_OWNER_CONTEXT_MEMORY: OwnerContextMemory = {};
