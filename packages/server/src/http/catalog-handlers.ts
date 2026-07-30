@@ -186,7 +186,7 @@ export const checkVehicleSupport = (query: VehicleSupportQuery = {}): JsonRespon
 
 export const listSupportedVehicles = (
   options: ListSupportedVehiclesOptions = {},
-): JsonResponse => {
+) => {
   const catalog = loadSupportedVehicleCatalog();
   const rows = filterSupportedVehicleRows(catalog.vehicles, options);
   const registryByPackId = getTier2000SourceByPackId();

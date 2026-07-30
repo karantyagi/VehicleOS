@@ -1,3 +1,5 @@
+import { searchCatalogVehicles } from "./catalog-vehicle-search";
+
 export type CatalogVehicleRow = {
   packId: string;
   make: string;
@@ -18,10 +20,24 @@ export type CatalogVehicleFilter = {
   q?: string;
 };
 
+const normalizeLabelToken = (value: string): string => value.trim().toLowerCase();
+
+const formatPowertrainSuffix = (
+  trim: string,
+  powertrain: string | null | undefined,
+): string => {
+  if (!powertrain?.trim()) return "";
+  const trimNorm = normalizeLabelToken(trim);
+  const powertrainNorm = normalizeLabelToken(powertrain);
+  if (trimNorm === powertrainNorm) return "";
+  if (trimNorm.includes(powertrainNorm)) return "";
+  return ` · ${powertrain.trim()}`;
+};
+
 export const formatCatalogVehicleLabel = (
   row: Pick<CatalogVehicleRow, "year" | "make" | "model" | "trim" | "powertrain">,
 ): string => {
-  const powertrain = row.powertrain ? ` · ${row.powertrain}` : "";
+  const powertrain = formatPowertrainSuffix(row.trim, row.powertrain);
   return `${row.year} ${row.make} ${row.model} ${row.trim}${powertrain}`;
 };
 
@@ -41,28 +57,21 @@ export const filterCatalogVehicles = (
   rows: CatalogVehicleRow[],
   filter: CatalogVehicleFilter = {},
 ): CatalogVehicleRow[] => {
-  const q = filter.q ? normalize(filter.q) : "";
   const make = filter.make ? normalize(filter.make) : "";
   const model = filter.model ? normalize(filter.model) : "";
   const year = filter.year;
 
-  return sortCatalogVehicles(rows).filter((row) => {
+  const filtered = rows.filter((row) => {
     if (make && normalize(row.make) !== make) return false;
     if (model && normalize(row.model) !== model) return false;
     if (year && row.year !== year) return false;
-    if (!q) return true;
-    const haystack = [
-      row.make,
-      row.model,
-      String(row.year),
-      row.trim,
-      row.powertrain ?? "",
-      row.packId,
-    ]
-      .join(" ")
-      .toLowerCase();
-    return haystack.includes(q);
+    return true;
   });
+
+  const q = filter.q?.trim() ?? "";
+  if (!q) return sortCatalogVehicles(filtered);
+
+  return searchCatalogVehicles(filtered, q, { limit: filtered.length });
 };
 
 export const fetchVerifiedCatalogVehicles = async (apiBase = ""): Promise<CatalogVehicleRow[]> => {
@@ -125,12 +134,56 @@ export const listCatalogTrimRows = (
 
 export const formatCatalogTrimOptionLabel = (
   row: Pick<CatalogVehicleRow, "trim" | "powertrain">,
-): string => {
-  const powertrain = row.powertrain ? ` · ${row.powertrain}` : "";
-  return `${row.trim}${powertrain}`;
+): string => `${row.trim}${formatPowertrainSuffix(row.trim, row.powertrain)}`;
+
+/** Unique list/combobox identity — packId alone is reused across model years. */
+export const catalogVehicleRowKey = (row: Pick<CatalogVehicleRow, "packId" | "year">): string =>
+  `${row.packId}::${row.year}`;
+
+export const isSameCatalogVehicleRow = (
+  a: Pick<CatalogVehicleRow, "packId" | "year">,
+  b: Pick<CatalogVehicleRow, "packId" | "year">,
+): boolean => a.packId === b.packId && a.year === b.year;
+
+export const findCatalogVehicleRow = (
+  rows: CatalogVehicleRow[],
+  lookup: {
+    packId?: string;
+    make?: string;
+    model?: string;
+    year?: number;
+    trim?: string;
+  },
+): CatalogVehicleRow | null => {
+  const { packId, make, model, year, trim } = lookup;
+
+  if (packId && year != null && year > 0) {
+    const exact = rows.find((row) => row.packId === packId && row.year === year);
+    if (exact) return exact;
+  }
+
+  if (make && model && year != null && year > 0 && trim) {
+    const byTrim = rows.find(
+      (row) =>
+        row.make === make &&
+        row.model === model &&
+        row.year === year &&
+        row.trim === trim,
+    );
+    if (byTrim) return byTrim;
+  }
+
+  if (packId) {
+    const matches = rows.filter((row) => row.packId === packId);
+    if (matches.length === 0) return null;
+    return [...matches].sort((a, b) => a.year - b.year)[0] ?? null;
+  }
+
+  return null;
 };
 
 export const findCatalogVehicleByPackId = (
   rows: CatalogVehicleRow[],
   packId: string,
-): CatalogVehicleRow | null => rows.find((row) => row.packId === packId) ?? null;
+  year?: number,
+): CatalogVehicleRow | null => findCatalogVehicleRow(rows, { packId, year });

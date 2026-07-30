@@ -15,6 +15,13 @@ export type MaintenanceRecordDraft = {
   mileage: string;
   total: string;
   lineItems: string;
+  ownerNote: string;
+  voiceTranscript: string;
+  captureChannel: "manual" | "receipt" | "voice";
+  evidenceStorageKey?: string;
+  evidenceFileName?: string;
+  voiceStorageKey?: string;
+  voiceFileName?: string;
 };
 
 export const emptyMaintenanceRecordDraft = (defaultMileage: number): MaintenanceRecordDraft => ({
@@ -24,6 +31,9 @@ export const emptyMaintenanceRecordDraft = (defaultMileage: number): Maintenance
   mileage: String(defaultMileage),
   total: "",
   lineItems: "",
+  ownerNote: "",
+  voiceTranscript: "",
+  captureChannel: "manual",
 });
 
 export const draftLineItems = (draft: MaintenanceRecordDraft): string[] =>

@@ -29,7 +29,11 @@ import {
   type ShopLocationHint,
   ownershipRecordFingerprint,
 } from "@vehicleos/domain";
-import { DOGFOOD_FIXTURES, fetchDogfoodJson } from "@/lib/extraction-status";
+import {
+  DEFAULT_DOGFOOD_FIXTURE_ID,
+  fetchDogfoodJson,
+  getDogfoodFixtureProfile,
+} from "@/lib/dogfood-fixtures";
 import type { OwnershipRecordEntry, TimelineEntry } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
@@ -307,14 +311,19 @@ export function RecordImportPanel({
   const loadDogfoodFixture = async () => {
     setIsLoadingDogfood(true);
     setParseError("");
+    const profile = getDogfoodFixtureProfile(DEFAULT_DOGFOOD_FIXTURE_ID);
     try {
       if (activeCategory === "carfax") {
-        const draft = await fetchDogfoodJson<VehicleOsImportV1>(DOGFOOD_FIXTURES.carfax);
-        await applyCarfaxDraft(draft, ["Dogfood CARFAX JSON loaded — review rows before confirming."]);
+        const draft = await fetchDogfoodJson<VehicleOsImportV1>(profile.carfaxUrl);
+        await applyCarfaxDraft(draft, [
+          `Dogfood CARFAX JSON loaded (${profile.label}) — review rows before confirming.`,
+        ]);
         return;
       }
-      const draft = await fetchDogfoodJson<VehicleOsRmvImportV1>(DOGFOOD_FIXTURES.rmv);
-      applyRmvDraft(draft, ["Dogfood RMV JSON loaded — review records before confirming."]);
+      const draft = await fetchDogfoodJson<VehicleOsRmvImportV1>(profile.rmvUrl);
+      applyRmvDraft(draft, [
+        `Dogfood RMV JSON loaded (${profile.label}) — review records before confirming.`,
+      ]);
     } catch (error) {
       onError(error instanceof Error ? error.message : "Could not load dogfood fixture.");
     } finally {

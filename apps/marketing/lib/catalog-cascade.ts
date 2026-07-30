@@ -64,8 +64,64 @@ export const listCatalogTrimRows = (
 export const formatCatalogTrimOptionLabel = (
   row: Pick<CatalogVehicleRow, "trim" | "powertrain">,
 ): string => {
-  const powertrain = row.powertrain ? ` · ${row.powertrain}` : "";
-  return `${row.trim}${powertrain}`;
+  if (!row.powertrain?.trim()) return row.trim;
+  const trimNorm = row.trim.trim().toLowerCase();
+  const powertrainNorm = row.powertrain.trim().toLowerCase();
+  if (trimNorm === powertrainNorm || trimNorm.includes(powertrainNorm)) return row.trim;
+  return `${row.trim} · ${row.powertrain.trim()}`;
+};
+
+export const formatCatalogVehicleLabel = (
+  row: Pick<CatalogVehicleRow, "year" | "make" | "model" | "trim" | "powertrain">,
+): string => {
+  const trimLabel = formatCatalogTrimOptionLabel(row);
+  return `${row.year} ${row.make} ${row.model} ${trimLabel}`;
+};
+
+/** Unique list/combobox identity — packId alone is reused across model years. */
+export const catalogVehicleRowKey = (row: Pick<CatalogVehicleRow, "packId" | "year">): string =>
+  `${row.packId}::${row.year}`;
+
+export const isSameCatalogVehicleRow = (
+  a: Pick<CatalogVehicleRow, "packId" | "year">,
+  b: Pick<CatalogVehicleRow, "packId" | "year">,
+): boolean => a.packId === b.packId && a.year === b.year;
+
+export const findCatalogVehicleRow = (
+  rows: CatalogVehicleRow[],
+  lookup: {
+    packId?: string;
+    make?: string;
+    model?: string;
+    year?: number;
+    trim?: string;
+  },
+): CatalogVehicleRow | null => {
+  const { packId, make, model, year, trim } = lookup;
+
+  if (packId && year != null && year > 0) {
+    const exact = rows.find((row) => row.packId === packId && row.year === year);
+    if (exact) return exact;
+  }
+
+  if (make && model && year != null && year > 0 && trim) {
+    const byTrim = rows.find(
+      (row) =>
+        row.make === make &&
+        row.model === model &&
+        row.year === year &&
+        row.trim === trim,
+    );
+    if (byTrim) return byTrim;
+  }
+
+  if (packId) {
+    const matches = rows.filter((row) => row.packId === packId);
+    if (matches.length === 0) return null;
+    return [...matches].sort((a, b) => a.year - b.year)[0] ?? null;
+  }
+
+  return null;
 };
 
 export const fetchCatalogVehicles = async (): Promise<CatalogVehicleRow[]> => {
