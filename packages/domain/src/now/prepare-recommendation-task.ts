@@ -1,5 +1,6 @@
 import type { MaintenanceRecommendation } from "../policy/types.js";
 import type { DrivingStyle } from "../schedule/resolve-schedule-projection-context.js";
+import { isRenewalRuleId } from "../ownership/resolve-renewal-rule-id.js";
 import {
   projectMaintenanceSchedule,
   type ScheduleProjectionRow,
@@ -10,6 +11,7 @@ import {
   addDays,
   formatOwnerDeadline,
   formatSnoozeEscalation,
+  resolveReminderUrgency,
   type ReminderUrgency,
 } from "./format-owner-deadline.js";
 
@@ -87,8 +89,9 @@ export const buildTimeFirstTaskCopy = (input: {
   const reasonParts = [deadlineLabel, why, escalation].filter(Boolean);
   const reason = `${reasonParts.join(" ")}`.trim();
 
-  const urgency =
-    scheduleRow?.status === "overdue"
+  const urgency = isRenewalRuleId(input.recommendation.ruleId)
+    ? resolveReminderUrgency({ dueBy, today, status: "pending", snoozeUntil: null })
+    : scheduleRow?.status === "overdue"
       ? "overdue"
       : scheduleRow?.status === "due_soon"
         ? "due_soon"

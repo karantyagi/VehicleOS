@@ -1,0 +1,16 @@
+{
+  "vin": "KMHLS4AG3NU293303",
+  "year": 2022,
+  "make": "Hyundai",
+  "model": "Elantra",
+  "trim": "SEL",
+  "currentMileage": 34045,
+  "ownedSince": "2022-02-01",
+  "drivingStyle": "casual",
+  "statedMilesPerYear": 8500,
+  "ownerContextMemory": {
+    "primaryCity": "Boston",
+    "climateNotes": ["winter salt", "MA state inspections"],
+    "ownerStatedPriorities": ["reliability", "inspection_compliance"]
+  }
+}

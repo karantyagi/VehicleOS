@@ -6,9 +6,9 @@ import { MaintenanceTimelineConsole } from "@/components/maintenance-timeline-co
 import { OwnerServiceScheduleBoardView } from "@/components/owner-service-schedule-board";
 import { Button } from "@/components/ui/button";
 import type {
-  OwnerServiceScheduleBoard,
+  OwnerDueItemsView,
+  OwnerHistoryItem,
   OwnershipRecordEntry,
-  OwnershipRenewalProjection,
   ScheduleProjectionRow,
   ServiceHistoryTab,
   TimelineEntry,
@@ -18,11 +18,11 @@ import { cn } from "@/lib/utils";
 type MaintenanceTimelineSectionProps = {
   timeline: TimelineEntry[];
   ownershipRecords: OwnershipRecordEntry[];
-  ownershipRenewals?: OwnershipRenewalProjection[];
+  ownerDueItems?: OwnerDueItemsView | null;
+  ownerHistoryTimeline?: OwnerHistoryItem[] | null;
   scheduleNear: ScheduleProjectionRow[];
   scheduleExtended: ScheduleProjectionRow[];
   scheduleFull: ScheduleProjectionRow[];
-  serviceScheduleBoard?: OwnerServiceScheduleBoard | null;
   currentMileage?: number;
   effectiveMilesPerYear: number;
   hasKnowledgeSchedule?: boolean;
@@ -54,11 +54,11 @@ const TAB_ITEMS = [
 export function MaintenanceTimelineSection({
   timeline,
   ownershipRecords,
-  ownershipRenewals = [],
+  ownerDueItems = null,
+  ownerHistoryTimeline = null,
   scheduleNear,
   scheduleExtended,
   scheduleFull,
-  serviceScheduleBoard = null,
   currentMileage = 0,
   effectiveMilesPerYear,
   hasKnowledgeSchedule = false,
@@ -97,6 +97,8 @@ export function MaintenanceTimelineSection({
       {historyOnly ? (
         <MaintenanceTimelineConsole
           entries={timeline}
+          ownershipRecords={ownershipRecords}
+          ownerHistoryTimeline={ownerHistoryTimeline}
           disabled={disabled}
           defaultMileage={defaultMileage}
           onOpenEvidence={onOpenEvidence}
@@ -135,6 +137,7 @@ export function MaintenanceTimelineSection({
             <MaintenanceTimelineConsole
               entries={timeline}
               ownershipRecords={ownershipRecords}
+              ownerHistoryTimeline={ownerHistoryTimeline}
               disabled={disabled}
               defaultMileage={defaultMileage}
               vehicleId={vehicleId}
@@ -149,10 +152,9 @@ export function MaintenanceTimelineSection({
           ) : null}
 
           {tab === "schedule" ? (
-            serviceScheduleBoard ? (
+            ownerDueItems ? (
               <OwnerServiceScheduleBoardView
-                board={serviceScheduleBoard}
-                ownershipRenewals={ownershipRenewals}
+                dueItems={ownerDueItems}
                 currentMileage={currentMileage}
                 hasKnowledgeSchedule={hasKnowledgeSchedule}
               />

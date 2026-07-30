@@ -174,6 +174,24 @@ export {
   type OwnerServiceVerdict,
 } from "./schedule/build-owner-service-schedule-board.js";
 export {
+  buildOwnerDueItems,
+  isOwnerDueItemActionable,
+  type OwnerDueItem,
+  type OwnerDueItemKind,
+  type OwnerDueItemsSummary,
+  type OwnerDueItemsView,
+} from "./owner-care/build-owner-due-items.js";
+export {
+  buildOwnerHistoryTimeline,
+  type OwnerHistoryItem,
+  type OwnerHistoryItemKind,
+} from "./owner-care/build-owner-history-timeline.js";
+export { dueItemToRecommendation } from "./owner-care/due-item-to-recommendation.js";
+export {
+  evaluateNextDueRecommendation,
+  evaluateNextDueRecommendationFromPolicyInput,
+} from "./owner-care/evaluate-next-due-recommendation.js";
+export {
   computeOemServiceTiming,
   DEFAULT_OEM_TIMING_TOLERANCE_DAYS,
   type OemServiceTiming,
@@ -229,6 +247,13 @@ export {
   type OwnershipRenewalProjection,
   type OwnershipRenewalStatus,
 } from "./ownership/evaluate-ownership-renewals.js";
+export {
+  INSPECTION_RENEWAL_RULE_ID,
+  OTHER_RENEWAL_RULE_ID,
+  REGISTRATION_RENEWAL_GENERIC_RULE_ID,
+  REGISTRATION_RENEWAL_MA_RULE_ID,
+  resolveRenewalRuleId,
+} from "./ownership/resolve-renewal-rule-id.js";
 export {
   deriveOwnershipRecordsFromLineItems,
   type DerivedOwnershipRecord,

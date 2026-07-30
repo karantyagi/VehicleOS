@@ -212,6 +212,16 @@
       "scheduleDepth": "verified"
     },
     {
+      "packId": "hyundai-elantra-2022-sel",
+      "make": "Hyundai",
+      "model": "Elantra",
+      "year": 2022,
+      "trim": "SEL",
+      "qaStatus": "auto_verified",
+      "supportTier": "tier1",
+      "scheduleDepth": "verified"
+    },
+    {
       "packId": "hyundai-elantra-2024-se",
       "make": "Hyundai",
       "model": "Elantra",

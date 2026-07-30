@@ -133,7 +133,6 @@ export const submitVoiceMemory = async (
     task: result.result.task,
     timeline: view.timeline,
     nowQueue: view.nowQueue,
-    ownershipRecords: view.ownershipRecords,
-    ownershipRenewals: view.ownershipRenewals,
+    ownerDueItems: view.ownerDueItems,
   });
 };

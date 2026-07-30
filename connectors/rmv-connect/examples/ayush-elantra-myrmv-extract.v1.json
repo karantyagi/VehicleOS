@@ -1,0 +1,36 @@
+{
+  "version": "1",
+  "portal": "myrmv-ma",
+  "source": "myrmv-pdf-manual",
+  "extractedAt": "2026-07-27T22:42:00.000Z",
+  "owner": {
+    "dateOfBirth": "1996-05-27",
+    "licenseClass": "D",
+    "licenseIssued": "2024-10-02",
+    "licenseExpires": "2027-10-04",
+    "passengerStatus": "Active",
+    "commercialStatus": "None",
+    "restrictions": ["Corrective Lenses"]
+  },
+  "vehicle": {
+    "yearMakeModel": "2022 HYUN ELANTRA",
+    "year": 2022,
+    "make": "Hyundai",
+    "model": "Elantra",
+    "vin": "KMHLS4AG3NU293303"
+  },
+  "registration": {
+    "typeNumber": "Passenger Normal Red Plate/1NST41",
+    "plate": "1NST41",
+    "effectiveDate": "2026-02-01",
+    "expirationDate": "2028-01-31",
+    "status": "Active",
+    "alreadyRenewed": false
+  },
+  "title": {
+    "titleNumber": "CM161923",
+    "titleDate": "2026-01-15",
+    "titleStatus": "Active"
+  },
+  "warnings": []
+}

@@ -3,11 +3,12 @@ import type { CatalogDomainEvent, VehicleProjectionState } from "@vehicleos/doma
 import {
   buildOwnerReminderViews,
   buildOwnerServiceScheduleBoard,
+  buildOwnerDueItems,
+  buildOwnerHistoryTimeline,
   computeVerificationMaturity,
   enrichTimelineForDisplay,
   projectMaintenanceDeviations,
   projectMaintenanceSchedule,
-  projectOwnershipRenewals,
   resolveScheduleProjectionContext,
   splitOwnerQueues,
 } from "@vehicleos/domain";
@@ -64,10 +65,20 @@ export const buildVehicleStateView = (
     ...scheduleProjectionBase,
     today,
   });
+  const ownerDueItems = buildOwnerDueItems({
+    board: serviceScheduleBoard,
+    ownershipRecords: state.ownershipRecords,
+    today,
+  });
+  const ownerHistoryTimeline = buildOwnerHistoryTimeline({
+    timeline: state.timeline,
+    ownershipRecords: state.ownershipRecords,
+  });
   const scheduleRowsForReminders = [...scheduleNear.rows, ...scheduleExtended.rows];
   const reminders = buildOwnerReminderViews({
     items: state.nowQueue,
     scheduleRows: scheduleRowsForReminders,
+    dueItems: ownerDueItems,
     today,
   });
   const { verifications } = splitOwnerQueues(state.nowQueue);
@@ -101,11 +112,8 @@ export const buildVehicleStateView = (
         full: scheduleFull.horizonEnd,
       },
     },
-    serviceScheduleBoard,
-    ownershipRenewals: projectOwnershipRenewals({
-      ownershipRecords: state.ownershipRecords,
-      today,
-    }),
+    ownerDueItems,
+    ownerHistoryTimeline,
     maintenanceDeviations: projectMaintenanceDeviations({
       scheduleRows: scheduleExtended.rows,
       ownerContextMemory: profile?.ownerContextMemory,

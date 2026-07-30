@@ -3,6 +3,7 @@
 import { FileUp } from "lucide-react";
 import { useState } from "react";
 import { ExtractionStatusBanner } from "@/components/extraction-status-banner";
+import { DogfoodFixturePicker } from "@/components/dogfood-fixture-picker";
 import { FileDropzone } from "@/components/file-dropzone";
 import { FormField } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DOGFOOD_FIXTURES, fetchDogfoodJson } from "@/lib/extraction-status";
+import {
+  DEFAULT_DOGFOOD_FIXTURE_ID,
+  fetchDogfoodJson,
+  getDogfoodFixtureProfile,
+  type DogfoodFixtureId,
+} from "@/lib/dogfood-fixtures";
 import {
   parseManualScheduleImportJson,
   type ManualScheduleImportV1,
@@ -86,6 +92,7 @@ export function ManualKnowledgePanel({
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const [isLoadingDogfood, setIsLoadingDogfood] = useState(false);
+  const [selectedDogfoodId, setSelectedDogfoodId] = useState<DogfoodFixtureId>(DEFAULT_DOGFOOD_FIXTURE_ID);
 
   const applyManualDraft = (draft: ManualScheduleImportV1, note: string) => {
     setManualTitle(draft.manualTitle);
@@ -114,9 +121,13 @@ export function ManualKnowledgePanel({
   const loadDogfoodFixture = async () => {
     setIsLoadingDogfood(true);
     onError("");
+    const profile = getDogfoodFixtureProfile(selectedDogfoodId);
     try {
-      const draft = await fetchDogfoodJson<ManualScheduleImportV1>(DOGFOOD_FIXTURES.oemSchedule);
-      applyManualDraft(draft, "Dogfood OEM schedule loaded — review intervals before confirming.");
+      const draft = await fetchDogfoodJson<ManualScheduleImportV1>(profile.oemScheduleUrl);
+      applyManualDraft(
+        draft,
+        `Dogfood OEM schedule loaded (${profile.label}) — review intervals before confirming.`,
+      );
     } catch (error) {
       onError(error instanceof Error ? error.message : "Could not load dogfood fixture.");
     } finally {
@@ -277,17 +288,24 @@ export function ManualKnowledgePanel({
             Import schedule JSON (dogfood / testing)
           </Label>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
+        <div className="space-y-3">
+          <DogfoodFixturePicker
+            value={selectedDogfoodId}
+            onValueChange={setSelectedDogfoodId}
             disabled={disabled || isLoadingDogfood}
-            onClick={() => void loadDogfoodFixture()}
-          >
-            {isLoadingDogfood ? "Loading…" : "Load dogfood OEM JSON"}
-          </Button>
-          <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
+            id="manual-dogfood-fixture"
+          />
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              disabled={disabled || isLoadingDogfood}
+              onClick={() => void loadDogfoodFixture()}
+            >
+              {isLoadingDogfood ? "Loading…" : "Load dogfood OEM JSON"}
+            </Button>
+            <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
             <label className="cursor-pointer">
               <FileUp className="mr-2 h-4 w-4" aria-hidden />
               Choose JSON file
@@ -314,6 +332,7 @@ export function ManualKnowledgePanel({
           >
             {isPreviewing ? "Loading stub…" : "Load stub preview (dev)"}
           </Button>
+          </div>
         </div>
         <Textarea
           id="manual-schedule-json"

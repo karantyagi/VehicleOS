@@ -38,17 +38,11 @@ export const EXTRACTION_STATUS: Record<ExtractionStatusVariant, ExtractionStatus
   },
 };
 
-/** Static dogfood fixtures served from /dogfood/karan-tlx/ */
-export const DOGFOOD_FIXTURES = {
-  carfax: "/dogfood/karan-tlx/carfax-history.v1.json",
-  rmv: "/dogfood/karan-tlx/rmv-records.v1.json",
-  oemSchedule: "/dogfood/karan-tlx/oem-schedule.v1.json",
-} as const;
-
-export const fetchDogfoodJson = async <T>(path: string): Promise<T> => {
-  const response = await fetch(path);
-  if (!response.ok) {
-    throw new Error(`Could not load dogfood fixture (${response.status}).`);
-  }
-  return (await response.json()) as T;
-};
+export {
+  DEFAULT_DOGFOOD_FIXTURE_ID,
+  DOGFOOD_FIXTURE_PROFILES,
+  fetchDogfoodJson,
+  getDogfoodFixtureProfile,
+  type DogfoodFixtureId,
+  type DogfoodFixtureProfile,
+} from "./dogfood-fixtures";
