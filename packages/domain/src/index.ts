@@ -411,6 +411,12 @@ export {
   type UpdateServiceRecordResult,
 } from "./service/update-service-record.js";
 export {
+  findPossibleServiceDuplicates,
+  mergeServiceRecords,
+  type MergeServiceRecordsInput,
+  type PossibleServiceDuplicate,
+} from "./service/merge-service-records.js";
+export {
   inferShopLocation,
   looksLikeShopAddressLine,
   resolveShopLocation,

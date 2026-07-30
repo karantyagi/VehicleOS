@@ -163,9 +163,9 @@ It is **not** a one-line filter in the import handler. It spans:
 
 ---
 
-## Part 10 — CARFAX source reconciliation (IMP-12 · deferred)
+## Part 10 — CARFAX source reconciliation (IMP-12 · narrow v0)
 
-**Status:** Strategy locked · implementation deferred until multi-user QA fixtures exist.
+**Status:** A conservative historical-review slice is implemented. Broader fuzzy reconciliation remains deferred until multi-user QA fixtures exist.
 
 **Distinct from Part 4 noise:** CARFAX can show the **same real-world visit twice** through different channels:
 
@@ -176,19 +176,22 @@ Owner app  ──► CARFAX self-report   ──► "Self Reported · oil change
             Same visit · different shop label · 0–15 day lag · ±mileage
 ```
 
-IMP-10 dedupes **exact** rows (`date + mileage + shop`). IMP-11 handles **boilerplate** and **same-day odometer noise**. Neither detects **semantic duplicates** across sources.
+IMP-10 dedupes a repeated **visit** (`date + normalized shop`). IMP-11 handles **boilerplate** and **same-day odometer noise**. The historical-review slice now surfaces a possible duplicate only when two committed records have the **same mileage**, are **at most one calendar day apart**, and share an **identical normalized line item**.
 
 **Principle:** Detect likely duplicates · never silent merge · owner chooses · deterministic rules only.
 
 | Signal (initial — tune with fixtures) | Example | Action |
 |----------------------------------------|---------|--------|
+| Same mileage + 0–1 day + identical normalized line item | Dealer oil change + owner oil-change note | Historical “Possible duplicate” review |
 | Same day + inspection lines + different shops | MA state + dealer inspection | Tier C verify |
 | ±14 days + overlapping line items + Self Reported vs dealer | Owner pre-log + late dealer feed | Tier C verify |
 | Re-import fuzzy match vs timeline | 2nd CARFAX pull adds dealer row | Verify on re-import |
 
-**Owner resolution (future UX):** Keep dealer record · Keep my entry · Keep both — reuses IMP-11 review queue and owner confirm flow.
+**Owner resolution (v0):** The assistant prepares one merged record and, when only one record is evidence-backed (`receipt`, `dealer`, or `CARFAX`), preselects that record's details; otherwise it selects the earlier record. The owner can switch the retained date/shop with one tap, drag work items to reorder, remove unwanted items, or optionally type a missing item. VehicleOS combines evidence, retains a useful non-zero total, and records an owner-confirmed `service.merged` event. Original source events remain in the audit log.
 
-**Why wait:** Single-car dogfood cannot validate rules. Early onboard users + annotated fixtures in `connectors/carfax-connect/examples/` are the promotion gate. See IMP-12 in the internal `task-queue.md`.
+**Automation boundary:** Exact repeated imports may still be skipped automatically before a duplicate timeline row is committed. Cross-source historical records are proposed and composed automatically, but require one owner confirmation to merge. Do not auto-merge these until the product has calibrated multi-user fixtures and a clear undo/unmerge path.
+
+**Why the broader rules still wait:** Single-car dogfood cannot validate ±14-day or semantic matching safely. Early onboard users + annotated fixtures in `connectors/carfax-connect/examples/` are the promotion gate. See IMP-12 in the internal `task-queue.md`.
 
 **Explicit non-goals until proven:** auto-collapse without owner tap · runtime LLM same-visit classifier · block entire import for unresolved suspects.
 
@@ -316,7 +319,7 @@ Import 2 (same user)
 | Who adds pack rows? | Creator offline factory — not runtime assistant |
 | How does knowledge improve? | Per-owner `shopLocations` compounds; 2nd import easier than 1st |
 | Why IMP-11 as a feature? | Enrichment + tiering + UX + memory + verification — not a single function |
-| Source duplicates (dealer vs Self Reported)? | IMP-12 deferred — detect + owner picks; never silent merge; needs multi-user fixtures |
+| Source duplicates (dealer vs Self Reported)? | Narrow v0 detects same-mileage, adjacent-day, identical-line overlap and lets the owner choose; broader fuzzy rules still need multi-user fixtures |
 
 ---
 

@@ -2,20 +2,30 @@
 
 import { useEffect, useMemo, useState, type ElementType } from "react";
 import {
+  AlertTriangle,
   Building2,
   Check,
+  ChevronDown,
   ChevronRight,
   ChevronUp,
   Clock3,
   FileJson,
+  GitMerge,
+  GripVertical,
   Mic,
   PenLine,
   Pencil,
   Plus,
   Receipt,
+  Sparkles,
+  Trash2,
   Wrench,
   X,
 } from "lucide-react";
+import {
+  findPossibleServiceDuplicates,
+  type PossibleServiceDuplicate,
+} from "@vehicleos/domain";
 import { DateField } from "@/components/date-field";
 import { EmptyState } from "@/components/empty-state";
 import {
@@ -46,6 +56,11 @@ type OwnerServiceHistoryTimelineProps = {
   disabled?: boolean;
   defaultMileage?: number;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onMergeService?: (
+    targetServiceId: string,
+    mergedServiceId: string,
+    lineItems: string[],
+  ) => Promise<void>;
   onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
   requireEditConfirmation?: boolean;
 };
@@ -123,11 +138,32 @@ const groupEntriesByYear = (entries: TimelineEntry[]): [number, TimelineEntry[]]
   return [...groups.entries()].sort(([a], [b]) => b - a);
 };
 
+const lineItemKey = (lineItem: string): string =>
+  lineItem.trim().toLowerCase().replace(/[^\w\s]/g, "").replace(/\s+/g, " ");
+
+const uniqueLineItems = (entries: TimelineEntry[]): string[] => {
+  const seen = new Set<string>();
+  return entries.flatMap((entry) =>
+    entry.lineItems.filter((lineItem) => {
+      const key = lineItemKey(lineItem);
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }),
+  );
+};
+
+const isEvidenceBackedSource = (entry: TimelineEntry): boolean =>
+  entry.source === "dealer" ||
+  entry.source === "receipt" ||
+  entry.source === "carfax_import";
+
 export function OwnerServiceHistoryTimeline({
   entries,
   disabled = false,
   defaultMileage = 0,
   onUpdateService,
+  onMergeService,
   onAddService,
   requireEditConfirmation = false,
 }: OwnerServiceHistoryTimelineProps) {
@@ -138,6 +174,22 @@ export function OwnerServiceHistoryTimeline({
   const yearGroups = useMemo(() => groupEntriesByYear(sortedEntries), [sortedEntries]);
   const latestEntry = sortedEntries[0] ?? null;
   const totalCost = useMemo(() => sumEntryCosts(entries), [entries]);
+  const possibleDuplicates = useMemo(
+    () => findPossibleServiceDuplicates(entries),
+    [entries],
+  );
+  const duplicateByServiceId = useMemo(() => {
+    const byServiceId = new Map<string, PossibleServiceDuplicate>();
+    for (const candidate of possibleDuplicates) {
+      if (!byServiceId.has(candidate.firstServiceId)) {
+        byServiceId.set(candidate.firstServiceId, candidate);
+      }
+      if (!byServiceId.has(candidate.secondServiceId)) {
+        byServiceId.set(candidate.secondServiceId, candidate);
+      }
+    }
+    return byServiceId;
+  }, [possibleDuplicates]);
 
   const [expandedYears, setExpandedYears] = useState<Set<number>>(() => new Set());
   const [expandedCards, setExpandedCards] = useState<Set<string>>(() => new Set());
@@ -149,6 +201,16 @@ export function OwnerServiceHistoryTimeline({
   const [addDraft, setAddDraft] = useState<MaintenanceRecordDraft | null>(null);
   const [confirmAdd, setConfirmAdd] = useState(false);
   const [isAddingSaving, setIsAddingSaving] = useState(false);
+  const [mergeReview, setMergeReview] = useState<{
+    candidate: PossibleServiceDuplicate;
+    anchorServiceId: string;
+    targetServiceId: string;
+    lineItems: string[];
+  } | null>(null);
+  const [isMerging, setIsMerging] = useState(false);
+  const [draggedMergeItemIndex, setDraggedMergeItemIndex] = useState<number | null>(null);
+  const [isAddingMergeItem, setIsAddingMergeItem] = useState(false);
+  const [mergeItemDraft, setMergeItemDraft] = useState("");
 
   useEffect(() => {
     if (yearGroups.length === 0) return;
@@ -183,6 +245,93 @@ export function OwnerServiceHistoryTimeline({
     setDraft(entryToDraft(entry));
     setConfirmSave(false);
     setExpandedCards((current) => new Set(current).add(entry.serviceId));
+  };
+
+  const duplicateAnchorServiceId = (candidate: PossibleServiceDuplicate): string => {
+    const first = entries.find((entry) => entry.serviceId === candidate.firstServiceId);
+    const second = entries.find((entry) => entry.serviceId === candidate.secondServiceId);
+    if (!first || !second) return candidate.firstServiceId;
+    return first.serviceDate >= second.serviceDate ? first.serviceId : second.serviceId;
+  };
+
+  const startMergeReview = (candidate: PossibleServiceDuplicate) => {
+    if (!onMergeService || disabled) return;
+    const first = entries.find((entry) => entry.serviceId === candidate.firstServiceId);
+    const second = entries.find((entry) => entry.serviceId === candidate.secondServiceId);
+    if (!first || !second) return;
+    const preferred =
+      isEvidenceBackedSource(first) !== isEvidenceBackedSource(second)
+        ? isEvidenceBackedSource(first)
+          ? first
+          : second
+        : first.serviceDate <= second.serviceDate
+          ? first
+          : second;
+
+    cancelEditing();
+    setMergeReview({
+      candidate,
+      anchorServiceId: duplicateAnchorServiceId(candidate),
+      targetServiceId: preferred.serviceId,
+      lineItems: uniqueLineItems([preferred, preferred === first ? second : first]),
+    });
+    setIsAddingMergeItem(false);
+    setMergeItemDraft("");
+    setExpandedCards((current) =>
+      new Set(current).add(candidate.firstServiceId).add(candidate.secondServiceId),
+    );
+  };
+
+  const confirmMerge = async () => {
+    if (!onMergeService || !mergeReview || mergeReview.lineItems.length === 0) return;
+    const { candidate, targetServiceId, lineItems } = mergeReview;
+    const mergedServiceId =
+      candidate.firstServiceId === targetServiceId
+        ? candidate.secondServiceId
+        : candidate.firstServiceId;
+
+    setIsMerging(true);
+    try {
+      await onMergeService(targetServiceId, mergedServiceId, lineItems);
+      setMergeReview(null);
+    } finally {
+      setIsMerging(false);
+    }
+  };
+
+  const moveMergeLineItem = (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) return;
+    setMergeReview((current) => {
+      if (!current) return current;
+      const lineItems = [...current.lineItems];
+      const [moved] = lineItems.splice(fromIndex, 1);
+      if (!moved) return current;
+      lineItems.splice(toIndex, 0, moved);
+      return { ...current, lineItems };
+    });
+  };
+
+  const removeMergeLineItem = (index: number) => {
+    setMergeReview((current) => {
+      if (!current || current.lineItems.length === 1) return current;
+      return {
+        ...current,
+        lineItems: current.lineItems.filter((_, itemIndex) => itemIndex !== index),
+      };
+    });
+  };
+
+  const addMergeLineItem = () => {
+    const lineItem = mergeItemDraft.trim();
+    if (!lineItem) return;
+    setMergeReview((current) => {
+      if (!current || current.lineItems.some((item) => lineItemKey(item) === lineItemKey(lineItem))) {
+        return current;
+      }
+      return { ...current, lineItems: [...current.lineItems, lineItem] };
+    });
+    setMergeItemDraft("");
+    setIsAddingMergeItem(false);
   };
 
   const cancelEditing = () => {
@@ -435,6 +584,212 @@ export function OwnerServiceHistoryTimeline({
     );
   };
 
+  const renderMergeReview = (review: NonNullable<typeof mergeReview>) => {
+    const { candidate } = review;
+    const first = entries.find((entry) => entry.serviceId === candidate.firstServiceId);
+    const second = entries.find((entry) => entry.serviceId === candidate.secondServiceId);
+    if (!first || !second) return null;
+
+    const sourceLabel = (entry: TimelineEntry) => {
+      if (entry.source === "carfax_import") return "CARFAX";
+      if (entry.source === "owner_note") return "Owner entry";
+      if (entry.source === "receipt") return "Receipt";
+      if (entry.source === "voice") return "Voice";
+      return "Dealer";
+    };
+
+    const renderSourceChoice = (entry: TimelineEntry) => {
+      const isSelected = review.targetServiceId === entry.serviceId;
+      return (
+        <button
+          type="button"
+          className={cn(
+            "relative rounded-lg border px-3 py-2.5 text-left transition-colors",
+            isSelected
+              ? "border-history-highlight bg-history-highlight/10"
+              : "border-border bg-background hover:border-history-highlight/40",
+          )}
+          disabled={isMerging}
+          aria-pressed={isSelected}
+          onClick={() =>
+            setMergeReview((current) =>
+              current ? { ...current, targetServiceId: entry.serviceId } : current,
+            )
+          }
+        >
+          <span className="block pr-6 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {sourceLabel(entry)}
+          </span>
+          <span className="mt-1 block text-sm font-semibold text-foreground">
+            {formatServiceDate(entry.serviceDate)}
+          </span>
+          <span className="mt-0.5 block text-sm text-muted-foreground">
+            {formatShopLine(entry)}
+          </span>
+          {isSelected ? (
+            <span className="absolute right-2.5 top-2.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-history-highlight text-white">
+              <Check className="h-3 w-3" aria-hidden />
+            </span>
+          ) : null}
+        </button>
+      );
+    };
+
+    return (
+      <div className="border-t border-history-highlight/25 bg-history-highlight/[0.04] px-3.5 py-4 sm:px-4">
+        <div className="flex items-start gap-2">
+          <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-history-highlight" aria-hidden />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground">Assistant prepared one clean record</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Same {first.mileage.toLocaleString()} mi · {candidate.dayDistance === 0 ? "same day" : "one day apart"} ·
+              matching “{candidate.matchingLineItems[0]}”
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Use date and shop from
+          </p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {renderSourceChoice(first)}
+            {renderSourceChoice(second)}
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Work performed · {review.lineItems.length}
+            </p>
+            <span className="text-xs text-muted-foreground">Drag or tap arrows</span>
+          </div>
+          <ul className="space-y-1.5">
+            {review.lineItems.map((lineItem, index) => (
+              <li
+                key={`${lineItemKey(lineItem)}-${index}`}
+                draggable={!isMerging}
+                className={cn(
+                  "flex items-center gap-2 rounded-lg border border-border bg-background px-2 py-2 text-sm",
+                  draggedMergeItemIndex === index && "opacity-50",
+                )}
+                onDragStart={() => setDraggedMergeItemIndex(index)}
+                onDragOver={(event) => event.preventDefault()}
+                onDrop={() => {
+                  if (draggedMergeItemIndex !== null) {
+                    moveMergeLineItem(draggedMergeItemIndex, index);
+                  }
+                  setDraggedMergeItemIndex(null);
+                }}
+                onDragEnd={() => setDraggedMergeItemIndex(null)}
+              >
+                <GripVertical
+                  className="h-4 w-4 shrink-0 cursor-grab text-muted-foreground"
+                  aria-hidden
+                />
+                <span className="min-w-0 flex-1 text-foreground">{lineItem}</span>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7 shrink-0 text-muted-foreground"
+                  disabled={isMerging || index === 0}
+                  aria-label={`Move ${lineItem} up`}
+                  onClick={() => moveMergeLineItem(index, index - 1)}
+                >
+                  <ChevronUp className="h-3.5 w-3.5" aria-hidden />
+                </Button>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7 shrink-0 text-muted-foreground"
+                  disabled={isMerging || index === review.lineItems.length - 1}
+                  aria-label={`Move ${lineItem} down`}
+                  onClick={() => moveMergeLineItem(index, index + 1)}
+                >
+                  <ChevronDown className="h-3.5 w-3.5" aria-hidden />
+                </Button>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7 shrink-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  disabled={isMerging || review.lineItems.length === 1}
+                  aria-label={`Remove ${lineItem}`}
+                  onClick={() => removeMergeLineItem(index)}
+                >
+                  <Trash2 className="h-3.5 w-3.5" aria-hidden />
+                </Button>
+              </li>
+            ))}
+          </ul>
+
+          {isAddingMergeItem ? (
+            <div className="mt-2 flex gap-2">
+              <Input
+                autoFocus
+                value={mergeItemDraft}
+                placeholder="Add missing work"
+                disabled={isMerging}
+                onChange={(event) => setMergeItemDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    addMergeLineItem();
+                  }
+                  if (event.key === "Escape") {
+                    setIsAddingMergeItem(false);
+                    setMergeItemDraft("");
+                  }
+                }}
+              />
+              <Button type="button" size="sm" disabled={!mergeItemDraft.trim()} onClick={addMergeLineItem}>
+                Add
+              </Button>
+            </div>
+          ) : (
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="mt-1.5 px-2 text-muted-foreground"
+              disabled={isMerging}
+              onClick={() => setIsAddingMergeItem(true)}
+            >
+              <Plus className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+              Add missing item
+            </Button>
+          )}
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-border/60 pt-3">
+          <Button type="button" size="sm" disabled={isMerging} onClick={() => void confirmMerge()}>
+            <GitMerge className="mr-1.5 h-4 w-4" aria-hidden />
+            {isMerging ? "Merging…" : "Merge 2 records"}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            disabled={isMerging}
+            onClick={() => {
+              setMergeReview(null);
+              setIsAddingMergeItem(false);
+              setMergeItemDraft("");
+            }}
+          >
+            Cancel
+          </Button>
+          <span className="text-xs text-muted-foreground">
+            Evidence combines automatically. You can edit details later.
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -531,6 +886,10 @@ export function OwnerServiceHistoryTimeline({
                     const serviceCount = entry.lineItems.length;
                     const previewItem = entry.lineItems[0];
                     const costDisplay = formatCostDisplay(entry.total);
+                    const duplicateCandidate = duplicateByServiceId.get(entry.serviceId);
+                    const showDuplicateFlag =
+                      duplicateCandidate !== undefined &&
+                      duplicateAnchorServiceId(duplicateCandidate) === entry.serviceId;
 
                     return (
                       <li
@@ -585,21 +944,41 @@ export function OwnerServiceHistoryTimeline({
                             </div>
                           )}
 
-                          {onUpdateService && !isEditing ? (
-                            <Button
-                              type="button"
-                              size="icon"
-                              variant="ghost"
-                              className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-history-highlight/10 hover:text-history-highlight"
-                              disabled={disabled}
-                              aria-label="Edit maintenance record"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                startEditing(entry);
-                              }}
-                            >
-                              <Pencil className="h-3.5 w-3.5" aria-hidden />
-                            </Button>
+                          {!isEditing ? (
+                            <div className="flex shrink-0 flex-wrap justify-end gap-1.5">
+                              {duplicateCandidate && showDuplicateFlag && onMergeService ? (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 border-amber-500/30 bg-amber-500/5 px-2.5 text-amber-700 hover:bg-amber-500/10"
+                                  disabled={disabled}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    startMergeReview(duplicateCandidate);
+                                  }}
+                                >
+                                  <AlertTriangle className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+                                  Possible duplicate
+                                </Button>
+                              ) : null}
+                              {onUpdateService ? (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-8 px-2.5 text-muted-foreground hover:bg-history-highlight/10 hover:text-history-highlight"
+                                  disabled={disabled}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    startEditing(entry);
+                                  }}
+                                >
+                                  <Pencil className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+                                  Edit
+                                </Button>
+                              ) : null}
+                            </div>
                           ) : null}
                         </div>
 
@@ -619,6 +998,9 @@ export function OwnerServiceHistoryTimeline({
                         ) : null}
 
                         {isEditing ? renderEditForm(entry) : null}
+                        {mergeReview?.anchorServiceId === entry.serviceId
+                          ? renderMergeReview(mergeReview)
+                          : null}
                       </li>
                     );
                   })}

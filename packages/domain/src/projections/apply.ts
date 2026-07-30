@@ -89,6 +89,24 @@ export const applyEvent = (
       };
     }
 
+    case EVENT_TYPES.SERVICE_MERGED:
+      return {
+        ...state,
+        vehicleId: event.payload.vehicleId,
+        timeline: state.timeline
+          .filter((entry) => entry.serviceId !== event.payload.mergedServiceId)
+          .map((entry) =>
+            entry.serviceId === event.payload.targetServiceId
+              ? {
+                  ...entry,
+                  lineItems: event.payload.lineItems,
+                  evidenceIds: event.payload.evidenceIds,
+                  total: event.payload.total,
+                }
+              : entry,
+          ),
+      };
+
     case EVENT_TYPES.MAINTENANCE_RECOMMENDATION_CREATED:
       return state;
 

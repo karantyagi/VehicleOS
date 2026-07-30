@@ -399,6 +399,38 @@ export function OwnerDashboard() {
     }
   };
 
+  const mergeServiceRecords = async (
+    targetServiceId: string,
+    mergedServiceId: string,
+    lineItems: string[],
+  ) => {
+    if (!vehicle) return;
+    setIsBusy(true);
+    try {
+      const response = await fetch(`${apiBase}/api/vehicles/${vehicle.id}/services/${targetServiceId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mergedServiceId, lineItems }),
+      });
+      const body = (await response.json()) as {
+        timeline?: TimelineEntry[];
+        currentMileage?: number;
+        error?: string;
+      };
+      if (!response.ok) throw new Error(body.error ?? "Could not merge service records.");
+      if (body.timeline) setTimeline(body.timeline);
+      if (typeof body.currentMileage === "number") {
+        setVehicle((current) => (current ? { ...current, currentMileage: body.currentMileage! } : current));
+      }
+      feedback("Records merged. The original history remains in VehicleOS's audit log.");
+    } catch (error) {
+      feedback(error instanceof Error ? error.message : "Could not merge service records.");
+      throw error;
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   const addMaintenanceRecord = async (draft: MaintenanceRecordDraft) => {
     if (!vehicle) return;
     const lineItems = draftLineItems(draft);
@@ -687,6 +719,7 @@ export function OwnerDashboard() {
             defaultMileage={vehicle.currentMileage}
             onOpenEvidence={openEvidence}
             onUpdateService={updateServiceRecord}
+            onMergeService={mergeServiceRecords}
             onAddService={addMaintenanceRecord}
             requireEditConfirmation={!isDeveloper}
             onGoToImport={() => setActiveSection("imports")}
