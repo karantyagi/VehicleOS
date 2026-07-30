@@ -14,6 +14,7 @@ import type {
   TimelineEntry,
 } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
+import type { OwnerContextMemory } from "@vehicleos/domain";
 
 type MaintenanceTimelineSectionProps = {
   timeline: TimelineEntry[];
@@ -48,6 +49,11 @@ type MaintenanceTimelineSectionProps = {
   observedMilesPerYear?: number | null;
   statedMilesPerYear?: number | null;
   dueSoonDays?: number;
+  ownerContextMemory?: OwnerContextMemory | null;
+  onSaveOwnerContextMemory?: (
+    memory: OwnerContextMemory,
+    successMessage: string,
+  ) => Promise<void>;
 };
 
 const TAB_ITEMS = [
@@ -84,6 +90,8 @@ export function MaintenanceTimelineSection({
   observedMilesPerYear,
   statedMilesPerYear,
   dueSoonDays,
+  ownerContextMemory,
+  onSaveOwnerContextMemory,
 }: MaintenanceTimelineSectionProps) {
   const [internalTab, setInternalTab] = useState<ServiceHistoryTab>("schedule");
   const tab = activeTab ?? internalTab;
@@ -185,6 +193,9 @@ export function MaintenanceTimelineSection({
               dueSoonDays={dueSoonDays}
               ownerDueItems={ownerDueItems}
               currentMileage={defaultMileage}
+              disabled={disabled}
+              ownerContextMemory={ownerContextMemory}
+              onSaveOwnerContextMemory={onSaveOwnerContextMemory}
             />
           ) : null}
         </>

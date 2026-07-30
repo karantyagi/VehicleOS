@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ListChecks } from "lucide-react";
+import { ChevronDown, ChevronUp, ListChecks } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { DeviationPatternForm } from "@/components/deviation-pattern-form";
 import { IntervalConfirmForm } from "@/components/interval-confirm-form";
@@ -46,6 +46,7 @@ export function NowQueueConsole({
   const setSelectedId = useAppUiStore((s) => s.setSelectedNowTaskId);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("status-asc");
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
 
   const pending = useMemo(
     () => items.filter((item) => item.taskKind === "verification" && item.status === "pending"),
@@ -84,85 +85,102 @@ export function NowQueueConsole({
             item.verificationCode === "VERIFY_MAINTENANCE_TIMING" && vehicleId && apiBase;
           const showIntervalForm =
             item.verificationCode === "VERIFY_OWNER_INTERVAL" && vehicleId && apiBase;
+          const isExpanded = expandedTaskId === item.taskId;
 
           return (
-            <li key={item.taskId} className="rounded-xl border border-border bg-card p-4 shadow-sm">
-              <div className="space-y-3">
-                <div className="space-y-1">
-                  <h3 className="font-semibold leading-tight">{item.title}</h3>
+            <li key={item.taskId} className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+              <button
+                type="button"
+                className="flex w-full items-start gap-3 p-4 text-left"
+                aria-expanded={isExpanded}
+                onClick={() => setExpandedTaskId(isExpanded ? null : item.taskId)}
+              >
+                <h3 className="min-w-0 flex-1 font-semibold leading-tight">
+                  {item.title}
+                </h3>
+                <span className="shrink-0 pt-0.5 text-muted-foreground">
+                  {isExpanded ? (
+                    <ChevronUp className="h-4 w-4" aria-hidden />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" aria-hidden />
+                  )}
+                </span>
+              </button>
+              {isExpanded ? (
+                <div className="space-y-3 border-t border-border/60 px-4 pb-4 pt-3">
                   <p className="text-sm text-muted-foreground">{item.reason}</p>
+                  {showIntervalForm ? (
+                    <IntervalConfirmForm
+                      vehicleId={vehicleId}
+                      taskId={item.taskId}
+                      apiBase={apiBase}
+                      disabled={disabled}
+                      suggestedIntervalMiles={item.suggestedIntervalMiles ?? null}
+                      suggestedIntervalMonths={item.suggestedIntervalMonths ?? null}
+                      intervalKind={item.intervalKind}
+                      dismissLabel={
+                        item.ruleId?.includes("owner-habit:") ? "Not now" : "Keep OEM interval"
+                      }
+                      onConfirmed={() => onVerificationResolved?.()}
+                      onDismiss={() => onDecide(item.taskId, "dismiss")}
+                      onError={(message) => onError?.(message)}
+                    />
+                  ) : null}
+                  {showDeviationForm ? (
+                    <DeviationPatternForm
+                      vehicleId={vehicleId}
+                      taskId={item.taskId}
+                      apiBase={apiBase}
+                      disabled={disabled}
+                      suggestedReasonId={item.suggestedReasonId ?? null}
+                      draftReasonSource={item.draftReasonSource ?? null}
+                      onConfirmed={() => onVerificationResolved?.()}
+                      onError={(message) => onError?.(message)}
+                    />
+                  ) : null}
+                  {showOdometerForm ? (
+                    <OdometerInlineForm
+                      vehicleId={vehicleId}
+                      apiBase={apiBase}
+                      defaultMileage={currentMileage}
+                      disabled={disabled}
+                      onSaved={() => {
+                        onOdometerSaved?.();
+                        onDecide(item.taskId, "approve");
+                      }}
+                      onError={(message) => onError?.(message)}
+                    />
+                  ) : null}
+                  {!showDeviationForm && !showIntervalForm ? (
+                    <div className="flex flex-wrap gap-2">
+                      <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
+                        Confirm
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="secondary"
+                        disabled={disabled}
+                        onClick={() => onDecide(item.taskId, "dismiss")}
+                      >
+                        Dismiss
+                      </Button>
+                    </div>
+                  ) : showDeviationForm ? (
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="secondary"
+                        disabled={disabled}
+                        onClick={() => onDecide(item.taskId, "dismiss")}
+                      >
+                        Dismiss
+                      </Button>
+                    </div>
+                  ) : null}
                 </div>
-                {showIntervalForm ? (
-                  <IntervalConfirmForm
-                    vehicleId={vehicleId}
-                    taskId={item.taskId}
-                    apiBase={apiBase}
-                    disabled={disabled}
-                    suggestedIntervalMiles={item.suggestedIntervalMiles ?? null}
-                    suggestedIntervalMonths={item.suggestedIntervalMonths ?? null}
-                    intervalKind={item.intervalKind}
-                    dismissLabel={
-                      item.ruleId?.includes("owner-habit:") ? "Not now" : "Keep OEM interval"
-                    }
-                    onConfirmed={() => onVerificationResolved?.()}
-                    onDismiss={() => onDecide(item.taskId, "dismiss")}
-                    onError={(message) => onError?.(message)}
-                  />
-                ) : null}
-                {showDeviationForm ? (
-                  <DeviationPatternForm
-                    vehicleId={vehicleId}
-                    taskId={item.taskId}
-                    apiBase={apiBase}
-                    disabled={disabled}
-                    suggestedReasonId={item.suggestedReasonId ?? null}
-                    draftReasonSource={item.draftReasonSource ?? null}
-                    onConfirmed={() => onVerificationResolved?.()}
-                    onError={(message) => onError?.(message)}
-                  />
-                ) : null}
-                {showOdometerForm ? (
-                  <OdometerInlineForm
-                    vehicleId={vehicleId}
-                    apiBase={apiBase}
-                    defaultMileage={currentMileage}
-                    disabled={disabled}
-                    onSaved={() => {
-                      onOdometerSaved?.();
-                      onDecide(item.taskId, "approve");
-                    }}
-                    onError={(message) => onError?.(message)}
-                  />
-                ) : null}
-                {!showDeviationForm && !showIntervalForm ? (
-                <div className="flex flex-wrap gap-2">
-                  <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
-                    Confirm
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="secondary"
-                    disabled={disabled}
-                    onClick={() => onDecide(item.taskId, "dismiss")}
-                  >
-                    Dismiss
-                  </Button>
-                </div>
-                ) : (
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="secondary"
-                    disabled={disabled}
-                    onClick={() => onDecide(item.taskId, "dismiss")}
-                  >
-                    Dismiss
-                  </Button>
-                </div>
-                )}
-              </div>
+              ) : null}
             </li>
           );
         })}

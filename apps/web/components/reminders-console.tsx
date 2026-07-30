@@ -1,7 +1,15 @@
 "use client";
 
-import { CalendarCheck2, CheckCircle2, Wrench } from "lucide-react";
+import {
+  CalendarCheck2,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Wrench,
+} from "lucide-react";
+import { useState } from "react";
 import { EmptyState } from "@/components/empty-state";
+import { MaintenanceIntelligenceSummary } from "@/components/maintenance-intelligence-summary";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { OwnerReminderItem } from "@/lib/console-types";
@@ -80,6 +88,7 @@ export function RemindersConsole({
   onFixData,
   minimal = false,
 }: RemindersConsoleProps) {
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
   const groups = buildGroups(items);
 
   if (groups.length === 0) {
@@ -87,7 +96,11 @@ export function RemindersConsole({
       <EmptyState
         icon={CheckCircle2}
         title="All clear this week"
-        description={minimal ? undefined : "Nothing needs action. Your maintenance schedule is still available anytime."}
+        description={
+          minimal
+            ? undefined
+            : "Nothing needs action. Your maintenance schedule is still available anytime."
+        }
       />
     );
   }
@@ -99,39 +112,74 @@ export function RemindersConsole({
           <ul className="mt-3 space-y-3">
             {group.items.map((item) => {
               const isOverdue = item.urgency === "overdue";
+              const isExpanded = expandedTaskId === item.taskId;
+
               return (
                 <li
                   key={item.taskId}
                   className={cn(
-                    "rounded-xl border border-border bg-card p-4 shadow-sm",
+                    "overflow-hidden rounded-xl border border-border bg-card shadow-sm",
                     isOverdue &&
                       "border-red-500/45 bg-red-500/[0.06] shadow-[inset_3px_0_0_hsl(var(--destructive))]",
                   )}
                 >
-                  <div className="min-w-0 space-y-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h3
+                  <button
+                    type="button"
+                    className="flex w-full items-start gap-3 p-4 text-left"
+                    aria-expanded={isExpanded}
+                    aria-label={`Details for ${item.title}`}
+                    onClick={() => setExpandedTaskId(isExpanded ? null : item.taskId)}
+                  >
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3
+                          className={cn(
+                            "font-semibold leading-tight",
+                            isOverdue && "text-red-800 dark:text-red-200",
+                          )}
+                        >
+                          {item.title}
+                        </h3>
+                        <Badge variant={urgencyVariant(item.urgency)}>
+                          {urgencyLabel[item.urgency]}
+                        </Badge>
+                      </div>
+                      <p
                         className={cn(
-                          "font-semibold leading-tight",
-                          isOverdue && "text-red-800 dark:text-red-200",
+                          "text-sm font-medium",
+                          isOverdue
+                            ? "text-red-700 dark:text-red-300"
+                            : "text-foreground",
                         )}
                       >
-                        {item.title}
-                      </h3>
-                      <Badge variant={urgencyVariant(item.urgency)}>{urgencyLabel[item.urgency]}</Badge>
+                        {item.deadlineLabel}
+                      </p>
                     </div>
-                    <p
-                      className={cn(
-                        "text-sm font-medium",
-                        isOverdue ? "text-red-700 dark:text-red-300" : "text-foreground",
+                    <span className="shrink-0 pt-1 text-muted-foreground">
+                      {isExpanded ? (
+                        <ChevronUp className="h-4 w-4" aria-hidden />
+                      ) : (
+                        <ChevronDown className="h-4 w-4" aria-hidden />
                       )}
-                    >
-                      {item.deadlineLabel}
-                    </p>
-                    <p className="text-sm text-muted-foreground">{item.reason}</p>
-                  </div>
+                    </span>
+                  </button>
 
-                  <div className="mt-4 flex flex-wrap gap-2">
+                  {isExpanded ? (
+                    <div className="border-t border-border/60 px-4 pb-4 pt-3">
+                      {item.intelligence ? (
+                        <MaintenanceIntelligenceSummary intelligence={item.intelligence} />
+                      ) : (
+                        <section className="rounded-lg border border-border/70 bg-background/75 p-3.5">
+                          <p className="text-sm font-semibold text-foreground">
+                            Why this needs attention
+                          </p>
+                          <p className="mt-1 text-sm text-muted-foreground">{item.reason}</p>
+                        </section>
+                      )}
+                    </div>
+                  ) : null}
+
+                  <div className="flex flex-wrap gap-2 border-t border-border/60 px-4 pb-4 pt-3">
                     <Button
                       type="button"
                       size="sm"
@@ -151,7 +199,13 @@ export function RemindersConsole({
                       <CheckCircle2 className="mr-1.5 h-4 w-4" aria-hidden />
                       Done
                     </Button>
-                    <Button type="button" size="sm" variant="outline" disabled={disabled} onClick={onFixData}>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={disabled}
+                      onClick={onFixData}
+                    >
                       <Wrench className="mr-1.5 h-4 w-4" aria-hidden />
                       Fix this
                     </Button>
@@ -173,11 +227,16 @@ export function RemindersConsole({
 
         if (group.id === "later") {
           return (
-            <details key={group.id} className="rounded-xl border border-border/70 bg-muted/20 px-4 py-3">
+            <details
+              key={group.id}
+              className="rounded-xl border border-border/70 bg-muted/20 px-4 py-3"
+            >
               <summary className="cursor-pointer text-sm font-semibold text-foreground">
                 {group.title} · {group.items.length}
               </summary>
-              {!minimal ? <p className="mt-1 text-xs text-muted-foreground">{group.description}</p> : null}
+              {!minimal ? (
+                <p className="mt-1 text-xs text-muted-foreground">{group.description}</p>
+              ) : null}
               {content}
             </details>
           );
@@ -186,12 +245,19 @@ export function RemindersConsole({
         return (
           <section key={group.id} aria-labelledby={`attention-${group.id}`}>
             <div className="flex items-baseline justify-between gap-3">
-              <h2 id={`attention-${group.id}`} className="text-base font-semibold tracking-tight text-foreground">
+              <h2
+                id={`attention-${group.id}`}
+                className="text-base font-semibold tracking-tight text-foreground"
+              >
                 {group.title}
               </h2>
-              <span className="text-xs tabular-nums text-muted-foreground">{group.items.length}</span>
+              <span className="text-xs tabular-nums text-muted-foreground">
+                {group.items.length}
+              </span>
             </div>
-            {!minimal ? <p className="mt-1 text-xs text-muted-foreground">{group.description}</p> : null}
+            {!minimal ? (
+              <p className="mt-1 text-xs text-muted-foreground">{group.description}</p>
+            ) : null}
             {content}
           </section>
         );

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { OwnerDueItemsView, ScheduleProjectionRow } from "@/lib/console-types";
+import type { OwnerContextMemory } from "@vehicleos/domain";
 import { cn } from "@/lib/utils";
 
 type ScheduleHorizonView = "near" | "extended" | "full";
@@ -26,6 +27,12 @@ type MaintenanceScheduleConsoleProps = {
   dueSoonDays?: number;
   ownerDueItems?: OwnerDueItemsView | null;
   currentMileage?: number;
+  disabled?: boolean;
+  ownerContextMemory?: OwnerContextMemory | null;
+  onSaveOwnerContextMemory?: (
+    memory: OwnerContextMemory,
+    successMessage: string,
+  ) => Promise<void>;
 };
 
 const emptyScheduleCopy = (hasKnowledgeSchedule: boolean) => {
@@ -96,6 +103,9 @@ export function MaintenanceScheduleConsole({
   dueSoonDays,
   ownerDueItems = null,
   currentMileage = 0,
+  disabled = false,
+  ownerContextMemory,
+  onSaveOwnerContextMemory,
 }: MaintenanceScheduleConsoleProps) {
   const [horizon, setHorizon] = useState<ScheduleHorizonView>("near");
 
@@ -159,6 +169,9 @@ export function MaintenanceScheduleConsole({
         dueItems={ownerDueItems}
         currentMileage={currentMileage}
         hasKnowledgeSchedule={hasKnowledgeSchedule}
+        disabled={disabled}
+        ownerContextMemory={ownerContextMemory}
+        onSaveOwnerContextMemory={onSaveOwnerContextMemory}
       />
     );
   }

@@ -11,7 +11,7 @@ See [`user-surfaces.md`](./user-surfaces.md).
 
 Deliver one credible, end-to-end ownership workflow that proves the architecture:
 
-Upload a maintenance receipt, extract structured service data, update vehicle state, generate the next recommended action, and let the user approve or dismiss that task.
+Upload a maintenance receipt, extract structured service data, update vehicle state, generate the next recommended action, and let the owner schedule it, record it as done, fix its source data, or mark it not needed.
 
 ## Primary User Flow
 
@@ -25,3 +25,25 @@ Upload a maintenance receipt, extract structured service data, update vehicle st
 8. System creates a proposed task with explanation and supporting evidence.
 9. Home shows the unresolved action by time horizon.
 10. The owner marks it Scheduled, records it Done, fixes the source data, or marks it Not needed.
+
+## Maintenance item intelligence
+
+Facts, descriptive insights, assistant recommendations, and owner interval
+decisions are separate layers. A low or variable evidence state must not hide
+useful service history or owner controls.
+
+Rotate Tires is the first complete item-specific policy. All maintenance items
+share the same rationale axes and collapsed-by-default interaction; item
+evaluators beyond Rotate Tires are Phase 2.
+
+The attention item owns `what / when / why now`. A separate action recommendation
+owns `how / where / expected time and cost / why this option`. The two outputs
+have separate confidence and evidence. The initial Rotate Tires pilot uses TLX
+service history and owner memory to propose a Costco fulfillment plan while
+requiring owner confirmation for the continuing `$0` benefit.
+
+See:
+
+- [`maintenance-item-intelligence.md`](./maintenance-item-intelligence.md)
+- [`maintenance-item-intelligence-queue.md`](./maintenance-item-intelligence-queue.md)
+- [ADR-014](../../docs-lite/adr/ADR-014-owner-centered-maintenance-item-intelligence.md)

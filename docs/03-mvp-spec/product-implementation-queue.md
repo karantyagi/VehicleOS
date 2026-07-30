@@ -2,7 +2,7 @@
 
 **Updated:** 2026-07-30
 **Scope:** Owner web attention and capture-first mobile
-**Architecture:** [ADR-014](../../docs-lite/adr/ADR-014-owner-attention-and-deferred-notification-control.md)
+**Architecture:** [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md)
 
 This queue records adopted product direction. It does not authorize notification-system implementation.
 

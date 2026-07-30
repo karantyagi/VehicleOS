@@ -1,4 +1,4 @@
-# ADR-014 — Separate owner attention from notification delivery
+# ADR-015 — Separate owner attention from notification delivery
 
 **Status:** Accepted; current web/capture slice implemented (2026-07-30)
 **Deciders:** Product / architecture

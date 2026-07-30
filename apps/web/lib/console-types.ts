@@ -45,6 +45,7 @@ export type OwnerReminderItem = {
   urgency: "overdue" | "due_now" | "due_soon" | "upcoming";
   attentionWindow: "overdue" | "this_week" | "next_week" | "this_month" | "later";
   ruleId?: string;
+  intelligence?: import("@vehicleos/domain").MaintenanceItemIntelligence;
 };
 
 export type ConsoleDensity = "comfortable" | "compact";

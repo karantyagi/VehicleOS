@@ -50,6 +50,7 @@ import type {
   TimelineEntry,
   VerificationMaturityView,
 } from "@/lib/console-types";
+import type { OwnerContextMemory } from "@vehicleos/domain";
 
 type Vehicle = OnboardingVehicle;
 
@@ -220,6 +221,36 @@ export function OwnerDashboard() {
       setForm((current) => ({ ...current, mileage: body.currentMileage ?? nextVehicle.currentMileage }));
     },
     [apiBase, applyQueueState],
+  );
+
+  const saveOwnerContextMemory = useCallback(
+    async (memory: OwnerContextMemory, successMessage: string) => {
+      if (!vehicle) throw new Error("No active vehicle.");
+
+      setIsBusy(true);
+      try {
+        const response = await fetch(`${apiBase}/api/vehicles/${vehicle.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ownerContextMemory: memory }),
+        });
+        const body = (await response.json()) as {
+          vehicle?: Vehicle;
+          error?: string;
+        };
+        if (!response.ok || !body.vehicle) {
+          throw new Error(body.error ?? "Could not save this preference.");
+        }
+
+        setVehicle(body.vehicle);
+        await loadVehicleState(body.vehicle);
+        feedback(successMessage);
+        void garage.refreshGarage();
+      } finally {
+        setIsBusy(false);
+      }
+    },
+    [apiBase, feedback, garage, loadVehicleState, vehicle],
   );
 
   const resetVehicleWorkspace = useCallback(() => {
@@ -811,6 +842,8 @@ export function OwnerDashboard() {
             observedMilesPerYear={maintenanceSchedule.observedMilesPerYear}
             statedMilesPerYear={maintenanceSchedule.statedMilesPerYear}
             dueSoonDays={maintenanceSchedule.dueSoonDays}
+            ownerContextMemory={vehicle.ownerContextMemory}
+            onSaveOwnerContextMemory={saveOwnerContextMemory}
           />
         </PanelCard>
       ) : null}

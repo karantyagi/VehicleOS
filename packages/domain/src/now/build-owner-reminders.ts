@@ -2,6 +2,7 @@ import type { NowQueueItem } from "../projections/types.js";
 import type { ScheduleProjectionRow } from "../schedule/project-maintenance-schedule.js";
 import { isRenewalRuleId } from "../ownership/resolve-renewal-rule-id.js";
 import type { OwnerDueItemsView } from "../owner-care/build-owner-due-items.js";
+import type { MaintenanceItemIntelligence } from "../schedule/build-maintenance-item-intelligence.js";
 import {
   formatOwnerDeadline,
   resolveAttentionWindow,
@@ -22,6 +23,7 @@ export type OwnerReminderView = {
   urgency: ReminderUrgency;
   attentionWindow: AttentionWindow;
   ruleId?: string;
+  intelligence?: MaintenanceItemIntelligence;
 };
 
 export const splitOwnerQueues = (items: NowQueueItem[]): {
@@ -74,6 +76,24 @@ const resolveDueBy = (input: {
   return row?.dueDate ?? null;
 };
 
+const resolveMaintenanceIntelligence = (input: {
+  item: NowQueueItem;
+  dueItems?: OwnerDueItemsView | null;
+}): MaintenanceItemIntelligence | undefined => {
+  if (!input.dueItems || !input.item.ruleId?.startsWith("knowledge.policy.")) {
+    return undefined;
+  }
+
+  const entryId = input.item.ruleId
+    .replace(/^knowledge\.policy\./, "")
+    .replace(/\.v\d+$/, "");
+  return input.dueItems.items.find(
+    (dueItem) =>
+      dueItem.kind === "maintenance" &&
+      dueItem.maintenanceRow?.entryId === entryId,
+  )?.maintenanceRow?.intelligence;
+};
+
 export const buildOwnerReminderView = (input: {
   item: NowQueueItem;
   scheduleRows: ScheduleProjectionRow[];
@@ -91,6 +111,10 @@ export const buildOwnerReminderView = (input: {
   });
   const attentionWindow = resolveAttentionWindow(dueBy, input.today);
   const deadlineLabel = formatOwnerDeadline(dueBy, input.today);
+  const intelligence = resolveMaintenanceIntelligence({
+    item: input.item,
+    dueItems: input.dueItems,
+  });
 
   let reason = input.item.reason;
   if (!reason.includes(deadlineLabel)) {
@@ -112,6 +136,7 @@ export const buildOwnerReminderView = (input: {
     urgency,
     attentionWindow,
     ruleId: input.item.ruleId,
+    ...(intelligence ? { intelligence } : {}),
   };
 };
 

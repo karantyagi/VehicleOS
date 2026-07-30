@@ -2,6 +2,10 @@ import { findMatchingServices } from "../knowledge/match-service-name.js";
 import type { ServiceAliasRegistry } from "../knowledge/service-alias-registry.js";
 import type { OwnerContextMemory } from "../owner-context/types.js";
 import type { KnowledgeScheduleEntry, ServiceTimelineEntry } from "../projections/types.js";
+import {
+  resolveTireRotationEvidence,
+  sortServiceTimeline,
+} from "./resolve-tire-rotation-evidence.js";
 
 export type IntervalProposal = {
   entryId: string;
@@ -79,6 +83,57 @@ const detectMilesProposal = (input: {
   };
 };
 
+const detectTireMilesProposal = (input: {
+  matches: ServiceTimelineEntry[];
+  timeline: ServiceTimelineEntry[];
+  oemIntervalMiles: number;
+}): { intervalMiles: number; evidenceSummary: string; confidence: number } | null => {
+  const evidence = resolveTireRotationEvidence({
+    timeline: input.timeline,
+    rotationMatches: input.matches,
+  });
+  const recentSpacings = evidence.recentGapsMiles;
+  if (
+    recentSpacings.length === 0 ||
+    evidence.recentAverageMiles === null ||
+    evidence.recentMedianMiles === null
+  ) {
+    return null;
+  }
+
+  const observedAverage = evidence.recentAverageMiles;
+  const observedMedian = evidence.recentMedianMiles;
+  const intervalMiles = Math.max(
+    500,
+    Math.round(observedMedian / 500) * 500,
+  );
+  if (intervalMiles === input.oemIntervalMiles) return null;
+
+  const rangeStart = Math.min(...recentSpacings);
+  const rangeEnd = Math.max(...recentSpacings);
+  const evidenceSummary =
+    recentSpacings.length === 1
+      ? `One ${evidence.scope === "current_tire_set" ? "current-tire interval" : "observed rotation gap"}: ${recentSpacings[0]!.toLocaleString("en-US")} mi`
+      : `${recentSpacings.length} ${evidence.scope === "current_tire_set" ? "current-tire intervals" : "recent rotation gaps"} averaged ${observedAverage.toLocaleString("en-US")} mi (median ${observedMedian.toLocaleString("en-US")} mi; range ${rangeStart.toLocaleString("en-US")}–${rangeEnd.toLocaleString("en-US")} mi)`;
+  const stable = isStableSpacing(recentSpacings);
+  const confidence =
+    recentSpacings.length >= 3
+      ? stable
+        ? 0.9
+        : 0.75
+      : recentSpacings.length === 2
+        ? stable
+          ? 0.75
+          : 0.65
+        : 0.55;
+
+  return {
+    intervalMiles,
+    evidenceSummary,
+    confidence,
+  };
+};
+
 const detectMonthsProposal = (input: {
   matches: ServiceTimelineEntry[];
   oemIntervalMonths: number;
@@ -121,21 +176,27 @@ export const detectIntervalProposalForEntry = (input: {
     /rotate tires|tire rotation/i.test(input.entry.serviceName);
   if (oemIntervalMiles === null && oemIntervalMonths === null) return null;
 
-  const matches = findMatchingServices(input.timeline, input.entry.serviceName, {
-    canonicalServiceId: input.entry.canonicalServiceId ?? null,
-    serviceAliasRegistry: input.serviceAliasRegistry,
-  }).sort((left, right) => left.serviceDate.localeCompare(right.serviceDate));
+  const matches = sortServiceTimeline(
+    findMatchingServices(input.timeline, input.entry.serviceName, {
+      canonicalServiceId: input.entry.canonicalServiceId ?? null,
+      serviceAliasRegistry: input.serviceAliasRegistry,
+    }),
+  );
 
-  // One gap from two services is not enough evidence for an owner habit.
-  if (matches.length < 3) return null;
+  if (!isTireRotation && matches.length < 3) return null;
 
   const milesCandidate =
     oemIntervalMiles !== null
-      ? detectMilesProposal({
-          matches,
-          oemIntervalMiles,
-          serviceLabel: isTireRotation ? "rotations" : undefined,
-        })
+      ? isTireRotation
+        ? detectTireMilesProposal({
+            matches,
+            timeline: input.timeline,
+            oemIntervalMiles,
+          })
+        : detectMilesProposal({
+            matches,
+            oemIntervalMiles,
+          })
       : null;
   const monthsCandidate =
     !isTireRotation && oemIntervalMonths !== null
@@ -180,6 +241,12 @@ export const detectIntervalProposals = (input: {
   });
 
 export const formatIntervalProposalTaskTitle = (proposal: IntervalProposal): string => {
+  if (
+    proposal.intervalKind === "tire_rotation" &&
+    proposal.intervalMiles !== null
+  ) {
+    return `${proposal.serviceName} — assistant suggests ${proposal.intervalMiles.toLocaleString("en-US")} mi`;
+  }
   if (proposal.intervalMiles !== null) {
     return `${proposal.serviceName} — your ~${proposal.intervalMiles.toLocaleString("en-US")} mi habit?`;
   }
@@ -200,7 +267,7 @@ export const formatIntervalProposalTaskReason = (proposal: IntervalProposal): st
     }
     const oemReference =
       oemParts.length > 0 ? ` OEM guidance (${oemParts.join(" / ")}) stays on file.` : "";
-    return `${proposal.evidenceSummary}. Use miles driven for rotation timing?${oemReference}`;
+    return `${proposal.evidenceSummary}. Assistant recommends ${proposal.intervalMiles?.toLocaleString("en-US")} mi. Edit or save this mileage for future rotation timing.${oemReference}`;
   }
 
   if (proposal.oemIntervalMiles === null && proposal.oemIntervalMonths === null) {
