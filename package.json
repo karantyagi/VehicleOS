@@ -10,6 +10,8 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
+    "docs:check-links": "node scripts/check-markdown-links.mjs",
+    "verify:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-windows.ps1",
     "dogfood:load-karan-tlx": "pnpm --filter @vehicleos/api exec tsx ../../seeds/dogfood/karan-tlx/load-seed.ts",
     "dogfood:load-ayush-elantra": "pnpm --filter @vehicleos/api exec tsx ../../seeds/dogfood/ayush-elantra/load-seed.ts"
   },

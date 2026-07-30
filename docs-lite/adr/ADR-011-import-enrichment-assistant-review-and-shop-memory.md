@@ -2,7 +2,7 @@
 
 **Status:** Accepted (2026-07-25)  
 **Deciders:** Product / architecture  
-**Related:** ADR-009 (PDF record import) · ADR-010 (deterministic service matching) · ADR-012 (product catalog vs owner runtime) · [`record-import-data-pipeline.md`](../../../workspace/strategy/record-import-data-pipeline.md) · [`phase-1-intelligence-scope.md`](../../../workspace/strategy/phase-1-intelligence-scope.md) · IMP-11 in [`task-queue.md`](../../../workspace/strategy/task-queue.md)
+**Related:** ADR-009 (PDF record import) · ADR-010 (deterministic service matching) · ADR-012 (product catalog vs owner runtime). Internal planning sources summarized by this ADR: `record-import-data-pipeline.md`, `phase-1-intelligence-scope.md`, and IMP-11 in `task-queue.md`.
 
 ---
 
@@ -60,7 +60,7 @@ Resolve shop → city/state using the **cheapest reliable source first**:
 | **Cost** | Every import would re-query for “Costco Tire Center” — wasteful when a static map suffices |
 | **Privacy** | Shop visits are owner behavior; cross-user cache blurs tenancy |
 | **Stale data** | Dealerships move; curated + owner-confirmed beats probabilistic memory |
-| **Phase 1 scope** | [`phase-1-intelligence-scope.md`](../../../workspace/strategy/phase-1-intelligence-scope.md) allows **per-owner memory**, not cross-user learning |
+| **Phase 1 scope** | The internal `phase-1-intelligence-scope.md` plan allows **per-owner memory**, not cross-user learning |
 
 **Product data vs product work:**
 
@@ -188,7 +188,7 @@ IMP-10 dedupes **exact** rows (`date + mileage + shop`). IMP-11 handles **boiler
 
 **Owner resolution (future UX):** Keep dealer record · Keep my entry · Keep both — reuses IMP-11 review queue and owner confirm flow.
 
-**Why wait:** Single-car dogfood cannot validate rules. Early onboard users + annotated fixtures in `connectors/carfax-connect/examples/` are the promotion gate. See [`task-queue.md`](../../../workspace/strategy/task-queue.md) § IMP-12.
+**Why wait:** Single-car dogfood cannot validate rules. Early onboard users + annotated fixtures in `connectors/carfax-connect/examples/` are the promotion gate. See IMP-12 in the internal `task-queue.md`.
 
 **Explicit non-goals until proven:** auto-collapse without owner tap · runtime LLM same-visit classifier · block entire import for unresolved suspects.
 
@@ -240,7 +240,7 @@ PDF or JSON ingest
 
 ## Part 9 — Knowledge compounding, who adds rows, new-user path
 
-See also [`feature-readiness-gate.md`](../../../workspace/strategy/feature-readiness-gate.md) for the mandatory dogfood vs new-user checklist.
+The internal `feature-readiness-gate.md` supplies the mandatory dogfood vs new-user checklist summarized below.
 
 ### The curated pack is dogfood bootstrap — not production scale
 
@@ -295,7 +295,7 @@ Import 2 (same user)
 
 ## Consequences
 
-- **BUILD:** IMP-11 tracked in [`task-queue.md`](../../../workspace/strategy/task-queue.md) — P0 ✅, P1–P3 queued.
+- **BUILD:** IMP-11 is tracked in the internal `task-queue.md` — P0 ✅, P1–P3 queued.
 - **Domain:** New import modules `enrich-vehicleos-import`, `normalize-carfax-line-items`; extend `infer-shop-location` via Shop Pack over time.
 - **UX:** P1 replaces wide review table with card summary + exception list.
 - **Memory:** P2 writes confirmed shops to `OwnerContextMemory` — compounds per owner, not cross-user.
@@ -322,6 +322,6 @@ Import 2 (same user)
 
 ## Related
 
-- [`record-import-data-pipeline.md`](../../../workspace/strategy/record-import-data-pipeline.md) — three-layer ETL + human gate
-- [`phase-1-intelligence-scope.md`](../../../workspace/strategy/phase-1-intelligence-scope.md) — per-owner memory IN, cross-user OUT
+- Internal `record-import-data-pipeline.md` — three-layer ETL + human gate
+- Internal `phase-1-intelligence-scope.md` — per-owner memory IN, cross-user OUT
 - ADR-010 — alias ontology for line item → OEM matching (separate from display noise strip)

@@ -110,6 +110,117 @@ describe("detectIntervalProposalForEntry", () => {
 
     expect(proposal).toBeNull();
   });
+
+  it("requires at least three matched records before proposing an interval", () => {
+    const proposal = detectIntervalProposalForEntry({
+      entry: {
+        ...oilEntry,
+        intervalMonths: undefined,
+      },
+      timeline: oilTimeline.slice(0, 2),
+    });
+
+    expect(proposal).toBeNull();
+  });
+
+  it("does not infer a transmission cadence from a rear differential service", () => {
+    const proposal = detectIntervalProposalForEntry({
+      entry: {
+        entryId: "mm-sub-3",
+        canonicalServiceId: "acura.mm.3.transmission_transfer",
+        serviceName: "Replace transmission and transfer fluid (Maintenance Minder sub 3)",
+        intervalMiles: 30_000,
+        intervalMonths: 36,
+        sourceDocumentId: "doc-1",
+        manualTitle: "2021 Acura TLX Owner's Manual",
+        recordedAt: "2026-01-01T00:00:00.000Z",
+      },
+      timeline: [
+        {
+          serviceId: "rear-diff",
+          shop: "MetroWest Acura",
+          serviceDate: "2025-06-11",
+          mileage: 44_567,
+          lineItems: ["Rear differential fluid flushed/changed"],
+          total: "$0.00",
+          evidenceIds: [],
+          source: "carfax_import",
+        },
+        {
+          serviceId: "transmission",
+          shop: "MetroWest Acura",
+          serviceDate: "2025-09-15",
+          mileage: 49_919,
+          lineItems: ["Transmission fluid changed"],
+          total: "$0.00",
+          evidenceIds: [],
+          source: "carfax_import",
+        },
+      ],
+    });
+
+    expect(proposal).toBeNull();
+  });
+
+  it("proposes tire rotations from mileage history and ignores elapsed time", () => {
+    const proposal = detectIntervalProposalForEntry({
+      entry: {
+        entryId: "mm-sub-1",
+        canonicalServiceId: "generic.tire_rotation",
+        serviceName: "Rotate tires (Maintenance Minder sub 1)",
+        intervalMiles: 7_500,
+        intervalMonths: 12,
+        sourceDocumentId: "doc-1",
+        manualTitle: "Manual",
+        recordedAt: "2026-01-01T00:00:00.000Z",
+      },
+      timeline: [10_000, 16_000, 22_000].map((mileage, index) => ({
+        serviceId: `rotation-${index + 1}`,
+        shop: "Tire shop",
+        serviceDate: ["2024-01-01", "2024-07-01", "2025-01-01"][index]!,
+        mileage,
+        lineItems: ["Tire rotation"],
+        total: "$0",
+        evidenceIds: [],
+      })),
+    });
+
+    expect(proposal?.intervalKind).toBe("tire_rotation");
+    expect(proposal?.intervalMiles).toBe(6_000);
+    expect(proposal?.intervalMonths).toBeNull();
+    expect(formatIntervalProposalTaskReason(proposal!)).toContain(
+      "Use miles driven for rotation reminders",
+    );
+    expect(formatIntervalProposalTaskReason(proposal!)).toContain(
+      "OEM guidance (7,500 mi / 12 mo) stays on file",
+    );
+  });
+
+  it("does not create a tire proposal from time spacing alone", () => {
+    const proposal = detectIntervalProposalForEntry({
+      entry: {
+        entryId: "mm-sub-1",
+        canonicalServiceId: "generic.tire_rotation",
+        serviceName: "Rotate tires",
+        intervalMiles: 7_500,
+        intervalMonths: 12,
+        sourceDocumentId: "doc-1",
+        manualTitle: "Manual",
+        recordedAt: "2026-01-01T00:00:00.000Z",
+      },
+      timeline: [10_000, 17_500, 25_000].map((mileage, index) => ({
+        serviceId: `rotation-${index + 1}`,
+        shop: "Tire shop",
+        serviceDate: ["2024-01-01", "2024-07-01", "2025-01-01"][index]!,
+        mileage,
+        lineItems: ["Tire rotation"],
+        total: "$0",
+        evidenceIds: [],
+      })),
+    });
+
+    expect(proposal).toBeNull();
+  });
 });
 
 describe("detectIntervalProposals", () => {

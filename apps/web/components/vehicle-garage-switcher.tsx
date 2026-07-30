@@ -1,6 +1,6 @@
 "use client";
 
-import { Car, ChevronDown, Plus } from "lucide-react";
+import { Car, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,15 +33,6 @@ export function VehicleGarageSwitcher({ compact = false, className }: VehicleGar
       return;
     }
     const result = garage.switchVehicle(vehicleId);
-    if (!result.ok) {
-      notify(result.reason, "error");
-      return;
-    }
-    setOpen(false);
-  };
-
-  const handleAdd = () => {
-    const result = garage.startAddVehicle();
     if (!result.ok) {
       notify(result.reason, "error");
       return;
@@ -89,21 +80,6 @@ export function VehicleGarageSwitcher({ compact = false, className }: VehicleGar
             </button>
           ))}
         </div>
-        <div className="my-2 h-px bg-border/80" />
-        {garage.garage?.canAddVehicle ? (
-          <button
-            type="button"
-            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-muted/80"
-            onClick={handleAdd}
-          >
-            <Plus className="h-4 w-4" aria-hidden />
-            Add vehicle
-          </button>
-        ) : (
-          <p className="px-2 text-xs leading-relaxed text-muted-foreground">
-            {garage.garage?.upgradeMessage ?? "Vehicle limit reached"}
-          </p>
-        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

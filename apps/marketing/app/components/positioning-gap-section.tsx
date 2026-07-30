@@ -1,4 +1,4 @@
-import { positioningContent } from "../../lib/site-config";
+import { positioningContent } from "../../lib/positioning-content";
 import { RevealOnScroll } from "./scroll-reveal";
 
 type CompareColumnId = "history" | "ai" | "vehicleos";
@@ -6,7 +6,7 @@ type CompareColumnId = "history" | "ai" | "vehicleos";
 function CompareMatrix() {
   return (
     <div className="compare-shell reveal-card">
-      <div className="compare-table" role="table" aria-label="Compare history reports, general AI, and VehicleOS">
+      <div className="compare-table" role="table" aria-label="Compare history reports, chat assistants, and VehicleOS">
         <div className="compare-row compare-header" role="row">
           <div className="compare-cell compare-label-cell compare-corner" role="columnheader" aria-hidden="true" />
           {positioningContent.columns.map((column) => (

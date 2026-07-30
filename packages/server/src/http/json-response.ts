@@ -1,9 +1,9 @@
-export type JsonResponse = {
+export type JsonResponse<TBody = unknown> = {
   status: number;
-  body: unknown;
+  body: TBody;
 };
 
-export const jsonResponse = (status: number, body: unknown): JsonResponse => ({
+export const jsonResponse = <TBody>(status: number, body: TBody): JsonResponse<TBody> => ({
   status,
   body,
 });

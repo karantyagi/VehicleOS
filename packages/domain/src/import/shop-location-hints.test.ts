@@ -51,6 +51,7 @@ describe("enrichVehicleOsImportWithLookupAndHints", () => {
             serviceDate: "2025-01-01",
             mileage: 1000,
             lineItems: ["Inspection"],
+            total: "$0.00",
           },
         ],
       },

@@ -100,6 +100,7 @@ export function NowQueueConsole({
                     disabled={disabled}
                     suggestedIntervalMiles={item.suggestedIntervalMiles ?? null}
                     suggestedIntervalMonths={item.suggestedIntervalMonths ?? null}
+                    intervalKind={item.intervalKind}
                     dismissLabel={
                       item.ruleId?.includes("owner-habit:") ? "Not now" : "Keep OEM interval"
                     }

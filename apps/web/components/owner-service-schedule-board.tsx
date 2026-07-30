@@ -158,8 +158,7 @@ function MileageTimeline({
 }
 
 function MaintenanceDueCard({ row, currentMileage }: { row: OwnerServiceScheduleRow; currentMileage: number }) {
-  const defaultOpen = row.verdict === "overdue" || row.verdict === "due_soon";
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useState(false);
 
   return (
     <article className={cn("overflow-hidden rounded-xl border shadow-sm transition-colors", verdictAccentClass(row.verdict))}>
@@ -250,7 +249,7 @@ function MaintenanceDueCard({ row, currentMileage }: { row: OwnerServiceSchedule
 }
 
 function OwnershipDueCard({ renewal }: { renewal: OwnershipRenewalProjection }) {
-  const [open, setOpen] = useState(renewal.status === "overdue" || renewal.status === "due_soon");
+  const [open, setOpen] = useState(false);
   const verdict: OwnerServiceVerdict = renewal.status === "overdue" ? "overdue" : "due_soon";
 
   return (

@@ -8,7 +8,7 @@ const row = (input: Partial<KnowledgeScheduleEntry> & Pick<KnowledgeScheduleEntr
   intervalMiles: input.intervalMiles ?? 7500,
   intervalMonths: input.intervalMonths ?? 12,
   sourceDocumentId: input.sourceDocumentId ?? "doc-1",
-  sourcePage: input.sourcePage ?? null,
+  sourcePage: input.sourcePage,
   canonicalServiceId: input.canonicalServiceId,
   manualTitle: input.manualTitle ?? "Manual",
   recordedAt: input.recordedAt ?? "2026-01-01T00:00:00.000Z",

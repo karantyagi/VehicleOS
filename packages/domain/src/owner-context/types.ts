@@ -5,9 +5,19 @@ export type MaintenancePatternMemory = {
 };
 
 /** Owner-verified interval overlay — does not mutate OEM truth, only projection input. */
+export type IntervalBasis = "mileage" | "time" | "mixed";
+
+export type TireRotationConditionId =
+  | "uneven_tread"
+  | "pressure_or_tpms"
+  | "pull_vibration_or_cupping"
+  | "special_tire_setup";
+
 export type IntervalOverlayMemory = {
   intervalMonths?: number | null;
   intervalMiles?: number | null;
+  basis?: IntervalBasis;
+  tireRotationConditions?: TireRotationConditionId[];
   label: string;
   confirmedAt: string;
 };

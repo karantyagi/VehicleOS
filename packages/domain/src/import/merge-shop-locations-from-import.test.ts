@@ -10,6 +10,7 @@ describe("mergeShopLocationsFromImport", () => {
         serviceDate: "2026-07-15",
         mileage: 58819,
         lineItems: ["Tires rotated"],
+        total: "$0.00",
       },
     ]);
 
@@ -26,6 +27,7 @@ describe("mergeShopLocationsFromImport", () => {
           serviceDate: "2025-01-01",
           mileage: 40000,
           lineItems: ["Oil changed"],
+          total: "$0.00",
         },
       ],
     );
@@ -41,6 +43,7 @@ describe("mergeShopLocationsFromImport", () => {
         serviceDate: "2025-01-01",
         mileage: 1000,
         lineItems: ["Inspection"],
+        total: "$0.00",
       },
     ]);
 

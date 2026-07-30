@@ -24,7 +24,7 @@ export const DEFAULT_RENEWAL_LEAD_DAYS = 60;
 const EXPIRATION_PATTERN = /expiration date:\s*(\d{4}-\d{2}-\d{2})/i;
 const RENEWAL_EVENT_TYPES = new Set<OwnershipRecordEntry["eventType"]>(["registration", "inspection"]);
 
-export const parseExpirationDate = (record: OwnershipRecordEntry): string | null => {
+export const parseExpirationDate = (record: Pick<OwnershipRecordEntry, "details">): string | null => {
   for (const line of record.details) {
     const match = line.match(EXPIRATION_PATTERN);
     if (match?.[1]) return match[1];

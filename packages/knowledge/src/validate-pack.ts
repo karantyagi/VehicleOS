@@ -1,5 +1,5 @@
-import Ajv from "ajv";
-import addFormats from "ajv-formats";
+import { Ajv } from "ajv";
+import addFormatsModule, { type FormatsPlugin } from "ajv-formats";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -7,6 +7,7 @@ import { resolveKnowledgePackageRoot } from "./package-root.js";
 import type { OemSchedulePack, ServiceAliasBundle } from "./types.js";
 
 const packageRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
+const addFormats = addFormatsModule as unknown as FormatsPlugin;
 
 const resolveSchemaPath = (name: string): string => {
   for (const root of [resolveKnowledgePackageRoot(), packageRoot]) {
