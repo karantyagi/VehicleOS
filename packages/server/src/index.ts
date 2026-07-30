@@ -22,7 +22,7 @@ export { refreshSeasonalPrompts } from "./http/seasonal-handlers.js";
 export { confirmManualSchedule, previewManualSchedule } from "./http/manual-handlers.js";
 export { submitOwnerServiceNote } from "./http/note-handlers.js";
 export { submitVehicleOsImport, submitVehicleOsRmvImport, extractRecordImportPdf, enrichVehicleOsImportDraftHandler } from "./http/import-handlers.js";
-export { updateVehicleService } from "./http/service-handlers.js";
+export { mergeVehicleServices, updateVehicleService } from "./http/service-handlers.js";
 export { refreshNowQueue } from "./http/now-handlers.js";
 export { checkVehicleSupport, listSupportedVehicles, assertVehicleCreateAllowed } from "./http/catalog-handlers.js";
 export type { VehicleSupportQuery, ListSupportedVehiclesOptions } from "./http/catalog-handlers.js";

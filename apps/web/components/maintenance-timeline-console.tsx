@@ -55,6 +55,11 @@ type MaintenanceTimelineConsoleProps = {
   defaultMileage?: number;
   onOpenEvidence?: (documentId: string) => void;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onMergeService?: (
+    targetServiceId: string,
+    mergedServiceId: string,
+    lineItems: string[],
+  ) => Promise<void>;
   onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
   requireEditConfirmation?: boolean;
   ownerSimple?: boolean;
@@ -82,6 +87,7 @@ export function MaintenanceTimelineConsole({
   defaultMileage = 0,
   onOpenEvidence,
   onUpdateService,
+  onMergeService,
   onAddService,
   requireEditConfirmation = false,
   ownerSimple = false,
@@ -323,6 +329,7 @@ export function MaintenanceTimelineConsole({
         disabled={disabled}
         defaultMileage={defaultMileage}
         onUpdateService={onUpdateService}
+        onMergeService={onMergeService}
         onAddService={onAddService}
         requireEditConfirmation={requireEditConfirmation}
       />

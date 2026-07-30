@@ -31,6 +31,11 @@ type MaintenanceTimelineSectionProps = {
   defaultMileage?: number;
   onOpenEvidence?: (documentId: string) => void;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onMergeService?: (
+    targetServiceId: string,
+    mergedServiceId: string,
+    lineItems: string[],
+  ) => Promise<void>;
   onAddService?: (draft: import("@/components/maintenance-record-fields").MaintenanceRecordDraft) => Promise<void>;
   requireEditConfirmation?: boolean;
   onGoToImport?: () => void;
@@ -63,6 +68,7 @@ export function MaintenanceTimelineSection({
   defaultMileage = 0,
   onOpenEvidence,
   onUpdateService,
+  onMergeService,
   onAddService,
   requireEditConfirmation = false,
   onGoToImport,
@@ -95,6 +101,7 @@ export function MaintenanceTimelineSection({
           defaultMileage={defaultMileage}
           onOpenEvidence={onOpenEvidence}
           onUpdateService={onUpdateService}
+          onMergeService={onMergeService}
           onAddService={onAddService}
           requireEditConfirmation={requireEditConfirmation}
           ownerSimple={ownerSimple}
@@ -135,6 +142,7 @@ export function MaintenanceTimelineSection({
                 defaultMileage={defaultMileage}
                 onOpenEvidence={onOpenEvidence}
                 onUpdateService={onUpdateService}
+                onMergeService={onMergeService}
                 onAddService={onAddService}
                 requireEditConfirmation={requireEditConfirmation}
                 ownerSimple={ownerSimple}

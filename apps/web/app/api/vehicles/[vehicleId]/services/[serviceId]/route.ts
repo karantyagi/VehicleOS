@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { updateVehicleService } from "@vehicleos/server";
+import { mergeVehicleServices, updateVehicleService } from "@vehicleos/server";
 import { toAuthContext } from "../../../../../../lib/auth/api-context";
 import { getSessionUser } from "../../../../../../lib/auth/session";
 import { getServices } from "../../../../../../lib/api-services";
@@ -20,6 +20,23 @@ export async function PATCH(request: Request, context: RouteContext) {
   };
 
   const result = await updateVehicleService(
+    getServices(),
+    context.params.vehicleId,
+    context.params.serviceId,
+    body,
+    toAuthContext(user),
+  );
+
+  return NextResponse.json(result.body, { status: result.status });
+}
+
+export async function POST(request: Request, context: RouteContext) {
+  const user = await getSessionUser();
+  const body = (await request.json()) as {
+    mergedServiceId?: string;
+    lineItems?: string[];
+  };
+  const result = await mergeVehicleServices(
     getServices(),
     context.params.vehicleId,
     context.params.serviceId,

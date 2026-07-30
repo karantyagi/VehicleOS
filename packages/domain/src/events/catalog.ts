@@ -5,6 +5,7 @@ export const EVENT_TYPES = {
   DOCUMENT_EXTRACTION_COMPLETED: "document.extraction.completed",
   SERVICE_RECORDED: "service.recorded",
   SERVICE_UPDATED: "service.updated",
+  SERVICE_MERGED: "service.merged",
   CONFLICT_DETECTED: "conflict.detected",
   QUOTE_ANALYZED: "quote.analyzed",
   KNOWLEDGE_SCHEDULE_RECORDED: "knowledge.schedule.recorded",
@@ -74,6 +75,16 @@ export type ServiceUpdatedPayload = {
   mileage?: number;
   lineItems?: string[];
   total?: string;
+};
+
+export type ServiceMergedPayload = {
+  vehicleId: string;
+  targetServiceId: string;
+  mergedServiceId: string;
+  lineItems: string[];
+  evidenceIds: string[];
+  total: string;
+  strategy: "owner_confirmed";
 };
 
 export type MaintenanceRecommendationCreatedPayload = {
@@ -192,6 +203,7 @@ export type DomainEventPayloadMap = {
   [EVENT_TYPES.DOCUMENT_EXTRACTION_COMPLETED]: DocumentExtractionCompletedPayload;
   [EVENT_TYPES.SERVICE_RECORDED]: ServiceRecordedPayload;
   [EVENT_TYPES.SERVICE_UPDATED]: ServiceUpdatedPayload;
+  [EVENT_TYPES.SERVICE_MERGED]: ServiceMergedPayload;
   [EVENT_TYPES.CONFLICT_DETECTED]: ConflictDetectedPayload;
   [EVENT_TYPES.QUOTE_ANALYZED]: QuoteAnalyzedPayload;
   [EVENT_TYPES.KNOWLEDGE_SCHEDULE_RECORDED]: KnowledgeScheduleRecordedPayload;
@@ -210,6 +222,7 @@ export const EVENT_VERSIONS: Record<DomainEventType, number> = {
   [EVENT_TYPES.DOCUMENT_EXTRACTION_COMPLETED]: 1,
   [EVENT_TYPES.SERVICE_RECORDED]: 1,
   [EVENT_TYPES.SERVICE_UPDATED]: 1,
+  [EVENT_TYPES.SERVICE_MERGED]: 1,
   [EVENT_TYPES.CONFLICT_DETECTED]: 1,
   [EVENT_TYPES.QUOTE_ANALYZED]: 1,
   [EVENT_TYPES.KNOWLEDGE_SCHEDULE_RECORDED]: 1,
