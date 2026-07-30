@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { resolveIntervalForEntry } from "./merge-interval-overlay-memory.js";
+import {
+  removeIntervalOverlayMemory,
+  resolveIntervalForEntry,
+} from "./merge-interval-overlay-memory.js";
 
 describe("resolveIntervalForEntry", () => {
   it("uses owner overlay miles when confirmed", () => {
@@ -44,5 +47,28 @@ describe("resolveIntervalForEntry", () => {
 
     expect(resolved.intervalMiles).toBe(6_000);
     expect(resolved.intervalMonths).toBeNull();
+  });
+
+  it("restores the OEM rule without removing other owner context", () => {
+    const memory = removeIntervalOverlayMemory({
+      memory: {
+        primaryCity: "Waltham",
+        intervalOverlays: {
+          "mm-sub-1": {
+            basis: "mileage",
+            intervalMiles: 6_000,
+            intervalMonths: null,
+            label: "Every 6,000 mi",
+            confirmedAt: "2026-07-30T12:00:00.000Z",
+          },
+        },
+      },
+      entryId: "mm-sub-1",
+    });
+
+    expect(memory).toEqual({
+      primaryCity: "Waltham",
+      intervalOverlays: undefined,
+    });
   });
 });

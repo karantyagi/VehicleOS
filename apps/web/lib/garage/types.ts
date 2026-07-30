@@ -20,13 +20,7 @@ export type GarageVehicleSummary = {
   ownedSince?: string | null;
   drivingStyle?: "economical" | "casual" | "aggressive" | null;
   statedMilesPerYear?: number | null;
-  ownerContextMemory?: {
-    shopLocations?: Record<string, string>;
-    maintenancePatterns?: Record<
-      string,
-      { timing: "early" | "late"; reason: string; confirmedAt: string }
-    >;
-  };
+  ownerContextMemory?: OwnerContextMemory;
 };
 
 export type ListVehiclesResponse = {
@@ -56,3 +50,4 @@ export const isGarageSwitchLocked = (input: {
   }
   return { locked: false, reason: null };
 };
+import type { OwnerContextMemory } from "@vehicleos/domain";

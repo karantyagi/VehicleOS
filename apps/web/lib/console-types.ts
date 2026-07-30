@@ -47,6 +47,7 @@ export type OwnerReminderItem = {
   snoozeUntil: string | null;
   escalation: string | null;
   ruleId?: string;
+  intelligence?: import("@vehicleos/domain").MaintenanceItemIntelligence;
 };
 
 export type ConsoleDensity = "comfortable" | "compact";

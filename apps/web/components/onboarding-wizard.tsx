@@ -22,6 +22,7 @@ import {
   type CatalogVehicleRow,
 } from "@/lib/supported-vehicle-catalog";
 import { RequestVehiclePanel } from "@/components/request-vehicle-panel";
+import type { OwnerContextMemory } from "@vehicleos/domain";
 
 export type OnboardingVehicle = {
   id: string;
@@ -34,13 +35,7 @@ export type OnboardingVehicle = {
   ownedSince?: string | null;
   drivingStyle?: "economical" | "casual" | "aggressive" | null;
   statedMilesPerYear?: number | null;
-  ownerContextMemory?: {
-    shopLocations?: Record<string, string>;
-    maintenancePatterns?: Record<
-      string,
-      { timing: "early" | "late"; reason: string; confirmedAt: string }
-    >;
-  };
+  ownerContextMemory?: OwnerContextMemory;
 };
 
 type VehicleForm = {

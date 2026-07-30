@@ -395,6 +395,7 @@ export {
 } from "./owner-context/draft-deviation-reason.js";
 export {
   mergeIntervalOverlayMemory,
+  removeIntervalOverlayMemory,
   resolveIntervalForEntry,
 } from "./owner-context/merge-interval-overlay-memory.js";
 export { formatIntervalOverlayLabel } from "./owner-context/format-interval-overlay-label.js";
