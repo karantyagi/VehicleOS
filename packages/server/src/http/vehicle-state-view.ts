@@ -72,12 +72,9 @@ export const buildVehicleStateView = (
     today,
   });
   const vehicleOwnershipRecords = state.ownershipRecords.filter((record) => record.eventType !== "license");
-  const legacyLicenseRecords = state.ownershipRecords.filter((record) => record.eventType === "license");
   const ownershipRecords = [
     ...vehicleOwnershipRecords,
-    ...(ownerDriverLicenses.length > 0
-      ? ownerDriverLicenses.map(ownerDriverLicenseToOwnershipRecord)
-      : legacyLicenseRecords),
+    ...ownerDriverLicenses.map(ownerDriverLicenseToOwnershipRecord),
   ];
   const ownerDueItems = buildOwnerDueItems({
     board: serviceScheduleBoard,
