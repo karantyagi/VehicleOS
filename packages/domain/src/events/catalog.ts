@@ -13,6 +13,7 @@ export const EVENT_TYPES = {
   TASK_CREATED: "task.created",
   TASK_DECIDED: "task.decided",
   VEHICLE_RECORD_RECORDED: "vehicle.record.recorded",
+  OWNER_DRIVER_LICENSE_RECORDED: "owner.driver_license.recorded",
 } as const;
 
 export type DomainEventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];
@@ -201,6 +202,19 @@ export type VehicleRecordRecordedPayload = {
   source: VehicleRecordSource;
 };
 
+/** A credential belongs to the signed-in owner, never to a specific vehicle. */
+export type OwnerDriverLicenseRecordedPayload = {
+  ownerId: string;
+  recordId: string;
+  agency: string;
+  recordDate: string;
+  licenseClass: string | null;
+  expirationDate: string;
+  description: string;
+  details: string[];
+  source: "rmv_import";
+};
+
 export type DomainEventPayloadMap = {
   [EVENT_TYPES.DOCUMENT_INGESTED]: DocumentIngestedPayload;
   [EVENT_TYPES.DOCUMENT_EXTRACTION_COMPLETED]: DocumentExtractionCompletedPayload;
@@ -214,6 +228,7 @@ export type DomainEventPayloadMap = {
   [EVENT_TYPES.TASK_CREATED]: TaskCreatedPayload;
   [EVENT_TYPES.TASK_DECIDED]: TaskDecidedPayload;
   [EVENT_TYPES.VEHICLE_RECORD_RECORDED]: VehicleRecordRecordedPayload;
+  [EVENT_TYPES.OWNER_DRIVER_LICENSE_RECORDED]: OwnerDriverLicenseRecordedPayload;
 };
 
 export type CatalogDomainEvent = {
@@ -233,6 +248,7 @@ export const EVENT_VERSIONS: Record<DomainEventType, number> = {
   [EVENT_TYPES.TASK_CREATED]: 1,
   [EVENT_TYPES.TASK_DECIDED]: 1,
   [EVENT_TYPES.VEHICLE_RECORD_RECORDED]: 1,
+  [EVENT_TYPES.OWNER_DRIVER_LICENSE_RECORDED]: 1,
 };
 
 export const GOLDEN_PATH_FLOW: DomainEventType[] = [

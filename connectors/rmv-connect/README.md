@@ -8,7 +8,7 @@ These events feed **ownership context** for the assistant — they do not appear
 
 ## Schema
 
-Driver license expiration from a supported RMV / DMV portal PDF can be imported as an ownership renewal. It appears beside maintenance in the owner schedule, but never in service history. Only the license class, issued date, expiration date, and passenger status are retained; date of birth, license number, and restrictions are excluded.
+Driver license expiration from a supported RMV / DMV portal PDF is imported once as an owner credential, not as a vehicle record. It appears beside maintenance in the owner schedule, but never in service history; importing it from another vehicle does not duplicate it. Only the license class, issued date, expiration date, and passenger status are retained; date of birth, license number, and restrictions are excluded.
 
 `connectors/rmv-connect/schema/vehicleos-rmv-import.v1.json`
 

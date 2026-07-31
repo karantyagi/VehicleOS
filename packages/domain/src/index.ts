@@ -315,6 +315,14 @@ export {
   type RecordVehicleOsRmvImportResult,
   type VehicleOsRmvRecord,
 } from "./import/record-vehicleos-rmv-import.js";
+export {
+  ownerDriverLicenseFromRmvRecord,
+  ownerDriverLicenseFingerprint,
+  ownerDriverLicenseToOwnershipRecord,
+  projectOwnerDriverLicenses,
+  recordOwnerDriverLicenses,
+  type OwnerDriverLicense,
+} from "./ownership/owner-driver-license.js";
 export { parseCarfaxPdfText, type ParseCarfaxPdfTextResult } from "./import/parse-carfax-pdf-text.js";
 export { parseRmvPdfText, type ParseRmvPdfTextResult } from "./import/parse-rmv-pdf-text.js";
 export {

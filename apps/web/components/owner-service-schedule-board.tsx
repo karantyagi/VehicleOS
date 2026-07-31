@@ -499,7 +499,7 @@ function OwnershipDueCard({ renewal }: { renewal: OwnershipRenewalProjection }) 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-              RMV
+              Owner · RMV
             </span>
             <Badge variant={verdictBadgeVariant(verdict)}>{verdictLabel[verdict]}</Badge>
           </div>
@@ -516,7 +516,7 @@ function OwnershipDueCard({ renewal }: { renewal: OwnershipRenewalProjection }) 
           <section className="rounded-lg border border-border/70 bg-background/75 p-3.5">
             <p className="font-semibold text-foreground">Why this needs attention</p>
             <p className="mt-1">
-              {renewal.title} expires {formatDate(renewal.expirationDate)}. The date comes from your {renewal.agency} record.
+              {renewal.title} expires {formatDate(renewal.expirationDate)}. This credential belongs to you, not a vehicle; the date comes from your {renewal.agency} record.
             </p>
           </section>
           <section className="rounded-lg border border-border/70 bg-background/75 p-3.5">
