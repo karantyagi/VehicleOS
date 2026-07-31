@@ -26,7 +26,7 @@ export type ServiceRecordSource =
   | "dealer"
   | "carfax_import";
 
-export type VehicleRecordEventType = "registration" | "title" | "inspection" | "lien" | "other";
+export type VehicleRecordEventType = "registration" | "title" | "inspection" | "license" | "lien" | "other";
 
 export type VehicleRecordSource = "rmv_import" | "carfax_import" | "owner_note";
 

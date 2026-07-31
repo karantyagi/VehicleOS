@@ -34,7 +34,7 @@
           "mileage": { "type": ["integer", "null"], "minimum": 0 },
           "eventType": {
             "type": "string",
-            "enum": ["registration", "title", "inspection", "lien", "other"]
+            "enum": ["registration", "title", "inspection", "license", "lien", "other"]
           },
           "description": { "type": "string" },
           "details": {

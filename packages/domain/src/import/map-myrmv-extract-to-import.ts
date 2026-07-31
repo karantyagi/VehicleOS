@@ -16,7 +16,6 @@ export type MapMyRmvExtractInput = {
   importSource?: string;
 };
 
-/** Owner block is extracted for future owner-profile use — not written on RMV vehicle import. */
 export const mapMyRmvExtractToImport = (input: MapMyRmvExtractInput): VehicleOsRmvImportV1 => {
   const { extract, vehicleDefaults } = input;
   const records: VehicleOsRmvRecord[] = [];
@@ -60,6 +59,24 @@ export const mapMyRmvExtractToImport = (input: MapMyRmvExtractInput): VehicleOsR
         extract.registration.status ? `Status: ${extract.registration.status}` : null,
         extract.registration.alreadyRenewed ? "Already Renewed" : null,
         vin ? `VIN: ${vin}` : null,
+      ].filter((line): line is string => Boolean(line)),
+    });
+  }
+
+  if (extract.owner.licenseExpires) {
+    records.push({
+      agency,
+      recordDate: extract.owner.licenseIssued ?? extract.owner.licenseExpires,
+      mileage: null,
+      eventType: "license",
+      description: extract.owner.licenseClass
+        ? `Driver's license active â€” Class ${extract.owner.licenseClass}`
+        : "Driver's license active",
+      details: [
+        extract.owner.licenseClass ? `License class: ${extract.owner.licenseClass}` : null,
+        extract.owner.licenseIssued ? `Issued: ${extract.owner.licenseIssued}` : null,
+        `Expiration Date: ${extract.owner.licenseExpires}`,
+        extract.owner.passengerStatus ? `Passenger status: ${extract.owner.passengerStatus}` : null,
       ].filter((line): line is string => Boolean(line)),
     });
   }

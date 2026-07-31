@@ -63,6 +63,27 @@ describe("evaluate-ownership-renewals", () => {
     expect(renewals).toHaveLength(0);
   });
 
+  it("shows a driver license renewal as monitor before its alert window", () => {
+    const renewals = projectOwnershipRenewals({
+      ownershipRecords: [
+        registrationRecord({
+          recordId: "license-1",
+          eventType: "license",
+          description: "Driver's license active — Class D",
+          details: ["License class: D", "Expiration Date: 2026-10-10"],
+        }),
+      ],
+      today: "2026-07-31",
+    });
+
+    expect(renewals).toHaveLength(1);
+    expect(renewals[0]).toMatchObject({
+      title: "Driver's license renewal",
+      status: "monitor",
+      expirationDate: "2026-10-10",
+    });
+  });
+
   it("returns maintenance recommendation for due renewal", () => {
     const recommendation = evaluateOwnershipRenewalDue({
       state: {

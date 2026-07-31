@@ -37,7 +37,13 @@ describe("MyRmvMa extract → import pipeline", () => {
     });
 
     expect(draft.version).toBe("1");
-    expect(draft.records).toHaveLength(2);
+    expect(draft.records).toHaveLength(3);
     expect(draft.vehicle.vin).toBe("19UUB6F47MA008400");
+
+    const license = draft.records.find((record) => record.eventType === "license");
+    expect(license?.recordDate).toBe("2024-04-16");
+    expect(license?.details).toContain("Expiration Date: 2026-10-10");
+    expect(license?.details.join(" ")).not.toContain("1991-09-21");
+    expect(license?.details.join(" ")).not.toContain("Corrective Lenses");
   });
 });

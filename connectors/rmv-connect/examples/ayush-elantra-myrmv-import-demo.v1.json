@@ -39,6 +39,19 @@
         "Status: Active",
         "VIN: KMHLS4AG3NU293303"
       ]
+    },
+    {
+      "agency": "Massachusetts RMV (myRMV)",
+      "recordDate": "2024-10-02",
+      "mileage": null,
+      "eventType": "license",
+      "description": "Driver's license active — Class D",
+      "details": [
+        "License class: D",
+        "Issued: 2024-10-02",
+        "Expiration Date: 2027-10-04",
+        "Passenger status: Active"
+      ]
     }
   ]
 }

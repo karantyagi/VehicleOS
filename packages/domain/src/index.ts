@@ -271,6 +271,7 @@ export {
   type OwnershipRenewalStatus,
 } from "./ownership/evaluate-ownership-renewals.js";
 export {
+  DRIVER_LICENSE_RENEWAL_RULE_ID,
   INSPECTION_RENEWAL_RULE_ID,
   OTHER_RENEWAL_RULE_ID,
   REGISTRATION_RENEWAL_GENERIC_RULE_ID,

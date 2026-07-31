@@ -94,4 +94,30 @@ describe("buildOwnerDueItems", () => {
     expect(view.items).toHaveLength(0);
     expect(view.summary.overdue).toBe(0);
   });
+
+  it("counts a future driver license renewal as monitor without making it actionable", () => {
+    const view = buildOwnerDueItems({
+      board: emptyBoard(),
+      ownershipRecords: [
+        {
+          recordId: "license-1",
+          agency: "Massachusetts RMV (myRMV)",
+          recordDate: "2024-04-16",
+          mileage: null,
+          eventType: "license",
+          description: "Driver's license active — Class D",
+          details: ["License class: D", "Expiration Date: 2026-10-10"],
+          source: "rmv_import",
+        },
+      ],
+      today: "2026-07-31",
+    });
+
+    expect(view.summary.monitor).toBe(1);
+    expect(view.summary.dueSoon).toBe(0);
+    expect(view.items[0]).toMatchObject({
+      title: "Driver's license renewal",
+      verdict: "monitor",
+    });
+  });
 });
