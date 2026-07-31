@@ -100,7 +100,7 @@ export const buildOwnerDueItems = (input: {
   const ownershipItems: OwnerDueItem[] = renewals.map((renewal) => ({
     id: `ownership:${renewal.recordId}`,
     kind: "ownership",
-    verdict: renewal.status === "overdue" ? "overdue" : "due_soon",
+    verdict: renewal.status,
     title: renewal.title,
     subtitle: renewal.agency,
     dueDate: renewal.expirationDate,
@@ -110,6 +110,7 @@ export const buildOwnerDueItems = (input: {
 
   const ownershipOverdue = ownershipItems.filter((item) => item.verdict === "overdue").length;
   const ownershipDueSoon = ownershipItems.filter((item) => item.verdict === "due_soon").length;
+  const ownershipMonitor = ownershipItems.filter((item) => item.verdict === "monitor").length;
   const maintenanceOverdue = board?.summary.overdue ?? 0;
   const maintenanceDueSoon = board?.summary.dueSoon ?? 0;
 
@@ -119,7 +120,7 @@ export const buildOwnerDueItems = (input: {
       overdue: maintenanceOverdue + ownershipOverdue,
       dueSoon: maintenanceDueSoon + ownershipDueSoon,
       current: board?.summary.current ?? 0,
-      monitor: board?.summary.monitor ?? 0,
+      monitor: (board?.summary.monitor ?? 0) + ownershipMonitor,
       needsBaseline: board?.summary.needsBaseline ?? 0,
       ownershipOverdue,
       ownershipDueSoon,

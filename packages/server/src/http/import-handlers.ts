@@ -14,6 +14,8 @@ import {
   reconcileImportVehicleProfile,
   recordProfileImportVerification,
   recordImportRowVerification,
+  projectOwnerDriverLicenses,
+  recordOwnerDriverLicenses,
   tierNewImportRows,
 } from "@vehicleos/domain";
 import type { ApiServices } from "../services/index.js";
@@ -375,10 +377,16 @@ export const submitVehicleOsRmvImport = async (
     }
   }
 
+  const licenseResult = await recordOwnerDriverLicenses({
+    eventStore: services.eventStore,
+    ownerId: auth.userId,
+    records,
+  });
+  const vehicleRecords = records.filter((record) => record.eventType !== "license");
   const importResult = await services.goldenPath.importVehicleOsRmvHistory({
     vehicleId,
     importSource: body.source?.trim() || "vehicleos-rmv-import",
-    records,
+    records: vehicleRecords,
   });
 
   const importSource = body.source?.trim() || "vehicleos-rmv-import";
@@ -408,11 +416,14 @@ export const submitVehicleOsRmvImport = async (
     ? await services.vehicles.update(vehicleId, auth.userId, { currentMileage: nextMileage })
     : workingVehicle;
 
-  const view = buildVehicleStateView(importResult.state, updatedVehicle ?? workingVehicle);
+  const ownerDriverLicenses = projectOwnerDriverLicenses(
+    await services.eventStore.loadByAggregate("owner", auth.userId),
+  );
+  const view = buildVehicleStateView(importResult.state, updatedVehicle ?? workingVehicle, undefined, ownerDriverLicenses);
 
   return jsonResponse(201, {
-    importedCount: importResult.importedCount,
-    skippedCount: importResult.skippedCount,
+    importedCount: importResult.importedCount + licenseResult.importedCount,
+    skippedCount: importResult.skippedCount + licenseResult.skippedCount,
     importSource,
     ownershipRecords: view.ownershipRecords,
     profilePatch: Object.keys(profilePatch).length > 0 ? profilePatch : undefined,

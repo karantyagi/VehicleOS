@@ -7,7 +7,7 @@ import { isRenewalRuleId } from "./resolve-renewal-rule-id.js";
 
 export { isRenewalRuleId, resolveRenewalRuleId } from "./resolve-renewal-rule-id.js";
 
-export type OwnershipRenewalStatus = "overdue" | "due_soon";
+export type OwnershipRenewalStatus = "overdue" | "due_soon" | "monitor";
 
 export type OwnershipRenewalProjection = {
   recordId: string;
@@ -22,7 +22,7 @@ export type OwnershipRenewalProjection = {
 export const DEFAULT_RENEWAL_LEAD_DAYS = 60;
 
 const EXPIRATION_PATTERN = /expiration date:\s*(\d{4}-\d{2}-\d{2})/i;
-const RENEWAL_EVENT_TYPES = new Set<OwnershipRecordEntry["eventType"]>(["registration", "inspection"]);
+const RENEWAL_EVENT_TYPES = new Set<OwnershipRecordEntry["eventType"]>(["registration", "inspection", "license"]);
 
 export const parseExpirationDate = (record: Pick<OwnershipRecordEntry, "details">): string | null => {
   for (const line of record.details) {
@@ -47,16 +47,17 @@ const resolveRenewalStatus = (input: {
   today: string;
   expirationDate: string;
   leadDays: number;
-}): OwnershipRenewalStatus | null => {
+}): OwnershipRenewalStatus => {
   const daysUntil = daysBetween(input.today, input.expirationDate);
   if (daysUntil < 0) return "overdue";
   if (daysUntil <= input.leadDays) return "due_soon";
-  return null;
+  return "monitor";
 };
 
 const renewalTitle = (record: OwnershipRecordEntry): string => {
   if (record.eventType === "inspection") return "Vehicle inspection renewal";
   if (record.eventType === "registration") return "Registration renewal";
+  if (record.eventType === "license") return "Driver's license renewal";
   return "Ownership renewal";
 };
 
@@ -78,8 +79,6 @@ export const projectOwnershipRenewals = (input: {
     if (!expirationDate) continue;
 
     const status = resolveRenewalStatus({ today, expirationDate, leadDays });
-    if (!status) continue;
-
     projections.push({
       recordId: record.recordId,
       eventType: record.eventType,
@@ -91,7 +90,7 @@ export const projectOwnershipRenewals = (input: {
     });
   }
 
-  const statusRank: Record<OwnershipRenewalStatus, number> = { overdue: 0, due_soon: 1 };
+  const statusRank: Record<OwnershipRenewalStatus, number> = { overdue: 0, due_soon: 1, monitor: 2 };
 
   return projections.sort((left, right) => {
     const rankDelta = statusRank[left.status] - statusRank[right.status];

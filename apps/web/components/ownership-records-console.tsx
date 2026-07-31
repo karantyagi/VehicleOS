@@ -59,7 +59,7 @@ export function OwnershipRecordsConsole({
         <EmptyState
           icon={FileBadge2}
           title="No ownership records yet"
-          description="Import registration and title events from Add records → RMV / DMV. These stay separate from your maintenance timeline."
+          description="Import registration, title, inspection, and driver license events from Add records → RMV / DMV. These stay separate from service history."
         />
         {onGoToImport ? (
           <div className="flex justify-center">

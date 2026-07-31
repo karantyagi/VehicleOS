@@ -29,6 +29,9 @@ const formatPowertrainSuffix = (
   if (!powertrain?.trim()) return "";
   const trimNorm = normalizeLabelToken(trim);
   const powertrainNorm = normalizeLabelToken(powertrain);
+  if (powertrain.trim().toUpperCase() === "SH-AWD" && !trimNorm.includes(powertrainNorm)) {
+    return ` ${powertrain.trim()}`;
+  }
   if (trimNorm === powertrainNorm) return "";
   if (trimNorm.includes(powertrainNorm)) return "";
   return ` · ${powertrain.trim()}`;
@@ -168,7 +171,7 @@ export const findCatalogVehicleRow = (
         row.make === make &&
         row.model === model &&
         row.year === year &&
-        row.trim === trim,
+        (row.trim === trim || formatCatalogTrimOptionLabel(row) === trim),
     );
     if (byTrim) return byTrim;
   }

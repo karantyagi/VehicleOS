@@ -536,7 +536,7 @@ function MaintenanceDueCard({
 
 function OwnershipDueCard({ renewal }: { renewal: OwnershipRenewalProjection }) {
   const [open, setOpen] = useState(false);
-  const verdict: OwnerServiceVerdict = renewal.status === "overdue" ? "overdue" : "due_soon";
+  const verdict: OwnerServiceVerdict = renewal.status;
 
   return (
     <article className={cn("overflow-hidden rounded-xl border shadow-sm transition-colors", verdictAccentClass(verdict))}>
@@ -549,7 +549,7 @@ function OwnershipDueCard({ renewal }: { renewal: OwnershipRenewalProjection }) 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-              RMV
+              Owner · RMV
             </span>
             <Badge variant={verdictBadgeVariant(verdict)}>{verdictLabel[verdict]}</Badge>
           </div>
@@ -566,7 +566,7 @@ function OwnershipDueCard({ renewal }: { renewal: OwnershipRenewalProjection }) 
           <section className="rounded-lg border border-border/70 bg-background/75 p-3.5">
             <p className="font-semibold text-foreground">Why this needs attention</p>
             <p className="mt-1">
-              {renewal.title} expires {formatDate(renewal.expirationDate)}. The date comes from your {renewal.agency} record.
+              {renewal.title} expires {formatDate(renewal.expirationDate)}. This credential belongs to you, not a vehicle; the date comes from your {renewal.agency} record.
             </p>
           </section>
           <section className="rounded-lg border border-border/70 bg-background/75 p-3.5">
@@ -764,9 +764,9 @@ export function OwnerServiceScheduleBoardView({
         </div>
       ) : hasOwnershipDue ? (
         <div className="history-surface p-4 sm:p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">RMV renewals</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">RMV / DMV renewals</p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Registration and inspection due dates from your RMV import — unified with OEM maintenance below when
+            Registration, inspection, and driver license due dates from your RMV import — unified with OEM maintenance below when
             loaded.
           </p>
         </div>

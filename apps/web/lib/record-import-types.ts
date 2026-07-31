@@ -29,7 +29,7 @@ export type VehicleOsRmvRecord = {
   agency: string;
   recordDate: string;
   mileage: number | null;
-  eventType: "registration" | "title" | "inspection" | "lien" | "other";
+  eventType: "registration" | "title" | "inspection" | "license" | "lien" | "other";
   description: string;
   details: string[];
 };
@@ -75,7 +75,7 @@ export const RECORD_IMPORT_CATEGORIES: RecordImportCategory[] = [
     id: "rmv",
     label: "RMV / DMV records",
     description:
-      "Registration, title, and inspection events — not maintenance, but the assistant tracks them for ownership context.",
+      "Registration, title, inspection, and driver license renewals — tracked alongside maintenance as ownership context.",
     status: "pdf-ready",
     pdfInstructions: [
       "Sign in to your state RMV/DMV portal (e.g. Massachusetts myRMV).",
@@ -163,6 +163,7 @@ export const RMV_EVENT_LABELS: Record<VehicleOsRmvRecord["eventType"], string> =
   registration: "Registration",
   title: "Title",
   inspection: "Inspection",
+  license: "Driver's license",
   lien: "Lien / loan",
   other: "Other",
 };

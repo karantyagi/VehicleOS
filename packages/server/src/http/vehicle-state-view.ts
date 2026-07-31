@@ -1,5 +1,10 @@
 import { getServiceAliasRegistry } from "../adapters/service-alias-registry.js";
-import type { CatalogDomainEvent, VehicleProjectionState } from "@vehicleos/domain";
+import {
+  ownerDriverLicenseToOwnershipRecord,
+  type CatalogDomainEvent,
+  type OwnerDriverLicense,
+  type VehicleProjectionState,
+} from "@vehicleos/domain";
 import {
   buildOwnerReminderViews,
   buildOwnerVerificationViews,
@@ -23,6 +28,7 @@ export const buildVehicleStateView = (
   state: VehicleProjectionState,
   profile?: VehicleProfileInput,
   events?: CatalogDomainEvent[],
+  ownerDriverLicenses: OwnerDriverLicense[] = [],
 ) => {
   const scheduleContext = resolveScheduleProjectionContext({
     ownedSince: profile?.ownedSince ?? null,
@@ -65,14 +71,19 @@ export const buildVehicleStateView = (
     ...scheduleProjectionBase,
     today,
   });
+  const vehicleOwnershipRecords = state.ownershipRecords.filter((record) => record.eventType !== "license");
+  const ownershipRecords = [
+    ...vehicleOwnershipRecords,
+    ...ownerDriverLicenses.map(ownerDriverLicenseToOwnershipRecord),
+  ];
   const ownerDueItems = buildOwnerDueItems({
     board: serviceScheduleBoard,
-    ownershipRecords: state.ownershipRecords,
+    ownershipRecords,
     today,
   });
   const ownerHistoryTimeline = buildOwnerHistoryTimeline({
     timeline: state.timeline,
-    ownershipRecords: state.ownershipRecords,
+    ownershipRecords,
   });
   const scheduleRowsForReminders = [...scheduleNear.rows, ...scheduleExtended.rows];
   const reminders = buildOwnerReminderViews({
@@ -122,6 +133,6 @@ export const buildVehicleStateView = (
       scheduleRows: scheduleExtended.rows,
       ownerContextMemory: profile?.ownerContextMemory,
     }),
-    ownershipRecords: state.ownershipRecords,
+    ownershipRecords,
   };
 };

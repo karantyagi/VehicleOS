@@ -19,6 +19,7 @@ import { todayIsoDate } from "@/lib/date-input";
 import {
   fetchVerifiedCatalogVehicles,
   findCatalogVehicleRow,
+  formatCatalogTrimOptionLabel,
   formatCatalogVehicleLabel,
   type CatalogVehicleRow,
 } from "@/lib/supported-vehicle-catalog";
@@ -78,7 +79,7 @@ const vehicleFormFromCatalog = (
   year: row.year,
   make: row.make,
   model: row.model,
-  trim: row.trim,
+  trim: formatCatalogTrimOptionLabel(row),
   vin: "",
   currentMileage:
     prefillDogfood && row.packId === DOGFOOD_PACK_ID ? 58_819 : 0,

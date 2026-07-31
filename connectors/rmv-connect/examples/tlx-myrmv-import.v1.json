@@ -37,6 +37,19 @@
         "Status: Active",
         "Already Renewed"
       ]
+    },
+    {
+      "agency": "Massachusetts RMV (myRMV)",
+      "recordDate": "2024-04-16",
+      "mileage": null,
+      "eventType": "license",
+      "description": "Driver's license active — Class D",
+      "details": [
+        "License class: D",
+        "Issued: 2024-04-16",
+        "Expiration Date: 2026-10-10",
+        "Passenger status: Active"
+      ]
     }
   ]
 }

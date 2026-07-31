@@ -45,23 +45,19 @@ describe("findCatalogVehicleRow", () => {
 });
 
 describe("catalog vehicle labels", () => {
-  it("does not duplicate powertrain when trim already matches", () => {
-    expect(formatCatalogTrimOptionLabel({ trim: "SH-AWD", powertrain: "SH-AWD" })).toBe("SH-AWD");
+  it("keeps Acura Technology SH-AWD together as one named configuration", () => {
+    expect(formatCatalogTrimOptionLabel({ trim: "Technology", powertrain: "SH-AWD" })).toBe(
+      "Technology SH-AWD",
+    );
     expect(
       formatCatalogVehicleLabel({
         year: 2021,
         make: "Acura",
         model: "TLX",
-        trim: "SH-AWD",
+        trim: "Technology",
         powertrain: "SH-AWD",
       }),
-    ).toBe("2021 Acura TLX SH-AWD");
-  });
-
-  it("appends powertrain when trim name differs", () => {
-    expect(formatCatalogTrimOptionLabel({ trim: "Technology", powertrain: "SH-AWD" })).toBe(
-      "Technology · SH-AWD",
-    );
+    ).toBe("2021 Acura TLX Technology SH-AWD");
   });
 });
 
