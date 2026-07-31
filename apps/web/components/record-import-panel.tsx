@@ -3,6 +3,7 @@
 import { FileJson, FileUp, Loader2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ExtractionStatusBanner } from "@/components/extraction-status-banner";
+import { DogfoodFixturePicker } from "@/components/dogfood-fixture-picker";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -30,15 +31,18 @@ import {
   ownershipRecordFingerprint,
 } from "@vehicleos/domain";
 import {
-  DEFAULT_DOGFOOD_FIXTURE_ID,
   fetchDogfoodJson,
+  getDogfoodFixtureForVehicle,
   getDogfoodFixtureProfile,
+  isDogfoodFixtureCompatible,
+  type DogfoodFixtureId,
 } from "@/lib/dogfood-fixtures";
 import type { OwnershipRecordEntry, TimelineEntry } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
 type RecordImportPanelProps = {
   vehicleId: string;
+  vehicle: { vin?: string | null; year: number; make: string; model: string };
   apiBase: string;
   ownerShopLocations?: Record<string, string>;
   existingTimeline?: TimelineEntry[];
@@ -172,6 +176,7 @@ const ONBOARDING_CATEGORY_BLURBS: Record<RecordImportCategoryId, string> = {
 
 export function RecordImportPanel({
   vehicleId,
+  vehicle,
   apiBase,
   ownerShopLocations,
   existingTimeline = [],
@@ -196,6 +201,20 @@ export function RecordImportPanel({
   const [isExtracting, setIsExtracting] = useState(false);
   const [isLoadingDogfood, setIsLoadingDogfood] = useState(false);
   const [pdfFileName, setPdfFileName] = useState<string | null>(null);
+  const [dogfoodFixtureId, setDogfoodFixtureId] = useState<DogfoodFixtureId>(() =>
+    getDogfoodFixtureForVehicle(vehicle)?.id ?? "karan-tlx",
+  );
+
+  useEffect(() => {
+    const matching = getDogfoodFixtureForVehicle(vehicle);
+    if (matching) setDogfoodFixtureId(matching.id);
+  }, [vehicle.vin, vehicle.year, vehicle.make, vehicle.model]);
+
+  const dogfoodProfile = useMemo(
+    () => getDogfoodFixtureProfile(dogfoodFixtureId),
+    [dogfoodFixtureId],
+  );
+  const dogfoodMatchesVehicle = isDogfoodFixtureCompatible(dogfoodProfile, vehicle);
 
   useEffect(() => {
     onActivityChange?.(isImporting || isExtracting || isLoadingDogfood);
@@ -257,13 +276,27 @@ export function RecordImportPanel({
   };
 
   const applyRmvDraft = (draft: VehicleOsRmvImportV1, warnings: string[] = []) => {
+    const missingExpirationCount = draft.records.filter(
+      (record) =>
+        (record.eventType === "registration" || record.eventType === "inspection") &&
+        !record.details.some((line) => /expiration date:\s*\d{4}-\d{2}-\d{2}/i.test(line)),
+    ).length;
+    const projectionWarnings = [...warnings];
+    if (missingExpirationCount > 0) {
+      projectionWarnings.push(
+        `${missingExpirationCount} renewal record(s) have no Expiration Date. They will stay in History; Schedule will not guess a deadline.`,
+      );
+    }
+    if (draft.records.some((record) => record.eventType === "license")) {
+      projectionWarnings.push("Driver's-license expiration will be saved to your owner profile, not to this vehicle.");
+    }
     setRmvPreview(draft);
     setCarfaxPreview(null);
     setCarfaxReviewRows([]);
     setRmvReviewRows(initRmvReviewRows(draft.records, existingOwnershipRecords));
     setJsonDraft(JSON.stringify(draft, null, 2));
     setParseError("");
-    setExtractWarnings(warnings);
+    setExtractWarnings(projectionWarnings);
   };
 
   const loadJsonText = useCallback(
@@ -293,7 +326,15 @@ export function RecordImportPanel({
       }
       applyRmvDraft(result.data);
     },
-    [activeCategory, resetPreview, ownerShopLocations, existingTimeline, apiBase, vehicleId],
+    [
+      activeCategory,
+      resetPreview,
+      ownerShopLocations,
+      existingTimeline,
+      existingOwnershipRecords,
+      apiBase,
+      vehicleId,
+    ],
   );
 
   const handleJsonFile = useCallback(
@@ -308,11 +349,15 @@ export function RecordImportPanel({
     [loadJsonText, onError],
   );
 
-  const loadDogfoodFixture = async () => {
+  const loadDogfoodFixture = async (demoDeadlines = false) => {
     setIsLoadingDogfood(true);
     setParseError("");
-    const profile = getDogfoodFixtureProfile(DEFAULT_DOGFOOD_FIXTURE_ID);
+    const profile = dogfoodProfile;
     try {
+      if (!dogfoodMatchesVehicle) {
+        onError(`Switch to ${profile.label} before importing this fixture.`);
+        return;
+      }
       if (activeCategory === "carfax") {
         const draft = await fetchDogfoodJson<VehicleOsImportV1>(profile.carfaxUrl);
         await applyCarfaxDraft(draft, [
@@ -320,7 +365,9 @@ export function RecordImportPanel({
         ]);
         return;
       }
-      const draft = await fetchDogfoodJson<VehicleOsRmvImportV1>(profile.rmvUrl);
+      const fixtureUrl = demoDeadlines ? profile.rmvDemoUrl : profile.rmvUrl;
+      if (!fixtureUrl) throw new Error(`No deadline demo is available for ${profile.label}.`);
+      const draft = await fetchDogfoodJson<VehicleOsRmvImportV1>(fixtureUrl);
       applyRmvDraft(draft, [
         `Dogfood RMV JSON loaded (${profile.label}) — review records before confirming.`,
       ]);
@@ -731,12 +778,22 @@ export function RecordImportPanel({
               Recommended for dogfood
             </Badge>
           </div>
+          <DogfoodFixturePicker
+            value={dogfoodFixtureId}
+            onValueChange={setDogfoodFixtureId}
+            disabled={disabled || isLoadingDogfood}
+          />
+          {!dogfoodMatchesVehicle ? (
+            <p className="text-xs text-amber-700 dark:text-amber-400">
+              This fixture belongs to {dogfoodProfile.label}. Switch vehicles before loading it so records cannot cross cars.
+            </p>
+          ) : null}
           <div className="flex flex-wrap gap-2">
             <Button
               type="button"
               variant="secondary"
               size="sm"
-              disabled={disabled || isLoadingDogfood}
+              disabled={disabled || isLoadingDogfood || !dogfoodMatchesVehicle}
               onClick={() => void loadDogfoodFixture()}
             >
               {isLoadingDogfood
@@ -745,6 +802,17 @@ export function RecordImportPanel({
                   ? "Load dogfood CARFAX JSON"
                   : "Load dogfood RMV JSON"}
             </Button>
+            {activeCategory === "rmv" && dogfoodProfile.rmvDemoUrl ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={disabled || isLoadingDogfood || !dogfoodMatchesVehicle}
+                onClick={() => void loadDogfoodFixture(true)}
+              >
+                Load deadline demo
+              </Button>
+            ) : null}
             <Button type="button" variant="outline" size="sm" disabled={disabled} asChild>
               <label className="cursor-pointer">
                 <FileUp className="mr-2 h-4 w-4" aria-hidden />

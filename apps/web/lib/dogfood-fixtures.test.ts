@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_DOGFOOD_FIXTURE_ID,
   DOGFOOD_FIXTURE_PROFILES,
+  getDogfoodFixtureForVehicle,
   getDogfoodFixtureProfile,
+  isDogfoodFixtureCompatible,
 } from "./dogfood-fixtures";
 
 describe("dogfood fixtures", () => {
@@ -17,11 +19,26 @@ describe("dogfood fixtures", () => {
     const tlx = getDogfoodFixtureProfile("karan-tlx");
     expect(tlx.carfaxUrl).toBe("/dogfood/karan-tlx/carfax-history.v1.json");
     expect(tlx.rmvUrl).toBe("/dogfood/karan-tlx/rmv-records.v1.json");
+    expect(tlx.rmvDemoUrl).toBe("/dogfood/karan-tlx/rmv-records-demo.v1.json");
 
     const elantra = getDogfoodFixtureProfile("ayush-elantra");
     expect(elantra.carfaxUrl).toBe("/dogfood/ayush-elantra/carfax-history.v1.json");
     expect(elantra.rmvUrl).toBe("/dogfood/ayush-elantra/rmv-records.v1.json");
     expect(elantra.rmvDemoUrl).toBe("/dogfood/ayush-elantra/rmv-records-demo.v1.json");
+  });
+
+  it("matches fixtures to the active vehicle and blocks cross-car imports", () => {
+    const tlx = getDogfoodFixtureProfile("karan-tlx");
+    const activeTlx = {
+      vin: "19UUB6F47MA008400",
+      year: 2021,
+      make: "Acura",
+      model: "TLX",
+    };
+
+    expect(getDogfoodFixtureForVehicle(activeTlx)?.id).toBe("karan-tlx");
+    expect(isDogfoodFixtureCompatible(tlx, activeTlx)).toBe(true);
+    expect(isDogfoodFixtureCompatible(getDogfoodFixtureProfile("ayush-elantra"), activeTlx)).toBe(false);
   });
 
   it("falls back to default profile for unknown ids", () => {

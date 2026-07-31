@@ -12,7 +12,11 @@ export type OwnerDriverLicense = {
   expirationDate: string;
   description: string;
   details: string[];
-  source: "rmv_import";
+  source: "rmv_import" | "owner_note";
+};
+
+export type OwnerDriverLicenseDraft = Omit<OwnerDriverLicense, "recordId"> & {
+  recordId?: string;
 };
 
 const detailValue = (details: string[], label: string): string | null => {
@@ -75,6 +79,48 @@ export const ownerDriverLicenseToOwnershipRecord = (license: OwnerDriverLicense)
   details: license.details,
   source: license.source,
 });
+
+/** Record one owner-entered credential deadline without attaching it to a vehicle. */
+export const recordOwnerDriverLicense = async (deps: {
+  eventStore: EventStore;
+  ownerId: string;
+  license: OwnerDriverLicenseDraft;
+}): Promise<OwnerDriverLicense[]> => {
+  const existingEvents = await deps.eventStore.loadByAggregate("owner", deps.ownerId);
+  const current = projectOwnerDriverLicenses(existingEvents)[0];
+  if (
+    current
+    && current.agency === deps.license.agency
+    && current.licenseClass === deps.license.licenseClass
+    && current.expirationDate === deps.license.expirationDate
+    && current.description === deps.license.description
+  ) {
+    return [current];
+  }
+
+  await deps.eventStore.append({
+    aggregateType: "owner",
+    aggregateId: deps.ownerId,
+    eventType: EVENT_TYPES.OWNER_DRIVER_LICENSE_RECORDED,
+    eventVersion: EVENT_VERSIONS[EVENT_TYPES.OWNER_DRIVER_LICENSE_RECORDED],
+    payload: {
+      ownerId: deps.ownerId,
+      recordId: deps.license.recordId ?? current?.recordId ?? crypto.randomUUID(),
+      agency: deps.license.agency,
+      recordDate: deps.license.recordDate,
+      licenseClass: deps.license.licenseClass,
+      expirationDate: deps.license.expirationDate,
+      description: deps.license.description,
+      details: deps.license.details,
+      source: deps.license.source,
+    },
+    correlationId: crypto.randomUUID(),
+  });
+
+  return projectOwnerDriverLicenses(
+    await deps.eventStore.loadByAggregate("owner", deps.ownerId),
+  );
+};
 
 export const recordOwnerDriverLicenses = async (deps: {
   eventStore: EventStore;

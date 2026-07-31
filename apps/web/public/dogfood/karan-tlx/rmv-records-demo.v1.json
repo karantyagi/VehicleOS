@@ -1,0 +1,55 @@
+{
+  "version": "1",
+  "source": "myrmv-pdf-manual-demo",
+  "exportedAt": "2026-07-31T12:00:00.000Z",
+  "vehicle": {
+    "vin": "19UUB6F47MA008400",
+    "year": 2021,
+    "make": "Acura",
+    "model": "TLX",
+    "trim": "Technology SH-AWD",
+    "currentMileage": 58819
+  },
+  "records": [
+    {
+      "agency": "Massachusetts RMV (myRMV)",
+      "recordDate": "2026-07-01",
+      "mileage": null,
+      "eventType": "registration",
+      "description": "Registration renewed — deadline demo",
+      "details": [
+        "Plate: 3KXT69",
+        "Effective Date: 2026-07-01",
+        "Expiration Date: 2026-09-15",
+        "Status: Active",
+        "VIN: 19UUB6F47MA008400",
+        "Synthetic deadline for dogfood testing"
+      ]
+    },
+    {
+      "agency": "Massachusetts RMV (myRMV)",
+      "recordDate": "2026-04-16",
+      "mileage": null,
+      "eventType": "inspection",
+      "description": "Passed safety and emissions inspection — deadline demo",
+      "details": [
+        "Passed safety inspection",
+        "Passed emissions inspection",
+        "Expiration Date: 2026-08-31",
+        "Synthetic deadline for dogfood testing"
+      ]
+    },
+    {
+      "agency": "Massachusetts RMV (myRMV)",
+      "recordDate": "2024-04-16",
+      "mileage": null,
+      "eventType": "license",
+      "description": "Massachusetts driver's license renewal — deadline demo",
+      "details": [
+        "License class: D",
+        "Expiration Date: 2026-09-29",
+        "Synthetic owner-level deadline for dogfood testing"
+      ]
+    }
+  ]
+}

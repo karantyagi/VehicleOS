@@ -20,6 +20,7 @@ describe("deleteUserData", () => {
 
     expect(queries[0]).toBe("BEGIN");
     expect(queries[1]).toContain("DELETE FROM domain_events");
+    expect(queries[1]).toContain("aggregate_type = 'owner'");
     expect(queries[2]).toContain("DELETE FROM vehicles WHERE user_id = $1");
     expect(queries[3]).toBe("COMMIT");
     expect(client.release).toHaveBeenCalledOnce();

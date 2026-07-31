@@ -23,7 +23,7 @@ Sign in at `app.vehicleos.app`, complete onboarding from `owner-profile.v1.json`
 | Step | Section | Action |
 |------|---------|--------|
 | 1 | **Record import → CARFAX** | **Load dogfood CARFAX JSON** → review → confirm |
-| 2 | **Record import → RMV** | **Load dogfood RMV JSON** → review → confirm |
+| 2 | **Record import → RMV** | Choose **2021 Acura TLX Technology SH-AWD** → **Load dogfood RMV JSON** → review → confirm |
 | 3 | **Manual & OEM** | **Load dogfood OEM JSON** → review → **Confirm schedule** |
 
 Or paste/upload the `.v1.json` files from this folder (or `public/dogfood/karan-tlx/`).
@@ -31,6 +31,18 @@ Or paste/upload the `.v1.json` files from this folder (or `public/dogfood/karan-
 **LLM extraction is not live** — PDF upload paths show “not yet initialized”; JSON is the dogfood path until ENG-2 / ENG-6 ship.
 
 **Upcoming:** OEM manual via internal search agent (no PDF upload required).
+
+### Deadline and owner-habit test
+
+1. Open the TLX and choose **Add records → RMV**.
+2. Select **2021 Acura TLX Technology SH-AWD**, then use **Load deadline demo**.
+3. Confirm the import. Registration, inspection, and the owner's driver's-license renewal appear under **Maintenance → Renewals**. The license row is labeled **Owner** and is not tied to the TLX.
+4. Under **Maintenance → Owner habits & personal deadlines**, type or dictate: `I add Chevron Techron every 3,000 miles.`
+5. Choose **Review this habit**, open **Owner verification**, and confirm the proposed interval.
+6. If Techron has no prior service record, the schedule correctly asks for a baseline. Add the last Techron use through maintenance history to exercise the next-due projection.
+
+The deadline-demo dates are synthetic and clearly labeled. The normal RMV
+fixture remains historical evidence and does not invent expiration dates.
 
 ## Load locally (CLI)
 
