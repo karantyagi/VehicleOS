@@ -68,6 +68,15 @@ export type ActionRecommendation = {
   confirmationPrompt: string | null;
 };
 
+export type MaintenanceServiceAction = {
+  entryId: string;
+  canonicalServiceId: string | null;
+  recordLineItem: string;
+  baselineServiceId: string | null;
+  baselineServiceDate: string | null;
+  baselineMileage: number | null;
+};
+
 export type MaintenanceItemIntelligence = {
   itemKind: "tire_rotation" | "general";
   whyNow: string;
@@ -75,6 +84,7 @@ export type MaintenanceItemIntelligence = {
   axes: MaintenanceRationaleAxis[];
   intervalRecommendation: IntervalRecommendation;
   actionRecommendation: ActionRecommendation;
+  serviceAction: MaintenanceServiceAction;
 };
 
 type BuildMaintenanceItemIntelligenceInput = {
@@ -353,6 +363,14 @@ export const buildMaintenanceItemIntelligence = (
     }),
   );
   const lastMatch = matches.at(-1) ?? null;
+  const serviceAction: MaintenanceServiceAction = {
+    entryId: input.row.entryId,
+    canonicalServiceId: input.canonicalServiceId ?? null,
+    recordLineItem: isTireRotation ? "Rotate tires" : input.row.serviceName,
+    baselineServiceId: lastMatch?.serviceId ?? null,
+    baselineServiceDate: lastMatch?.serviceDate ?? null,
+    baselineMileage: lastMatch?.mileage ?? null,
+  };
 
   const historySummary =
     matches.length === 0
@@ -415,6 +433,7 @@ export const buildMaintenanceItemIntelligence = (
       axes,
       intervalRecommendation: upcomingIntervalRecommendation(input.row),
       actionRecommendation: upcomingActionRecommendation(),
+      serviceAction,
     };
   }
 
@@ -477,5 +496,6 @@ export const buildMaintenanceItemIntelligence = (
       tireEvidence,
       ownerContextMemory: input.ownerContextMemory,
     }),
+    serviceAction,
   };
 };

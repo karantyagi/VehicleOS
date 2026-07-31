@@ -6,8 +6,9 @@
 
 **Related:** ADR-002 (event-sourced domain model) · ADR-010 (deterministic service matching and OEM packs) · ADR-012 (catalog vs owner runtime) · ADR-015 (owner attention vs notification delivery)
 
-**Implementation:** Rotate Tires pilot on
-`agent/maintenance-reminder-recommendation-pilot`
+**Implementation:** Rotate Tires pilot on `master`; exact-item completion,
+correction, odometer, and navigation trust loop on
+`agent/rotate-tires-trust-loop`
 
 ---
 
@@ -352,7 +353,8 @@ an external link by inference.
 
 ### Costs
 
-- The existing `IntervalProposal` type must be split or expanded.
+- The shared intelligence and service-action contracts must remain compatible
+  as each item-specific evaluator is added.
 - Reminder views need structured evidence rather than a single reason string.
 - Action recommendations need structured provider, time, cost, owner-fit, and
   confidence fields.
@@ -386,6 +388,9 @@ an external link by inference.
 - Reminder rationale states the active interval, baseline, current position,
   and remaining/overdue amount.
 - Rotate Tires emits a structured Costco action plan from dogfood evidence.
+- Rotate Tires completion prefills the exact service identity; correction opens
+  the exact matched baseline and preserves unrelated lines from that visit.
+- Odometer or baseline corrections immediately reproject the reminder.
 - Observed `$0` history is not presented as a guaranteed entitlement until
   owner-confirmed.
 - Reminder, interval, provider, cost, and booking confidence remain distinct.
