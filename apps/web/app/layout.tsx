@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { AppProviders } from "../components/app-providers";
+import { PwaServiceWorker } from "../components/pwa-service-worker";
 import { Toaster } from "../components/ui/sonner";
 import { pwaConfig } from "../lib/pwa-config";
 import { siteConfig } from "../lib/site-config";
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </a>
           {children}
           <Toaster />
+          <PwaServiceWorker />
           <Analytics />
           <SpeedInsights />
         </AppProviders>
