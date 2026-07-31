@@ -83,7 +83,13 @@ At minimum, the later design must cover:
 - overdue, safety, and legal-deadline behavior;
 - accessible controls, understandable copy, and user testing.
 
-The existing browser notification hook is a prototype, not the notification-system contract.
+The former browser-notification hook was a prototype, not the notification-system contract, and has been removed from the current owner slice.
+
+Stable app navigation targets are permitted in the current scope. A link may
+open the exact reminder or maintenance row expanded and focused. That routing
+contract is useful for owner handoffs today and may later be consumed by a
+notification subsystem; it does not implement notification delivery, cadence,
+permissions, deduplication, retries, or channel preferences.
 
 ### 6. Keep mobile capture-first
 

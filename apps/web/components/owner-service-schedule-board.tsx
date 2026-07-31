@@ -17,11 +17,14 @@ import {
 } from "@vehicleos/domain";
 import { EmptyState } from "@/components/empty-state";
 import { MaintenanceIntelligenceSummary } from "@/components/maintenance-intelligence-summary";
+import { MaintenanceItemTrustActions } from "@/components/maintenance-item-trust-actions";
+import type { MaintenanceRecordDraft } from "@/components/maintenance-record-fields";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { isoDateToLocalDate } from "@/lib/date-input";
+import type { TimelineEntry } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
 type OwnerServiceScheduleBoardProps = {
@@ -29,11 +32,16 @@ type OwnerServiceScheduleBoardProps = {
   currentMileage: number;
   hasKnowledgeSchedule?: boolean;
   disabled?: boolean;
+  serviceTimeline?: TimelineEntry[];
+  focusedEntryId?: string | null;
   ownerContextMemory?: OwnerContextMemory | null;
   onSaveOwnerContextMemory?: (
     memory: OwnerContextMemory,
     successMessage: string,
   ) => Promise<void>;
+  onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
+  onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onUpdateCurrentMileage?: (mileage: number) => Promise<void>;
 };
 
 type GroupFilter = "All" | "Engine" | "Fluids" | "Filters" | "Brakes" | "Tires" | "Other";
@@ -175,17 +183,27 @@ function MaintenanceDueCard({
   row,
   currentMileage,
   disabled = false,
+  serviceTimeline = [],
+  focusedEntryId = null,
   ownerContextMemory,
   onSaveOwnerContextMemory,
+  onAddService,
+  onUpdateService,
+  onUpdateCurrentMileage,
 }: {
   row: OwnerServiceScheduleRow;
   currentMileage: number;
   disabled?: boolean;
+  serviceTimeline?: TimelineEntry[];
+  focusedEntryId?: string | null;
   ownerContextMemory?: OwnerContextMemory | null;
   onSaveOwnerContextMemory?: (
     memory: OwnerContextMemory,
     successMessage: string,
   ) => Promise<void>;
+  onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
+  onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onUpdateCurrentMileage?: (mileage: number) => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
   const [intervalInput, setIntervalInput] = useState("");
@@ -194,6 +212,11 @@ function MaintenanceDueCard({
   const intelligence = row.intelligence;
   const interval = intelligence?.intervalRecommendation;
   const action = intelligence?.actionRecommendation;
+  const baselineEntry = intelligence?.serviceAction.baselineServiceId
+    ? serviceTimeline.find(
+        (entry) => entry.serviceId === intelligence.serviceAction.baselineServiceId,
+      ) ?? null
+    : null;
   const ownerInterval =
     ownerContextMemory?.intervalOverlays?.[row.entryId]?.intervalMiles ?? null;
 
@@ -201,6 +224,17 @@ function MaintenanceDueCard({
     const nextValue = ownerInterval ?? interval?.recommendedMiles ?? null;
     setIntervalInput(nextValue ? String(nextValue) : "");
   }, [interval?.recommendedMiles, ownerInterval]);
+
+  useEffect(() => {
+    if (focusedEntryId !== row.entryId) return;
+    setOpen(true);
+    const frame = window.requestAnimationFrame(() => {
+      document
+        .getElementById(`maintenance-item-${row.entryId}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [focusedEntryId, row.entryId]);
 
   const persistOwnerContext = async (
     memory: OwnerContextMemory,
@@ -276,7 +310,10 @@ function MaintenanceDueCard({
   };
 
   return (
-    <article className={cn("overflow-hidden rounded-xl border shadow-sm transition-colors", verdictAccentClass(row.verdict))}>
+    <article
+      id={`maintenance-item-${row.entryId}`}
+      className={cn("overflow-hidden rounded-xl border shadow-sm transition-colors", verdictAccentClass(row.verdict))}
+    >
       <button
         type="button"
         className="flex w-full items-start gap-3 px-4 py-3.5 text-left sm:px-5 sm:py-4"
@@ -442,6 +479,19 @@ function MaintenanceDueCard({
             </div>
           ) : null}
 
+          {intelligence?.itemKind === "tire_rotation" ? (
+            <MaintenanceItemTrustActions
+              entryId={row.entryId}
+              recordLineItem={intelligence.serviceAction.recordLineItem}
+              currentMileage={currentMileage}
+              baselineEntry={baselineEntry}
+              disabled={disabled}
+              onRecordService={onAddService}
+              onCorrectService={onUpdateService}
+              onUpdateMileage={onUpdateCurrentMileage}
+            />
+          ) : null}
+
           {row.historyEvents.length > 0 ? (
             <details className="rounded-lg border border-border/70 bg-background/65">
               <summary className="cursor-pointer px-3.5 py-3 text-sm font-medium text-foreground">
@@ -542,17 +592,27 @@ function OwnerDueItemCard({
   item,
   currentMileage,
   disabled,
+  serviceTimeline,
+  focusedEntryId,
   ownerContextMemory,
   onSaveOwnerContextMemory,
+  onAddService,
+  onUpdateService,
+  onUpdateCurrentMileage,
 }: {
   item: OwnerDueItem;
   currentMileage: number;
   disabled?: boolean;
+  serviceTimeline?: TimelineEntry[];
+  focusedEntryId?: string | null;
   ownerContextMemory?: OwnerContextMemory | null;
   onSaveOwnerContextMemory?: (
     memory: OwnerContextMemory,
     successMessage: string,
   ) => Promise<void>;
+  onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
+  onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onUpdateCurrentMileage?: (mileage: number) => Promise<void>;
 }) {
   if (item.kind === "ownership" && item.ownershipRenewal) {
     return <OwnershipDueCard renewal={item.ownershipRenewal} />;
@@ -563,8 +623,13 @@ function OwnerDueItemCard({
         row={item.maintenanceRow}
         currentMileage={currentMileage}
         disabled={disabled}
+        serviceTimeline={serviceTimeline}
+        focusedEntryId={focusedEntryId}
         ownerContextMemory={ownerContextMemory}
         onSaveOwnerContextMemory={onSaveOwnerContextMemory}
+        onAddService={onAddService}
+        onUpdateService={onUpdateService}
+        onUpdateCurrentMileage={onUpdateCurrentMileage}
       />
     );
   }
@@ -576,8 +641,13 @@ export function OwnerServiceScheduleBoardView({
   currentMileage,
   hasKnowledgeSchedule = false,
   disabled = false,
+  serviceTimeline = [],
+  focusedEntryId = null,
   ownerContextMemory,
   onSaveOwnerContextMemory,
+  onAddService,
+  onUpdateService,
+  onUpdateCurrentMileage,
 }: OwnerServiceScheduleBoardProps) {
   const [group, setGroup] = useState<GroupFilter>("All");
 
@@ -709,8 +779,13 @@ export function OwnerServiceScheduleBoardView({
             item={item}
             currentMileage={currentMileage}
             disabled={disabled}
+            serviceTimeline={serviceTimeline}
+            focusedEntryId={focusedEntryId}
             ownerContextMemory={ownerContextMemory}
             onSaveOwnerContextMemory={onSaveOwnerContextMemory}
+            onAddService={onAddService}
+            onUpdateService={onUpdateService}
+            onUpdateCurrentMileage={onUpdateCurrentMileage}
           />
         ))}
       </div>

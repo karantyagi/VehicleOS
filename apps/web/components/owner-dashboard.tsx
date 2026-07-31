@@ -11,6 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { APP_SECTIONS, useAppUiStore } from "@/lib/store/app-ui-store";
+import {
+  parseMaintenanceItemDeepLink,
+  parseOwnerAttentionDeepLink,
+} from "@/lib/attention-deep-link";
 import { notify, notifyAuto } from "@/lib/notify";
 import { toast } from "sonner";
 import { getApiBase } from "../lib/api-base";
@@ -84,10 +88,13 @@ export function OwnerDashboard() {
   const [serviceHistoryTab, setServiceHistoryTab] = useState<ServiceHistoryTab>("schedule");
   const [historyAddRequest, setHistoryAddRequest] = useState(0);
   const [historyCompletionTaskId, setHistoryCompletionTaskId] = useState<string | null>(null);
+  const [historyCompletionLineItem, setHistoryCompletionLineItem] = useState<string | null>(null);
   const [nowQueue, setNowQueue] = useState<QueueItem[]>([]);
   const [reminders, setReminders] = useState<OwnerReminderItem[]>([]);
   const [verifications, setVerifications] = useState<QueueItem[]>([]);
   const [focusedVerificationTaskId, setFocusedVerificationTaskId] = useState<string | null>(null);
+  const [focusedReminderTaskId, setFocusedReminderTaskId] = useState<string | null>(null);
+  const [focusedScheduleEntryId, setFocusedScheduleEntryId] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [form, setForm] = useState(emptyReceiptForm);
@@ -115,6 +122,22 @@ export function OwnerDashboard() {
   const feedback = useCallback((message: string) => {
     notifyAuto(message);
   }, []);
+
+  useEffect(() => {
+    const reminderTaskId = parseOwnerAttentionDeepLink(window.location.search);
+    const scheduleEntryId = parseMaintenanceItemDeepLink(window.location.search);
+    setFocusedReminderTaskId(reminderTaskId);
+    setFocusedScheduleEntryId(scheduleEntryId);
+
+    if (scheduleEntryId) {
+      setServiceHistoryTab("schedule");
+      setActiveSection("timeline");
+      return;
+    }
+    if (reminderTaskId) {
+      setActiveSection("reminders");
+    }
+  }, [setActiveSection]);
 
   const vehicleLabel = useMemo(() => {
     if (!vehicle) return null;
@@ -436,9 +459,39 @@ export function OwnerDashboard() {
         });
       }
       feedback(isDeveloper ? "Service record updated." : "Maintenance history updated.");
+      const refreshedVehicle =
+        typeof body.currentMileage === "number"
+          ? { ...vehicle, currentMileage: body.currentMileage }
+          : vehicle;
+      await loadVehicleState(refreshedVehicle);
     } catch (error) {
       feedback(error instanceof Error ? error.message : "Could not update maintenance record.");
       throw error;
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const updateCurrentMileage = async (mileage: number) => {
+    if (!vehicle) return;
+    if (!Number.isFinite(mileage) || mileage <= 0) {
+      throw new Error("Enter a valid odometer reading.");
+    }
+    setIsBusy(true);
+    try {
+      const response = await fetch(`${apiBase}/api/vehicles/${vehicle.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentMileage: Math.round(mileage) }),
+      });
+      const body = (await response.json()) as { vehicle?: Vehicle; error?: string };
+      if (!response.ok || !body.vehicle) {
+        throw new Error(body.error ?? "Could not update mileage.");
+      }
+      setVehicle(body.vehicle);
+      await loadVehicleState(body.vehicle);
+      feedback(`Odometer updated to ${body.vehicle.currentMileage.toLocaleString("en-US")} miles.`);
+      void garage.refreshGarage();
     } finally {
       setIsBusy(false);
     }
@@ -541,7 +594,11 @@ export function OwnerDashboard() {
             ? "Maintenance recorded and Home updated."
             : "Maintenance record saved.",
       );
-      void loadVehicleState(vehicle);
+      await loadVehicleState(
+        typeof body.currentMileage === "number"
+          ? { ...vehicle, currentMileage: body.currentMileage }
+          : vehicle,
+      );
     } catch (error) {
       feedback(error instanceof Error ? error.message : "Could not save maintenance record.");
       throw error;
@@ -801,19 +858,32 @@ export function OwnerDashboard() {
             <RemindersConsole
               items={reminders}
               disabled={isBusy}
+              focusTaskId={focusedReminderTaskId}
               onScheduled={(taskId) => void decide(taskId, "schedule")}
               onNotNeeded={(taskId) => void decide(taskId, "dismiss")}
-              onRecordDone={(taskId) => {
-                setHistoryCompletionTaskId(taskId);
+              onRecordDone={(item) => {
+                setHistoryCompletionTaskId(item.taskId);
+                setHistoryCompletionLineItem(
+                  item.intelligence?.serviceAction.recordLineItem ?? item.title,
+                );
                 setServiceHistoryTab("history");
                 setHistoryAddRequest((current) => current + 1);
                 setActiveSection("timeline");
                 feedback("Add the completed service so the schedule can update from the record.");
               }}
-              onFixData={() => {
+              onFixData={(item) => {
+                const serviceAction = item.intelligence?.serviceAction;
                 setServiceHistoryTab("history");
                 setActiveSection("timeline");
-                feedback("Review or edit the history that anchors this maintenance item.");
+                if (serviceAction?.baselineServiceId) {
+                  setSelectedTimelineId(serviceAction.baselineServiceId);
+                  feedback("Opened the exact service record that anchors this reminder.");
+                  return;
+                }
+                setHistoryCompletionTaskId(null);
+                setHistoryCompletionLineItem(serviceAction?.recordLineItem ?? item.title);
+                setHistoryAddRequest((current) => current + 1);
+                feedback("No baseline exists yet. Add the missing service record here.");
               }}
               minimal={!isDeveloper}
             />
@@ -902,9 +972,14 @@ export function OwnerDashboard() {
             effectiveMilesPerYear={maintenanceSchedule.effectiveMilesPerYear}
             hasKnowledgeSchedule={knowledgeSchedule.length > 0}
             activeTab={serviceHistoryTab}
+            focusedScheduleEntryId={focusedScheduleEntryId}
             addRequestKey={historyAddRequest}
             addRequestTaskId={historyCompletionTaskId}
-            onAddRequestHandled={() => setHistoryAddRequest(0)}
+            addRequestLineItem={historyCompletionLineItem}
+            onAddRequestHandled={() => {
+              setHistoryAddRequest(0);
+              setHistoryCompletionLineItem(null);
+            }}
             onTabChange={setServiceHistoryTab}
             ownerSimple={!isDeveloper}
             disabled={isBusy}
@@ -914,6 +989,7 @@ export function OwnerDashboard() {
             onMergeService={mergeServiceRecords}
             onReviewVerification={openVerificationTask}
             onAddService={addMaintenanceRecord}
+            onUpdateCurrentMileage={updateCurrentMileage}
             requireEditConfirmation={!isDeveloper}
             onGoToImport={() => setActiveSection("imports")}
             maintenancePatterns={vehicle.ownerContextMemory?.maintenancePatterns}

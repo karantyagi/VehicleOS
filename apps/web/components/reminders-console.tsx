@@ -7,7 +7,8 @@ import {
   ChevronUp,
   Wrench,
 } from "lucide-react";
-import { useState } from "react";
+import React from "react";
+import { useEffect, useState } from "react";
 import { EmptyState } from "@/components/empty-state";
 import { MaintenanceIntelligenceSummary } from "@/components/maintenance-intelligence-summary";
 import { Badge } from "@/components/ui/badge";
@@ -41,8 +42,9 @@ type RemindersConsoleProps = {
   disabled?: boolean;
   onScheduled: (taskId: string) => void;
   onNotNeeded: (taskId: string) => void;
-  onRecordDone: (taskId: string) => void;
-  onFixData: () => void;
+  onRecordDone: (item: OwnerReminderItem) => void;
+  onFixData: (item: OwnerReminderItem) => void;
+  focusTaskId?: string | null;
   minimal?: boolean;
 };
 
@@ -86,10 +88,22 @@ export function RemindersConsole({
   onNotNeeded,
   onRecordDone,
   onFixData,
+  focusTaskId = null,
   minimal = false,
 }: RemindersConsoleProps) {
-  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(focusTaskId);
   const groups = buildGroups(items);
+
+  useEffect(() => {
+    if (!focusTaskId || !items.some((item) => item.taskId === focusTaskId)) return;
+    setExpandedTaskId(focusTaskId);
+    const frame = window.requestAnimationFrame(() => {
+      document
+        .getElementById(`attention-item-${focusTaskId}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [focusTaskId, items]);
 
   if (groups.length === 0) {
     return (
@@ -117,6 +131,7 @@ export function RemindersConsole({
               return (
                 <li
                   key={item.taskId}
+                  id={`attention-item-${item.taskId}`}
                   className={cn(
                     "overflow-hidden rounded-xl border border-border bg-card shadow-sm",
                     isOverdue &&
@@ -194,7 +209,7 @@ export function RemindersConsole({
                       size="sm"
                       variant="secondary"
                       disabled={disabled}
-                      onClick={() => onRecordDone(item.taskId)}
+                      onClick={() => onRecordDone(item)}
                     >
                       <CheckCircle2 className="mr-1.5 h-4 w-4" aria-hidden />
                       Done
@@ -204,7 +219,7 @@ export function RemindersConsole({
                       size="sm"
                       variant="outline"
                       disabled={disabled}
-                      onClick={onFixData}
+                      onClick={() => onFixData(item)}
                     >
                       <Wrench className="mr-1.5 h-4 w-4" aria-hidden />
                       Fix this

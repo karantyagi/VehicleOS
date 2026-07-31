@@ -8,6 +8,7 @@ type SpeechRecognitionResultLike = {
 };
 
 type SpeechRecognitionEventLike = {
+  resultIndex: number;
   results: ArrayLike<SpeechRecognitionResultLike>;
 };
 
@@ -68,7 +69,9 @@ export const useSpeechRecognition = (): UseSpeechRecognitionState => {
       let nextFinal = "";
       let nextInterim = "";
 
-      for (let index = 0; index < event.results.length; index += 1) {
+      // Web Speech keeps earlier final results in the collection. Start at the
+      // changed result so a long note does not append the same sentence twice.
+      for (let index = event.resultIndex; index < event.results.length; index += 1) {
         const result = event.results[index];
         const chunk = result?.[0]?.transcript ?? "";
         if (result?.isFinal) nextFinal += chunk;

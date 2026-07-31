@@ -69,6 +69,7 @@ type MaintenanceTimelineConsoleProps = {
   onGoToImport?: () => void;
   addRequestKey?: number;
   addRequestTaskId?: string | null;
+  addRequestLineItem?: string | null;
   onAddRequestHandled?: () => void;
 };
 
@@ -102,6 +103,7 @@ export function MaintenanceTimelineConsole({
   onGoToImport,
   addRequestKey,
   addRequestTaskId,
+  addRequestLineItem,
   onAddRequestHandled,
 }: MaintenanceTimelineConsoleProps) {
   const selectedId = useAppUiStore((s) => s.selectedTimelineId);
@@ -331,6 +333,7 @@ export function MaintenanceTimelineConsole({
         onGoToImport={onGoToImport}
         addRequestKey={addRequestKey}
         addRequestTaskId={addRequestTaskId}
+        addRequestLineItem={addRequestLineItem}
         onAddRequestHandled={onAddRequestHandled}
         focusedRecordId={selectedId}
         verifications={verifications}

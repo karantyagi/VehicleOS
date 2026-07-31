@@ -60,6 +60,7 @@ type OwnerUnifiedHistoryTimelineProps = {
   onGoToImport?: () => void;
   addRequestKey?: number;
   addRequestTaskId?: string | null;
+  addRequestLineItem?: string | null;
   onAddRequestHandled?: () => void;
   focusedRecordId?: string | null;
   verifications?: QueueItem[];
@@ -171,6 +172,7 @@ export function OwnerUnifiedHistoryTimeline({
   onGoToImport,
   addRequestKey = 0,
   addRequestTaskId = null,
+  addRequestLineItem = null,
   onAddRequestHandled,
   focusedRecordId = null,
   verifications = [],
@@ -396,23 +398,27 @@ export function OwnerUnifiedHistoryTimeline({
     setIsAddingMergeItem(false);
   };
 
-  const startAdding = (attentionTaskId?: string | null) => {
+  const startAdding = (
+    attentionTaskId?: string | null,
+    requestedLineItem?: string | null,
+  ) => {
     if (!onAddService || disabled) return;
     setIsAdding(true);
     setAddDraft({
       ...emptyMaintenanceRecordDraft(defaultMileage),
       ...(attentionTaskId ? { attentionTaskId } : {}),
+      ...(requestedLineItem ? { lineItems: requestedLineItem } : {}),
     });
     setConfirmAdd(false);
   };
 
   useEffect(() => {
     if (addRequestKey <= 0) return;
-    startAdding(addRequestTaskId);
+    startAdding(addRequestTaskId, addRequestLineItem);
     onAddRequestHandled?.();
     // The incrementing key represents an explicit owner action.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addRequestKey, addRequestTaskId, onAddRequestHandled]);
+  }, [addRequestKey, addRequestLineItem, addRequestTaskId, onAddRequestHandled]);
 
   const saveAdding = async () => {
     if (!onAddService || !addDraft || draftLineItems(addDraft).length === 0) return;

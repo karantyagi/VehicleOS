@@ -5,10 +5,11 @@ import { CalendarClock } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { OwnerMaintenanceScheduleTimeline } from "@/components/owner-maintenance-schedule-timeline";
 import { OwnerServiceScheduleBoardView } from "@/components/owner-service-schedule-board";
+import type { MaintenanceRecordDraft } from "@/components/maintenance-record-fields";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { OwnerDueItemsView, ScheduleProjectionRow } from "@/lib/console-types";
+import type { OwnerDueItemsView, ScheduleProjectionRow, TimelineEntry } from "@/lib/console-types";
 import type { OwnerContextMemory } from "@vehicleos/domain";
 import { cn } from "@/lib/utils";
 
@@ -28,11 +29,16 @@ type MaintenanceScheduleConsoleProps = {
   ownerDueItems?: OwnerDueItemsView | null;
   currentMileage?: number;
   disabled?: boolean;
+  serviceTimeline?: TimelineEntry[];
+  focusedEntryId?: string | null;
   ownerContextMemory?: OwnerContextMemory | null;
   onSaveOwnerContextMemory?: (
     memory: OwnerContextMemory,
     successMessage: string,
   ) => Promise<void>;
+  onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
+  onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onUpdateCurrentMileage?: (mileage: number) => Promise<void>;
 };
 
 const emptyScheduleCopy = (hasKnowledgeSchedule: boolean) => {
@@ -104,8 +110,13 @@ export function MaintenanceScheduleConsole({
   ownerDueItems = null,
   currentMileage = 0,
   disabled = false,
+  serviceTimeline = [],
+  focusedEntryId = null,
   ownerContextMemory,
   onSaveOwnerContextMemory,
+  onAddService,
+  onUpdateService,
+  onUpdateCurrentMileage,
 }: MaintenanceScheduleConsoleProps) {
   const [horizon, setHorizon] = useState<ScheduleHorizonView>("near");
 
@@ -170,8 +181,13 @@ export function MaintenanceScheduleConsole({
         currentMileage={currentMileage}
         hasKnowledgeSchedule={hasKnowledgeSchedule}
         disabled={disabled}
+        serviceTimeline={serviceTimeline}
+        focusedEntryId={focusedEntryId}
         ownerContextMemory={ownerContextMemory}
         onSaveOwnerContextMemory={onSaveOwnerContextMemory}
+        onAddService={onAddService}
+        onUpdateService={onUpdateService}
+        onUpdateCurrentMileage={onUpdateCurrentMileage}
       />
     );
   }

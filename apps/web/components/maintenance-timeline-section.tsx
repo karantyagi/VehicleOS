@@ -30,8 +30,10 @@ type MaintenanceTimelineSectionProps = {
   effectiveMilesPerYear: number;
   hasKnowledgeSchedule?: boolean;
   activeTab?: ServiceHistoryTab;
+  focusedScheduleEntryId?: string | null;
   addRequestKey?: number;
   addRequestTaskId?: string | null;
+  addRequestLineItem?: string | null;
   onAddRequestHandled?: () => void;
   onTabChange?: (tab: ServiceHistoryTab) => void;
   disabled?: boolean;
@@ -45,6 +47,7 @@ type MaintenanceTimelineSectionProps = {
   ) => Promise<void>;
   onReviewVerification?: (taskId: string) => void;
   onAddService?: (draft: import("@/components/maintenance-record-fields").MaintenanceRecordDraft) => Promise<void>;
+  onUpdateCurrentMileage?: (mileage: number) => Promise<void>;
   requireEditConfirmation?: boolean;
   onGoToImport?: () => void;
   historyOnly?: boolean;
@@ -80,8 +83,10 @@ export function MaintenanceTimelineSection({
   effectiveMilesPerYear,
   hasKnowledgeSchedule = false,
   activeTab,
+  focusedScheduleEntryId,
   addRequestKey,
   addRequestTaskId,
+  addRequestLineItem,
   onAddRequestHandled,
   onTabChange,
   disabled = false,
@@ -91,6 +96,7 @@ export function MaintenanceTimelineSection({
   onMergeService,
   onReviewVerification,
   onAddService,
+  onUpdateCurrentMileage,
   requireEditConfirmation = false,
   onGoToImport,
   historyOnly = false,
@@ -211,6 +217,7 @@ export function MaintenanceTimelineSection({
                   onGoToImport={onGoToImport}
                   addRequestKey={addRequestKey}
                   addRequestTaskId={addRequestTaskId}
+                  addRequestLineItem={addRequestLineItem}
                   onAddRequestHandled={onAddRequestHandled}
                 />
                 {!ownerSimple && ownershipRecords.length > 0 ? (
@@ -249,8 +256,13 @@ export function MaintenanceTimelineSection({
                 ownerDueItems={ownerDueItems}
                 currentMileage={defaultMileage}
                 disabled={disabled}
+                serviceTimeline={timeline}
+                focusedEntryId={focusedScheduleEntryId}
                 ownerContextMemory={ownerContextMemory}
                 onSaveOwnerContextMemory={onSaveOwnerContextMemory}
+                onAddService={onAddService}
+                onUpdateService={onUpdateService}
+                onUpdateCurrentMileage={onUpdateCurrentMileage}
               />
             ) : null}
           </div>
