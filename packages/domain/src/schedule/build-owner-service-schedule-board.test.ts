@@ -222,6 +222,13 @@ describe("buildOwnerServiceScheduleBoard — 2021 TLX dogfood", () => {
     const rotation = board.rows.find((row) => row.entryId === "mm-sub-1");
     expect(rotation?.intelligence?.itemKind).toBe("tire_rotation");
     expect(rotation?.intelligence?.whyNow).toContain("7,219 mi remaining");
+    expect(rotation?.intelligence?.serviceAction).toMatchObject({
+      entryId: "mm-sub-1",
+      canonicalServiceId: "generic.tire_rotation",
+      recordLineItem: "Rotate tires",
+      baselineServiceId: "carfax-import-0",
+      baselineMileage: 58_819,
+    });
     expect(rotation?.intelligence?.intervalRecommendation).toMatchObject({
       status: "active",
       recommendedMiles: 6_000,
@@ -276,6 +283,9 @@ describe("buildOwnerServiceScheduleBoard — 2021 TLX dogfood", () => {
       serviceAliasRegistry: aliasRegistry,
     });
     const oneRecord = oneRecordBoard.rows.find((row) => row.entryId === "mm-sub-1");
+    expect(oneRecord?.intelligence?.serviceAction.baselineServiceId).toBe(
+      rotationVisits[0]?.serviceId,
+    );
     expect(oneRecord?.intelligence?.intervalRecommendation.status).toBe("active");
     expect(oneRecord?.intelligence?.intervalRecommendation.evidenceNote).toBe(
       "Last rotation only · no observed gap yet",
@@ -298,6 +308,25 @@ describe("buildOwnerServiceScheduleBoard — 2021 TLX dogfood", () => {
     expect(twoRecords?.intelligence?.intervalRecommendation.evidenceNote).not.toContain(
       "average",
     );
+  });
+
+  it("keeps the service action available when Rotate Tires has no history", () => {
+    const board = buildOwnerServiceScheduleBoard({
+      knowledgeSchedule,
+      timeline: [],
+      currentMileage: 59_000,
+      ownedSince: "2021-03-18",
+      today: "2026-07-30",
+      serviceAliasRegistry: aliasRegistry,
+    });
+
+    const rotation = board.rows.find((row) => row.entryId === "mm-sub-1");
+    expect(rotation?.intelligence?.serviceAction).toMatchObject({
+      recordLineItem: "Rotate tires",
+      baselineServiceId: null,
+      baselineServiceDate: null,
+      baselineMileage: null,
+    });
   });
 
   it("uses needs_baseline when no history imported", () => {

@@ -4,8 +4,9 @@
 
 **Decision:** [ADR-014](../../docs-lite/adr/ADR-014-owner-centered-maintenance-item-intelligence.md)
 
-**Implementation:** Rotate Tires pilot implemented on
-`agent/maintenance-reminder-recommendation-pilot`; see the
+**Implementation:** Rotate Tires intelligence is on `master`; its exact-item
+completion, correction, odometer, and navigation trust loop is implemented on
+`agent/rotate-tires-trust-loop`. See the
 [delivery queue](./maintenance-item-intelligence-queue.md).
 
 ---
@@ -225,6 +226,12 @@ Implemented for the Rotate Tires pilot:
 - a structured Costco action plan with provider, location, expected cost,
   owner-fit rationale, evidence IDs, and separate confidence;
 - owner confirmation memory for the inferred `$0` benefit;
+- exact `Rotate tires` completion prefill rather than a generic service record;
+- correction of the exact matched rotation baseline while preserving the rest
+  of a multi-line visit;
+- an in-item odometer correction followed by immediate reprojection;
+- stable reminder and schedule-item link targets that expand and focus the
+  intended item without claiming notification delivery;
 - the verified official [Costco Tire Center](https://tires.costco.com/) entry
   point.
 
@@ -237,12 +244,21 @@ Implemented as shared Phase 2 scaffolding:
 
 Still missing:
 
-- item-level correction actions for the last service and odometer;
 - provider alternatives and time-versus-money ranking;
 - a general provider catalog, live appointment availability, and offer
   ingestion;
 - item evaluators beyond Rotate Tires;
-- UI-level copy regression tests.
+- the complete UI copy regression matrix across every evidence state.
+
+### Rollout after Rotate Tires
+
+Expansion uses one parent program and separately accepted evaluator families,
+not one all-items implementation. This keeps the owner interaction consistent
+while allowing each item to define its own evidence, schedule basis, safety
+signals, correction semantics, and fulfillment choices. OEM rows that share a
+single inspection trigger and workflow may ship as one family, but their
+findings remain distinct facts. The complete ordered backlog is in the
+[maintenance item intelligence delivery queue](./maintenance-item-intelligence-queue.md#per-item-rollout-backlog).
 
 ---
 

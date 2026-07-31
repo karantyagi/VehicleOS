@@ -1,6 +1,6 @@
 # Owner product implementation queue
 
-**Updated:** 2026-07-30
+**Updated:** 2026-07-31
 **Scope:** Owner web attention and capture-first mobile
 **Architecture:** [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md)
 
@@ -16,6 +16,8 @@ This queue records adopted product direction. It does not authorize notification
 | WEB-ATTN-4 | P0 | Implemented | Present attention by owner time horizon | This week leads; next week and this month support planning; overdue work remains in This week |
 | WEB-ATTN-5 | P1 | Implemented | Keep maintenance truth available behind the attention summary | Full history, actual due dates, evidence, and long-range schedule remain under Maintenance |
 | WEB-ATTN-6 | P0 | Implemented | Retire automatic browser-notification behavior from the current owner slice | The notification-permission hook and automatic browser delivery were removed |
+| WEB-ATTN-7 | P0 | Implemented | Make completion and correction item-aware | Done prefills the exact service; Fix this opens the matched baseline or a prefilled missing record; a successful save reprojects the item |
+| WEB-ATTN-8 | P1 | Implemented | Add stable exact-item navigation targets | Query links can open and focus one reminder or maintenance row; this is routing only, not notification delivery |
 | WEB-IA-1 | P1 | Implemented | Simplify persistent owner navigation | Owner navigation is **Home**, **Maintenance**, and **Add records**; rare verification appears contextually on Home |
 | WEB-VERIFY-1 | P0 | Implemented | Separate blocking from advisory owner verification | Blocking questions lead Home; advisory questions follow maintenance attention; no verification surface appears when there are no questions |
 | WEB-VERIFY-2 | P0 | Implemented | Deep-link verification to maintenance truth | Home carries an unresolved count; affected history records show **Needs confirmation**; review opens the exact record or field |
@@ -40,6 +42,7 @@ This queue records adopted product direction. It does not authorize notification
 ## Guardrails
 
 - Do not treat in-app attention lists, banners, or action feedback as notification delivery.
+- Deep-link targets may be implemented before notification delivery, but they must not imply that cadence, channel, permissions, or delivery reliability exist.
 - Do not let notification preferences modify maintenance history or actual due dates.
 - Do not add per-item delay controls as part of web-attention work.
 - Do not expand mobile into a second full review application during the capture phase.

@@ -184,6 +184,7 @@ export {
   type MaintenanceItemIntelligence,
   type MaintenanceRationaleAxis,
   type MaintenanceRationaleAxisId,
+  type MaintenanceServiceAction,
   type QualitativeConfidence,
 } from "./schedule/build-maintenance-item-intelligence.js";
 export {
