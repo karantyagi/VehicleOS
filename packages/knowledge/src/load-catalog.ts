@@ -118,7 +118,10 @@ export const resolvePackIdForVehicle = (input: {
     if (inputTokens.includes(rowTrim)) return true;
 
     const rowTokens = trimTokens(row.trim);
-    return rowTokens.length > 0 && rowTokens.every((token) => inputTokens.includes(token));
+    if (rowTokens.length > 0 && rowTokens.every((token) => inputTokens.includes(token))) return true;
+
+    const powertrainTokens = trimTokens(row.powertrain ?? "");
+    return powertrainTokens.length > 0 && powertrainTokens.every((token) => inputTokens.includes(token));
   });
 
   return rankMatches(compoundMatches);

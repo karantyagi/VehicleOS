@@ -35,7 +35,7 @@ const FLEET = [
     years: [2021, 2022, 2023, 2024, 2025, 2026],
     trims: [
       { trim: "Technology", packId: "acura-tlx-2021-technology", supportTier: "tier1" },
-      { trim: "SH-AWD", packId: "acura-tlx-2021-sh-awd", powertrain: "SH-AWD", supportTier: "tier1" },
+      { trim: "Technology", packId: "acura-tlx-2021-sh-awd", powertrain: "SH-AWD", supportTier: "tier1" },
     ],
   },
   {
