@@ -296,6 +296,7 @@ export function OwnerDashboard() {
       resetVehicleWorkspace();
       setVehicle(null);
       setOwnerSetupComplete(false);
+      setIsVehicleStateLoading(false);
       setIsLoading(false);
       return;
     }
