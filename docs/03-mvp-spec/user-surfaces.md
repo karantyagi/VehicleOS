@@ -22,7 +22,7 @@ See marketing site `#early-access`, `#positioning` (category gap cards), and wor
 ## Current surface boundary
 
 - **Web:** the complete owner review desk for attention, maintenance history, schedule truth, imports, and corrections.
-- **Mobile:** image and voice-note capture with upload status and a link to web review when needed.
+- **Mobile:** camera/image capture with on-device crop and rotation, real-time voice transcript review, upload status, and a link to web review when needed.
 - **Notifications:** deferred as a separate product and architecture track; current in-app attention is not notification delivery.
 
 See [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md) and the [owner product implementation queue](./product-implementation-queue.md).
