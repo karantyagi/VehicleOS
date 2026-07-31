@@ -16,7 +16,7 @@
 
 ## Claims that are safe today
 
-- The hosted PWA is capture-first and can be added to a phone home screen.
+- The hosted PWA is capture-first and can be installed from the browser onto a phone home screen; it remains network-first rather than offline-capable.
 - Photo crop and rotation happen in the browser before upload.
 - Voice text appears in real time when the browser supports Web Speech; typing is the fallback.
 - Maintenance schedule projection and due timing are deterministic and owner-correctable.
