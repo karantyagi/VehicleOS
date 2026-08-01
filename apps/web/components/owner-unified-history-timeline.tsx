@@ -42,6 +42,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { OwnerHistoryItem, QueueItem, TimelineEntry } from "@/lib/console-types";
 import { isoDateToLocalDate, todayIsoDate } from "@/lib/date-input";
+import {
+  filterOwnerHistoryItems,
+  OWNER_HISTORY_FILTERS,
+  type OwnerHistoryFilter,
+} from "@/lib/owner-history-filter";
 import { RMV_EVENT_LABELS } from "@/lib/record-import-types";
 import { cn } from "@/lib/utils";
 
@@ -178,8 +183,21 @@ export function OwnerUnifiedHistoryTimeline({
   verifications = [],
   onReviewVerification,
 }: OwnerUnifiedHistoryTimelineProps) {
-  const yearGroups = useMemo(() => groupByYear(items), [items]);
+  const [historyFilter, setHistoryFilter] = useState<OwnerHistoryFilter>("all");
+  const filteredItems = useMemo(
+    () => filterOwnerHistoryItems(items, historyFilter),
+    [historyFilter, items],
+  );
+  const yearGroups = useMemo(() => groupByYear(filteredItems), [filteredItems]);
   const serviceItems = useMemo(() => items.filter((item) => item.kind === "service"), [items]);
+  const historyFilterCounts = useMemo(
+    () => ({
+      all: items.length,
+      service: serviceItems.length,
+      ownership: items.length - serviceItems.length,
+    }),
+    [items.length, serviceItems.length],
+  );
   const serviceEntries = useMemo(() => serviceItems.map(serviceEntryFromItem), [serviceItems]);
   const possibleDuplicates = useMemo(
     () => findPossibleServiceDuplicates(serviceEntries),
@@ -232,11 +250,15 @@ export function OwnerUnifiedHistoryTimeline({
 
   useEffect(() => {
     if (yearGroups.length === 0) return;
-    setExpandedYears((current) => (current.size > 0 ? current : new Set([yearGroups[0][0]])));
+    const filteredYears = new Set(yearGroups.map(([year]) => year));
+    setExpandedYears((current) =>
+      [...current].some((year) => filteredYears.has(year)) ? current : new Set([yearGroups[0][0]]),
+    );
   }, [yearGroups]);
 
   useEffect(() => {
     if (!focusedRecordId) return;
+    setHistoryFilter("all");
     const item = items.find((candidate) => candidate.id === focusedRecordId);
     if (!item) return;
     const year = Number(item.date.slice(0, 4)) || 0;
@@ -425,6 +447,7 @@ export function OwnerUnifiedHistoryTimeline({
     setIsAddingSaving(true);
     try {
       await onAddService(addDraft);
+      setHistoryFilter("all");
       setIsAdding(false);
       setAddDraft(null);
       setConfirmAdd(false);
@@ -768,6 +791,27 @@ export function OwnerUnifiedHistoryTimeline({
         ) : null}
       </div>
 
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Filter timeline">
+        {OWNER_HISTORY_FILTERS.map((filter) => {
+          const count = historyFilterCounts[filter.id];
+          if (filter.id !== "all" && count === 0) return null;
+          return (
+            <Button
+              key={filter.id}
+              type="button"
+              size="sm"
+              variant={historyFilter === filter.id ? "secondary" : "ghost"}
+              className="h-8 rounded-full px-3 text-xs"
+              aria-pressed={historyFilter === filter.id}
+              onClick={() => setHistoryFilter(filter.id)}
+            >
+              {filter.label}
+              {filter.id !== "all" ? ` (${count})` : ""}
+            </Button>
+          );
+        })}
+      </div>
+
       {serviceItems.length > 0 ? (
         <section className="history-surface p-4 sm:p-5">
           <dl className="flex gap-6 text-sm tabular-nums">
@@ -841,10 +885,24 @@ export function OwnerUnifiedHistoryTimeline({
         </div>
       ) : null}
 
-      <div className="relative space-y-6">
-        <div className="pointer-events-none absolute bottom-0 left-[0.4375rem] top-2 w-px bg-gradient-to-b from-history-highlight/35 via-history-highlight/12 to-transparent" />
+      {yearGroups.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border/80 bg-muted/20 px-4 py-5 text-sm text-muted-foreground">
+          No {historyFilter === "service" ? "service records" : "ownership events"} match this filter.
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            className="ml-1 h-auto px-1 py-0 text-sm text-primary hover:text-primary"
+            onClick={() => setHistoryFilter("all")}
+          >
+            Show all
+          </Button>
+        </div>
+      ) : (
+        <div className="relative space-y-6">
+          <div className="pointer-events-none absolute bottom-0 left-[0.4375rem] top-2 w-px bg-gradient-to-b from-history-highlight/35 via-history-highlight/12 to-transparent" />
 
-        {yearGroups.map(([year, yearItems]) => {
+          {yearGroups.map(([year, yearItems]) => {
           const isYearOpen = expandedYears.has(year);
 
           return (
@@ -1046,8 +1104,9 @@ export function OwnerUnifiedHistoryTimeline({
               ) : null}
             </section>
           );
-        })}
-      </div>
+          })}
+        </div>
+      )}
     </div>
   );
 }
