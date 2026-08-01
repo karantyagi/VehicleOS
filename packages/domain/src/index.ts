@@ -247,6 +247,16 @@ export {
   detectOwnerHabitProposals,
 } from "./schedule/detect-owner-habit-proposals.js";
 export {
+  parseOwnerHabitNote,
+  validateOwnerHabitProposal,
+} from "./owner-habits/parse-owner-habit-note.js";
+export { recordOwnerHabitProposal } from "./owner-habits/record-owner-habit-proposal.js";
+export type {
+  OwnerHabitCaptureChannel,
+  OwnerHabitExtractionMethod,
+  OwnerHabitProposalV1,
+} from "./owner-habits/types.js";
+export {
   OWNER_HABIT_DEFINITIONS,
   isOwnerHabitEntryId,
   type OwnerHabitDefinition,
@@ -321,8 +331,10 @@ export {
   ownerDriverLicenseFingerprint,
   ownerDriverLicenseToOwnershipRecord,
   projectOwnerDriverLicenses,
+  recordOwnerDriverLicense,
   recordOwnerDriverLicenses,
   type OwnerDriverLicense,
+  type OwnerDriverLicenseDraft,
 } from "./ownership/owner-driver-license.js";
 export { parseCarfaxPdfText, type ParseCarfaxPdfTextResult } from "./import/parse-carfax-pdf-text.js";
 export { parseRmvPdfText, type ParseRmvPdfTextResult } from "./import/parse-rmv-pdf-text.js";

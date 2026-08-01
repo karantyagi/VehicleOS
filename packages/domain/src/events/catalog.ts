@@ -212,7 +212,7 @@ export type OwnerDriverLicenseRecordedPayload = {
   expirationDate: string;
   description: string;
   details: string[];
-  source: "rmv_import";
+  source: "rmv_import" | "owner_note";
 };
 
 export type DomainEventPayloadMap = {

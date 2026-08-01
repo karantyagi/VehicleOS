@@ -148,7 +148,7 @@ export type OwnershipRecordEntry = {
   agency: string;
   recordDate: string;
   mileage: number | null;
-  eventType: "registration" | "title" | "inspection" | "lien" | "other";
+  eventType: "registration" | "title" | "inspection" | "license" | "lien" | "other";
   description: string;
   details: string[];
   source: "rmv_import" | "carfax_import" | "owner_note";

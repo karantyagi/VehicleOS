@@ -2,7 +2,7 @@
 
 **Updated:** 2026-07-31
 **Scope:** Owner web attention and capture-first mobile
-**Architecture:** [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md)
+**Architecture:** [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md) · [ADR-016](../../docs-lite/adr/ADR-016-owner-habits-and-owner-level-compliance.md)
 
 This queue records adopted product direction. It does not authorize notification-system implementation.
 
@@ -28,6 +28,11 @@ This queue records adopted product direction. It does not authorize notification
 | MOBILE-CAP-2 | P1 | Implemented | Link uncertain captures to web review | Queued or conflicting captures expose an explicit **Review on Home** handoff instead of expanding mobile review |
 | MOBILE-CAP-3 | P1 | Implemented | Add a deliberate photo-review step before upload | Camera photos can be dragged to crop, zoomed, rotated, reset, replaced, or uploaded unchanged; editing stays on-device until the Owner confirms |
 | MOBILE-CAP-4 | P1 | Implemented | Make voice transcription visibly real time | Listening state, live transcript, stop-and-review, correction, start-over, and review-before-save are explicit; unsupported browsers retain typed-note fallback |
+| OWNER-HABIT-1 | P0 | Implemented | Capture an owner habit by text or browser voice transcription | Rules produce `OwnerHabitProposalV1`; future LLM extraction must return the same public contract |
+| OWNER-HABIT-2 | P0 | Implemented | Require approval before an owner habit controls a schedule | Every extracted interval enters `VERIFY_OWNER_INTERVAL`; no proposal mutates schedule truth directly |
+| OWNER-COMPLIANCE-1 | P0 | Implemented | Model driver's-license renewal once per owner | `owner.driver_license.recorded` is owner-scoped, excludes license number/date of birth, and projects into the shared due-item model |
+| RMV-OWNER-1 | P0 | Implemented | Route mixed RMV facts to the correct aggregate | Registration/inspection remain vehicle records; driver's-license expiration is written to the authenticated owner |
+| DOGFOOD-SELECT-1 | P1 | Implemented | Select between TLX and Elantra fixtures during CARFAX/RMV import | Both profiles are visible; VIN or YMM matching prevents cross-car imports; synthetic deadline fixtures exercise upcoming schedule items |
 
 ## Explicitly deferred
 
@@ -38,6 +43,7 @@ This queue records adopted product direction. It does not authorize notification
 | NOTIFY-DESIGN-3 | Deferred | Decide channels: browser, push, email, or combinations | Permission, privacy, cost, and reliability assessment |
 | NOTIFY-DESIGN-4 | Deferred | Define future mute/defer semantics | Separate attention state, actual due time, and next allowed nudge |
 | NOTIFY-BUILD | Blocked by design | Implement notification delivery and user controls | NOTIFY-DESIGN-1 through NOTIFY-DESIGN-4 accepted |
+| OWNER-HABIT-LLM | Deferred | Expand natural-language habit extraction beyond the deterministic Techron pilot | Private tuned prompt/evals that emit the public `OwnerHabitProposalV1` schema |
 
 ## Guardrails
 
@@ -46,3 +52,6 @@ This queue records adopted product direction. It does not authorize notification
 - Do not let notification preferences modify maintenance history or actual due dates.
 - Do not add per-item delay controls as part of web-attention work.
 - Do not expand mobile into a second full review application during the capture phase.
+- Do not let voice, rules, or LLM extraction silently change an owner interval.
+- Do not store a driver's-license number or date of birth in the compliance-deadline contract.
+- Do not attach personal compliance deadlines to a vehicle aggregate.

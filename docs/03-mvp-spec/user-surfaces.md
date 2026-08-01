@@ -48,6 +48,18 @@ The owner interaction has two connected layers:
 Registration, state inspection, and future ownership deadlines use the same
 attention model. Action recommendations never change the underlying due rule.
 
+Owner-entered maintenance patterns are called **owner habits**. Text or voice
+capture produces a structured interval proposal and always asks the owner to
+confirm it before the schedule changes. The public proposal schema is shared by
+the current deterministic extractor and the future LLM extractor.
+
+Personal obligations such as a driver's-license renewal are **owner-level
+compliance deadlines**. They appear in the same schedule/attention experience,
+but are saved once on the owner account and are never attached to a car. The
+deadline record intentionally omits the license number and date of birth.
+
 Rotate Tires is the first full item pilot. See
 [`maintenance-item-intelligence.md`](./maintenance-item-intelligence.md) and
 [ADR-014](../../docs-lite/adr/ADR-014-owner-centered-maintenance-item-intelligence.md).
+See [ADR-016](../../docs-lite/adr/ADR-016-owner-habits-and-owner-level-compliance.md)
+for owner-habit extraction and owner-level compliance boundaries.

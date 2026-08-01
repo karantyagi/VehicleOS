@@ -42,6 +42,7 @@ import { DateField } from "@/components/date-field";
 import { todayIsoDate } from "@/lib/date-input";
 import { ImportHistoryNudge } from "./import-history-nudge";
 import { VerificationMaturityPanel } from "./verification-maturity-panel";
+import { OwnerHabitsCompliancePanel } from "./owner-habits-compliance-panel";
 import { draftLineItems, type MaintenanceRecordDraft } from "@/components/maintenance-record-fields";
 import type {
   MaintenanceScheduleView,
@@ -955,12 +956,13 @@ export function OwnerDashboard() {
       ) : null}
 
       {activeSection === "timeline" ? (
-        <PanelCard
-          hideHeader={!isDeveloper}
-          title="Maintenance"
-          description="Forward OEM schedule and unified service + RMV history."
-        >
-          <MaintenanceTimelineSection
+        <div className="space-y-6">
+          <PanelCard
+            hideHeader={!isDeveloper}
+            title="Maintenance"
+            description="Forward OEM schedule and unified service + RMV history."
+          >
+            <MaintenanceTimelineSection
             timeline={timeline}
             ownershipRecords={ownershipRecords}
             ownerDueItems={ownerDueItems}
@@ -998,8 +1000,30 @@ export function OwnerDashboard() {
             dueSoonDays={maintenanceSchedule.dueSoonDays}
             ownerContextMemory={vehicle.ownerContextMemory}
             onSaveOwnerContextMemory={saveOwnerContextMemory}
-          />
-        </PanelCard>
+            />
+          </PanelCard>
+          <PanelCard
+            title="Owner habits & personal deadlines"
+            description="Owner-confirmed schedules and renewals that do not change OEM truth."
+          >
+            <OwnerHabitsCompliancePanel
+              vehicleId={vehicle.id}
+              apiBase={apiBase}
+              records={ownershipRecords.filter((record) => record.eventType === "license")}
+              disabled={isBusy}
+              onHabitProposed={() => {
+                feedback("Habit extracted — confirm or edit the interval in Owner verification.");
+                setActiveSection("now");
+                void loadVehicleState(vehicle);
+              }}
+              onComplianceSaved={() => {
+                feedback("Driver's-license deadline saved to your owner profile.");
+                void loadVehicleState(vehicle);
+              }}
+              onError={(message) => feedback(message)}
+            />
+          </PanelCard>
+        </div>
       ) : null}
 
       {activeSection === "imports" ? (
@@ -1010,6 +1034,12 @@ export function OwnerDashboard() {
         >
           <RecordImportPanel
             vehicleId={vehicle.id}
+            vehicle={{
+              vin: vehicle.vin,
+              year: vehicle.year,
+              make: vehicle.make,
+              model: vehicle.model,
+            }}
             apiBase={apiBase}
             ownerShopLocations={vehicle.ownerContextMemory?.shopLocations}
             existingTimeline={timeline}
