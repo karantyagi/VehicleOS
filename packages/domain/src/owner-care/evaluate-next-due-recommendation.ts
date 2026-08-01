@@ -10,6 +10,11 @@ import {
   isOwnerDueItemActionable,
 } from "./build-owner-due-items.js";
 import { dueItemToRecommendation } from "./due-item-to-recommendation.js";
+import {
+  ONBOARDING_BASELINE_REASON,
+  ONBOARDING_BASELINE_RULE_ID,
+  ONBOARDING_BASELINE_TITLE,
+} from "./onboarding-baseline.js";
 
 const hasLineItemMatch = (lineItems: string[], pattern: RegExp): boolean =>
   lineItems.some((item) => pattern.test(item.toLowerCase()));
@@ -101,12 +106,11 @@ export const evaluateNextDueRecommendation = (input: {
 
     return {
       recommendationId: crypto.randomUUID(),
-      title: "Log your first service",
-      reason:
-        "No maintenance history yet. Upload a receipt or add a service record to start recommendations.",
+      title: ONBOARDING_BASELINE_TITLE,
+      reason: ONBOARDING_BASELINE_REASON,
       confidence: 1,
       evidenceIds: [],
-      ruleId: "schedule.policy.onboarding.v1",
+      ruleId: ONBOARDING_BASELINE_RULE_ID,
     };
   }
 

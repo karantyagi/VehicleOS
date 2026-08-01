@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import React from "react";
 import { useEffect, useState } from "react";
+import { isOnboardingBaselineRule } from "@vehicleos/domain";
 import { EmptyState } from "@/components/empty-state";
 import { MaintenanceIntelligenceSummary } from "@/components/maintenance-intelligence-summary";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +32,7 @@ const urgencyVariant = (urgency: OwnerReminderItem["urgency"]) => {
 };
 
 type AttentionGroup = {
-  id: "this_week" | "next_week" | "this_month" | "later";
+  id: "this_week" | "start_here" | "next_week" | "this_month" | "later";
   title: string;
   description: string;
   items: OwnerReminderItem[];
@@ -44,20 +45,31 @@ type RemindersConsoleProps = {
   onNotNeeded: (taskId: string) => void;
   onRecordDone: (item: OwnerReminderItem) => void;
   onFixData: (item: OwnerReminderItem) => void;
+  onStartBaseline: (item: OwnerReminderItem) => void;
   focusTaskId?: string | null;
   minimal?: boolean;
 };
 
 const buildGroups = (items: OwnerReminderItem[]): AttentionGroup[] => {
   const active = items.filter((item) => item.effectiveStatus === "pending");
+  const isOnboardingBaseline = (item: OwnerReminderItem): boolean =>
+    isOnboardingBaselineRule(item.ruleId);
   const groups: AttentionGroup[] = [
     {
       id: "this_week",
       title: "This week",
       description: "Overdue work stays here until it is handled.",
       items: active.filter(
-        (item) => item.attentionWindow === "overdue" || item.attentionWindow === "this_week",
+        (item) =>
+          !isOnboardingBaseline(item) &&
+          (item.attentionWindow === "overdue" || item.attentionWindow === "this_week"),
       ),
+    },
+    {
+      id: "start_here",
+      title: "Start here",
+      description: "One completed service gives your assistant a real maintenance baseline.",
+      items: active.filter(isOnboardingBaseline),
     },
     {
       id: "next_week",
@@ -88,6 +100,7 @@ export function RemindersConsole({
   onNotNeeded,
   onRecordDone,
   onFixData,
+  onStartBaseline,
   focusTaskId = null,
   minimal = false,
 }: RemindersConsoleProps) {
@@ -125,7 +138,8 @@ export function RemindersConsole({
         const content = (
           <ul className="mt-3 space-y-3">
             {group.items.map((item) => {
-              const isOverdue = item.urgency === "overdue";
+              const isOnboardingBaseline = isOnboardingBaselineRule(item.ruleId);
+              const isOverdue = !isOnboardingBaseline && item.urgency === "overdue";
               const isExpanded = expandedTaskId === item.taskId;
 
               return (
@@ -155,9 +169,11 @@ export function RemindersConsole({
                         >
                           {item.title}
                         </h3>
-                        <Badge variant={urgencyVariant(item.urgency)}>
-                          {urgencyLabel[item.urgency]}
-                        </Badge>
+                        {!isOnboardingBaseline ? (
+                          <Badge variant={urgencyVariant(item.urgency)}>
+                            {urgencyLabel[item.urgency]}
+                          </Badge>
+                        ) : null}
                       </div>
                       <p
                         className={cn(
@@ -194,46 +210,63 @@ export function RemindersConsole({
                     </div>
                   ) : null}
 
-                  <div className="flex flex-wrap gap-2 border-t border-border/60 px-4 pb-4 pt-3">
-                    <Button
-                      type="button"
-                      size="sm"
-                      disabled={disabled}
-                      onClick={() => onScheduled(item.taskId)}
-                    >
-                      <CalendarCheck2 className="mr-1.5 h-4 w-4" aria-hidden />
-                      Scheduled
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="secondary"
-                      disabled={disabled}
-                      onClick={() => onRecordDone(item)}
-                    >
-                      <CheckCircle2 className="mr-1.5 h-4 w-4" aria-hidden />
-                      Done
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      disabled={disabled}
-                      onClick={() => onFixData(item)}
-                    >
-                      <Wrench className="mr-1.5 h-4 w-4" aria-hidden />
-                      Fix this
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="ghost"
-                      disabled={disabled}
-                      onClick={() => onNotNeeded(item.taskId)}
-                    >
-                      Not needed
-                    </Button>
-                  </div>
+                  {isOnboardingBaseline ? (
+                    <div className="flex flex-wrap items-center gap-3 border-t border-border/60 px-4 pb-4 pt-3">
+                      <Button
+                        type="button"
+                        size="sm"
+                        disabled={disabled}
+                        onClick={() => onStartBaseline(item)}
+                      >
+                        <CheckCircle2 className="mr-1.5 h-4 w-4" aria-hidden />
+                        Log a service
+                      </Button>
+                      <p className="text-xs text-muted-foreground">
+                        This closes automatically after you save a service.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap gap-2 border-t border-border/60 px-4 pb-4 pt-3">
+                      <Button
+                        type="button"
+                        size="sm"
+                        disabled={disabled}
+                        onClick={() => onScheduled(item.taskId)}
+                      >
+                        <CalendarCheck2 className="mr-1.5 h-4 w-4" aria-hidden />
+                        Scheduled
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="secondary"
+                        disabled={disabled}
+                        onClick={() => onRecordDone(item)}
+                      >
+                        <CheckCircle2 className="mr-1.5 h-4 w-4" aria-hidden />
+                        Done
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={disabled}
+                        onClick={() => onFixData(item)}
+                      >
+                        <Wrench className="mr-1.5 h-4 w-4" aria-hidden />
+                        Fix this
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        disabled={disabled}
+                        onClick={() => onNotNeeded(item.taskId)}
+                      >
+                        Not needed
+                      </Button>
+                    </div>
+                  )}
                 </li>
               );
             })}

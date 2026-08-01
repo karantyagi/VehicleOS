@@ -78,6 +78,7 @@ const renderReminder = (focusTaskId: string | null) =>
       onNotNeeded={vi.fn()}
       onRecordDone={vi.fn()}
       onFixData={vi.fn()}
+      onStartBaseline={vi.fn()}
       minimal
     />,
   );
@@ -95,5 +96,40 @@ describe("RemindersConsole trust copy", () => {
     expect(markup).toContain("Why this needs attention");
     expect(markup).toContain("Assistant recommends 6,000 miles");
     expect(markup).toContain("Costco Tire Center");
+  });
+});
+
+describe("RemindersConsole onboarding baseline", () => {
+  it("keeps the first-service baseline calm and non-dismissable", () => {
+    const markup = renderToStaticMarkup(
+      <RemindersConsole
+        items={[
+          {
+            taskId: "task-onboarding",
+            title: "Log your first service",
+            reason: "Add one completed service to personalize future maintenance recommendations.",
+            status: "pending",
+            effectiveStatus: "pending",
+            deadlineLabel: "Set your maintenance baseline",
+            dueBy: null,
+            urgency: "upcoming",
+            attentionWindow: "this_week",
+            ruleId: "schedule.policy.onboarding.v1",
+          },
+        ]}
+        onScheduled={vi.fn()}
+        onNotNeeded={vi.fn()}
+        onRecordDone={vi.fn()}
+        onFixData={vi.fn()}
+        onStartBaseline={vi.fn()}
+      />,
+    );
+
+    expect(markup).toContain("Start here");
+    expect(markup).toContain("Log a service");
+    expect(markup).toContain("This closes automatically after you save a service.");
+    expect(markup).not.toContain("Due soon");
+    expect(markup).not.toContain("Not needed");
+    expect(markup).not.toContain("Fix this");
   });
 });
