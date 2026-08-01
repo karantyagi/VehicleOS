@@ -329,6 +329,7 @@ export {
 export {
   ownerDriverLicenseFromRmvRecord,
   ownerDriverLicenseFingerprint,
+  ownerDriverLicenseImportNeedsConfirmation,
   ownerDriverLicenseToOwnershipRecord,
   projectOwnerDriverLicenses,
   recordOwnerDriverLicense,

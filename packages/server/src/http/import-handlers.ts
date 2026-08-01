@@ -14,6 +14,7 @@ import {
   reconcileImportVehicleProfile,
   recordProfileImportVerification,
   recordImportRowVerification,
+  ownerDriverLicenseImportNeedsConfirmation,
   projectOwnerDriverLicenses,
   recordOwnerDriverLicenses,
   tierNewImportRows,
@@ -196,6 +197,8 @@ type VehicleOsRmvImportBody = {
     currentMileage?: number;
   };
   records?: VehicleOsRmvRecord[];
+  /** Required when a selected license would change an owner-level deadline. */
+  ownerLicenseChangeConfirmed?: boolean;
 };
 
 const vehicleProfileSnapshot = (vehicle: {
@@ -377,10 +380,22 @@ export const submitVehicleOsRmvImport = async (
     }
   }
 
+  const ownerEvents = await services.eventStore.loadByAggregate("owner", auth.userId);
+  if (
+    ownerDriverLicenseImportNeedsConfirmation({ existingEvents: ownerEvents, records })
+    && body.ownerLicenseChangeConfirmed !== true
+  ) {
+    return jsonResponse(409, {
+      error:
+        "This import would change your owner-level driver's-license deadline. Review the change and explicitly confirm it before importing.",
+    });
+  }
+
   const licenseResult = await recordOwnerDriverLicenses({
     eventStore: services.eventStore,
     ownerId: auth.userId,
     records,
+    importContext: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
   });
   const vehicleRecords = records.filter((record) => record.eventType !== "license");
   const importResult = await services.goldenPath.importVehicleOsRmvHistory({

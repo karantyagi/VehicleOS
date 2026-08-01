@@ -4,7 +4,7 @@ import {
   submitVehicleOsImport,
   submitVehicleOsRmvImport,
 } from "../http/import-handlers.js";
-import { InMemoryEventStore } from "@vehicleos/domain";
+import { InMemoryEventStore, projectOwnerDriverLicenses } from "@vehicleos/domain";
 import { InMemoryVehicleRepository } from "../repositories/in-memory-vehicle-repository.js";
 import { createApiServices } from "../services/index.js";
 
@@ -280,5 +280,55 @@ describe("import-handlers enrich + submit", () => {
     });
     await expect(services.eventStore.loadByAggregate("owner", vehicle.userId)).resolves.toHaveLength(1);
     await expect(services.eventStore.loadByAggregate("vehicle", vehicle.id)).resolves.not.toEqual([]);
+  });
+
+  it("requires an explicit owner decision before an RMV import changes a driver-license deadline", async () => {
+    const { services, vehicle } = await buildServices();
+    const originalLicense = {
+      recordDate: "2024-04-16",
+      mileage: null,
+      eventType: "license" as const,
+      agency: "Massachusetts RMV (myRMV)",
+      description: "Driver's license active — Class D",
+      details: ["License class: D", "Expiration Date: 2026-10-10"],
+    };
+    const importedLicense = {
+      ...originalLicense,
+      details: ["License class: D", "Expiration Date: 2031-10-10"],
+    };
+
+    expect(
+      (await submitVehicleOsRmvImport(
+        services,
+        vehicle.id,
+        { records: [originalLicense] },
+        { userId: vehicle.userId },
+      )).status,
+    ).toBe(201);
+
+    const withoutConfirmation = await submitVehicleOsRmvImport(
+      services,
+      vehicle.id,
+      { records: [importedLicense] },
+      { userId: vehicle.userId },
+    );
+    expect(withoutConfirmation.status).toBe(409);
+    expect(projectOwnerDriverLicenses(await services.eventStore.loadByAggregate("owner", vehicle.userId))).toMatchObject([
+      { expirationDate: "2026-10-10" },
+    ]);
+
+    const confirmed = await submitVehicleOsRmvImport(
+      services,
+      vehicle.id,
+      { records: [importedLicense], ownerLicenseChangeConfirmed: true },
+      { userId: vehicle.userId },
+    );
+    expect(confirmed.status).toBe(201);
+    expect(projectOwnerDriverLicenses(await services.eventStore.loadByAggregate("owner", vehicle.userId))).toMatchObject([
+      {
+        expirationDate: "2031-10-10",
+        details: expect.arrayContaining(["Imported while reviewing 2021 Acura TLX"]),
+      },
+    ]);
   });
 });

@@ -64,6 +64,13 @@ Personal obligations such as a driver's-license renewal are **owner-level
 compliance deadlines**. They appear in the same schedule/attention experience,
 but are saved once on the owner account and are never attached to a car. The
 deadline record intentionally omits the license number and date of birth.
+The saved card proves the useful facts instead: issuing agency, license class,
+expiration, source, and that it applies across the owner's garage. During an
+RMV import, vehicle records and owner records appear in separate review groups.
+An existing owner deadline never changes merely because another car is being
+imported: the owner compares the saved and imported facts, then explicitly
+chooses whether to keep the current deadline or use the imported update. The
+earlier event remains in the private audit trail with the car-review context.
 
 Rotate Tires is the first full item pilot. See
 [`maintenance-item-intelligence.md`](./maintenance-item-intelligence.md) and

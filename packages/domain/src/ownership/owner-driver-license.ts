@@ -45,6 +45,40 @@ export const ownerDriverLicenseFromRmvRecord = (record: VehicleOsRmvRecord): Own
 export const ownerDriverLicenseFingerprint = (license: Pick<OwnerDriverLicense, "agency" | "licenseClass" | "expirationDate">): string =>
   `${normalizeDedupeText(license.agency)}|${normalizeDedupeText(license.licenseClass ?? "")}|${license.expirationDate}`;
 
+/**
+ * A new license fact can affect the single owner-facing renewal deadline. The
+ * importing surface must ask the owner before accepting that change. Facts
+ * already present in the audit stream are safe re-imports and do not prompt.
+ */
+export const ownerDriverLicenseImportNeedsConfirmation = (input: {
+  existingEvents: CatalogDomainEvent[];
+  records: VehicleOsRmvRecord[];
+}): boolean => {
+  const incoming = input.records
+    .map(ownerDriverLicenseFromRmvRecord)
+    .filter((license): license is OwnerDriverLicense => license !== null);
+  const current = projectOwnerDriverLicenses(input.existingEvents)[0];
+  if (!current) return false;
+
+  const known = new Set(
+    input.existingEvents
+      .filter((event) => event.eventType === EVENT_TYPES.OWNER_DRIVER_LICENSE_RECORDED)
+      .map((event) =>
+        ownerDriverLicenseFingerprint({
+          agency: event.payload.agency,
+          licenseClass: event.payload.licenseClass,
+          expirationDate: event.payload.expirationDate,
+        }),
+      ),
+  );
+  const currentFingerprint = ownerDriverLicenseFingerprint(current);
+
+  return incoming.some((license) => {
+    const fingerprint = ownerDriverLicenseFingerprint(license);
+    return !known.has(fingerprint) && fingerprint !== currentFingerprint;
+  });
+};
+
 export const projectOwnerDriverLicenses = (events: CatalogDomainEvent[]): OwnerDriverLicense[] => {
   const unique = new Map<string, OwnerDriverLicense>();
 
@@ -126,6 +160,8 @@ export const recordOwnerDriverLicenses = async (deps: {
   eventStore: EventStore;
   ownerId: string;
   records: VehicleOsRmvRecord[];
+  /** Human-readable source context for the immutable owner audit trail. */
+  importContext?: string;
 }): Promise<{ importedCount: number; skippedCount: number }> => {
   const incoming = deps.records
     .map(ownerDriverLicenseFromRmvRecord)
@@ -156,6 +192,11 @@ export const recordOwnerDriverLicenses = async (deps: {
     }
     known.add(fingerprint);
     importedCount += 1;
+    const importContext = deps.importContext?.trim();
+    const importDetail = importContext ? `Imported while reviewing ${importContext}` : null;
+    const details = importDetail && !license.details.includes(importDetail)
+      ? [...license.details, importDetail]
+      : license.details;
     await deps.eventStore.append({
       aggregateType: "owner",
       aggregateId: deps.ownerId,
@@ -169,7 +210,7 @@ export const recordOwnerDriverLicenses = async (deps: {
         licenseClass: license.licenseClass,
         expirationDate: license.expirationDate,
         description: license.description,
-        details: license.details,
+        details,
         source: "rmv_import",
       },
       correlationId,

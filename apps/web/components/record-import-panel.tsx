@@ -9,7 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CarfaxImportReview, type CarfaxReviewRow } from "@/components/carfax-import-review";
-import { RmvImportReview, type RmvReviewRow } from "@/components/rmv-import-review";
+import {
+  RmvImportReview,
+  type OwnerLicenseReview,
+  type OwnerLicenseSummary,
+  type RmvReviewRow,
+} from "@/components/rmv-import-review";
 import {
   parseVehicleOsImportJson,
   parseVehicleOsRmvImportJson,
@@ -28,6 +33,7 @@ import {
   normalizeShopKey,
   tierImportRows,
   type ShopLocationHint,
+  ownerDriverLicenseFingerprint,
   ownershipRecordFingerprint,
 } from "@vehicleos/domain";
 import {
@@ -75,11 +81,74 @@ type RecordImportPanelProps = {
 
 type RmvReviewRowState = RmvReviewRow;
 
+const detailValue = (details: string[], label: string): string | null => {
+  const detail = details.find((line) => line.toLowerCase().startsWith(`${label.toLowerCase()}:`));
+  return detail ? detail.slice(detail.indexOf(":") + 1).trim() || null : null;
+};
+
+const ownerLicenseSummary = (
+  record: Pick<VehicleOsRmvRecord | OwnershipRecordEntry, "agency" | "details">,
+): OwnerLicenseSummary | null => {
+  const expirationDate = detailValue(record.details, "Expiration Date");
+  if (!expirationDate) return null;
+  return {
+    agency: record.agency,
+    licenseClass: detailValue(record.details, "License class"),
+    expirationDate,
+  };
+};
+
+const classifyOwnerLicenseReview = (
+  record: VehicleOsRmvRecord,
+  current?: OwnerLicenseSummary,
+  includedForReview = false,
+): Pick<RmvReviewRowState, "included" | "alreadyOnFile" | "ownerLicenseReview"> | null => {
+  if (record.eventType !== "license") return null;
+
+  const incoming = ownerLicenseSummary(record);
+  if (!incoming) {
+    return {
+      included: false,
+      alreadyOnFile: false,
+      ownerLicenseReview: { status: "missing_expiration" },
+    };
+  }
+  if (!current) {
+    return {
+      included: true,
+      alreadyOnFile: false,
+      ownerLicenseReview: { status: "new" },
+    };
+  }
+  if (ownerDriverLicenseFingerprint(incoming) === ownerDriverLicenseFingerprint(current)) {
+    return {
+      included: false,
+      alreadyOnFile: true,
+    };
+  }
+
+  const sameCredential =
+    current.agency.trim().toLocaleLowerCase() === incoming.agency.trim().toLocaleLowerCase()
+    && (current.licenseClass ?? "").trim().toLocaleLowerCase()
+      === (incoming.licenseClass ?? "").trim().toLocaleLowerCase();
+  const ownerLicenseReview: OwnerLicenseReview = {
+    status: "review",
+    current,
+    reason: sameCredential ? "renewal" : "different_credential",
+  };
+  return { included: includedForReview, alreadyOnFile: false, ownerLicenseReview };
+};
+
 const initRmvReviewRows = (
   records: VehicleOsRmvRecord[],
   existingOwnershipRecords: OwnershipRecordEntry[] = [],
-): RmvReviewRowState[] =>
-  records.map((record) => {
+): RmvReviewRowState[] => {
+  const currentOwnerLicense = ownerLicenseSummary(
+    existingOwnershipRecords.find((record) => record.eventType === "license") ?? { agency: "", details: [] },
+  );
+
+  return records.map((record) => {
+    const ownerLicenseState = classifyOwnerLicenseReview(record, currentOwnerLicense ?? undefined);
     const alreadyOnFile = existingOwnershipRecords.some(
       (existing) =>
         ownershipRecordFingerprint({
@@ -92,10 +161,12 @@ const initRmvReviewRows = (
     return {
       ...record,
       id: createRowId(),
-      included: !alreadyOnFile,
-      alreadyOnFile,
+      included: ownerLicenseState?.included ?? !alreadyOnFile,
+      alreadyOnFile: ownerLicenseState?.alreadyOnFile ?? alreadyOnFile,
+      ownerLicenseReview: ownerLicenseState?.ownerLicenseReview,
     };
   });
+};
 
 const createRowId = (): string =>
   typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -288,7 +359,9 @@ export function RecordImportPanel({
       );
     }
     if (draft.records.some((record) => record.eventType === "license")) {
-      projectionWarnings.push("Driver's-license expiration will be saved to your owner profile, not to this vehicle.");
+      projectionWarnings.push(
+        "Driver's-license records are saved to your owner profile, not to this vehicle. Existing deadlines always need your explicit confirmation before they change.",
+      );
     }
     setRmvPreview(draft);
     setCarfaxPreview(null);
@@ -523,9 +596,15 @@ export function RecordImportPanel({
           }
         }
 
-        const payload: VehicleOsRmvImportV1 = {
+        const ownerLicenseChangeConfirmed = selectedRmvRows.some(
+          (row) => row.ownerLicenseReview?.status === "review",
+        );
+        const payload: VehicleOsRmvImportV1 & { ownerLicenseChangeConfirmed?: boolean } = {
           ...rmvPreview,
-          records: selectedRmvRows.map(({ id: _id, included: _included, ...record }) => record),
+          records: selectedRmvRows.map(
+            ({ id: _id, included: _included, ownerLicenseReview: _ownerLicenseReview, ...record }) => record,
+          ),
+          ...(ownerLicenseChangeConfirmed ? { ownerLicenseChangeConfirmed: true } : {}),
         };
 
         const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/import/rmv`, {
@@ -620,7 +699,19 @@ export function RecordImportPanel({
   };
 
   const updateRmvRow = (id: string, patch: Partial<RmvReviewRowState>) => {
-    setRmvReviewRows((rows) => rows.map((row) => (row.id === id ? { ...row, ...patch } : row)));
+    setRmvReviewRows((rows) =>
+      rows.map((row) => {
+        if (row.id !== id) return row;
+        const updated = { ...row, ...patch };
+        const editingLicenseFields = "recordDate" in patch || "agency" in patch || "details" in patch;
+        const ownerLicenseState = classifyOwnerLicenseReview(
+          updated,
+          updated.ownerLicenseReview?.current,
+          editingLicenseFields ? false : updated.included,
+        );
+        return ownerLicenseState ? { ...updated, ...ownerLicenseState } : updated;
+      }),
+    );
   };
 
   const setAllCarfaxIncluded = (included: boolean) => {
@@ -649,13 +740,19 @@ export function RecordImportPanel({
 
   const setAllRmvIncluded = (included: boolean) => {
     setRmvReviewRows((rows) =>
-      rows.map((row) => ({ ...row, included: row.alreadyOnFile ? false : included })),
+      rows.map((row) => ({
+        ...row,
+        included: row.alreadyOnFile || row.ownerLicenseReview?.status === "review" ? false : included,
+      })),
     );
   };
 
   const includeAllReadyRmv = () => {
     setRmvReviewRows((rows) =>
-      rows.map((row) => ({ ...row, included: row.alreadyOnFile ? false : true })),
+      rows.map((row) => ({
+        ...row,
+        included: row.alreadyOnFile || row.ownerLicenseReview?.status === "review" ? false : true,
+      })),
     );
   };
 
