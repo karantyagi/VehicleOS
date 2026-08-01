@@ -33,8 +33,14 @@ Maintenance items are quiet, owner-correctable assistant surfaces:
 
 - collapsed by default;
 - one status and one next action;
+- only one item expanded at a time;
 - evidence, recommendation confidence, and the four-axis rationale revealed by
   chevron;
+- first expansion shows the complete owner-facing service journey: recorded
+  service dots, current odometer, projected next service, and every matching
+  service record with its date, mileage, shop, and line item;
+- raw source metadata remains optional, but service history never requires a
+  second expansion;
 - owner interval entry always available after expansion;
 - OEM, Assistant, and Owner intervals visibly distinguished;
 - unfinished item intelligence labeled `Phase 2 · upcoming · in development`.
