@@ -33,10 +33,8 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
   const mobileNavOpen = useAppUiStore((state) => state.mobileNavOpen);
   const setMobileNavOpen = useAppUiStore((state) => state.setMobileNavOpen);
   const consoleMode = useAppUiStore((state) => state.consoleMode);
-  const setupFlowActive = useAppUiStore((state) => state.setupFlowActive);
   const isDeveloper = consoleMode === "developer";
   const isAssistantWorkspace = pathname === "/";
-  const focusSetup = setupFlowActive && isAssistantWorkspace;
 
   useEffect(() => {
     if (!mobileNavOpen) return;
@@ -74,45 +72,28 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
       <ConsoleModeHydrator />
       <CommandMenu />
       <ConsoleKeyboardShortcuts />
-      <aside
-        className={cn(
-          "hidden w-72 shrink-0 border-r border-sidebar-border bg-sidebar shadow-[1px_0_0_hsl(var(--sidebar-border))] lg:block",
-          focusSetup && "lg:hidden",
-        )}
-      >
+      <aside className="hidden w-72 shrink-0 border-r border-sidebar-border bg-sidebar shadow-[1px_0_0_hsl(var(--sidebar-border))] lg:block">
         <div className="sticky top-0 flex h-screen flex-col">{sidebarBody}</div>
       </aside>
 
       <div className="flex min-h-[100dvh] min-w-0 flex-1 flex-col">
-        <header
-          className={cn(
-            "sticky top-0 z-20 flex items-center gap-3 border-b border-border bg-background/95 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:hidden",
-            focusSetup && "border-transparent bg-transparent backdrop-blur-none supports-[backdrop-filter]:bg-transparent",
-          )}
-        >
-          {focusSetup ? null : (
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              aria-expanded={mobileNavOpen}
-              aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
-              onClick={() => setMobileNavOpen(!mobileNavOpen)}
-            >
-              {mobileNavOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </Button>
-          )}
+        <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-border bg-background/95 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:hidden">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-expanded={mobileNavOpen}
+            aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
+            onClick={() => setMobileNavOpen(!mobileNavOpen)}
+          >
+            {mobileNavOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </Button>
           <div className="min-w-0 flex-1">{mobileBar ?? sidebarHeader}</div>
-          {focusSetup && user ? (
-            <div className="shrink-0">
-              <AccountMenu user={user} />
-            </div>
-          ) : null}
-          {!focusSetup && isDeveloper ? <CommandMenuTrigger compact /> : null}
-          {!focusSetup ? <ThemeToggle variant="icon" /> : null}
+          {isDeveloper ? <CommandMenuTrigger compact /> : null}
+          <ThemeToggle variant="icon" />
         </header>
 
-        {!focusSetup && mobileNavOpen ? (
+        {mobileNavOpen ? (
           <div className="fixed inset-0 z-30 lg:hidden" role="presentation">
             <button
               type="button"
@@ -132,23 +113,18 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
 
         <main
           id="main-content"
-          className={cn("flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-8", focusSetup ? "bg-background" : "bg-muted/25")}
+          className="flex-1 bg-muted/25 px-4 py-6 sm:px-6 lg:px-10 lg:py-8"
         >
           <div
             className={cn(
               "mx-auto w-full",
-              isDeveloper && !focusSetup ? "space-y-8" : "space-y-6",
-              focusSetup ? "max-w-lg" : isAssistantWorkspace ? "max-w-6xl" : "max-w-3xl",
+              isDeveloper ? "space-y-8" : "space-y-6",
+              isAssistantWorkspace ? "max-w-6xl" : "max-w-3xl",
             )}
           >
-            {!focusSetup ? <VehicleContextBar /> : null}
-            {!focusSetup ? <DeveloperModeBanner /> : null}
-            {!focusSetup && user ? <PwaInstallBanner minimal={!isDeveloper} /> : null}
-            {focusSetup && user ? (
-              <div className="hidden justify-end lg:flex">
-                <AccountMenu user={user} />
-              </div>
-            ) : null}
+            <VehicleContextBar />
+            <DeveloperModeBanner />
+            {user ? <PwaInstallBanner minimal={!isDeveloper} /> : null}
             {children}
           </div>
         </main>

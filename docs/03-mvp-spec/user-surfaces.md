@@ -29,6 +29,23 @@ See marketing site `#early-access`, `#positioning` (category gap cards), and wor
 
 See [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md) and the [owner product implementation queue](./product-implementation-queue.md).
 
+## Workspace continuity
+
+Home is a stable owner canvas, not a sequence of replacement screens:
+
+- opening a known vehicle keeps the same shell and Home geometry while its
+  state refreshes;
+- a cold open uses Home-shaped placeholder regions rather than a generic
+  "opening workspace" card;
+- first-car setup is a compact panel inside the normal Home canvas;
+- adding another car opens a local, dismissible setup sheet over the existing
+  Home; the existing vehicle remains visible until the new one is prepared;
+- vehicle preparation changes only the content that is not ready. It never
+  hides navigation or shrinks the application width.
+
+The transition does not depend on motion. Width and shell transitions are not
+used to mask loading.
+
 ## Maintenance item interaction
 
 Maintenance items are quiet, owner-correctable assistant surfaces:

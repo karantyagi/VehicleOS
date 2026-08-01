@@ -52,7 +52,7 @@ type VehicleForm = {
 };
 
 type OnboardingWizardProps = {
-  onComplete: (vehicle: OnboardingVehicle) => void;
+  onComplete: (vehicle: OnboardingVehicle) => void | Promise<void>;
   mode?: "first" | "additional";
   onCancel?: () => void;
   prefillDogfood?: boolean;
@@ -130,6 +130,7 @@ export function OnboardingWizard({
   const [createdVehicle, setCreatedVehicle] = useState<OnboardingVehicle | null>(null);
   const [oemEntriesLoaded, setOemEntriesLoaded] = useState<number | null>(null);
   const [isBusy, setIsBusy] = useState(false);
+  const [isHandoffBusy, setIsHandoffBusy] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -299,9 +300,14 @@ export function OnboardingWizard({
     if (vehicle) setStep("ready");
   };
 
-  const finishSetup = () => {
+  const finishSetup = async () => {
     if (!createdVehicle) return;
-    onComplete(createdVehicle);
+    setIsHandoffBusy(true);
+    try {
+      await onComplete(createdVehicle);
+    } finally {
+      setIsHandoffBusy(false);
+    }
   };
 
   const goBack = () => {
@@ -455,7 +461,7 @@ export function OnboardingWizard({
 
         <FormActions>
           {showBack ? (
-            <Button type="button" variant="outline" disabled={isBusy} onClick={goBack}>
+            <Button type="button" variant="outline" disabled={isBusy || isHandoffBusy} onClick={goBack}>
               Back
             </Button>
           ) : null}
@@ -469,8 +475,8 @@ export function OnboardingWizard({
             </Button>
           ) : null}
           {step === "ready" && createdVehicle ? (
-            <Button type="button" disabled={isBusy} onClick={finishSetup}>
-              {mode === "additional" ? "Done" : "Go to Home"}
+            <Button type="button" disabled={isBusy || isHandoffBusy} onClick={() => void finishSetup()}>
+              {isHandoffBusy ? "Preparing Home…" : mode === "additional" ? "Done" : "Go to Home"}
             </Button>
           ) : null}
         </FormActions>
