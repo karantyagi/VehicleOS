@@ -22,7 +22,11 @@ jobs:
     steps:
       - name: Check deployed Geoapify integration
         env:
-          DEPLOYMENT_URL: ${{ github.event.client_payload.url }}
+          # The unique deployment URL from the event is Vercel SSO-protected
+          # and can return a redirect before reaching the app. The stable
+          # production alias is public and points to the deployed production
+          # app after this event is sent.
+          SMOKE_URL: https://vehicle-os-web.vercel.app/api/internal/geoapify-smoke
           DEPLOYMENT_SMOKE_TOKEN: ${{ secrets.DEPLOYMENT_SMOKE_TOKEN }}
         run: |
           if [ -z "$DEPLOYMENT_SMOKE_TOKEN" ]; then
@@ -30,15 +34,20 @@ jobs:
             exit 1
           fi
 
-          case "$DEPLOYMENT_URL" in
-            https://vehicle-os-*.vercel.app) ;;
+          case "$SMOKE_URL" in
+            https://vehicle-os-web.vercel.app/api/internal/geoapify-smoke) ;;
             *)
-              echo "Unexpected Vercel deployment URL; refusing to send the smoke token."
+              echo "Unexpected smoke URL; refusing to send the smoke token."
               exit 1
               ;;
           esac
 
-          curl --fail-with-body --retry 3 --retry-all-errors --retry-delay 2 \
+          response="$(curl --fail-with-body --location --max-redirs 2 --retry 3 --retry-all-errors --retry-delay 2 \
             --connect-timeout 10 --max-time 20 \
             --header "Authorization: Bearer $DEPLOYMENT_SMOKE_TOKEN" \
-            "$DEPLOYMENT_URL/api/internal/geoapify-smoke"
+            "$SMOKE_URL")"
+
+          if ! jq --exit-status '.status == "ok" and .integration == "geoapify"' <<<"$response" >/dev/null; then
+            echo "Geoapify smoke endpoint returned an unexpected response."
+            exit 1
+          fi
