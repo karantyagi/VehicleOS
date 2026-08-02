@@ -14,6 +14,7 @@ import {
   projectScheduleRowsForRecommendations,
 } from "../now/prepare-recommendation-task.js";
 import { isOnboardingBaselineRule } from "../owner-care/onboarding-baseline.js";
+import { maintenanceServiceHistory } from "../service/service-record-kind.js";
 
 export type RecordServiceInput = {
   vehicleId: string;
@@ -63,7 +64,7 @@ export const completeOnboardingBaselineTasks = async (deps: {
   vehicleId: string;
   state: ReturnType<typeof foldEvents>;
 }): Promise<number> => {
-  if (deps.state.timeline.length === 0) return 0;
+  if (maintenanceServiceHistory(deps.state.timeline).length === 0) return 0;
 
   const baselineTasks = deps.state.nowQueue.filter(
     (item) =>

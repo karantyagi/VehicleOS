@@ -1,6 +1,7 @@
 import { resolveShopLocation } from "./infer-shop-location.js";
 import { normalizeCarfaxLineItems } from "./normalize-carfax-line-items.js";
 import type { VehicleOsImportService } from "./record-vehicleos-import.js";
+import { stripGenericCarfaxVisitLineItems } from "../service/service-record-kind.js";
 
 export type EnrichVehicleOsImportOptions = {
   ownerShopLocations?: Record<string, string>;
@@ -31,7 +32,7 @@ export const enrichVehicleOsImportService = (
     shopLocation: service.shopLocation,
     ownerShopLocations: options?.ownerShopLocations,
   }),
-  lineItems: normalizeCarfaxLineItems(service.lineItems),
+  lineItems: stripGenericCarfaxVisitLineItems(normalizeCarfaxLineItems(service.lineItems)),
 });
 
 export const enrichVehicleOsImport = (

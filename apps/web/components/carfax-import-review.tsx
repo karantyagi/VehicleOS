@@ -7,7 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import type { ImportTrustTier, ImportVerifyGuidance, TierImportSummary } from "@vehicleos/domain";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  isVisitOnlyServiceRecord,
+  type ImportTrustTier,
+  type ImportVerifyGuidance,
+  type TierImportSummary,
+} from "@vehicleos/domain";
 import { isoDateToLocalDate } from "@/lib/date-input";
 import { cn } from "@/lib/utils";
 import type { VehicleOsImportService } from "@/lib/record-import-types";
@@ -63,6 +69,9 @@ const tierBadgeVariant = (row: CarfaxReviewRow): "secondary" | "warning" | "dest
 };
 
 const tierLabel = (row: CarfaxReviewRow): string => {
+  if (isVisitOnlyServiceRecord({ source: "carfax_import", lineItems: row.lineItems })) {
+    return "Limited details";
+  }
   if (row.alreadyOnFile) return "On file";
   if (row.ownerReviewPhase === "done" && row.tier === "verify") return "Accepted";
   if (row.tier === "auto") return "Ready";
@@ -89,7 +98,10 @@ function ReviewCard({
   onAcceptAsReported: (id: string) => void;
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
-  const previewItem = row.lineItems[0];
+  const [addingDetails, setAddingDetails] = useState(false);
+  const [detailsDraft, setDetailsDraft] = useState("");
+  const visitOnly = isVisitOnlyServiceRecord({ source: "carfax_import", lineItems: row.lineItems });
+  const previewItem = visitOnly ? "Dealer visit" : row.lineItems[0];
   const extraCount = row.lineItems.length - 1;
   const inReview = isInReviewQueue(row);
 
@@ -190,7 +202,26 @@ function ReviewCard({
               </Button>
             </div>
           ) : null}
-          {!inReview && row.tierReasons.length > 0 ? (
+          {visitOnly ? (
+            <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-muted-foreground">
+              <span>CARFAX confirms a visit, but does not list the work performed.</span>
+              {!expanded ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-1.5 text-xs text-history-highlight hover:bg-history-highlight/10 hover:text-history-highlight"
+                  disabled={disabled || isImporting || !row.included}
+                  onClick={() => {
+                    setAddingDetails(true);
+                    setExpanded(true);
+                  }}
+                >
+                  Add details
+                </Button>
+              ) : null}
+            </div>
+          ) : !inReview && row.tierReasons.length > 0 ? (
             <ul className="space-y-0.5 text-xs text-amber-800 dark:text-amber-300">
               {row.tierReasons.map((reason) => (
                 <li key={reason}>{reason}</li>
@@ -275,11 +306,35 @@ function ReviewCard({
               />
             </label>
           </div>
-          <ul className="space-y-1 text-xs text-muted-foreground">
-            {row.lineItems.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
+          {visitOnly || addingDetails ? (
+            <label className="block space-y-1 text-xs">
+              <span className="font-medium text-muted-foreground">What work was performed?</span>
+              <Textarea
+                value={detailsDraft}
+                disabled={disabled || isImporting || !row.included}
+                placeholder="Optional — for example, Oil change"
+                className="min-h-20 text-xs"
+                onChange={(event) => {
+                  setAddingDetails(true);
+                  setDetailsDraft(event.target.value);
+                  const lineItems = event.target.value
+                    .split("\n")
+                    .map((line) => line.trim())
+                    .filter(Boolean);
+                  if (lineItems.length > 0) onRowChange(row.id, { lineItems });
+                }}
+              />
+              <span className="block text-muted-foreground">
+                Adding a service makes this record available for maintenance timing.
+              </span>
+            </label>
+          ) : (
+            <ul className="space-y-1 text-xs text-muted-foreground">
+              {row.lineItems.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          )}
         </div>
       ) : null}
     </article>

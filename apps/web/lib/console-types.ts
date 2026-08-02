@@ -8,6 +8,7 @@ export type TimelineEntry = {
   total: string;
   evidenceIds: string[];
   source?: "receipt" | "voice" | "owner_note" | "dealer" | "carfax_import";
+  recordKind?: import("@vehicleos/domain").ServiceRecordKind;
 };
 
 export type QueueItem = {

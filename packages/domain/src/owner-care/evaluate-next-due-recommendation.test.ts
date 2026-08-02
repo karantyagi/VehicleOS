@@ -1,8 +1,33 @@
 import { describe, expect, it } from "vitest";
 import { evaluateNextDueRecommendation } from "./evaluate-next-due-recommendation.js";
 import { createEmptyVehicleState } from "../projections/types.js";
+import { ONBOARDING_BASELINE_RULE_ID } from "./onboarding-baseline.js";
 
 describe("evaluateNextDueRecommendation", () => {
+  it("keeps first-service onboarding when CARFAX only confirms a visit", () => {
+    const recommendation = evaluateNextDueRecommendation({
+      state: {
+        ...createEmptyVehicleState("veh-visit"),
+        currentMileage: 6629,
+        timeline: [
+          {
+            serviceId: "visit-1",
+            shop: "Genesis of Framingham",
+            serviceDate: "2022-12-22",
+            mileage: 6629,
+            lineItems: ["Service visit"],
+            total: "$0.00",
+            evidenceIds: [],
+            source: "carfax_import",
+          },
+        ],
+      },
+      today: "2026-08-02",
+    });
+
+    expect(recommendation?.ruleId).toBe(ONBOARDING_BASELINE_RULE_ID);
+  });
+
   it("prioritizes ownership overdue ahead of maintenance", () => {
     const recommendation = evaluateNextDueRecommendation({
       state: {

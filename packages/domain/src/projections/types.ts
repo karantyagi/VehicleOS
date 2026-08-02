@@ -5,6 +5,7 @@ import type {
   VehicleRecordEventType,
   VehicleRecordSource,
 } from "../events/catalog.js";
+import type { ServiceRecordKind } from "../service/service-record-kind.js";
 
 export type ServiceTimelineEntry = {
   serviceId: string;
@@ -16,6 +17,8 @@ export type ServiceTimelineEntry = {
   total: string;
   evidenceIds: string[];
   source?: ServiceRecordSource;
+  /** Present on new projections; legacy snapshots derive this from source and line items. */
+  recordKind?: ServiceRecordKind;
 };
 
 export type NowQueueItem = {

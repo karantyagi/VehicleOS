@@ -481,6 +481,14 @@ export {
   normalizeCarfaxLineItems,
 } from "./import/normalize-carfax-line-items.js";
 export {
+  isGenericCarfaxVisitLineItem,
+  isVisitOnlyServiceRecord,
+  maintenanceServiceHistory,
+  resolveServiceRecordKind,
+  stripGenericCarfaxVisitLineItems,
+  type ServiceRecordKind,
+} from "./service/service-record-kind.js";
+export {
   mergeShopLocationsFromImport,
 } from "./import/merge-shop-locations-from-import.js";
 export {

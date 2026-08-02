@@ -149,6 +149,47 @@ describe("recordServiceAndRecommend", () => {
       "completed",
     );
   });
+
+  it("does not complete first-service onboarding for a visit-only CARFAX record", async () => {
+    const eventStore = new InMemoryEventStore();
+    const vehicleId = crypto.randomUUID();
+    await eventStore.append({
+      aggregateType: "task",
+      aggregateId: "task-onboarding-visit",
+      eventType: EVENT_TYPES.TASK_CREATED,
+      eventVersion: 1,
+      payload: {
+        vehicleId,
+        taskId: "task-onboarding-visit",
+        recommendationId: "rec-onboarding-visit",
+        title: "Log your first service",
+        reason: "No maintenance history yet.",
+        status: "pending",
+        taskKind: "recommendation",
+        ruleId: ONBOARDING_BASELINE_RULE_ID,
+      },
+    });
+
+    const result = await recordServiceAndRecommend({
+      eventStore,
+      policyEngine: { evaluate: () => null },
+      input: {
+        vehicleId,
+        shop: "Genesis of Framingham",
+        serviceDate: "2022-12-22",
+        mileage: 6629,
+        lineItems: ["Service visit"],
+        total: "$0.00",
+        evidenceIds: [],
+        source: "carfax_import",
+      },
+    });
+
+    expect(result.state.timeline[0]?.recordKind).toBe("visit_only");
+    expect(result.state.nowQueue.find((item) => item.taskId === "task-onboarding-visit")?.status).toBe(
+      "pending",
+    );
+  });
 });
 
 describe("decideTask", () => {

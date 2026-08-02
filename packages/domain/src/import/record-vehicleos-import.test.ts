@@ -104,4 +104,45 @@ describe("recordVehicleOsImport", () => {
     expect(second.skippedCount).toBe(1);
     expect(second.state.timeline).toHaveLength(1);
   });
+
+  it("keeps a visit-only CARFAX record out of service schedule baselines", async () => {
+    const eventStore = new InMemoryEventStore();
+    const result = await recordVehicleOsImport({
+      eventStore,
+      input: {
+        vehicleId: "veh-visit-only",
+        importSource: "carfax-connect-cli",
+        services: [
+          {
+            shop: "Genesis of Framingham",
+            serviceDate: "2022-12-22",
+            mileage: 6629,
+            lineItems: ["Service visit"],
+            total: "$0.00",
+          },
+        ],
+      },
+    });
+
+    const schedule = projectMaintenanceSchedule({
+      knowledgeSchedule: [
+        {
+          entryId: "oil-1",
+          serviceName: "Engine oil & filter",
+          intervalMonths: 6,
+          intervalMiles: 5_000,
+          sourceDocumentId: "doc-1",
+          manualTitle: "Owner manual",
+          recordedAt: "2026-01-01T00:00:00.000Z",
+        },
+      ],
+      timeline: result.state.timeline,
+      currentMileage: 7000,
+      today: "2026-08-02",
+    });
+
+    expect(result.state.timeline[0]?.recordKind).toBe("visit_only");
+    expect(schedule.rows[0]?.serviceBaseline.performedDate).toBeNull();
+    expect(schedule.rows[0]?.status).toBe("needs_baseline");
+  });
 });

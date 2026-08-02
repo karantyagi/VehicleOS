@@ -1,4 +1,5 @@
 import type { VehicleProjectionState } from "../projections/types.js";
+import { maintenanceServiceHistory } from "../service/service-record-kind.js";
 
 export type ServiceConflictKind = "mileage_regression" | "date_regression";
 
@@ -16,6 +17,7 @@ export const detectServiceConflict = (
   state: VehicleProjectionState,
   input: { mileage: number; serviceDate: string },
 ): ServiceConflict | null => {
+  const maintenanceTimeline = maintenanceServiceHistory(state.timeline);
   if (state.currentMileage > 0 && input.mileage < state.currentMileage) {
     return {
       kind: "mileage_regression",
@@ -24,11 +26,11 @@ export const detectServiceConflict = (
       incomingMileage: input.mileage,
       incomingServiceDate: input.serviceDate,
       currentMileage: state.currentMileage,
-      lastServiceDate: state.timeline.at(-1)?.serviceDate,
+      lastServiceDate: maintenanceTimeline.at(-1)?.serviceDate,
     };
   }
 
-  const lastServiceDate = state.timeline.at(-1)?.serviceDate;
+  const lastServiceDate = maintenanceTimeline.at(-1)?.serviceDate;
   if (lastServiceDate && input.serviceDate < lastServiceDate) {
     return {
       kind: "date_regression",

@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import {
   findPossibleServiceDuplicates,
+  isVisitOnlyServiceRecord,
   type PossibleServiceDuplicate,
 } from "@vehicleos/domain";
 import { DateField } from "@/components/date-field";
@@ -97,6 +98,7 @@ const serviceEntryFromItem = (item: OwnerHistoryItem): TimelineEntry => ({
   total: item.total ?? "",
   evidenceIds: item.evidenceIds ?? [],
   source: item.source,
+  recordKind: item.recordKind,
 });
 
 const entryToDraft = (entry: TimelineEntry): ServiceDraft => ({
@@ -198,7 +200,10 @@ export function OwnerUnifiedHistoryTimeline({
     }),
     [items.length, serviceItems.length],
   );
-  const serviceEntries = useMemo(() => serviceItems.map(serviceEntryFromItem), [serviceItems]);
+  const serviceEntries = useMemo(
+    () => serviceItems.map(serviceEntryFromItem).filter((entry) => !isVisitOnlyServiceRecord(entry)),
+    [serviceItems],
+  );
   const possibleDuplicates = useMemo(
     () => findPossibleServiceDuplicates(serviceEntries),
     [serviceEntries],
@@ -300,7 +305,10 @@ export function OwnerUnifiedHistoryTimeline({
   const startEditing = (entry: TimelineEntry) => {
     if (!onUpdateService || disabled) return;
     setEditingId(entry.serviceId);
-    setDraft(entryToDraft(entry));
+    setDraft({
+      ...entryToDraft(entry),
+      ...(isVisitOnlyServiceRecord(entry) ? { lineItems: "" } : {}),
+    });
     setConfirmSave(false);
     setExpandedCards((current) => new Set(current).add(entry.serviceId));
   };
@@ -525,15 +533,21 @@ export function OwnerUnifiedHistoryTimeline({
         </div>
         <div className="max-w-2xl space-y-1.5">
           <Label htmlFor={`edit-lines-${entry.serviceId}`} className="text-xs text-muted-foreground">
-            Line items
+            {isVisitOnlyServiceRecord(entry) ? "What work was performed?" : "Line items"}
           </Label>
           <Textarea
             id={`edit-lines-${entry.serviceId}`}
             rows={Math.min(6, Math.max(3, draft.lineItems.split("\n").length))}
             value={draft.lineItems}
             disabled={isSaving}
+            placeholder={isVisitOnlyServiceRecord(entry) ? "Optional — for example, Oil change" : undefined}
             onChange={(event) => setDraft({ ...draft, lineItems: event.target.value })}
           />
+          {isVisitOnlyServiceRecord(entry) ? (
+            <p className="text-xs text-muted-foreground">
+              Adding a service makes this record available for maintenance timing.
+            </p>
+          ) : null}
         </div>
         {requireEditConfirmation && confirmSave ? (
           <p className="max-w-2xl rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-foreground">
@@ -936,6 +950,7 @@ export function OwnerUnifiedHistoryTimeline({
 
                     if (isService) {
                       const entry = serviceEntryFromItem(item);
+                      const visitOnly = isVisitOnlyServiceRecord(entry);
                       const Icon = serviceIcon(entry);
                       const isEditing = editingId === item.id;
                       const cardExpanded = isEditing || isExpanded;
@@ -979,7 +994,7 @@ export function OwnerUnifiedHistoryTimeline({
                                     </Badge>
                                   ) : null}
                                   <Badge variant="secondary" className="text-[10px]">
-                                    Service
+                                    {visitOnly ? "Limited details" : "Service"}
                                   </Badge>
                                 </span>
                               </div>
@@ -988,17 +1003,25 @@ export function OwnerUnifiedHistoryTimeline({
                                 {(item.mileage ?? 0).toLocaleString()} mi
                               </p>
                               {!cardExpanded && item.lineItems[0] ? (
-                                <p className="mt-2 truncate text-sm text-muted-foreground">{item.lineItems[0]}</p>
+                                <p className="mt-2 truncate text-sm text-muted-foreground">
+                                  {visitOnly ? "Dealer visit" : item.lineItems[0]}
+                                </p>
                               ) : null}
                             </div>
                           </button>
                           {!isEditing && cardExpanded ? (
                             <div className="border-t border-border/60 px-3.5 pb-3.5 pt-3 sm:px-4 sm:pb-4">
-                              <ul className="space-y-1.5 text-sm text-foreground/85">
-                                {item.lineItems.map((line) => (
-                                  <li key={line}>{line}</li>
-                                ))}
-                              </ul>
+                              {visitOnly ? (
+                                <p className="rounded-lg bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+                                  CARFAX confirms this dealer visit, but does not say what work was performed.
+                                </p>
+                              ) : (
+                                <ul className="space-y-1.5 text-sm text-foreground/85">
+                                  {item.lineItems.map((line) => (
+                                    <li key={line}>{line}</li>
+                                  ))}
+                                </ul>
+                              )}
                               <div className="mt-3 flex flex-wrap gap-2">
                                 {pendingVerification && onReviewVerification ? (
                                   <Button
@@ -1033,7 +1056,7 @@ export function OwnerUnifiedHistoryTimeline({
                                     onClick={() => startEditing(entry)}
                                   >
                                     <Pencil className="mr-1.5 h-3.5 w-3.5" aria-hidden />
-                                    Edit record
+                                    {visitOnly ? "Add details" : "Edit record"}
                                   </Button>
                                 ) : null}
                               </div>
