@@ -381,9 +381,6 @@ export function CarfaxImportReview({
         </p>
       ) : null}
       {needsManualLocation ? <ExtractionStatusBanner variant="upcoming-places-lookup" /> : null}
-      {needsManualLocation ? (
-        <ExtractionStatusBanner variant="upcoming-shop-disambiguation-llm" />
-      ) : null}
       <div className="history-surface p-4">
         <p className="text-sm font-medium">Assistant reviewed your CARFAX history</p>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">

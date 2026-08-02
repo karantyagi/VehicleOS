@@ -10,7 +10,7 @@ const resolvedLookup = (shopLocation: string): ShopLocationLookupPort => ({
     status: "resolved",
     shop,
     shopLocation,
-    source: "nominatim",
+    source: "geoapify",
   }),
 });
 

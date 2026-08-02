@@ -1,6 +1,6 @@
 # ADR-011 — Import enrichment, assistant review, and shop location memory
 
-**Status:** Accepted (2026-07-25)  
+**Status:** Accepted (2026-07-25) · Amended (2026-08-02)
 **Deciders:** Product / architecture  
 **Related:** ADR-009 (PDF record import) · ADR-010 (deterministic service matching) · ADR-012 (product catalog vs owner runtime). Internal planning sources summarized by this ADR: `record-import-data-pipeline.md`, `phase-1-intelligence-scope.md`, and IMP-11 in `task-queue.md`.
 
@@ -25,11 +25,11 @@ This ADR locks **how the assistant enriches import drafts before commit**, **whe
 | Who reviews import rows? | **Assistant first** (deterministic enrichment) · **Owner only for exceptions** (Tier C/D) |
 | Shop location memory | **Per-owner confirmed directory** + **creator curated map** — not a shared LLM cache |
 | Meaningful vs noise line items | **Deterministic denylist + alias ontology** (ADR-010 pattern) — not runtime LLM |
-| Shop lookup when cache misses | **Places API first** (structured city/state + place_id) · LLM disambiguation only with owner confirm |
+| Shop lookup when cache misses | **Geoapify only** (structured city/state + place_id) · owner resolves uncertainty manually |
 | Domain commit | **Never LLM** — same rule as ADR-009 and ADR-010 |
 | Is “Assistant helps review” its own feature? | **Yes — IMP-11** — spans enrichment, tiering, UX, and verification queue |
 
-**One sentence:** The assistant does deterministic cleanup and enrichment on every import; the owner confirms a summary and fixes only what the assistant flags — LLM is quarantined to messy extract and optional disambiguation, never to schedule truth or silent writes.
+**One sentence:** The assistant does deterministic cleanup and enrichment on every import; the owner confirms a summary and fixes only what the assistant flags — LLM is quarantined to messy extract, never to shop-location decisions, schedule truth, or silent writes.
 
 ---
 
@@ -41,17 +41,23 @@ Resolve shop → city/state using the **cheapest reliable source first**:
 1. Explicit value on row          PDF extract or owner edit
 2. Per-owner confirmed memory     OwnerContextMemory.shopLocations["metrowest acura"] = "Framingham, MA"
 3. Creator curated map            infer-shop-location.ts + published Shop Pack (zero marginal cost)
-4. Deterministic Places API       Google Places / OSM Nominatim → { city, state, placeId } — rate-limited
-5. LLM disambiguation (optional)  "MetroWest Acura" × 3 cities → propose one · owner confirms
-6. Never                          Silent write from LLM alone
+4. Geoapify lookup                { city, state, placeId } → one candidate fills; several become owner choices
+5. Manual owner entry             City, ST → remembered after import confirm
 ```
 
 | Layer | Cost to VehicleOS | Reproducible? | When |
 |-------|-------------------|---------------|------|
 | Curated map | $0 | Yes | Known dogfood / early-access shops |
 | Owner memory | $0 | Yes | After first owner confirm for that shop on that vehicle |
-| Places API | ~$0.01/lookup | Yes (cached by place_id) | Cache miss on a shop that matters (dealer visit) |
-| LLM | Per token | No | Only when Places returns multiple plausible matches |
+| Geoapify | Within configured provider quota | Yes (attribution retained) | Cache miss on a shop that matters (dealer visit) |
+| Manual entry | $0 | Yes | Geoapify has no safe single result or is unavailable |
+
+### Single-provider boundary
+
+- Geoapify is the only production shop-location provider. Nominatim and a runtime provider fallback are intentionally absent: conflicting answers and availability plumbing are not worth the complexity for an optional import enrichment.
+- `GEOAPIFY_API_KEY` stays server-side. If it is absent, or Geoapify has no safe single result, the owner keeps the editable `City, ST` field and the import remains reviewable.
+- The app retains a confirmed location in the owner directory only after import confirmation and keeps the required Geoapify/OpenStreetMap attribution in the product trust surface.
+- There is no LLM shop search or ranking step. Manual owner choice is the recovery path.
 
 ### Why not a shared “central LLM cache” the team pays for on every import?
 
@@ -81,7 +87,7 @@ Service history feeds **schedule baselines** (ADR-010). Wrong enrichment → wro
 | Cost at 30 rows × N users | $0 | Unbounded |
 | Hot path | Runs once at import review | Would run on every review |
 
-**Rule:** If the decision affects **what gets written to the event store** or **which OEM row gets a baseline**, it must be **deterministic or owner-verified**. LLM may **propose**; it may not **commit**.
+**Rule:** If the decision affects **what gets written to the event store** or **which OEM row gets a baseline**, it must be **deterministic or owner-verified**. Shop lookup has no LLM step; the owner confirms any proposed location.
 
 ---
 
@@ -101,6 +107,7 @@ Use LLM **if and only if** all of the following hold:
 | Decide meaningful vs noise line items | `normalizeCarfaxLineItems()` denylist (runtime) · creator expands denylist offline |
 | Match line item → OEM schedule row | Alias ontology (ADR-010) |
 | Fill shop location when curated map + owner memory hit | Already resolved — no call needed |
+| Resolve an unknown shop location | Geoapify or owner-entered City, ST — never an LLM guess |
 | Append `service.recorded` events | `recordVehicleOsImport` — never calls LLM |
 | Dedup / conflict detection | Domain functions (IMP-10, VERIFY_* tasks) |
 
@@ -134,7 +141,7 @@ Do **not** fully abstract review away. Service history is the **system of record
 |------|----------|--------------|------------------|
 | **A — Auto** | Date + mileage parse clean · shop recognized · lines normalized · dedupe pass · no regression | None — included in bulk confirm | Enrich + mark ready |
 | **B — Enriched** | Location from map/memory · noise stripped · aliases resolved | Summary only (“28 visits ready”) | Same + show what was cleaned |
-| **C — Verify** | Unknown shop · mileage/date regression · Places/LLM low confidence · profile conflict (VIN) · **likely source duplicate (IMP-12)** | One card in **Owner verification** queue | Propose; wait for confirm |
+| **C — Verify** | Unknown shop · mileage/date regression · Geoapify has no safe single result · profile conflict (VIN) · **likely source duplicate (IMP-12)** | One card in **Owner verification** queue | Propose; wait for confirm |
 | **D — Block** | Unparseable row · conflicting duplicate · extract failure | Exclude + explicit warning | Do not commit |
 
 **Target:** ≥90% of rows Tier A/B on a clean CARFAX PDF like TLX dogfood. Owner experience:
@@ -155,11 +162,11 @@ It is **not** a one-line filter in the import handler. It spans:
 | Trust tiering | Classify rows A/B/C/D before UI |
 | Review UX | Card-based summary, exception list — replace horizontal table (P1) |
 | Memory write path | Owner confirm → `OwnerContextMemory` shop directory (P2) |
-| External lookup | Places API port, cache by place_id (P2) |
+| External lookup | Geoapify port, owner confirmation, and required attribution (P2) |
 | Verification | Reuse Now queue for Tier C (P3) |
 | LLM extract edge | Pairs IMP-7 when rules fail |
 
-**LLM or not?** Mostly **no**. IMP-11 is primarily **deterministic product intelligence**. LLM appears only at the **extract edge** (IMP-7) and optional **shop disambiguation** (propose + confirm).
+**LLM or not?** Mostly **no**. IMP-11 is primarily **deterministic product intelligence**. LLM appears only at the **extract edge** (IMP-7), never for shop-location disambiguation.
 
 ---
 
@@ -176,7 +183,7 @@ Owner app  ──► CARFAX self-report   ──► "Self Reported · oil change
             Same visit · different shop label · 0–15 day lag · ±mileage
 ```
 
-IMP-10 dedupes a repeated **visit** (`date + normalized shop`). IMP-11 handles **boilerplate** and **same-day odometer noise**. The historical-review slice now surfaces a possible duplicate only when two committed records have the **same mileage**, are **at most one calendar day apart**, and share an **identical normalized line item**.
+IMP-10 dedupes a repeated **visit** (`date + normalized shop`). IMP-11 handles **boilerplate** and **same-day odometer noise**. The historical-review slice presents a prominent strong signal for an exact adjacent-day, same-mileage overlap, and a quieter possible signal for compatible owner/external or same-shop records with similar work within 10 days and an adaptive 100–500 mile band. Both require owner confirmation to merge.
 
 **Principle:** Detect likely duplicates · never silent merge · owner chooses · deterministic rules only.
 
@@ -197,18 +204,19 @@ IMP-10 dedupes a repeated **visit** (`date + normalized shop`). IMP-11 handles *
 
 ---
 
-## Part 7 — Internet search / Places API vs LLM agent
+## Part 7 — Geoapify location lookup, not an LLM agent
 
 For “MetroWest Acura → Framingham, MA”:
 
 ```text
-❌ LLM browsing on every import     → expensive, non-reproducible, hard to cache
+❌ LLM browsing on every import     → expensive and non-reproducible
+❌ External-provider fallback chain  → conflicting answers and avoidable operational complexity
 ✅ Curated map entry                → $0, instant (dogfood shops)
-✅ Places API text search           → structured { city, state, placeId } · cache per placeId
-⚠️ LLM disambiguation              → only if Places returns 3+ plausible matches · owner picks
+✅ Geoapify lookup                  → structured { city, state, placeId } on a server-only key
+✅ Manual City, ST                  → the recovery path when there is no safe single result
 ```
 
-**Places API** returns structured geo data suitable for caching and tests. **LLM web agent** is a last resort for ambiguous names — output is a **proposal** in Tier C, not a silent PATCH to the vehicle record.
+**Geoapify** returns structured geo data suitable for deterministic tests and owner review. Its key stays server-side; retained results keep the required provider/data attribution. There is no runtime LLM or second location provider.
 
 ---
 
@@ -256,8 +264,7 @@ The **Shop Pack** ships ~5 Boston-area dealer mappings for TLX dogfood. That is 
 | **Explicit on row** | PDF extract or owner edit | Import review | On service row | B |
 | **Owner confirmed memory** | Owner | After import confirm | `OwnerContextMemory.shopLocations` | B |
 | **Creator Shop Pack** | Creator offline (factory) | QA on sample CARFAX | `shop-pack.v1.json` | A |
-| **Nominatim geocoding** | System (server) | Cache miss on dealer shop | Proposed → owner memory after confirm | B |
-| **LLM disambiguation** | System proposes | Nominatim returns 3+ matches | Tier C verification card | Edge |
+| **Geoapify lookup** | System (server) | Cache miss on dealer shop | Proposed → owner memory after confirm | B |
 | **Runtime auto-expand pack** | **Never** | — | — | — |
 
 ### How knowledge improves over time (per owner)
@@ -267,8 +274,8 @@ Import 1 (new user, ~30 CARFAX rows)
   → Row has address from PDF: auto
   → Shop in owner memory: auto
   → Shop in creator pack (dogfood): auto
-  → Unknown dealer: Nominatim on server enrich
-  → Still miss: Tier C — owner adds "City, ST" once → memory grows
+  → Unknown dealer: Geoapify server lookup proposes city/state
+  → Still miss or multiple cities: Tier C — owner adds or selects "City, ST" once → memory grows
 
 Import 2 (same user)
   → Known shops: auto from owner memory
@@ -279,7 +286,7 @@ Import 2 (same user)
 
 ### Interview line (shop locations)
 
-> “We don’t ship a 10,000-row shop database. We ship a resolution ladder: explicit row data, per-owner confirmed memory, a small creator seed pack for dogfood, then Nominatim geocoding on cache miss. Second import is easier than first because memory compounds per owner.”
+> “We don’t ship a 10,000-row shop database. We ship a resolution ladder: explicit row data, per-owner confirmed memory, a small creator seed pack for dogfood, then one Geoapify lookup on cache miss. If it cannot safely resolve the shop, the owner adds City, ST once. Second import is easier because memory compounds per owner.”
 
 ---
 
@@ -311,11 +318,11 @@ Import 2 (same user)
 | Question | Answer |
 |----------|--------|
 | Why deterministic first? | Service history = schedule truth; must be reproducible, testable, explainable |
-| When LLM? | Iff rules extract fails OR optional shop disambiguation — schema-bound, owner-gated |
+| When LLM? | Only when rules-based PDF extraction fails — never for shop locations |
 | Shop memory? | Per-owner after confirm + creator map — not shared LLM cache |
 | Meaningful line items? | Denylist at runtime; creator expands offline — not LLM per row |
-| Places vs LLM? | Nominatim/OSM first for structured geo; LLM only to disambiguate, never silent write |
-| Why only ~5 shops in pack? | Dogfood bootstrap (Plane A factory) — new users use Nominatim + owner memory |
+| Places vs LLM? | Geoapify only for structured geo; manual owner entry handles uncertainty |
+| Why only ~5 shops in pack? | Dogfood bootstrap (Plane A factory) — new users use Geoapify + owner memory |
 | Who adds pack rows? | Creator offline factory — not runtime assistant |
 | How does knowledge improve? | Per-owner `shopLocations` compounds; 2nd import easier than 1st |
 | Why IMP-11 as a feature? | Enrichment + tiering + UX + memory + verification — not a single function |
