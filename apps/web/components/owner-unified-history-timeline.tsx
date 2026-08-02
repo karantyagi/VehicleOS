@@ -586,6 +586,7 @@ export function OwnerUnifiedHistoryTimeline({
     const first = serviceEntries.find((entry) => entry.serviceId === review.candidate.firstServiceId);
     const second = serviceEntries.find((entry) => entry.serviceId === review.candidate.secondServiceId);
     if (!first || !second) return null;
+    const isStrongDuplicate = review.candidate.confidence === "strong";
 
     const sourceLabel = (entry: TimelineEntry) => {
       if (entry.source === "carfax_import") return "CARFAX";
@@ -632,9 +633,15 @@ export function OwnerUnifiedHistoryTimeline({
         <div className="flex items-start gap-2">
           <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-history-highlight" aria-hidden />
           <div>
-            <p className="text-sm font-semibold text-foreground">Assistant prepared one clean record</p>
+            <p className="text-sm font-semibold text-foreground">
+              {isStrongDuplicate
+                ? "Assistant found a strong duplicate signal"
+                : "Assistant found a possible duplicate"}
+            </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Only this detected consecutive pair can be merged. Choose what to keep; typing is optional.
+              {isStrongDuplicate
+                ? "The records share the same mileage, overlapping work, and nearly the same date."
+                : `Matching work was logged ${review.candidate.dayDistance} days and ${review.candidate.mileageDistance.toLocaleString()} mi apart.`} Choose what to keep; merging is always optional.
             </p>
           </div>
         </div>
@@ -1039,12 +1046,22 @@ export function OwnerUnifiedHistoryTimeline({
                                     type="button"
                                     size="sm"
                                     variant="outline"
-                                    className="border-amber-500/30 bg-amber-500/5 text-amber-700 hover:bg-amber-500/10"
+                                    className={cn(
+                                      duplicateCandidate.confidence === "strong"
+                                        ? "border-amber-500/30 bg-amber-500/5 text-amber-700 hover:bg-amber-500/10"
+                                        : "border-history-highlight/25 bg-history-highlight/[0.04] text-history-highlight hover:bg-history-highlight/10",
+                                    )}
                                     disabled={disabled}
                                     onClick={() => startMergeReview(duplicateCandidate)}
                                   >
-                                    <AlertTriangle className="mr-1.5 h-3.5 w-3.5" aria-hidden />
-                                    Review possible duplicate
+                                    {duplicateCandidate.confidence === "strong" ? (
+                                      <AlertTriangle className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+                                    ) : (
+                                      <Sparkles className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+                                    )}
+                                    {duplicateCandidate.confidence === "strong"
+                                      ? "Review possible duplicate"
+                                      : "May be the same visit"}
                                   </Button>
                                 ) : null}
                                 {onUpdateService ? (
