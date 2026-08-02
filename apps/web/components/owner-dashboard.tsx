@@ -56,7 +56,7 @@ import type {
   TimelineEntry,
   VerificationMaturityView,
 } from "@/lib/console-types";
-import type { OwnerContextMemory } from "@vehicleos/domain";
+import { isOnboardingBaselineRule, type OwnerContextMemory } from "@vehicleos/domain";
 
 type Vehicle = OnboardingVehicle;
 
@@ -810,7 +810,9 @@ export function OwnerDashboard() {
         Viewing {sectionMeta.label} section
       </p>
 
-      {activeSection === "reminders" && timeline.length === 0 ? (
+      {activeSection === "reminders" &&
+      timeline.length === 0 &&
+      !reminders.some((item) => isOnboardingBaselineRule(item.ruleId)) ? (
         <ImportHistoryNudge
           vehicleId={vehicle.id}
           timelineEmpty={timeline.length === 0}
@@ -871,6 +873,14 @@ export function OwnerDashboard() {
                 setHistoryAddRequest((current) => current + 1);
                 setActiveSection("timeline");
                 feedback("Add the completed service so the schedule can update from the record.");
+              }}
+              onStartBaseline={() => {
+                setHistoryCompletionTaskId(null);
+                setHistoryCompletionLineItem(null);
+                setServiceHistoryTab("history");
+                setHistoryAddRequest((current) => current + 1);
+                setActiveSection("timeline");
+                feedback("Add any completed service to set your maintenance baseline.");
               }}
               onFixData={(item) => {
                 const serviceAction = item.intelligence?.serviceAction;

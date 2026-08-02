@@ -13,6 +13,7 @@ import {
   buildTimeFirstTaskCopy,
   projectScheduleRowsForRecommendations,
 } from "../now/prepare-recommendation-task.js";
+import { isOnboardingBaselineRule } from "../owner-care/onboarding-baseline.js";
 
 export type RecordServiceInput = {
   vehicleId: string;
@@ -56,6 +57,31 @@ const eventsForVehicle = (events: CatalogDomainEvent[], vehicleId: string): Cata
   events.filter(
     (event) => "vehicleId" in event.payload && event.payload.vehicleId === vehicleId,
   );
+
+export const completeOnboardingBaselineTasks = async (deps: {
+  eventStore: EventStore;
+  vehicleId: string;
+  state: ReturnType<typeof foldEvents>;
+}): Promise<number> => {
+  if (deps.state.timeline.length === 0) return 0;
+
+  const baselineTasks = deps.state.nowQueue.filter(
+    (item) =>
+      (item.status === "pending" || item.status === "scheduled") &&
+      isOnboardingBaselineRule(item.ruleId),
+  );
+
+  for (const task of baselineTasks) {
+    await decideTask({
+      eventStore: deps.eventStore,
+      vehicleId: deps.vehicleId,
+      taskId: task.taskId,
+      decision: "complete",
+    });
+  }
+
+  return baselineTasks.length;
+};
 
 export const recordServiceAndRecommend = async (deps: {
   eventStore: EventStore;
@@ -107,8 +133,17 @@ export const recordServiceAndRecommend = async (deps: {
     correlationId,
   });
 
-  const vehicleEvents = eventsForVehicle(await eventStore.loadAll(), input.vehicleId);
-  const state = foldEvents(input.vehicleId, vehicleEvents);
+  let vehicleEvents = eventsForVehicle(await eventStore.loadAll(), input.vehicleId);
+  let state = foldEvents(input.vehicleId, vehicleEvents);
+  const completedOnboardingCount = await completeOnboardingBaselineTasks({
+    eventStore,
+    vehicleId: input.vehicleId,
+    state,
+  });
+  if (completedOnboardingCount > 0) {
+    vehicleEvents = eventsForVehicle(await eventStore.loadAll(), input.vehicleId);
+    state = foldEvents(input.vehicleId, vehicleEvents);
+  }
   const evaluated = policyEngine.evaluate({ vehicleId: input.vehicleId, state });
   const recommendation = evaluated
     ? enrichRecommendationReason({

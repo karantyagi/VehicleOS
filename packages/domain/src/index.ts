@@ -216,6 +216,13 @@ export {
   evaluateNextDueRecommendationFromPolicyInput,
 } from "./owner-care/evaluate-next-due-recommendation.js";
 export {
+  isOnboardingBaselineRule,
+  ONBOARDING_BASELINE_DEADLINE_LABEL,
+  ONBOARDING_BASELINE_REASON,
+  ONBOARDING_BASELINE_RULE_ID,
+  ONBOARDING_BASELINE_TITLE,
+} from "./owner-care/onboarding-baseline.js";
+export {
   computeOemServiceTiming,
   DEFAULT_OEM_TIMING_TOLERANCE_DAYS,
   type OemServiceTiming,
@@ -329,6 +336,7 @@ export {
 export {
   ownerDriverLicenseFromRmvRecord,
   ownerDriverLicenseFingerprint,
+  ownerDriverLicenseImportNeedsConfirmation,
   ownerDriverLicenseToOwnershipRecord,
   projectOwnerDriverLicenses,
   recordOwnerDriverLicense,

@@ -35,6 +35,10 @@ export function OwnerHabitsCompliancePanel({
     .find((detail) => detail.toLowerCase().startsWith("expiration date:"))
     ?.slice("expiration date:".length)
     .trim();
+  const existingLicenseClass = existingLicense?.details
+    .find((detail) => detail.toLowerCase().startsWith("license class:"))
+    ?.slice("license class:".length)
+    .trim();
   const [jurisdiction, setJurisdiction] = useState("MA");
   const [issuer, setIssuer] = useState(existingLicense?.agency ?? "Massachusetts RMV (myRMV)");
   const [expirationDate, setExpirationDate] = useState(existingExpirationDate ?? "");
@@ -169,6 +173,22 @@ export function OwnerHabitsCompliancePanel({
           <p className="text-sm text-muted-foreground">
             Saved once for you. It is visible from every vehicle but does not belong to any car.
           </p>
+          {existingLicense ? (
+            <div className="rounded-lg border border-border/70 bg-muted/20 p-3" aria-label="Saved driver license summary">
+              <p className="text-sm font-medium text-foreground">Driver's license</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {[existingLicense.agency, existingLicenseClass ? `Class ${existingLicenseClass}` : null]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+              {existingExpirationDate ? (
+                <p className="mt-1 text-sm text-foreground">Expires {existingExpirationDate}</p>
+              ) : null}
+              <p className="mt-2 text-xs text-muted-foreground">
+                {existingLicense.source === "rmv_import" ? "Imported from your RMV" : "Saved by you"} · owner-level record · applies across your garage
+              </p>
+            </div>
+          ) : null}
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="space-y-1 text-sm">
               <span className="text-muted-foreground">Jurisdiction</span>
@@ -186,7 +206,7 @@ export function OwnerHabitsCompliancePanel({
           <Button type="button" size="sm" disabled={disabled || isSavingLicense} onClick={() => void saveLicense()}>
             {isSavingLicense ? "Saving…" : existingLicense ? "Update owner deadline" : "Save owner deadline"}
           </Button>
-          <p className="text-xs text-muted-foreground">Vehicle OS never asks for or stores your license number here.</p>
+          <p className="text-xs text-muted-foreground">Vehicle OS never asks for or stores your license number here. Agency, class, expiration, and source are enough to verify this reminder.</p>
         </div>
       </details>
     </div>
