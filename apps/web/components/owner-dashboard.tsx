@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import { PanelCard } from "@/components/panel-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,6 +45,7 @@ import { ImportHistoryNudge } from "./import-history-nudge";
 import { VerificationMaturityPanel } from "./verification-maturity-panel";
 import { OwnerHabitsCompliancePanel } from "./owner-habits-compliance-panel";
 import { draftLineItems, type MaintenanceRecordDraft } from "@/components/maintenance-record-fields";
+import { resolveWorkspacePresentation } from "@/lib/workspace-presentation";
 import type {
   MaintenanceScheduleView,
   OwnershipRecordEntry,
@@ -68,6 +70,29 @@ const emptyReceiptForm = {
   total: "",
 };
 
+function HomeWorkspaceSkeleton() {
+  return (
+    <div className="space-y-6" aria-busy="true" aria-label="Preparing Home">
+      <div className="space-y-3">
+        <Skeleton className="h-3 w-28" />
+        <Skeleton className="h-9 w-48" />
+        <Skeleton className="h-4 w-full max-w-sm" />
+      </div>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(18rem,0.55fr)]">
+        <div className="space-y-4 rounded-xl border border-border/70 bg-card p-5 shadow-sm">
+          <Skeleton className="h-5 w-40" />
+          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-20 w-full" />
+        </div>
+        <div className="space-y-4 rounded-xl border border-border/70 bg-card p-5 shadow-sm">
+          <Skeleton className="h-5 w-28" />
+          <Skeleton className="h-28 w-full" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function OwnerDashboard() {
   const router = useRouter();
   const apiBase = getApiBase();
@@ -78,7 +103,6 @@ export function OwnerDashboard() {
   const consoleMode = useAppUiStore((state) => state.consoleMode);
   const setActiveSection = useAppUiStore((state) => state.setActiveSection);
   const setSelectedTimelineId = useAppUiStore((state) => state.setSelectedTimelineId);
-  const setSetupFlowActive = useAppUiStore((state) => state.setSetupFlowActive);
   const isDeveloper = consoleMode === "developer";
   const sectionMeta = APP_SECTIONS.find((section) => section.id === activeSection) ?? APP_SECTIONS[0];
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
@@ -119,6 +143,7 @@ export function OwnerDashboard() {
   const [ownerSetupComplete, setOwnerSetupComplete] = useState(false);
   const [importBusy, setImportBusy] = useState(false);
   const [isVehicleStateLoading, setIsVehicleStateLoading] = useState(false);
+  const hydratedVehicleIdRef = useRef<string | null>(null);
 
   const feedback = useCallback((message: string) => {
     notifyAuto(message);
@@ -176,19 +201,6 @@ export function OwnerDashboard() {
     });
   }, [vehicle, timeline, reminders, verifications, isBusy, pipelinePhase, setSnapshot]);
 
-  const inSetupFlow =
-    isLoading ||
-    garage.isLoading ||
-    isVehicleStateLoading ||
-    garage.isAddingVehicle ||
-    !vehicle ||
-    !ownerSetupComplete;
-
-  useEffect(() => {
-    setSetupFlowActive(inSetupFlow);
-    return () => setSetupFlowActive(false);
-  }, [inSetupFlow, setSetupFlowActive]);
-
   useEffect(() => {
     return () => setSnapshot(null);
   }, [setSnapshot]);
@@ -206,9 +218,9 @@ export function OwnerDashboard() {
   }, []);
 
   const loadVehicleState = useCallback(
-    async (nextVehicle: Vehicle) => {
+    async (nextVehicle: Vehicle): Promise<Vehicle> => {
       const response = await fetch(`${apiBase}/api/vehicles/${nextVehicle.id}/state`);
-      if (!response.ok) return;
+      if (!response.ok) return nextVehicle;
 
       const body = (await response.json()) as {
         timeline: TimelineEntry[];
@@ -243,10 +255,13 @@ export function OwnerDashboard() {
         },
       );
       setVerificationMaturity(body.verificationMaturity ?? null);
-      if (body.currentMileage && body.currentMileage > nextVehicle.currentMileage) {
-        setVehicle({ ...nextVehicle, currentMileage: body.currentMileage });
-      }
+      const hydratedVehicle =
+        body.currentMileage && body.currentMileage > nextVehicle.currentMileage
+          ? { ...nextVehicle, currentMileage: body.currentMileage }
+          : nextVehicle;
+      setVehicle((current) => (current?.id === nextVehicle.id ? hydratedVehicle : current));
       setForm((current) => ({ ...current, mileage: body.currentMileage ?? nextVehicle.currentMileage }));
+      return hydratedVehicle;
     },
     [apiBase, applyQueueState],
   );
@@ -317,9 +332,6 @@ export function OwnerDashboard() {
     if (garage.isLoading) return;
 
     if (garage.isAddingVehicle) {
-      resetVehicleWorkspace();
-      setVehicle(null);
-      setOwnerSetupComplete(false);
       setIsVehicleStateLoading(false);
       setIsLoading(false);
       return;
@@ -335,19 +347,38 @@ export function OwnerDashboard() {
       return;
     }
 
+    if (hydratedVehicleIdRef.current === nextVehicle.id) {
+      setVehicle((current) => current ?? nextVehicle);
+      setOwnerSetupComplete(isOwnerSetupComplete(nextVehicle));
+      setForm((current) => ({ ...current, mileage: nextVehicle.currentMileage }));
+      setIsVehicleStateLoading(false);
+      setIsLoading(false);
+      return;
+    }
+
     let cancelled = false;
-    setVehicle(nextVehicle);
-    setOwnerSetupComplete(isOwnerSetupComplete(nextVehicle));
     setForm((current) => ({ ...current, mileage: nextVehicle.currentMileage }));
     resetVehicleWorkspace();
     setIsVehicleStateLoading(true);
 
-    void loadVehicleState(nextVehicle).finally(() => {
-      if (!cancelled) {
-        setIsVehicleStateLoading(false);
-        setIsLoading(false);
-      }
-    });
+    void loadVehicleState(nextVehicle)
+      .then((hydratedVehicle) => {
+        if (cancelled) return;
+        hydratedVehicleIdRef.current = hydratedVehicle.id;
+        setVehicle(hydratedVehicle);
+        setOwnerSetupComplete(isOwnerSetupComplete(hydratedVehicle));
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setVehicle(nextVehicle);
+        setOwnerSetupComplete(isOwnerSetupComplete(nextVehicle));
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setIsVehicleStateLoading(false);
+          setIsLoading(false);
+        }
+      });
 
     return () => {
       cancelled = true;
@@ -363,16 +394,25 @@ export function OwnerDashboard() {
 
   const handleOnboardingComplete = async (created: OnboardingVehicle) => {
     const isAdditional = garage.vehicles.length > 0;
-    garage.completeAddVehicle(created);
-    setVehicle(created);
+    let hydratedVehicle = created;
+
+    try {
+      hydratedVehicle = await loadVehicleState(created);
+      hydratedVehicleIdRef.current = hydratedVehicle.id;
+    } catch {
+      // The vehicle exists already. Let the normal vehicle-state effect retry
+      // after the setup surface closes instead of blocking the owner here.
+    }
+
+    setVehicle(hydratedVehicle);
     setOwnerSetupComplete(true);
-    setForm((current) => ({ ...current, mileage: created.currentMileage }));
+    setForm((current) => ({ ...current, mileage: hydratedVehicle.currentMileage }));
     feedback(
       isAdditional
         ? "Vehicle added."
         : "You're set — Home will show what needs attention.",
     );
-    await loadVehicleState(created);
+    garage.completeAddVehicle(hydratedVehicle);
   };
 
   const submitReceipt = async () => {
@@ -735,50 +775,40 @@ export function OwnerDashboard() {
     document.title = `${sectionMeta.label} · VehicleOS`;
   }, [sectionMeta.label]);
 
-  if (isLoading || garage.isLoading || isVehicleStateLoading) {
+  const workspacePresentation = resolveWorkspacePresentation({
+    hasVehicle: Boolean(vehicle),
+    ownerSetupComplete,
+    isDashboardLoading: isLoading,
+    isGarageLoading: garage.isLoading,
+    isVehicleStateLoading,
+    isAddingVehicle: garage.isAddingVehicle,
+  });
+
+  if (workspacePresentation.body === "loading") {
+    return <HomeWorkspaceSkeleton />;
+  }
+
+  if (workspacePresentation.body === "first-vehicle-setup") {
     return (
-      <div className="space-y-6" aria-busy="true" aria-label="Loading workspace">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-4 w-full max-w-md" />
-        <PanelCard title="Loading" description="Opening your workspace…">
-          <div className="space-y-3">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-24 w-full" />
-          </div>
-        </PanelCard>
+      <div className="mx-auto w-full max-w-lg">
+        <OnboardingWizard prefillDogfood={isDeveloper} onComplete={handleOnboardingComplete} />
       </div>
     );
   }
 
-  if (garage.isAddingVehicle) {
+  if (workspacePresentation.body === "driver-setup" && vehicle) {
     return (
-      <OnboardingWizard
-        mode="additional"
-        prefillDogfood={isDeveloper}
-        onCancel={() => garage.cancelAddVehicle()}
-        onComplete={(created) => void handleOnboardingComplete(created)}
-      />
+      <div className="mx-auto w-full max-w-lg">
+        <SetupDriverGate
+          vehicleId={vehicle.id}
+          vehicleLabel={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+          onComplete={() => setOwnerSetupComplete(true)}
+        />
+      </div>
     );
   }
 
-  if (!vehicle) {
-    return (
-      <OnboardingWizard
-        prefillDogfood={isDeveloper}
-        onComplete={(created) => void handleOnboardingComplete(created)}
-      />
-    );
-  }
-
-  if (!ownerSetupComplete) {
-    return (
-      <SetupDriverGate
-        vehicleId={vehicle.id}
-        vehicleLabel={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-        onComplete={() => setOwnerSetupComplete(true)}
-      />
-    );
-  }
+  if (!vehicle) return <HomeWorkspaceSkeleton />;
 
   return (
     <>
@@ -1315,6 +1345,25 @@ export function OwnerDashboard() {
             />
           </PanelCard>
         </div>
+      ) : null}
+
+      {workspacePresentation.showAdditionalVehicleSheet ? (
+        <Dialog open>
+          <DialogContent
+            showClose={false}
+            className="left-auto right-0 top-0 h-[100dvh] max-w-xl translate-x-0 translate-y-0 overflow-y-auto rounded-none border-l sm:rounded-none"
+          >
+            <DialogTitle className="sr-only">Add a vehicle</DialogTitle>
+            <div className="p-4 sm:p-6">
+              <OnboardingWizard
+                mode="additional"
+                prefillDogfood={isDeveloper}
+                onCancel={() => garage.cancelAddVehicle()}
+                onComplete={handleOnboardingComplete}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
       ) : null}
     </>
   );
