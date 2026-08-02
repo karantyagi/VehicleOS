@@ -28,7 +28,7 @@ jobs:
           fi
 
           case "$DEPLOYMENT_URL" in
-            https://vehicle-os-web-*.vercel.app) ;;
+            https://vehicle-os-*.vercel.app) ;;
             *)
               echo "Unexpected Vercel deployment URL; refusing to send the smoke token."
               exit 1
