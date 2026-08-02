@@ -30,6 +30,12 @@ If this fails, the vertical slice is broken — not a model regression, a **prod
 
 ## Extraction eval dimensions (hosted / BYOK)
 
+Before an LLM-assisted import reaches owner early access, run it through the
+isolated [Import Research Cohort](../docs/research-import-cohort.md). That
+surface captures consented source variation, schema-bound drafts, owner
+corrections, and versioned failures without ever writing a model output into the
+owner event store.
+
 When we score extraction quality (private goldens in `vehicleos-engine/evals/golden/`):
 
 | Dimension | Pass criteria |

@@ -2,6 +2,7 @@ export { getApiServices, type BuildServicesOptions } from "./get-services.js";
 export { createApiServices, type ApiServices } from "./services/index.js";
 export { deleteUserData } from "./account/delete-user-data.js";
 export { getPool, closePool } from "./db/pool.js";
+export { extractPdfText } from "./import/pdf-text.js";
 export {
   createVehicle,
   decideOnTask,
