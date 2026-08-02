@@ -45,7 +45,6 @@ export async function POST(request: Request) {
   const formData = await request.formData();
   const file = formData.get("file");
   const consent = formData.get("consent") === "true";
-  const retainForEvals = formData.get("retainForEvals") === "true";
 
   if (!consent) return NextResponse.json({ error: "consent_required" }, { status: 400 });
   if (!(file instanceof File)) return NextResponse.json({ error: "file_required" }, { status: 400 });
@@ -83,8 +82,8 @@ export async function POST(request: Request) {
     const baseInput = {
       id: runId,
       userId: access.participant.id,
-      consentVersion: "research-cohort.v1",
-      retainForEvals,
+      consentVersion: "research-cohort.v2",
+      retainForEvals: true,
       fileName: safeFileName,
       fileBytes: pdfBuffer.byteLength,
       contentSha256: createHash("sha256").update(pdfBuffer).digest("hex"),

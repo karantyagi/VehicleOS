@@ -41,6 +41,69 @@ const updateRecord = (
   records: draft.records.map((record, recordIndex) => (recordIndex === index ? { ...record, ...patch } : record)),
 });
 
+function ResearchAccountControl({ email }: { email: string }) {
+  const [confirmText, setConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<PortalError>(null);
+
+  const deleteAccount = async () => {
+    if (confirmText !== "DELETE" || deleting) return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      const response = await fetch("/api/account/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: "DELETE" }),
+      });
+      const body = (await response.json()) as { deleted?: boolean; error?: string };
+      if (!response.ok || !body.deleted) throw new Error(body.error ?? "Could not delete your research account.");
+      window.location.assign("/login?deleted=1");
+    } catch (error) {
+      setDeleteError(error instanceof Error ? error.message : "Could not delete your research account.");
+      setDeleting(false);
+    }
+  };
+
+  return (
+    <details className="mt-4 border-t border-border pt-4 text-sm">
+      <summary className="cursor-pointer font-medium text-foreground">Account</summary>
+      <div className="mt-3 rounded-lg border border-border bg-card p-3">
+        <p className="break-all text-xs text-muted-foreground">{email}</p>
+        <form action="/auth/signout" method="post" className="mt-3">
+          <button type="submit" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
+            Sign out
+          </button>
+        </form>
+        <p className="mt-4 text-sm font-medium text-destructive">Delete research account</p>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">
+          This removes your stored PDFs, drafts, and sign-in. A test example already separated from your identity cannot
+          be linked back to you or removed later.
+        </p>
+        <label className="mt-3 block text-xs font-medium text-foreground">
+          Type DELETE to confirm
+          <input
+            value={confirmText}
+            onChange={(event) => setConfirmText(event.target.value)}
+            autoComplete="off"
+            spellCheck={false}
+            className="mt-1 h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
+          />
+        </label>
+        <button
+          type="button"
+          disabled={confirmText !== "DELETE" || deleting}
+          onClick={() => void deleteAccount()}
+          className="mt-3 inline-flex h-9 items-center justify-center rounded-md bg-destructive px-3 text-sm font-medium text-destructive-foreground disabled:opacity-50"
+        >
+          {deleting ? "Deleting…" : "Delete account"}
+        </button>
+        {deleteError ? <p className="mt-2 text-xs text-destructive">{deleteError}</p> : null}
+      </div>
+    </details>
+  );
+}
+
 function ResearchRunReview({
   run,
   onSave,
@@ -77,8 +140,8 @@ function ResearchRunReview({
         <div>
           <h2 className="text-base font-semibold">Review the draft</h2>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            Fix anything that is wrong or incomplete. Your corrections are research feedback; they do not change your
-            VehicleOS account or maintenance history.
+            You are the final check. Fix anything that is wrong or incomplete. Nothing here changes your VehicleOS
+            maintenance history.
           </p>
         </div>
         <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
@@ -157,7 +220,7 @@ function ResearchRunReview({
               </label>
             </div>
             <p className="mt-3 text-xs text-muted-foreground">
-              Model confidence: {Math.round(record.confidence * 100)}%. Source: {record.evidence || "No source excerpt."}
+              Found in your PDF: {record.evidence || "No matching text was found."}
             </p>
           </article>
         ))}
@@ -185,7 +248,6 @@ function ResearchRunReview({
 export function ResearchCohortPage({ email, invited }: { email: string | null; invited: boolean }) {
   const [file, setFile] = useState<File | null>(null);
   const [consent, setConsent] = useState(false);
-  const [retainForEvals, setRetainForEvals] = useState(false);
   const [runs, setRuns] = useState<ResearchImportRun[]>([]);
   const [loadingRuns, setLoadingRuns] = useState(invited);
   const [submitting, setSubmitting] = useState(false);
@@ -220,14 +282,12 @@ export function ResearchCohortPage({ email, invited }: { email: string | null; i
       const data = new FormData();
       data.set("file", file);
       data.set("consent", String(consent));
-      data.set("retainForEvals", String(retainForEvals));
       const response = await fetch("/api/research/imports", { method: "POST", body: data });
       const body = (await response.json()) as { run?: ResearchImportRun; error?: string };
       if (!response.ok || !body.run) throw new Error(readableError(body.error ?? ""));
       setRuns((current) => [body.run as ResearchImportRun, ...current]);
       setFile(null);
       setConsent(false);
-      setRetainForEvals(false);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Could not process your PDF.");
     } finally {
@@ -264,13 +324,13 @@ export function ResearchCohortPage({ email, invited }: { email: string | null; i
   return (
     <main id="main-content" className="mx-auto min-h-screen max-w-3xl px-5 py-8 sm:px-8 sm:py-12">
       <header className="border-b border-border pb-6">
-        <p className="text-sm font-medium text-primary">VehicleOS · invite-only research</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Help us make CARFAX import trustworthy.</h1>
+        <p className="text-sm font-medium text-primary">VehicleOS research</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Help improve CARFAX import.</h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
-          Upload a CARFAX service-history PDF, review the draft, and tell us what it got wrong. This is research—not the
-          VehicleOS owner app. Nothing here changes your maintenance history.
+          Upload a CARFAX PDF. We use an AI-assisted parser to make a draft for you to check. Nothing here is added to
+          your VehicleOS maintenance history.
         </p>
-        {email ? <p className="mt-3 text-xs text-muted-foreground">Signed in as {email}</p> : null}
+        {email ? <ResearchAccountControl email={email} /> : null}
       </header>
 
       {!invited ? (
@@ -284,9 +344,9 @@ export function ResearchCohortPage({ email, invited }: { email: string | null; i
       ) : (
         <>
           <form onSubmit={(event) => void submit(event)} className="mt-8 rounded-xl border border-border bg-card p-5 shadow-sm">
-            <h2 className="text-lg font-semibold">1. Upload your CARFAX PDF</h2>
+            <h2 className="text-lg font-semibold">Upload a CARFAX PDF</h2>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Use the CARFAX print-to-PDF export. PDFs must be 15 MB or smaller and contain selectable text.
+              Use CARFAX’s print-to-PDF export. PDFs must be 15 MB or smaller and contain selectable text.
             </p>
             <label className="mt-4 block rounded-lg border border-dashed border-border bg-background p-4 text-sm">
               <span className="font-medium">Choose CARFAX PDF</span>
@@ -306,24 +366,16 @@ export function ResearchCohortPage({ email, invited }: { email: string | null; i
                 onChange={(event) => setConsent(event.target.checked)}
                 className="mt-1 h-4 w-4"
               />
-              <span>
-                I allow VehicleOS to process this PDF to make a research draft. When the extractor is enabled, only text
-                extracted from the PDF (not the raw PDF) is sent to OpenAI&apos;s API. The PDF stays in private VehicleOS
-                research storage for up to 30 days, and I can delete it here at any time.
-              </span>
+              <span>I agree to let VehicleOS use this PDF and my corrections to improve its AI-assisted CARFAX import.</span>
             </label>
-            <label className="mt-3 flex items-start gap-3 text-sm leading-5 text-muted-foreground">
-              <input
-                type="checkbox"
-                checked={retainForEvals}
-                onChange={(event) => setRetainForEvals(event.target.checked)}
-                className="mt-1 h-4 w-4"
-              />
-              <span>
-                Optional: VehicleOS may retain a de-identified correction as a private regression test. The original PDF
-                still follows the 30-day deletion window.
-              </span>
-            </label>
+            <details className="mt-3 text-sm text-muted-foreground">
+              <summary className="cursor-pointer font-medium text-foreground">How your information is used</summary>
+              <p className="mt-2 leading-6">
+                We keep your original PDF private for up to 30 days. We send text from it—not the PDF itself—to our AI
+                provider to make the draft. We may keep a version of your corrections with direct identifiers removed to
+                test future improvements.
+              </p>
+            </details>
 
             {error ? <p className="mt-4 text-sm text-destructive">{error}</p> : null}
             <button
@@ -331,13 +383,13 @@ export function ResearchCohortPage({ email, invited }: { email: string | null; i
               disabled={!file || !consent || submitting}
               className="mt-5 inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 disabled:opacity-50"
             >
-              {submitting ? "Processing…" : "Create research draft"}
+              {submitting ? "Making your draft…" : "Make my draft"}
             </button>
           </form>
 
           <section className="mt-8">
             <div className="flex items-baseline justify-between gap-3">
-              <h2 className="text-lg font-semibold">2. Review your drafts</h2>
+              <h2 className="text-lg font-semibold">Your drafts</h2>
               <span className="text-xs text-muted-foreground">{loadingRuns ? "Loading…" : runs.length + " uploads"}</span>
             </div>
             {!loadingRuns && runs.length === 0 ? (

@@ -19,7 +19,7 @@ writes to the owner event store.
 | Model data | Extracted PDF text only, bounded to 60,000 characters, store=false |
 | Product writes | None. A research draft can only be reviewed or deleted |
 | Raw-PDF retention | 30 days by default, configurable from 1 to 90 days |
-| Long-term learning | Optional consent records intent to retain a de-identified private regression fixture; it is an explicit offline operator step, not an automatic export |
+| Long-term learning | Participation requires consent to retain a de-identified private regression fixture. It is an explicit offline operator step, not an automatic export. |
 
 The public repository holds the schema contract and representative request
 boundary. A production-tuned instruction may be supplied through the
@@ -49,7 +49,11 @@ No arrow reaches the VehicleOS owner event store.
 
 The portal also captures valuable failure states: no selectable PDF text, model
 not configured, invalid structured response, and model request failure. Each
-state is a research outcome, not a silent fallback.
+state is a research outcome, not a silent fallback. The portal provides a
+visible sign-out control and a research-account deletion flow that removes the
+participant's stored PDFs and research runs before deleting their Supabase Auth
+user. A de-identified fixture already manually separated from an account cannot
+be linked back to that participant or removed later.
 
 ## Supabase setup
 

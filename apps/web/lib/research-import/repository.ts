@@ -141,6 +141,21 @@ export const deleteResearchImportRun = async (input: {
   return "deleted";
 };
 
+export const deleteResearchParticipantData = async (userId: string): Promise<void> => {
+  const admin = createAdminClient();
+  const { data, error } = await admin.from("research_import_runs").select("storage_key").eq("user_id", userId);
+  if (error) throw new Error(error.message);
+
+  const storageKeys = (data ?? []).map((run) => run.storage_key).filter((key): key is string => Boolean(key));
+  if (storageKeys.length > 0) {
+    const { error: storageError } = await admin.storage.from(RESEARCH_IMPORT_BUCKET).remove(storageKeys);
+    if (storageError) throw new Error(storageError.message);
+  }
+
+  const { error: deleteError } = await admin.from("research_import_runs").delete().eq("user_id", userId);
+  if (deleteError) throw new Error(deleteError.message);
+};
+
 export const purgeExpiredResearchImportRuns = async (limit = 20): Promise<{ considered: number; deleted: number }> => {
   const admin = createAdminClient();
   const now = new Date().toISOString();
