@@ -1,0 +1,41 @@
+name: Production Geoapify smoke
+
+on:
+  repository_dispatch:
+    types: [vercel.deployment.ready]
+
+permissions:
+  contents: read
+
+jobs:
+  geoapify-smoke:
+    # Vercel's GitHub integration dispatches this only after a deployment is
+    # ready. Keep it production-only and scoped to the owner app project.
+    if: >-
+      github.event.client_payload.target == 'production' &&
+      github.event.client_payload.project.name == 'vehicle-os-web'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Check deployed Geoapify integration
+        env:
+          DEPLOYMENT_URL: ${{ github.event.client_payload.url }}
+          DEPLOYMENT_SMOKE_TOKEN: ${{ secrets.DEPLOYMENT_SMOKE_TOKEN }}
+        run: |
+          if [ -z "$DEPLOYMENT_SMOKE_TOKEN" ]; then
+            echo "DEPLOYMENT_SMOKE_TOKEN is not configured in the GitHub production environment."
+            exit 1
+          fi
+
+          case "$DEPLOYMENT_URL" in
+            https://vehicle-os-web-*.vercel.app) ;;
+            *)
+              echo "Unexpected Vercel deployment URL; refusing to send the smoke token."
+              exit 1
+              ;;
+          esac
+
+          curl --fail-with-body --retry 3 --retry-all-errors --retry-delay 2 \
+            --connect-timeout 10 --max-time 20 \
+            --header "Authorization: Bearer $DEPLOYMENT_SMOKE_TOKEN" \
+            "$DEPLOYMENT_URL/api/internal/geoapify-smoke"

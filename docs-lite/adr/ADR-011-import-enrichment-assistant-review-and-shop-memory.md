@@ -58,6 +58,7 @@ Resolve shop → city/state using the **cheapest reliable source first**:
 - `GEOAPIFY_API_KEY` stays server-side. If it is absent, or Geoapify has no safe single result, the owner keeps the editable `City, ST` field and the import remains reviewable.
 - The app retains a confirmed location in the owner directory only after import confirmation and keeps the required Geoapify/OpenStreetMap attribution in the product trust surface.
 - There is no LLM shop search or ranking step. Manual owner choice is the recovery path.
+- A production-only deployed canary makes one fixed, non-owner Geoapify request after each Vercel owner-app deployment. Its separate bearer token proves the Vercel runtime has the configured server key without exposing it; a failure is an operational signal, not a release gate, because manual owner entry remains safe recovery.
 
 ### Why not a shared “central LLM cache” the team pays for on every import?
 
