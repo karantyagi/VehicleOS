@@ -12,7 +12,7 @@ jobs:
     # Vercel's GitHub integration dispatches this only after a deployment is
     # ready. Keep it production-only and scoped to the owner app project.
     if: >-
-      github.event.client_payload.target == 'production' &&
+      github.event.client_payload.environment == 'production' &&
       github.event.client_payload.project.name == 'vehicle-os-web'
     runs-on: ubuntu-latest
     environment: production
