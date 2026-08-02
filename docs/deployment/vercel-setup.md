@@ -65,7 +65,7 @@ See [`supabase-setup.md`](./supabase-setup.md) for DB migrations and smoke tests
 The regular CI suite uses mocked Geoapify responses to check deterministic parsing and failure handling. The [`production-geoapify-smoke.yml`](../../.github/workflows/production-geoapify-smoke.yml) workflow adds one real request **after a Vercel production deployment is ready**:
 
 - Vercel provides `GEOAPIFY_API_KEY` and `DEPLOYMENT_SMOKE_TOKEN` to the `apps/web` **Production** environment. Add the Geoapify key to Preview too only when preview imports should use live lookup.
-- GitHub repository **Settings -> Environments -> production** stores the same `DEPLOYMENT_SMOKE_TOKEN` as an environment secret. GitHub never receives the Geoapify key.
+- GitHub repository **Settings -> Environments -> Production – vehicle-os-web** stores the same `DEPLOYMENT_SMOKE_TOKEN` as an environment secret. This must be the project-specific environment, not the separate generic `Production` environment. GitHub never receives the Geoapify key.
 - The deployed `/api/internal/geoapify-smoke` route checks a fixed `Boston City Hall` query. It sends no owner, vehicle, mileage, VIN, or import data, returns no location data, and is indistinguishable from a 404 without the bearer token.
 - The workflow is intentionally **informational**, not a Vercel Deployment Check: a temporary provider outage should not delay an unrelated release because import review safely falls back to manual `City, ST` entry.
 

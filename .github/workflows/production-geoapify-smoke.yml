@@ -15,7 +15,10 @@ jobs:
       github.event.client_payload.environment == 'production' &&
       github.event.client_payload.project.name == 'vehicle-os-web'
     runs-on: ubuntu-latest
-    environment: production
+    # This is the existing GitHub Environment attached to the vehicle-os-web
+    # Vercel project. It is intentionally distinct from the generic Production
+    # environment so this job receives its project-scoped smoke token.
+    environment: Production – vehicle-os-web
     steps:
       - name: Check deployed Geoapify integration
         env:
@@ -23,7 +26,7 @@ jobs:
           DEPLOYMENT_SMOKE_TOKEN: ${{ secrets.DEPLOYMENT_SMOKE_TOKEN }}
         run: |
           if [ -z "$DEPLOYMENT_SMOKE_TOKEN" ]; then
-            echo "DEPLOYMENT_SMOKE_TOKEN is not configured in the GitHub production environment."
+            echo "DEPLOYMENT_SMOKE_TOKEN is not configured in the GitHub Production – vehicle-os-web environment."
             exit 1
           fi
 
