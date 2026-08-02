@@ -1,4 +1,5 @@
 import type { ServiceTimelineEntry } from "../projections/types.js";
+import { maintenanceServiceHistory } from "../service/service-record-kind.js";
 import {
   DEFAULT_DUE_SOON_DAYS,
   DEFAULT_EFFECTIVE_MILES_PER_YEAR,
@@ -92,7 +93,7 @@ export const resolveScheduleProjectionContext = (input: {
   const today = input.today ?? formatIsoDate(new Date());
   const statedMilesPerYear = input.statedMilesPerYear ?? null;
   const drivingStyle = input.drivingStyle ?? null;
-  const observedMilesPerYear = computeObservedMilesPerYear(input.timeline, today);
+  const observedMilesPerYear = computeObservedMilesPerYear(maintenanceServiceHistory(input.timeline), today);
 
   return {
     ownedSince: input.ownedSince ?? null,

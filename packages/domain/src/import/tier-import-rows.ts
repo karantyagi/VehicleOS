@@ -2,6 +2,7 @@ import type { VehicleOsImportService } from "./record-vehicleos-import.js";
 import type { ServiceTimelineEntry } from "../projections/types.js";
 import { normalizeShopKey } from "./shop-location-keys.js";
 import { crossDayMileageRegressionByIndex } from "./cross-day-mileage-regression.js";
+import { stripGenericCarfaxVisitLineItems } from "../service/service-record-kind.js";
 import {
   guidanceSummaryLine,
   mileageCrossDayGuidance,
@@ -55,12 +56,22 @@ const isValidServiceRow = (service: VehicleOsImportService): string | null => {
 };
 
 export const tierImportRows = (services: VehicleOsImportService[]): TierImportSummary => {
-  const mileageRegressionByIndex = crossDayMileageRegressionByIndex(services);
+  const normalizedServices = services.map((service) => ({
+    ...service,
+    lineItems: stripGenericCarfaxVisitLineItems(service.lineItems),
+  }));
+  const mileageRegressionByIndex = crossDayMileageRegressionByIndex(normalizedServices);
 
-  const rows: TieredImportRow[] = services.map((service, index) => {
+  const rows: TieredImportRow[] = normalizedServices.map((service, index) => {
     const blockReason = isValidServiceRow(service);
     if (blockReason) {
       return { index, service, tier: "block", reasons: [blockReason], ownerGuidance: [] };
+    }
+
+    // A generic CARFAX visit is valid history, not an incomplete import row.
+    // It receives its quiet Limited details treatment after import.
+    if (service.lineItems.some((line) => line === "Service visit")) {
+      return { index, service, tier: "auto", reasons: [], ownerGuidance: [] };
     }
 
     const reasons: string[] = [];
@@ -84,11 +95,6 @@ export const tierImportRows = (services: VehicleOsImportService[]): TierImportSu
       const guidance = missingShopLocationGuidance(service.shop);
       ownerGuidance.push(guidance);
       reasons.push(guidanceSummaryLine(guidance));
-    }
-
-    if (service.lineItems.some((line) => line === "Service visit")) {
-      if (tier === "auto") tier = "enriched";
-      reasons.push("Boilerplate stripped — visit anchor kept.");
     }
 
     if (tier === "auto" && reasons.length === 0) {

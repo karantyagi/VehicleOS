@@ -4,6 +4,7 @@ import { resolveIntervalForEntry } from "../owner-context/merge-interval-overlay
 import type { OwnerContextMemory } from "../owner-context/types.js";
 import { computeOemServiceTiming, type OemServiceTiming } from "./compute-oem-service-timing.js";
 import type { KnowledgeScheduleEntry, ServiceTimelineEntry } from "../projections/types.js";
+import { maintenanceServiceHistory } from "../service/service-record-kind.js";
 
 export type ScheduleProjectionStatus = "overdue" | "due_soon" | "upcoming" | "needs_baseline";
 
@@ -334,11 +335,12 @@ export const projectMaintenanceSchedule = (
 
   const isVerifiedPack = input.knowledgeSchedule.length >= VERIFIED_PACK_MIN_ENTRIES;
 
+  const maintenanceTimeline = maintenanceServiceHistory(input.timeline);
   const rows = input.knowledgeSchedule
     .map((entry) =>
       buildRow({
         entry,
-        timeline: input.timeline,
+        timeline: maintenanceTimeline,
         currentMileage: input.currentMileage,
         effectiveMilesPerYear,
         ownedSince,

@@ -8,26 +8,19 @@ describe("createShopLocationLookupService", () => {
     expect(result.status).toBe("not_initialized");
   });
 
-  it("rate-limits nominatim lookups", async () => {
-    const timestamps: number[] = [];
+  it("uses Geoapify when its server-only key is configured", async () => {
     const lookup = createShopLocationLookupService({
-      provider: "nominatim",
-      minIntervalMs: 50,
+      provider: "geoapify",
+      apiKey: "test-key",
       fetchImpl: async () => {
-        timestamps.push(Date.now());
-        return new Response(JSON.stringify([]), {
+        return new Response(JSON.stringify({ features: [] }), {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
       },
     });
 
-    await Promise.all([
-      lookup.lookupShopLocation({ shop: "Shop A" }),
-      lookup.lookupShopLocation({ shop: "Shop B" }),
-    ]);
-
-    expect(timestamps).toHaveLength(2);
-    expect(timestamps[1]! - timestamps[0]!).toBeGreaterThanOrEqual(45);
+    const result = await lookup.lookupShopLocation({ shop: "Shop A" });
+    expect(result.status).toBe("not_found");
   });
 });

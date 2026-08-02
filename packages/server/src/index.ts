@@ -1,5 +1,9 @@
 export { getApiServices, type BuildServicesOptions } from "./get-services.js";
 export { createApiServices, type ApiServices } from "./services/index.js";
+export {
+  createShopLocationLookupService,
+  type ShopLocationLookupServiceOptions,
+} from "./services/shop-location-lookup-service.js";
 export { deleteUserData } from "./account/delete-user-data.js";
 export { getPool, closePool } from "./db/pool.js";
 export {

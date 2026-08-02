@@ -9,7 +9,7 @@ export type LookupShopLocationResult =
       shop: string;
       shopLocation: string;
       placeId?: string;
-      source: "places_api" | "owner_memory" | "curated_pack" | "nominatim";
+      source: "geoapify" | "owner_memory" | "curated_pack";
     }
   | {
       status: "ambiguous";

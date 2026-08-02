@@ -18,7 +18,7 @@ describe("tierImportRows edge cases", () => {
     expect(summary.rows[0]?.tier).toBe("block");
   });
 
-  it("marks enriched when only boilerplate was stripped", () => {
+  it("removes a generic visit marker when the actual work is present", () => {
     const summary = tierImportRows([
       {
         shop: "Costco Tire Center",
@@ -30,8 +30,9 @@ describe("tierImportRows edge cases", () => {
       },
     ]);
 
-    expect(summary.enrichedCount).toBe(1);
-    expect(summary.rows[0]?.tier).toBe("enriched");
+    expect(summary.autoCount).toBe(1);
+    expect(summary.rows[0]?.tier).toBe("auto");
+    expect(summary.rows[0]?.service.lineItems).toEqual(["Tires rotated"]);
   });
 
   it("blocks rows missing shop name", () => {

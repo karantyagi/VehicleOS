@@ -7,6 +7,10 @@ describe("isPublicAppRoute", () => {
     expect(isPublicAppRoute("/api/catalog/supported")).toBe(true);
   });
 
+  it("lets the token-protected deployment smoke route reach its own guard", () => {
+    expect(isPublicAppRoute("/api/internal/geoapify-smoke")).toBe(true);
+  });
+
   it("blocks protected owner APIs", () => {
     expect(isPublicAppRoute("/api/vehicles")).toBe(false);
     expect(isPublicAppRoute("/")).toBe(false);

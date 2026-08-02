@@ -25,7 +25,7 @@ describe("shopLocationHintFromLookup", () => {
         status: "resolved",
         shop: "Costco",
         shopLocation: "Waltham, MA",
-        source: "nominatim",
+        source: "geoapify",
       }),
     ).toBeUndefined();
   });

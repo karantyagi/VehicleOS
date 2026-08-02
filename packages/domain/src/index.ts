@@ -481,6 +481,14 @@ export {
   normalizeCarfaxLineItems,
 } from "./import/normalize-carfax-line-items.js";
 export {
+  isGenericCarfaxVisitLineItem,
+  isVisitOnlyServiceRecord,
+  maintenanceServiceHistory,
+  resolveServiceRecordKind,
+  stripGenericCarfaxVisitLineItems,
+  type ServiceRecordKind,
+} from "./service/service-record-kind.js";
+export {
   mergeShopLocationsFromImport,
 } from "./import/merge-shop-locations-from-import.js";
 export {
@@ -545,14 +553,16 @@ export {
   type ShopLocationHintStatus,
 } from "./import/shop-location-hints.js";
 export {
-  buildNominatimSearchQuery,
-  buildNominatimSearchUrl,
-  createNominatimShopLocationLookup,
-  formatNominatimAddress,
-  parseNominatimSearchResponse,
+  buildGeoapifySearchText,
+  buildGeoapifySearchUrl,
+  createGeoapifyShopLocationLookup,
+  formatGeoapifyLocation,
+  parseGeoapifySearchResponse,
   abbreviateUsState,
-  type NominatimFetch,
-  type NominatimSearchResult,
-} from "./import/nominatim-shop-location.js";
+  type GeoapifyFeatureProperties,
+  type GeoapifyFetch,
+  type GeoapifySearchFeature,
+  type GeoapifySearchResponse,
+} from "./import/geoapify-shop-location.js";
 export type { KnowledgeScheduleRow } from "./events/catalog.js";
 export type { KnowledgeScheduleEntry } from "./projections/types.js";

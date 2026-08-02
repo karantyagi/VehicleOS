@@ -29,7 +29,7 @@ describe("import-handlers enrich + submit", () => {
           status: "resolved",
           shop,
           shopLocation: "Denver, CO",
-          source: "nominatim",
+          source: "geoapify",
         }),
       },
     });

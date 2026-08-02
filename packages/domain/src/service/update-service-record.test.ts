@@ -74,4 +74,44 @@ describe("SERVICE_UPDATED projection", () => {
 
     expect(next.timeline).toEqual(base.timeline);
   });
+
+  it("turns a visit-only CARFAX record into a service when details are added", () => {
+    const vehicleId = "veh-visit";
+    const serviceId = "svc-visit";
+    const state = foldEvents(vehicleId, [
+      {
+        id: "event-1",
+        aggregateType: "vehicle",
+        aggregateId: vehicleId,
+        eventType: EVENT_TYPES.SERVICE_RECORDED,
+        eventVersion: EVENT_VERSIONS[EVENT_TYPES.SERVICE_RECORDED],
+        payload: {
+          vehicleId,
+          serviceId,
+          shop: "Genesis of Framingham",
+          serviceDate: "2022-12-22",
+          mileage: 6629,
+          lineItems: ["Service visit"],
+          total: "$0.00",
+          evidenceIds: [],
+          source: "carfax_import",
+        },
+        correlationId: "corr-visit-1",
+        createdAt: "2022-12-22T12:00:00.000Z",
+      },
+      {
+        id: "event-2",
+        aggregateType: "vehicle",
+        aggregateId: vehicleId,
+        eventType: EVENT_TYPES.SERVICE_UPDATED,
+        eventVersion: EVENT_VERSIONS[EVENT_TYPES.SERVICE_UPDATED],
+        payload: { vehicleId, serviceId, lineItems: ["Oil change"] },
+        correlationId: "corr-visit-2",
+        createdAt: "2026-08-02T12:00:00.000Z",
+      },
+    ]);
+
+    expect(state.timeline[0]?.recordKind).toBe("service");
+    expect(state.timeline[0]?.lineItems).toEqual(["Oil change"]);
+  });
 });

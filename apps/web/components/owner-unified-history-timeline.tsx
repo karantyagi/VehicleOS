@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import {
   findPossibleServiceDuplicates,
+  isVisitOnlyServiceRecord,
   type PossibleServiceDuplicate,
 } from "@vehicleos/domain";
 import { DateField } from "@/components/date-field";
@@ -97,6 +98,7 @@ const serviceEntryFromItem = (item: OwnerHistoryItem): TimelineEntry => ({
   total: item.total ?? "",
   evidenceIds: item.evidenceIds ?? [],
   source: item.source,
+  recordKind: item.recordKind,
 });
 
 const entryToDraft = (entry: TimelineEntry): ServiceDraft => ({
@@ -198,7 +200,10 @@ export function OwnerUnifiedHistoryTimeline({
     }),
     [items.length, serviceItems.length],
   );
-  const serviceEntries = useMemo(() => serviceItems.map(serviceEntryFromItem), [serviceItems]);
+  const serviceEntries = useMemo(
+    () => serviceItems.map(serviceEntryFromItem).filter((entry) => !isVisitOnlyServiceRecord(entry)),
+    [serviceItems],
+  );
   const possibleDuplicates = useMemo(
     () => findPossibleServiceDuplicates(serviceEntries),
     [serviceEntries],
@@ -300,7 +305,10 @@ export function OwnerUnifiedHistoryTimeline({
   const startEditing = (entry: TimelineEntry) => {
     if (!onUpdateService || disabled) return;
     setEditingId(entry.serviceId);
-    setDraft(entryToDraft(entry));
+    setDraft({
+      ...entryToDraft(entry),
+      ...(isVisitOnlyServiceRecord(entry) ? { lineItems: "" } : {}),
+    });
     setConfirmSave(false);
     setExpandedCards((current) => new Set(current).add(entry.serviceId));
   };
@@ -525,15 +533,21 @@ export function OwnerUnifiedHistoryTimeline({
         </div>
         <div className="max-w-2xl space-y-1.5">
           <Label htmlFor={`edit-lines-${entry.serviceId}`} className="text-xs text-muted-foreground">
-            Line items
+            {isVisitOnlyServiceRecord(entry) ? "What work was performed?" : "Line items"}
           </Label>
           <Textarea
             id={`edit-lines-${entry.serviceId}`}
             rows={Math.min(6, Math.max(3, draft.lineItems.split("\n").length))}
             value={draft.lineItems}
             disabled={isSaving}
+            placeholder={isVisitOnlyServiceRecord(entry) ? "Optional — for example, Oil change" : undefined}
             onChange={(event) => setDraft({ ...draft, lineItems: event.target.value })}
           />
+          {isVisitOnlyServiceRecord(entry) ? (
+            <p className="text-xs text-muted-foreground">
+              Adding a service makes this record available for maintenance timing.
+            </p>
+          ) : null}
         </div>
         {requireEditConfirmation && confirmSave ? (
           <p className="max-w-2xl rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-foreground">
@@ -572,6 +586,7 @@ export function OwnerUnifiedHistoryTimeline({
     const first = serviceEntries.find((entry) => entry.serviceId === review.candidate.firstServiceId);
     const second = serviceEntries.find((entry) => entry.serviceId === review.candidate.secondServiceId);
     if (!first || !second) return null;
+    const isStrongDuplicate = review.candidate.confidence === "strong";
 
     const sourceLabel = (entry: TimelineEntry) => {
       if (entry.source === "carfax_import") return "CARFAX";
@@ -618,9 +633,15 @@ export function OwnerUnifiedHistoryTimeline({
         <div className="flex items-start gap-2">
           <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-history-highlight" aria-hidden />
           <div>
-            <p className="text-sm font-semibold text-foreground">Assistant prepared one clean record</p>
+            <p className="text-sm font-semibold text-foreground">
+              {isStrongDuplicate
+                ? "Assistant found a strong duplicate signal"
+                : "Assistant found a possible duplicate"}
+            </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Only this detected consecutive pair can be merged. Choose what to keep; typing is optional.
+              {isStrongDuplicate
+                ? "The records share the same mileage, overlapping work, and nearly the same date."
+                : `Matching work was logged ${review.candidate.dayDistance} days and ${review.candidate.mileageDistance.toLocaleString()} mi apart.`} Choose what to keep; merging is always optional.
             </p>
           </div>
         </div>
@@ -936,6 +957,7 @@ export function OwnerUnifiedHistoryTimeline({
 
                     if (isService) {
                       const entry = serviceEntryFromItem(item);
+                      const visitOnly = isVisitOnlyServiceRecord(entry);
                       const Icon = serviceIcon(entry);
                       const isEditing = editingId === item.id;
                       const cardExpanded = isEditing || isExpanded;
@@ -979,7 +1001,7 @@ export function OwnerUnifiedHistoryTimeline({
                                     </Badge>
                                   ) : null}
                                   <Badge variant="secondary" className="text-[10px]">
-                                    Service
+                                    {visitOnly ? "Limited details" : "Service"}
                                   </Badge>
                                 </span>
                               </div>
@@ -988,17 +1010,25 @@ export function OwnerUnifiedHistoryTimeline({
                                 {(item.mileage ?? 0).toLocaleString()} mi
                               </p>
                               {!cardExpanded && item.lineItems[0] ? (
-                                <p className="mt-2 truncate text-sm text-muted-foreground">{item.lineItems[0]}</p>
+                                <p className="mt-2 truncate text-sm text-muted-foreground">
+                                  {visitOnly ? "Dealer visit" : item.lineItems[0]}
+                                </p>
                               ) : null}
                             </div>
                           </button>
                           {!isEditing && cardExpanded ? (
                             <div className="border-t border-border/60 px-3.5 pb-3.5 pt-3 sm:px-4 sm:pb-4">
-                              <ul className="space-y-1.5 text-sm text-foreground/85">
-                                {item.lineItems.map((line) => (
-                                  <li key={line}>{line}</li>
-                                ))}
-                              </ul>
+                              {visitOnly ? (
+                                <p className="rounded-lg bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+                                  CARFAX confirms this dealer visit, but does not say what work was performed.
+                                </p>
+                              ) : (
+                                <ul className="space-y-1.5 text-sm text-foreground/85">
+                                  {item.lineItems.map((line) => (
+                                    <li key={line}>{line}</li>
+                                  ))}
+                                </ul>
+                              )}
                               <div className="mt-3 flex flex-wrap gap-2">
                                 {pendingVerification && onReviewVerification ? (
                                   <Button
@@ -1016,12 +1046,22 @@ export function OwnerUnifiedHistoryTimeline({
                                     type="button"
                                     size="sm"
                                     variant="outline"
-                                    className="border-amber-500/30 bg-amber-500/5 text-amber-700 hover:bg-amber-500/10"
+                                    className={cn(
+                                      duplicateCandidate.confidence === "strong"
+                                        ? "border-amber-500/30 bg-amber-500/5 text-amber-700 hover:bg-amber-500/10"
+                                        : "border-history-highlight/25 bg-history-highlight/[0.04] text-history-highlight hover:bg-history-highlight/10",
+                                    )}
                                     disabled={disabled}
                                     onClick={() => startMergeReview(duplicateCandidate)}
                                   >
-                                    <AlertTriangle className="mr-1.5 h-3.5 w-3.5" aria-hidden />
-                                    Review possible duplicate
+                                    {duplicateCandidate.confidence === "strong" ? (
+                                      <AlertTriangle className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+                                    ) : (
+                                      <Sparkles className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+                                    )}
+                                    {duplicateCandidate.confidence === "strong"
+                                      ? "Review possible duplicate"
+                                      : "May be the same visit"}
                                   </Button>
                                 ) : null}
                                 {onUpdateService ? (
@@ -1033,7 +1073,7 @@ export function OwnerUnifiedHistoryTimeline({
                                     onClick={() => startEditing(entry)}
                                   >
                                     <Pencil className="mr-1.5 h-3.5 w-3.5" aria-hidden />
-                                    Edit record
+                                    {visitOnly ? "Add details" : "Edit record"}
                                   </Button>
                                 ) : null}
                               </div>
