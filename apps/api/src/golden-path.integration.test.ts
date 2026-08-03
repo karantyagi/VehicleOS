@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, it } from "vitest";
 import type { InjectOptions, LightMyRequestResponse } from "fastify";
-import { InMemoryEventStore } from "@vehicleos/domain";
+import { InMemoryEventStore, ONBOARDING_BASELINE_RULE_ID } from "@vehicleos/domain";
 import { InMemoryVehicleRepository } from "@vehicleos/server";
 import { buildApp } from "./app.js";
 
@@ -403,7 +403,7 @@ Cabin air filter $59.00`,
     expect(duplicateBody.created).toHaveLength(0);
   });
 
-  it("records OEM manual schedule into knowledge base and opens a due task", async () => {
+  it("records an OEM manual schedule and starts first-service onboarding without history", async () => {
     const app = await appPromise;
     const client = createAuthClient(app);
 
@@ -442,7 +442,7 @@ Cabin air filter $59.00`,
     expect(confirmBody.knowledgeSchedule.length).toBeGreaterThan(0);
     expect(
       confirmBody.nowQueue.some(
-        (item) => item.ruleId?.startsWith("knowledge.policy.") && item.status === "pending",
+        (item) => item.ruleId === ONBOARDING_BASELINE_RULE_ID && item.status === "pending",
       ),
     ).toBe(true);
 

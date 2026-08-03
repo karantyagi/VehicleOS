@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { deleteUserData, getPool } from "@vehicleos/server";
 import { getSessionUser } from "../../../../lib/auth/session";
+import { isResearchCohortSurface } from "../../../../lib/research-import/policy";
+import { deleteResearchParticipantData } from "../../../../lib/research-import/repository";
 import { createClient } from "../../../../lib/supabase/server";
 import { createAdminClient } from "../../../../lib/supabase/admin";
 import { isAuthEnabled } from "../../../../lib/supabase/env";
@@ -41,7 +43,11 @@ export async function POST(request: Request) {
   }
 
   try {
-    await deleteUserData(getPool(), user.id);
+    if (isResearchCohortSurface()) {
+      await deleteResearchParticipantData(user.id);
+    } else {
+      await deleteUserData(getPool(), user.id);
+    }
 
     const supabase = createClient();
     await supabase.auth.signOut();

@@ -341,5 +341,8 @@ describe("buildOwnerServiceScheduleBoard — 2021 TLX dogfood", () => {
 
     expect(board.summary.needsBaseline).toBe(board.rows.length);
     expect(board.summary.overdue).toBe(0);
+    expect(board.rows.find((row) => row.entryId === "code-b")?.intelligence?.whyNow).toBe(
+      "A service baseline is still needed before VehicleOS can calculate when this is due.",
+    );
   });
 });
