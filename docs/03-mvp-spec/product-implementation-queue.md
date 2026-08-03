@@ -1,6 +1,6 @@
 # Owner product implementation queue
 
-**Updated:** 2026-08-01
+**Updated:** 2026-08-03
 **Scope:** Owner web attention and capture-first mobile
 **Architecture:** [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md) · [ADR-016](../../docs-lite/adr/ADR-016-owner-habits-and-owner-level-compliance.md)
 
@@ -18,7 +18,7 @@ This queue records adopted product direction. It does not authorize notification
 | WEB-ATTN-6 | P0 | Implemented | Retire automatic browser-notification behavior from the current owner slice | The notification-permission hook and automatic browser delivery were removed |
 | WEB-ATTN-7 | P0 | Implemented | Make completion and correction item-aware | Done prefills the exact service; Fix this opens the matched baseline or a prefilled missing record; a successful save reprojects the item |
 | WEB-ATTN-8 | P1 | Implemented | Add stable exact-item navigation targets | Query links can open and focus one reminder or maintenance row; this is routing only, not notification delivery |
-| WEB-ATTN-9 | P1 | Implemented | Treat the first-service prompt as onboarding, not a due task | It has no invented deadline or dismiss controls, opens the service recorder, and auto-completes after the first saved service entry |
+| WEB-ATTN-9 | P1 | Implemented | Treat the first-service prompt as onboarding, not a due task | It has no invented deadline or dismiss controls, takes precedence over an unanchored OEM interval, opens the service recorder, and auto-completes after the first saved service entry |
 | WEB-IA-1 | P1 | Implemented | Simplify persistent owner navigation | Owner navigation is **Home**, **Maintenance**, and **Add records**; rare verification appears contextually on Home |
 | WEB-VERIFY-1 | P0 | Implemented | Separate blocking from advisory owner verification | Blocking questions lead Home; advisory questions follow maintenance attention; no verification surface appears when there are no questions |
 | WEB-VERIFY-2 | P0 | Implemented | Deep-link verification to maintenance truth | Home carries an unresolved count; affected history records show **Needs confirmation**; review opens the exact record or field |

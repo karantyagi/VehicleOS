@@ -10,6 +10,7 @@ import type { MaintenanceRecommendation } from "../policy/types.js";
 import { enrichRecommendationReason } from "../owner-context/enrich-recommendation-reason.js";
 import type { OwnerContextMemory } from "../owner-context/types.js";
 import type { DrivingStyle } from "../schedule/resolve-schedule-projection-context.js";
+import { maintenanceServiceHistory } from "../service/service-record-kind.js";
 import {
   buildTimeFirstTaskCopy,
   matchScheduleRowForRule,
@@ -81,6 +82,7 @@ const dismissStaleKnowledgeReminders = async (input: {
   state: ReturnType<typeof foldEvents>;
   drivingStyle?: DrivingStyle | null;
 }): Promise<number> => {
+  const hasMaintenanceBaseline = maintenanceServiceHistory(input.state.timeline).length > 0;
   const scheduleRows = projectScheduleRowsForRecommendations({
     state: input.state,
     drivingStyle: input.drivingStyle,
@@ -88,8 +90,15 @@ const dismissStaleKnowledgeReminders = async (input: {
 
   const staleTasks = input.state.nowQueue.filter((item) => {
     if (item.status !== "pending" || item.taskKind === "verification") return false;
+    if (!item.ruleId?.startsWith("knowledge.policy.")) return false;
+
+    // Older recommendation runs could convert an empty service history into an
+    // overdue OEM task by treating mile 0 as its baseline. Replace that task
+    // with first-service onboarding on the same refresh instead.
+    if (!hasMaintenanceBaseline) return true;
+
     const row = matchScheduleRowForRule(item.ruleId, scheduleRows);
-    return Boolean(item.ruleId?.startsWith("knowledge.policy.") && row?.status === "upcoming");
+    return row?.status === "upcoming";
   });
 
   for (const task of staleTasks) {

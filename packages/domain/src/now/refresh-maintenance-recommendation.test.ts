@@ -217,4 +217,40 @@ describe("refreshMaintenanceRecommendation", () => {
       "completed",
     );
   });
+
+  it("replaces an unanchored OEM reminder with first-service onboarding", async () => {
+    const eventStore = new InMemoryEventStore();
+    const vehicleId = crypto.randomUUID();
+
+    await eventStore.append({
+      aggregateType: "task",
+      aggregateId: "task-unanchored-oil",
+      eventType: "task.created",
+      eventVersion: 1,
+      payload: {
+        vehicleId,
+        taskId: "task-unanchored-oil",
+        recommendationId: "rec-unanchored-oil",
+        title: "Replace engine oil and filter",
+        reason: "By end of this week.",
+        status: "pending",
+        taskKind: "recommendation",
+        ruleId: "knowledge.policy.code-b.v1",
+      },
+    });
+
+    const result = await refreshMaintenanceRecommendation({
+      eventStore,
+      policyEngine: new StubPolicyEngine(),
+      vehicleId,
+    });
+
+    expect(result.dismissedStaleCount).toBe(1);
+    expect(result.nowQueue.find((item) => item.taskId === "task-unanchored-oil")?.status).toBe(
+      "dismissed",
+    );
+    expect(
+      result.nowQueue.filter((item) => item.status === "pending").map((item) => item.ruleId),
+    ).toEqual([ONBOARDING_BASELINE_RULE_ID]);
+  });
 });
