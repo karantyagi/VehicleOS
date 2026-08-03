@@ -1,6 +1,6 @@
 # Owner product implementation queue
 
-**Updated:** 2026-08-01
+**Updated:** 2026-08-03
 **Scope:** Owner web attention and capture-first mobile
 **Architecture:** [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md) · [ADR-016](../../docs-lite/adr/ADR-016-owner-habits-and-owner-level-compliance.md)
 
@@ -20,6 +20,7 @@ This queue records adopted product direction. It does not authorize notification
 | WEB-ATTN-8 | P1 | Implemented | Add stable exact-item navigation targets | Query links can open and focus one reminder or maintenance row; this is routing only, not notification delivery |
 | WEB-ATTN-9 | P1 | Implemented | Treat the first-service prompt as onboarding, not a due task | It has no invented deadline or dismiss controls, opens the service recorder, and auto-completes after the first saved service entry |
 | WEB-IA-1 | P1 | Implemented | Simplify persistent owner navigation | Owner navigation is **Home**, **Maintenance**, and **Add records**; rare verification appears contextually on Home |
+| WEB-PROFILE-1 | P1 | Implemented | Make vehicle and driving profiles seamless owner surfaces | The garage record loads once behind a neutral skeleton; saved details render read-only first, and an explicit Edit action reveals a cancellable form without flashing default choices |
 | WEB-VERIFY-1 | P0 | Implemented | Separate blocking from advisory owner verification | Blocking questions lead Home; advisory questions follow maintenance attention; no verification surface appears when there are no questions |
 | WEB-VERIFY-2 | P0 | Implemented | Deep-link verification to maintenance truth | Home carries an unresolved count; affected history records show **Needs confirmation**; review opens the exact record or field |
 | WEB-VERIFY-3 | P1 | Implemented | Preserve verification accountability | Resolved confirmations remain available in a collapsed Maintenance history audit trail |

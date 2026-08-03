@@ -7,11 +7,28 @@ import { DriverHabitsPanel } from "@/components/driver-habits-panel";
 import { OwnerContextPanel } from "@/components/owner-context-panel";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { VehicleSettingsPanel } from "@/components/vehicle-settings-panel";
 import { CAR_IDENTITY_NAV } from "@/lib/car-identity-nav";
 import { useGarage } from "@/lib/garage/garage-context";
 import { notify } from "@/lib/notify";
 import { useAppUiStore } from "@/lib/store/app-ui-store";
+
+function ProfileLoadingSkeleton({ label }: { label: string }) {
+  return (
+    <div className="surface-panel space-y-5 rounded-xl border border-border/80 p-6" aria-busy="true" aria-label={`Loading ${label}`}>
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-40" />
+        <Skeleton className="h-4 w-72 max-w-full" />
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full" />
+      </div>
+    </div>
+  );
+}
 
 function GarageWorkspaceContent() {
   const router = useRouter();
@@ -20,6 +37,7 @@ function GarageWorkspaceContent() {
   const isDeveloper = consoleMode === "developer";
   const garage = useGarage();
   const vehicleId = garage.activeVehicleId;
+  const isInitialGarageLoad = garage.isLoading && garage.vehicles.length === 0;
 
   const activeTab = searchParams.get("tab") === "driver" ? "driver" : "car";
   const pageMeta = CAR_IDENTITY_NAV.find((item) => item.id === activeTab) ?? CAR_IDENTITY_NAV[0];
@@ -62,15 +80,27 @@ function GarageWorkspaceContent() {
         className="flex-row items-start justify-between"
       />
 
-      {activeTab === "car" ? (
+      {isInitialGarageLoad ? <ProfileLoadingSkeleton label={pageMeta.label} /> : null}
+
+      {!isInitialGarageLoad && activeTab === "car" ? (
         <div>
-          <VehicleSettingsPanel vehicleId={vehicleId} minimal={!isDeveloper} />
+          <VehicleSettingsPanel
+            key={vehicleId ?? "no-vehicle"}
+            vehicle={garage.activeVehicle}
+            minimal={!isDeveloper}
+            onVehicleUpdated={garage.refreshGarage}
+          />
         </div>
       ) : null}
 
-      {activeTab === "driver" ? (
+      {!isInitialGarageLoad && activeTab === "driver" ? (
         <div className="space-y-6">
-          <DriverHabitsPanel vehicleId={vehicleId} minimal={!isDeveloper} />
+          <DriverHabitsPanel
+            key={vehicleId ?? "no-vehicle"}
+            vehicle={garage.activeVehicle}
+            minimal={!isDeveloper}
+            onVehicleUpdated={garage.refreshGarage}
+          />
           {isDeveloper ? <OwnerContextPanel vehicleId={vehicleId} /> : null}
         </div>
       ) : null}
