@@ -37,6 +37,7 @@ describe("research cohort access policy", () => {
 
   it("permits the research account route while keeping unrelated routes closed", () => {
     expect(isResearchCohortPathAllowed("/research/account")).toBe(true);
+    expect(isResearchCohortPathAllowed("/api/account/delete")).toBe(true);
     expect(isResearchCohortPathAllowed("/settings")).toBe(false);
   });
 
