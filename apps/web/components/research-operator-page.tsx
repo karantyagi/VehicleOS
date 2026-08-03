@@ -60,7 +60,7 @@ const metricCells = (metrics: ResearchAttemptMetrics | null) => ({
   omitted: metrics ? number(metrics.omittedServiceLines) : "—",
 });
 
-export function ResearchOperatorPage({ email }: { email: string | null }) {
+export function ResearchOperatorPage() {
   const [payload, setPayload] = useState<ReportPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -126,19 +126,18 @@ export function ResearchOperatorPage({ email }: { email: string | null }) {
   };
 
   if (loading) {
-    return <main className="mx-auto min-h-screen max-w-6xl px-5 py-10 text-sm text-muted-foreground">Loading research results…</main>;
+    return <section className="px-1 py-2 text-sm text-muted-foreground">Loading research results…</section>;
   }
 
   const report = payload?.report;
   return (
-    <main id="main-content" className="mx-auto min-h-screen max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
-      <header className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-6">
+    <section>
+      <header className="border-b border-border pb-6">
         <div>
           <p className="text-sm font-medium text-primary">VehicleOS research operator</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight">CARFAX import evidence</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Signed in as {email ?? "operator"}</p>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">Review extraction quality, owner corrections, and evidence before changing the import experience.</p>
         </div>
-        <a href="/" className="text-sm font-medium text-primary underline-offset-4 hover:underline">Participant view</a>
       </header>
 
       {error ? <p className="mt-5 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</p> : null}
@@ -303,6 +302,6 @@ export function ResearchOperatorPage({ email }: { email: string | null }) {
           </section>
         </div>
       ) : null}
-    </main>
+    </section>
   );
 }

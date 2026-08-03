@@ -22,7 +22,15 @@ function userLabel(user: SessionUser): string {
   return local.replace(/[._-]/g, " ").replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
-function ResearchAccountMenu({ user, compact = false }: { user: SessionUser; compact?: boolean }) {
+function ResearchAccountMenu({
+  user,
+  compact = false,
+  showAccountData = true,
+}: {
+  user: SessionUser;
+  compact?: boolean;
+  showAccountData?: boolean;
+}) {
   return (
     <div className={cn(!compact && "border-t border-sidebar-border px-2 py-3")}>
       <DropdownMenu>
@@ -55,13 +63,15 @@ function ResearchAccountMenu({ user, compact = false }: { user: SessionUser; com
                 <span className="text-sm font-medium text-foreground">Theme</span>
                 <ThemeSegmentedToggle />
               </div>
-              <a
-                href="#research-account"
-                className="group relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/80"
-              >
-                <ShieldCheck className="h-4 w-4 text-muted-foreground" aria-hidden />
-                Account & data
-              </a>
+              {showAccountData ? (
+                <a
+                  href="#research-account"
+                  className="group relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/80"
+                >
+                  <ShieldCheck className="h-4 w-4 text-muted-foreground" aria-hidden />
+                  Account & data
+                </a>
+              ) : null}
             </div>
             <div className="my-1 h-px bg-border/80" />
             <form action="/auth/signout" method="post" className="p-1">
@@ -84,11 +94,17 @@ export function ResearchCohortShell({
   children,
   user,
   operator,
+  mode = "participant",
 }: {
   children: ReactNode;
   user: SessionUser | null;
   operator: boolean;
+  mode?: "participant" | "operator";
 }) {
+  const operatorConsole = mode === "operator";
+  const researchLabel = operatorConsole ? "CARFAX import operations" : "CARFAX import research";
+  const mobileLabel = operatorConsole ? "VehicleOS operations" : "VehicleOS research";
+
   const navItem = (href: string, label: string, icon: ReactNode) => (
     <Link
       href={href}
@@ -104,33 +120,43 @@ export function ResearchCohortShell({
       <aside className="hidden w-72 shrink-0 border-r border-sidebar-border bg-sidebar shadow-[1px_0_0_hsl(var(--sidebar-border))] lg:block">
         <div className="sticky top-0 flex h-screen flex-col">
           <div className="border-b border-sidebar-border px-4 py-4">
-            <Link href="/" className="flex items-center gap-2.5 text-sm font-semibold tracking-tight text-foreground no-underline hover:opacity-90">
+            <Link href={operatorConsole ? "/research/admin" : "/"} className="flex items-center gap-2.5 text-sm font-semibold tracking-tight text-foreground no-underline hover:opacity-90">
               <LogoMark />
               <span>VehicleOS</span>
             </Link>
-            <p className="mt-2 text-xs font-medium text-primary">CARFAX import research</p>
+            <p className="mt-2 text-xs font-medium text-primary">{researchLabel}</p>
           </div>
           <nav className="px-3 py-3" aria-label="Research navigation">
-            {navItem("/", "Import research", <ClipboardCheck className="h-4 w-4" aria-hidden />)}
-            {operator ? navItem("/research/admin", "Research results", <BarChart3 className="h-4 w-4" aria-hidden />) : null}
+            {operatorConsole
+              ? navItem("/research/admin", "Evidence & metrics", <BarChart3 className="h-4 w-4" aria-hidden />)
+              : (
+                <>
+                  {navItem("/", "Import research", <ClipboardCheck className="h-4 w-4" aria-hidden />)}
+                  {operator ? navItem("/research/admin", "Research results", <BarChart3 className="h-4 w-4" aria-hidden />) : null}
+                </>
+              )}
           </nav>
           <div className="mx-4 border-t border-sidebar-border" aria-hidden />
-          <p className="px-4 pt-4 text-xs leading-5 text-muted-foreground">Invite-only. Your upload is for parser research, never your maintenance history.</p>
+          <p className="px-4 pt-4 text-xs leading-5 text-muted-foreground">
+            {operatorConsole
+              ? "Internal console. Sensitive source access is audited."
+              : "Invite-only. Your upload is for parser research, never your maintenance history."}
+          </p>
           <div className="flex-1" />
-          {user ? <ResearchAccountMenu user={user} /> : null}
+          {user ? <ResearchAccountMenu user={user} showAccountData={!operatorConsole} /> : null}
         </div>
       </aside>
 
       <div className="flex min-h-[100dvh] min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-border bg-background/95 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:hidden">
-          <Link href="/" className="flex min-w-0 flex-1 items-center gap-2.5 text-sm font-semibold tracking-tight text-foreground no-underline">
+          <Link href={operatorConsole ? "/research/admin" : "/"} className="flex min-w-0 flex-1 items-center gap-2.5 text-sm font-semibold tracking-tight text-foreground no-underline">
             <LogoMark />
-            <span className="truncate">VehicleOS research</span>
+            <span className="truncate">{mobileLabel}</span>
           </Link>
-          {user ? <ResearchAccountMenu user={user} compact /> : null}
+          {user ? <ResearchAccountMenu user={user} compact showAccountData={!operatorConsole} /> : null}
         </header>
         <main id="main-content" className="flex-1 bg-muted/25 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
-          <div className="mx-auto w-full max-w-3xl">{children}</div>
+          <div className={cn("mx-auto w-full", operatorConsole ? "max-w-6xl" : "max-w-3xl")}>{children}</div>
         </main>
       </div>
     </div>
