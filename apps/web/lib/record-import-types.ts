@@ -59,17 +59,19 @@ export type RecordImportCategory = {
   pdfInstructions: string[];
 };
 
+export const CARFAX_PDF_INSTRUCTIONS = [
+  "Sign in at carfax.com → My Car Maintenance → your vehicle → Service History.",
+  "Print the full history page (Ctrl+P / Cmd+P) → Save as PDF.",
+  "Upload the PDF here — the assistant extracts rows for your review.",
+];
+
 export const RECORD_IMPORT_CATEGORIES: RecordImportCategory[] = [
   {
     id: "carfax",
     label: "CARFAX service history",
-    description: "Maintenance visits from CARFAX Car Care — feeds your service history and schedule baseline.",
+    description: "Maintenance visits from CARFAX My Car Maintenance — feeds your service history and schedule baseline.",
     status: "pdf-ready",
-    pdfInstructions: [
-      "Sign in at carfax.com → Car Care → your vehicle → Service History.",
-      "Print the full history page (Ctrl+P / Cmd+P) → Save as PDF.",
-      "Upload the PDF here — the assistant extracts rows for your review.",
-    ],
+    pdfInstructions: CARFAX_PDF_INSTRUCTIONS,
   },
   {
     id: "rmv",
