@@ -11,13 +11,17 @@ import {
 import {
   RESEARCH_IMPORT_BUCKET,
   claimResearchImportRunForProcessing,
+  completeResearchImportQuota,
   createResearchImportAttempts,
   deleteResearchImportRun,
+  getResearchParticipantQuota,
   listResearchImportRuns,
+  releaseResearchImportQuota,
   refreshResearchComparisonObservation,
   updateResearchImportRun,
   updateResearchImportSourceAnalysis,
 } from "../../../../lib/research-import/repository";
+import { researchDraftLimit, researchQuotaSubject } from "../../../../lib/research-import/quota";
 import type { ResearchAttemptStoreInput, ResearchExtractionStrategy } from "../../../../lib/research-import/types";
 import { createAdminClient } from "../../../../lib/supabase/admin";
 
@@ -61,8 +65,15 @@ export async function GET() {
   const access = await getResearchAccess();
   if (!access.ok) return accessError(access.reason);
 
+  const quotaSubject = researchQuotaSubject(access.participant.email);
+  if (!quotaSubject) return NextResponse.json({ error: "research_quota_not_configured" }, { status: 503 });
+
   try {
-    return NextResponse.json({ runs: await listResearchImportRuns(access.participant.id) });
+    const [runs, quota] = await Promise.all([
+      listResearchImportRuns(access.participant.id),
+      getResearchParticipantQuota({ subjectHmac: quotaSubject, limit: researchDraftLimit() }),
+    ]);
+    return NextResponse.json({ runs, quota });
   } catch {
     return NextResponse.json({ error: "research_not_configured" }, { status: 503 });
   }
@@ -155,14 +166,24 @@ export async function POST(request: Request) {
       errorCode: selection.errorCode,
     });
     if (!run) throw new Error("Research run disappeared before extraction completed");
-    await refreshResearchComparisonObservation(run.id);
+    if (selection.status === "extracted") {
+      const completed = await completeResearchImportQuota(run.id);
+      if (!completed) throw new Error("Research quota reservation was unavailable");
+    } else {
+      await releaseResearchImportQuota(run.id);
+    }
+    await refreshResearchComparisonObservation(run.id).catch(() => null);
     return NextResponse.json({ run }, { status: 201 });
   } catch {
+    await releaseResearchImportQuota(claimed.id).catch(() => null);
     await updateResearchImportRun({
       id: claimed.id,
       userId: access.participant.id,
       status: "extract-failed",
       errorCode: "paired-pipeline-failed",
+      draft: null,
+      displayedStrategy: null,
+      displayOverrideReason: null,
     }).catch(() => null);
     return NextResponse.json({ error: "research_not_configured_or_unavailable" }, { status: 503 });
   }

@@ -11,6 +11,10 @@ const processingRoute = readFileSync(
   new URL("../../app/api/research/imports/route.ts", import.meta.url),
   "utf8",
 );
+const quotaMigration = readFileSync(
+  new URL("../../../../ops/research-cohort/003_participant_quota.sql", import.meta.url),
+  "utf8",
+);
 
 describe("research security and retention contract", () => {
   it("requires the full-PDF consent version", () => {
@@ -39,5 +43,13 @@ describe("research security and retention contract", () => {
     expect(processingRoute).toContain("pdfBuffer.length !== claimed.fileBytes");
     expect(processingRoute).toContain("contentSha256 !== claimed.contentSha256");
     expect(processingRoute).toContain('error: "upload_integrity_mismatch"');
+  });
+
+  it("keeps the capped pilot quota service-role-only and deletion-safe", () => {
+    expect(quotaMigration).toContain("subject_hmac text primary key");
+    expect(quotaMigration).toContain("run_id uuid null unique references research_import_runs(id) on delete set null");
+    expect(quotaMigration).toContain("active_slots >= 1");
+    expect(quotaMigration).toContain("revoke all on function reserve_research_import_quota");
+    expect(quotaMigration).toContain("grant execute on function reserve_research_import_quota(uuid, text, integer) to service_role");
   });
 });

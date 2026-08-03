@@ -82,6 +82,18 @@ type ResearchObservationRow = {
   observed_at: string;
 };
 
+type ResearchQuotaRow = {
+  successful_drafts: number;
+  active_slots: number;
+};
+
+export type ResearchParticipantQuota = {
+  successfulDrafts: number;
+  activeSlots: number;
+  limit: number;
+  remaining: number;
+};
+
 const nullableNumber = (value: number | string | null): number | null => {
   if (value === null) return null;
   const number = typeof value === "number" ? value : Number.parseFloat(value);
@@ -174,6 +186,68 @@ export const createResearchImportRun = async (input: ResearchRunStoreInput): Pro
     .single();
   if (error || !data) throw new Error(error?.message ?? "Could not create research import run");
   return rowToRun(data as ResearchRunRow);
+};
+
+export const discardInitializedResearchImportRun = async (input: { id: string; userId: string }): Promise<void> => {
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("research_import_runs")
+    .delete()
+    .eq("id", input.id)
+    .eq("user_id", input.userId)
+    .eq("status", "uploaded");
+  if (error) throw new Error(error.message);
+};
+
+export const reserveResearchImportQuota = async (input: {
+  runId: string;
+  subjectHmac: string;
+  limit: number;
+}): Promise<boolean> => {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc("reserve_research_import_quota", {
+    p_run_id: input.runId,
+    p_subject_hmac: input.subjectHmac,
+    p_max_successful_drafts: input.limit,
+  });
+  if (error) throw new Error(error.message);
+  return data === true;
+};
+
+export const completeResearchImportQuota = async (runId: string): Promise<boolean> => {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc("complete_research_import_quota", { p_run_id: runId });
+  if (error) throw new Error(error.message);
+  return data === true;
+};
+
+export const releaseResearchImportQuota = async (runId: string): Promise<boolean> => {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc("release_research_import_quota", { p_run_id: runId });
+  if (error) throw new Error(error.message);
+  return data === true;
+};
+
+export const getResearchParticipantQuota = async (input: {
+  subjectHmac: string;
+  limit: number;
+}): Promise<ResearchParticipantQuota> => {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("research_participant_quotas")
+    .select("successful_drafts, active_slots")
+    .eq("subject_hmac", input.subjectHmac)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  const row = data as ResearchQuotaRow | null;
+  const successfulDrafts = row?.successful_drafts ?? 0;
+  const activeSlots = row?.active_slots ?? 0;
+  return {
+    successfulDrafts,
+    activeSlots,
+    limit: input.limit,
+    remaining: Math.max(0, input.limit - successfulDrafts - activeSlots),
+  };
 };
 
 export const claimResearchImportRunForProcessing = async (input: {
@@ -522,7 +596,7 @@ export const deleteResearchImportRun = async (input: {
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("research_import_runs")
-    .select("storage_key")
+    .select("id, storage_key")
     .eq("id", input.id)
     .eq("user_id", input.userId)
     .maybeSingle();
@@ -534,6 +608,8 @@ export const deleteResearchImportRun = async (input: {
     await recordResearchDeletionAudit({ action: "delete-run", outcome: "failed", objectCount: 0, errorClass: "storage-remove-failed" });
     throw new Error(storageError.message);
   }
+
+  await releaseResearchImportQuota(data.id).catch(() => null);
 
   const { error: deleteError } = await admin
     .from("research_import_runs")
@@ -550,7 +626,7 @@ export const deleteResearchImportRun = async (input: {
 
 export const deleteResearchParticipantData = async (userId: string): Promise<void> => {
   const admin = createAdminClient();
-  const { data, error } = await admin.from("research_import_runs").select("storage_key").eq("user_id", userId);
+  const { data, error } = await admin.from("research_import_runs").select("id, storage_key").eq("user_id", userId);
   if (error) throw new Error(error.message);
 
   const storageKeys = (data ?? []).map((run) => run.storage_key).filter((key): key is string => Boolean(key));
@@ -561,6 +637,8 @@ export const deleteResearchParticipantData = async (userId: string): Promise<voi
       throw new Error(storageError.message);
     }
   }
+
+  await Promise.all((data ?? []).map((run) => releaseResearchImportQuota(run.id).catch(() => null)));
 
   const { error: deleteError } = await admin.from("research_import_runs").delete().eq("user_id", userId);
   if (deleteError) {
@@ -585,6 +663,8 @@ export const purgeExpiredResearchImportRuns = async (limit = 20): Promise<{ cons
   for (const run of data ?? []) {
     const { error: storageError } = await admin.storage.from(RESEARCH_IMPORT_BUCKET).remove([run.storage_key]);
     if (storageError) continue;
+
+    await releaseResearchImportQuota(run.id).catch(() => null);
 
     const { error: deleteError } = await admin
       .from("research_import_runs")

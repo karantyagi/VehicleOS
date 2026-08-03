@@ -29,6 +29,11 @@ Create one invite-only research surface, research.vehicleos.app:
    product-import or event-store write capability.
 7. Treat an owner correction as a potential private regression candidate only
    with an additional consent flag and human de-identification review.
+8. Route allowlisted operators directly to the protected evidence console;
+   participants see only their upload/review flow. Give each participant five
+   successful-draft slots during the pilot, one active import at a time.
+   Parsing failures release their temporary slot. A deletion-safe HMAC-derived
+   quota count persists without retaining the raw email or Auth user id.
 
 ## Boundary
 

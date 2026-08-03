@@ -20,6 +20,7 @@ writes to the owner event store.
 | Product writes | None. A research draft can only be reviewed or deleted |
 | Raw-PDF retention | 30 days by default, configurable from 1 to 90 days |
 | Long-term learning | Anonymous comparison counts and ratios remain after temporary source data is deleted |
+| Pilot quota | Five successful drafts per participant, one active import at a time; parser failures release the slot |
 
 The public repository holds the schema contract and representative request
 boundary. A production-tuned instruction may be supplied through the
@@ -53,7 +54,9 @@ state is a research outcome, not a silent fallback. The portal provides a
 visible sign-out control and a research-account deletion flow that removes the
 participant's stored PDFs, drafts, attempts, corrections, and Auth user.
 Anonymous measurements may remain, but include no account id, PDF, VIN,
-filename, provider, draft, extracted text, or evidence excerpt.
+filename, provider, draft, extracted text, or evidence excerpt. A separate
+HMAC-derived quota count may remain so deleting and re-signing-in cannot reset
+the five-draft pilot limit; it retains no raw email or Auth user id.
 
 ## Supabase setup
 
@@ -63,9 +66,10 @@ Auth users, service-role key, or connection string.
 1. Run the normal VehicleOS migrations required to create the base app.
 2. Run ops/research-cohort/001_research_import_cohort.sql.
 3. Run ops/research-cohort/002_paired_extraction_evaluation.sql.
-4. Configure Google sign-in and the callback URL for research.vehicleos.app.
-5. Keep the research-imports bucket private.
-6. Set the database and Supabase environment values only in the research
+4. Run ops/research-cohort/003_participant_quota.sql.
+5. Configure Google sign-in and the callback URL for research.vehicleos.app.
+6. Keep the research-imports bucket private.
+7. Set the database and Supabase environment values only in the research
    Vercel project.
 
 The migrations create the temporary research run, its two extraction attempts,
@@ -93,6 +97,8 @@ OPENAI_API_KEY=<research-project-only-openai-key>
 RESEARCH_OPENAI_MODEL=gpt-5-mini-2025-08-07
 RESEARCH_OPENAI_TIMEOUT_MS=45000
 RESEARCH_RETENTION_DAYS=30
+RESEARCH_MAX_SUCCESSFUL_DRAFTS=5
+RESEARCH_QUOTA_HMAC_SECRET=<at-least-32-character-random-string>
 RESEARCH_PROMOTION_MIN_REVIEWED=25
 # Current gpt-5-mini rates; re-check when changing the model:
 RESEARCH_OPENAI_INPUT_COST_PER_MILLION=0.25
@@ -116,6 +122,12 @@ downloads the object with the service role, revalidates its bytes and PDF
 signature, and recomputes the SHA-256 digest before model calls. Storage URLs
 and provider file metadata use fixed opaque filenames, not the owner's original
 filename.
+
+The research login uses the shared application code but the research Supabase
+Auth tenant, so it is not the same session or user database as the owner app.
+After sign-in, an allowlisted operator is routed only to the protected evidence
+console; an invited participant is routed only to upload and review. Both reach
+account deletion from the account menu, not the draft screen.
 
 For local visual and route testing:
 

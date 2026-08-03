@@ -6,6 +6,13 @@ import { createClient as createSupabaseClient } from "@/lib/supabase/client";
 
 type PortalError = string | null;
 
+type ResearchParticipantQuota = {
+  successfulDrafts: number;
+  activeSlots: number;
+  limit: number;
+  remaining: number;
+};
+
 const statusCopy: Record<ResearchImportRun["status"], string> = {
   uploaded: "Uploaded",
   processing: "Creating your draft.",
@@ -28,6 +35,9 @@ const readableError = (error: string): string =>
     research_not_configured_or_unavailable: "The research service is unavailable. Please try again later.",
     upload_not_ready_or_already_processed: "That upload could not be processed. Please upload the PDF again.",
     invalid_file_digest: "We could not verify that PDF. Please choose it again.",
+    research_quota_reached: "You have reached this pilot's usable-draft limit. Ask Karan if you have another PDF to include.",
+    research_import_in_progress: "Your current PDF is still being processed. Please wait before starting another one.",
+    research_quota_not_configured: "This research portal is not configured yet. Please tell Karan.",
   })[error] ?? "Something went wrong. Please try again.";
 
 const sha256 = async (file: File): Promise<string> => {
@@ -58,64 +68,6 @@ const emptyRecord = (): ResearchServiceRecord => ({
   confidence: 1,
   evidence: "Added by owner",
 });
-
-function ResearchAccountControl({ email }: { email: string }) {
-  const [confirmText, setConfirmText] = useState("");
-  const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<PortalError>(null);
-
-  const deleteAccount = async () => {
-    if (confirmText !== "DELETE" || deleting) return;
-    setDeleting(true);
-    setDeleteError(null);
-    try {
-      const response = await fetch("/api/account/delete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ confirm: "DELETE" }),
-      });
-      const body = (await response.json()) as { deleted?: boolean; error?: string };
-      if (!response.ok || !body.deleted) throw new Error(body.error ?? "Could not delete your research account.");
-      window.location.assign("/login?deleted=1");
-    } catch (error) {
-      setDeleteError(error instanceof Error ? error.message : "Could not delete your research account.");
-      setDeleting(false);
-    }
-  };
-
-  return (
-    <details id="research-account" className="mt-4 border-t border-border pt-4 text-sm">
-      <summary className="cursor-pointer font-medium text-foreground">Account</summary>
-      <div className="mt-3 rounded-lg border border-border bg-card p-3">
-        <p className="break-all text-xs text-muted-foreground">{email}</p>
-        <p className="mt-4 text-sm font-medium text-destructive">Delete research account</p>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">
-          This removes your stored PDFs, drafts, and sign-in. Anonymous quality counts may remain, but they contain no
-          PDF, VIN, filename, shop, draft, or account identifier.
-        </p>
-        <label className="mt-3 block text-xs font-medium text-foreground">
-          Type DELETE to confirm
-          <input
-            value={confirmText}
-            onChange={(event) => setConfirmText(event.target.value)}
-            autoComplete="off"
-            spellCheck={false}
-            className="mt-1 h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
-          />
-        </label>
-        <button
-          type="button"
-          disabled={confirmText !== "DELETE" || deleting}
-          onClick={() => void deleteAccount()}
-          className="mt-3 inline-flex h-9 items-center justify-center rounded-md bg-destructive px-3 text-sm font-medium text-destructive-foreground disabled:opacity-50"
-        >
-          {deleting ? "Deleting…" : "Delete account"}
-        </button>
-        {deleteError ? <p className="mt-2 text-xs text-destructive">{deleteError}</p> : null}
-      </div>
-    </details>
-  );
-}
 
 function ResearchRunReview({
   run,
@@ -273,23 +225,27 @@ function ResearchRunReview({
   );
 }
 
-export function ResearchCohortPage({ email, invited }: { email: string | null; invited: boolean }) {
+export function ResearchCohortPage({ invited }: { invited: boolean }) {
   const [file, setFile] = useState<File | null>(null);
   const [consent, setConsent] = useState(false);
   const [runs, setRuns] = useState<ResearchImportRun[]>([]);
+  const [quota, setQuota] = useState<ResearchParticipantQuota | null>(null);
   const [loadingRuns, setLoadingRuns] = useState(invited);
   const [submitting, setSubmitting] = useState(false);
   const [fileInputKey, setFileInputKey] = useState(0);
   const [error, setError] = useState<PortalError>(null);
+  const importInProgress = (quota?.activeSlots ?? 0) > 0;
+  const pilotLimitReached = quota?.remaining === 0;
 
   useEffect(() => {
     if (!invited) return;
     const load = async () => {
       try {
         const response = await fetch("/api/research/imports");
-        const body = (await response.json()) as { runs?: ResearchImportRun[]; error?: string };
+        const body = (await response.json()) as { runs?: ResearchImportRun[]; quota?: ResearchParticipantQuota; error?: string };
         if (!response.ok) throw new Error(readableError(body.error ?? ""));
         setRuns(body.runs ?? []);
+        setQuota(body.quota ?? null);
       } catch (loadError) {
         setError(loadError instanceof Error ? loadError.message : "Could not load your research uploads.");
       } finally {
@@ -346,6 +302,11 @@ export function ResearchCohortPage({ email, invited }: { email: string | null; i
       const body = (await response.json()) as { run?: ResearchImportRun; error?: string };
       if (!response.ok || !body.run) throw new Error(readableError(body.error ?? ""));
       setRuns((current) => [body.run as ResearchImportRun, ...current]);
+      if (body.run.status === "extracted") {
+        setQuota((current) => current
+          ? { ...current, successfulDrafts: current.successfulDrafts + 1, remaining: Math.max(0, current.remaining - 1) }
+          : current);
+      }
       setFile(null);
       setFileInputKey((current) => current + 1);
       setConsent(false);
@@ -396,7 +357,6 @@ export function ResearchCohortPage({ email, invited }: { email: string | null; i
           Upload a CARFAX PDF. We use an AI-assisted parser to make a draft for you to check. Nothing here is added to
           your VehicleOS maintenance history.
         </p>
-        {email ? <ResearchAccountControl email={email} /> : null}
       </header>
 
       {!invited ? (
@@ -412,7 +372,7 @@ export function ResearchCohortPage({ email, invited }: { email: string | null; i
           <form onSubmit={(event) => void submit(event)} className="mt-8 rounded-xl border border-border bg-card p-5 shadow-sm">
             <h2 className="text-lg font-semibold">Upload a CARFAX PDF</h2>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              In CARFAX, choose Print, then save as a PDF. Files can be up to 15 MB.
+              In CARFAX, choose Print, then save as a PDF. Files can be up to 15 MB. This pilot allows up to {quota?.limit ?? 5} usable drafts; a processing failure does not use a slot.
             </p>
             <label className="mt-4 block rounded-lg border border-dashed border-border bg-background p-4 text-sm">
               <span className="font-medium">Choose CARFAX PDF</span>
@@ -447,17 +407,19 @@ export function ResearchCohortPage({ email, invited }: { email: string | null; i
             {error ? <p className="mt-4 text-sm text-destructive">{error}</p> : null}
             <button
               type="submit"
-              disabled={!file || !consent || submitting}
+              disabled={!file || !consent || submitting || pilotLimitReached || importInProgress}
               className="mt-5 inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 disabled:opacity-50"
             >
-              {submitting ? "Making your draft…" : "Make my draft"}
+              {submitting ? "Making your draft…" : importInProgress ? "Current import processing" : pilotLimitReached ? "Pilot limit reached" : "Make my draft"}
             </button>
           </form>
 
           <section className="mt-8">
             <div className="flex items-baseline justify-between gap-3">
               <h2 className="text-lg font-semibold">Your drafts</h2>
-              <span className="text-xs text-muted-foreground">{loadingRuns ? "Loading…" : runs.length + " uploads"}</span>
+              <span className="text-xs text-muted-foreground">
+                {loadingRuns ? "Loading…" : quota ? `${quota.successfulDrafts} of ${quota.limit} usable drafts` : `${runs.length} uploads`}
+              </span>
             </div>
             {!loadingRuns && runs.length === 0 ? (
               <p className="mt-3 rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">

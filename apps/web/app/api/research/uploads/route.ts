@@ -2,7 +2,13 @@ import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getResearchAccess } from "../../../../lib/research-import/access";
 import { assignResearchStrategy } from "../../../../lib/research-import/experiment";
-import { createResearchImportRun } from "../../../../lib/research-import/repository";
+import {
+  createResearchImportRun,
+  discardInitializedResearchImportRun,
+  getResearchParticipantQuota,
+  reserveResearchImportQuota,
+} from "../../../../lib/research-import/repository";
+import { researchDraftLimit, researchQuotaSubject } from "../../../../lib/research-import/quota";
 import { RESEARCH_CONSENT_VERSION } from "../../../../lib/research-import/types";
 import { sanitizeEvidenceFileName } from "../../../../lib/receipt-storage";
 
@@ -46,9 +52,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "invalid_file_digest" }, { status: 400 });
   }
 
+  const quotaSubject = researchQuotaSubject(access.participant.email);
+  if (!quotaSubject) return NextResponse.json({ error: "research_quota_not_configured" }, { status: 503 });
+
   const runId = randomUUID();
   const safeFileName = sanitizeEvidenceFileName(body.fileName, "carfax.pdf");
   const storageKey = `${access.participant.id}/${runId}/source.pdf`;
+  let initialized = false;
   try {
     const run = await createResearchImportRun({
       id: runId,
@@ -65,8 +75,21 @@ export async function POST(request: Request) {
       deleteAfter: retentionDeadline(),
       assignedStrategy: assignResearchStrategy(runId),
     });
+    initialized = true;
+    const reserved = await reserveResearchImportQuota({
+      runId,
+      subjectHmac: quotaSubject,
+      limit: researchDraftLimit(),
+    });
+    if (!reserved) {
+      await discardInitializedResearchImportRun({ id: runId, userId: access.participant.id });
+      const quota = await getResearchParticipantQuota({ subjectHmac: quotaSubject, limit: researchDraftLimit() });
+      if (quota.activeSlots > 0) return NextResponse.json({ error: "research_import_in_progress" }, { status: 409 });
+      return NextResponse.json({ error: "research_quota_reached" }, { status: 429 });
+    }
     return NextResponse.json({ run, upload: { path: storageKey } }, { status: 201 });
   } catch {
+    if (initialized) await discardInitializedResearchImportRun({ id: runId, userId: access.participant.id }).catch(() => null);
     return NextResponse.json({ error: "research_not_configured_or_unavailable" }, { status: 503 });
   }
 }

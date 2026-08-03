@@ -25,11 +25,9 @@ function userLabel(user: SessionUser): string {
 function ResearchAccountMenu({
   user,
   compact = false,
-  showAccountData = true,
 }: {
   user: SessionUser;
   compact?: boolean;
-  showAccountData?: boolean;
 }) {
   return (
     <div className={cn(!compact && "border-t border-sidebar-border px-2 py-3")}>
@@ -63,15 +61,13 @@ function ResearchAccountMenu({
                 <span className="text-sm font-medium text-foreground">Theme</span>
                 <ThemeSegmentedToggle />
               </div>
-              {showAccountData ? (
-                <a
-                  href="#research-account"
-                  className="group relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/80"
-                >
-                  <ShieldCheck className="h-4 w-4 text-muted-foreground" aria-hidden />
-                  Account & data
-                </a>
-              ) : null}
+              <Link
+                href="/research/account"
+                className="group relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/80"
+              >
+                <ShieldCheck className="h-4 w-4 text-muted-foreground" aria-hidden />
+                Account & data
+              </Link>
             </div>
             <div className="my-1 h-px bg-border/80" />
             <form action="/auth/signout" method="post" className="p-1">
@@ -143,7 +139,7 @@ export function ResearchCohortShell({
               : "Invite-only. Your upload is for parser research, never your maintenance history."}
           </p>
           <div className="flex-1" />
-          {user ? <ResearchAccountMenu user={user} showAccountData={!operatorConsole} /> : null}
+          {user ? <ResearchAccountMenu user={user} /> : null}
         </div>
       </aside>
 
@@ -153,7 +149,7 @@ export function ResearchCohortShell({
             <LogoMark />
             <span className="truncate">{mobileLabel}</span>
           </Link>
-          {user ? <ResearchAccountMenu user={user} compact showAccountData={!operatorConsole} /> : null}
+          {user ? <ResearchAccountMenu user={user} compact /> : null}
         </header>
         <main id="main-content" className="flex-1 bg-muted/25 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
           <div className={cn("mx-auto w-full", operatorConsole ? "max-w-6xl" : "max-w-3xl")}>{children}</div>
