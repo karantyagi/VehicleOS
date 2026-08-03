@@ -25,6 +25,7 @@ export const isResearchCohortPathAllowed = (pathname: string): boolean =>
   pathname === "/research/admin" ||
   pathname === "/research/account" ||
   pathname.startsWith("/auth/") ||
+  pathname === "/api/account/delete" ||
   pathname === "/api/health" ||
   pathname.startsWith("/api/research/");
 

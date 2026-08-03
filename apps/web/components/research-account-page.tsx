@@ -47,16 +47,19 @@ export function ResearchAccountPage({ email, operator }: { email: string; operat
             It never deletes other participants&apos; research. If this email remains on the operator allowlist, signing in again restores operator access.
           </p>
         ) : null}
-        <label className="mt-5 block text-sm font-medium text-foreground">
-          Type DELETE to confirm
+        <div className="mt-5">
+          <label htmlFor="research-account-delete-confirm" className="block text-sm font-medium text-foreground">
+            Type DELETE to confirm
+          </label>
           <input
+            id="research-account-delete-confirm"
             value={confirmText}
             onChange={(event) => setConfirmText(event.target.value)}
             autoComplete="off"
             spellCheck={false}
-            className="mt-2 h-10 w-full max-w-md rounded-md border border-input bg-background px-3 text-sm"
+            className="mt-2 block h-10 w-full max-w-sm rounded-md border border-input bg-background px-3 text-sm"
           />
-        </label>
+        </div>
         <button
           type="button"
           disabled={confirmText !== "DELETE" || deleting}
