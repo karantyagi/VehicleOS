@@ -41,6 +41,27 @@ describe("research OpenAI extractor boundary", () => {
     expect(MAX_RESEARCH_INPUT_CHARS).toBe(60_000);
   });
 
+  it("accepts structured text returned through the response output items", () => {
+    expect(
+      parseOpenAiResearchResponse({
+        output: [{
+          type: "message",
+          content: [{ type: "output_text", text: JSON.stringify(validDraft) }],
+        }],
+      }),
+    ).toEqual(validDraft);
+  });
+
+  it("keeps a safe provider failure category for operator diagnosis", async () => {
+    const fetchImpl = vi.fn(async () => new Response(
+      JSON.stringify({ error: { code: "invalid_request_error" } }),
+      { status: 400, headers: { "x-request-id": "request-400", "content-type": "application/json" } },
+    ));
+
+    const result = await extractResearchCarfaxTextDraft({ rawText: "CARFAX", apiKey: "test-key", fetchImpl: fetchImpl as typeof fetch });
+    expect(result).toMatchObject({ ok: false, errorCode: "model-request-failed:http-400-invalid_request_error", providerRequestId: "request-400" });
+  });
+
   it("sends a request-scoped PDF with storage disabled and strict schema output", async () => {
     const fetchImpl = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => new Response(
       JSON.stringify({ output_text: JSON.stringify(validDraft), usage: { input_tokens: 20, output_tokens: 10, total_tokens: 30 } }),

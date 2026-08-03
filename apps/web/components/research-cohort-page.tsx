@@ -84,15 +84,10 @@ function ResearchAccountControl({ email }: { email: string }) {
   };
 
   return (
-    <details className="mt-4 border-t border-border pt-4 text-sm">
+    <details id="research-account" className="mt-4 border-t border-border pt-4 text-sm">
       <summary className="cursor-pointer font-medium text-foreground">Account</summary>
       <div className="mt-3 rounded-lg border border-border bg-card p-3">
         <p className="break-all text-xs text-muted-foreground">{email}</p>
-        <form action="/auth/signout" method="post" className="mt-3">
-          <button type="submit" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
-            Sign out
-          </button>
-        </form>
         <p className="mt-4 text-sm font-medium text-destructive">Delete research account</p>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           This removes your stored PDFs, drafts, and sign-in. Anonymous quality counts may remain, but they contain no
@@ -278,7 +273,7 @@ function ResearchRunReview({
   );
 }
 
-export function ResearchCohortPage({ email, invited, operator }: { email: string | null; invited: boolean; operator: boolean }) {
+export function ResearchCohortPage({ email, invited }: { email: string | null; invited: boolean }) {
   const [file, setFile] = useState<File | null>(null);
   const [consent, setConsent] = useState(false);
   const [runs, setRuns] = useState<ResearchImportRun[]>([]);
@@ -394,13 +389,9 @@ export function ResearchCohortPage({ email, invited, operator }: { email: string
   };
 
   return (
-    <main id="main-content" className="mx-auto min-h-screen max-w-3xl px-5 py-8 sm:px-8 sm:py-12">
+    <section>
       <header className="border-b border-border pb-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm font-medium text-primary">VehicleOS research</p>
-          {operator ? <a href="/research/admin" className="text-sm font-medium text-primary underline-offset-4 hover:underline">Research results</a> : null}
-        </div>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Help improve CARFAX import.</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Help improve CARFAX import.</h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
           Upload a CARFAX PDF. We use an AI-assisted parser to make a draft for you to check. Nothing here is added to
           your VehicleOS maintenance history.
@@ -500,6 +491,6 @@ export function ResearchCohortPage({ email, invited, operator }: { email: string
           </section>
         </>
       )}
-    </main>
+    </section>
   );
 }

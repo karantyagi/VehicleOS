@@ -245,6 +245,13 @@ export function ResearchOperatorPage({ email }: { email: string | null }) {
                         <p className="rounded-md bg-muted p-2">Direct PDF: {challengerMetrics.corrections} changes · {challengerMetrics.unsupported} rejected · {challengerMetrics.omitted} omitted</p>
                       </div>
                     ) : <p className="mt-3 text-xs text-muted-foreground">Waiting for the owner correction.</p>}
+                    {run.attempts.some((attempt) => attempt.errorCode) ? (
+                      <div className="mt-3 rounded-md border border-amber-500/30 bg-amber-500/5 p-2 text-xs text-muted-foreground">
+                        {run.attempts.filter((attempt) => attempt.errorCode).map((attempt) => (
+                          <p key={attempt.strategy}>{attempt.strategy}: {attempt.errorCode}</p>
+                        ))}
+                      </div>
+                    ) : null}
                   </article>
                 );
               })}
@@ -273,6 +280,9 @@ export function ResearchOperatorPage({ email }: { email: string | null }) {
               {detail.run.attempts.map((attempt) => (
                 <div key={attempt.strategy} className="min-w-0 rounded-lg border border-border p-3">
                   <h3 className="text-sm font-semibold">{attempt.strategy}</h3>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {attempt.status}{attempt.errorCode ? ` · ${attempt.errorCode}` : ""}{attempt.providerRequestId ? ` · request ${attempt.providerRequestId}` : ""}
+                  </p>
                   <pre className="mt-2 max-h-80 overflow-auto whitespace-pre-wrap break-words text-xs text-muted-foreground">{JSON.stringify(attempt.draft, null, 2)}</pre>
                 </div>
               ))}

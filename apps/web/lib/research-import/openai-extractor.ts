@@ -14,6 +14,12 @@ type OpenAiUsage = {
 
 type OpenAiResponse = {
   output_text?: string;
+  output?: Array<{
+    type?: string;
+    content?: Array<{ type?: string; text?: string; refusal?: string }>;
+  }>;
+  status?: string;
+  incomplete_details?: { reason?: string };
   usage?: OpenAiUsage;
   error?: { message?: string; code?: string };
 };
@@ -32,7 +38,7 @@ export type ResearchExtractionResult =
   | ({ ok: true; draft: ResearchImportDraft } & ExtractionTelemetry)
   | ({
       ok: false;
-      errorCode: "model-not-configured" | "model-response-invalid" | "model-request-failed";
+      errorCode: string;
     } & ExtractionTelemetry);
 
 const publicContractInstructions = [
@@ -43,13 +49,41 @@ const publicContractInstructions = [
   "Each record needs short evidence tied to the source. This is a proposal for an owner to review; it never commits data.",
 ].join(" ");
 
+const outputText = (payload: OpenAiResponse): string | null => {
+  if (payload.output_text) return payload.output_text;
+  for (const item of payload.output ?? []) {
+    for (const content of item.content ?? []) {
+      if (content.type === "output_text" && typeof content.text === "string") return content.text;
+    }
+  }
+  return null;
+};
+
 export const parseOpenAiResearchResponse = (payload: OpenAiResponse): ResearchImportDraft | null => {
-  if (!payload.output_text) return null;
+  const text = outputText(payload);
+  if (!text) return null;
   try {
-    return parseResearchImportDraft(JSON.parse(payload.output_text));
+    return parseResearchImportDraft(JSON.parse(text));
   } catch {
     return null;
   }
+};
+
+const safeProviderCode = (value: unknown): string | null =>
+  typeof value === "string" && /^[a-z0-9_-]{1,80}$/i.test(value) ? value.toLowerCase() : null;
+
+const responseInvalidCode = (payload: OpenAiResponse): string => {
+  const incompleteReason = safeProviderCode(payload.incomplete_details?.reason);
+  if (payload.status === "incomplete") {
+    return incompleteReason ? `model-response-invalid:incomplete-${incompleteReason}` : "model-response-invalid:incomplete";
+  }
+  const refused = payload.output?.some((item) => item.content?.some((content) => content.type === "refusal"));
+  return refused ? "model-response-invalid:refusal" : "model-response-invalid";
+};
+
+const requestFailureCode = (status: number, providerCode: unknown): string => {
+  const safeCode = safeProviderCode(providerCode);
+  return safeCode ? `model-request-failed:http-${status}-${safeCode}` : `model-request-failed:http-${status}`;
 };
 
 const finiteTokenCount = (value: number | undefined): number | null =>
@@ -140,9 +174,10 @@ const extractWithContent = async (input: {
 
   const providerRequestId = response.headers.get("x-request-id");
   if (!response.ok) {
+    const failurePayload = await response.json().catch(() => null) as OpenAiResponse | null;
     return {
       ok: false,
-      errorCode: "model-request-failed",
+      errorCode: requestFailureCode(response.status, failurePayload?.error?.code),
       model,
       latencyMs: Date.now() - startedAt,
       inputTokens: null,
@@ -164,7 +199,7 @@ const extractWithContent = async (input: {
     providerRequestId,
   };
   const draft = parseOpenAiResearchResponse(payload);
-  if (!draft) return { ok: false, errorCode: "model-response-invalid", ...telemetry };
+  if (!draft) return { ok: false, errorCode: responseInvalidCode(payload), ...telemetry };
   return { ok: true, draft, ...telemetry };
 };
 
