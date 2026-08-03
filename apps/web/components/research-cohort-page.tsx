@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { CARFAX_PDF_INSTRUCTIONS } from "@/lib/record-import-types";
 import { RESEARCH_IMPORT_BUCKET, type ResearchImportDraft, type ResearchImportRun, type ResearchServiceRecord } from "@/lib/research-import/types";
 import { createClient as createSupabaseClient } from "@/lib/supabase/client";
 
@@ -369,6 +370,15 @@ export function ResearchCohortPage({ invited }: { invited: boolean }) {
         </section>
       ) : (
         <>
+          <section className="mt-6 rounded-xl border border-border bg-[hsl(var(--surface-inset))] p-5">
+            <h2 className="text-lg font-semibold">How to get your PDF</h2>
+            <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-muted-foreground">
+              {CARFAX_PDF_INSTRUCTIONS.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </section>
+
           <form onSubmit={(event) => void submit(event)} className="mt-8 rounded-xl border border-border bg-card p-5 shadow-sm">
             <h2 className="text-lg font-semibold">Upload a CARFAX PDF</h2>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
