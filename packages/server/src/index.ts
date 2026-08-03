@@ -6,6 +6,7 @@ export {
 } from "./services/shop-location-lookup-service.js";
 export { deleteUserData } from "./account/delete-user-data.js";
 export { getPool, closePool } from "./db/pool.js";
+export { extractPdfText } from "./import/pdf-text.js";
 export {
   createVehicle,
   decideOnTask,

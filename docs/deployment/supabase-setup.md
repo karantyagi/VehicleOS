@@ -17,6 +17,14 @@ The hosted Owners app (`apps/web` on Vercel) runs API route handlers that connec
 
 `apps/worker` stays local/optional until background jobs ship. When they do, you can add Railway/Fly **only for the worker** — Postgres still lives on Supabase.
 
+## Import research cohort isolation
+
+The import research cohort is a separate Supabase project, not a new table in
+the hosted owner project. It has its own Auth tenant, private storage bucket,
+database URL, anon key, and service-role key. Apply the cohort-specific
+operator migration only to that research project. See
+[Import Research Cohort](../research-import-cohort.md).
+
 ## One-time Supabase setup
 
 1. [Supabase Dashboard](https://supabase.com/dashboard) → **New project**
