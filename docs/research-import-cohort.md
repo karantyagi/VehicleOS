@@ -96,6 +96,7 @@ RESEARCH_OPERATOR_ALLOWLIST=you@example.com
 OPENAI_API_KEY=<research-project-only-openai-key>
 RESEARCH_OPENAI_MODEL=gpt-5-mini-2025-08-07
 RESEARCH_OPENAI_TIMEOUT_MS=45000
+RESEARCH_OPENAI_MAX_OUTPUT_TOKENS=8000
 RESEARCH_RETENTION_DAYS=30
 RESEARCH_MAX_SUCCESSFUL_DRAFTS=5
 RESEARCH_QUOTA_HMAC_SECRET=<at-least-32-character-random-string>
@@ -129,6 +130,12 @@ After sign-in, an allowlisted operator is routed only to the protected evidence
 console; an invited participant is routed only to upload and review. Both reach
 account deletion from the account menu, not the draft screen.
 
+The research surface deliberately does not register the owner PWA service
+worker or load Vercel Analytics / Speed Insights. They are not needed to run a
+consented document study and this keeps the route-restricted research surface
+free of injected script-routing dependencies. The owner app keeps those shell
+integrations.
+
 For local visual and route testing:
 
 ~~~text
@@ -150,6 +157,22 @@ For every failure:
 4. Use the anonymous paired metrics and source adjudication to classify the failure.
 5. Make the parser or prompt change in the appropriate public/private boundary.
 6. Re-run synthetic, licensed, or separately consented private fixtures before promotion.
+
+### Failure triage
+
+A failed PDF is an expected research observation; it must not consume a pilot
+slot or become a silent generic error. The protected operator queue shows the
+per-strategy status, safe error code, model, latency, token count, and provider
+request ID. Vercel logs contain matching `research_import_attempt_failure`
+events keyed only by opaque run ID. They never log the PDF, filename, VIN,
+extracted text, draft, or provider response body.
+
+Before inviting more participants after a deployment, verify that
+`GET /sw.js` returns JavaScript without a redirect, the research browser
+console is clean, and one consented synthetic or separately approved PDF
+produces a visible paired-attempt outcome. A 201 response means the research
+run was recorded; it does not by itself prove that either model attempt made a
+reviewable draft.
 
 The 30-day cohort is an evaluation pipeline, not permanent PDF-fixture storage.
 A useful direct-PDF regression fixture still contains the source document, so

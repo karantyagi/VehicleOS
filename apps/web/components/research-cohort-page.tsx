@@ -20,7 +20,7 @@ const statusCopy: Record<ResearchImportRun["status"], string> = {
   "text-unavailable": "This PDF does not contain selectable text.",
   "model-not-configured": "The document was stored, but the research extractor is not enabled yet.",
   extracted: "Draft ready for your review.",
-  "extract-failed": "We could not create a usable draft from this document.",
+  "extract-failed": "This PDF did not produce a reviewable draft. It did not use one of your pilot slots. Try CARFAX Print, then Save as PDF.",
   reviewed: "Your corrections were saved.",
 };
 
