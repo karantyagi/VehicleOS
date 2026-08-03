@@ -1,15 +1,25 @@
 import { createAdminClient } from "../supabase/admin";
+import { attemptMetrics, canSkipSourceAdjudication } from "./comparison";
 import {
   RESEARCH_IMPORT_SOURCE,
+  RESEARCH_IMPORT_BUCKET,
   RESEARCH_PROMPT_VERSION,
   RESEARCH_SCHEMA_VERSION,
+  type ResearchAdjudicationStatus,
+  type ResearchAttemptMetrics,
+  type ResearchAttemptStoreInput,
+  type ResearchComparisonObservation,
+  type ResearchDeletionAuditEvent,
+  type ResearchExtractionAttempt,
+  type ResearchExtractionStrategy,
   type ResearchImportDraft,
   type ResearchImportRun,
+  type ResearchOperatorRun,
   type ResearchRunStatus,
   type ResearchRunStoreInput,
 } from "./types";
 
-export const RESEARCH_IMPORT_BUCKET = "research-imports";
+export { RESEARCH_IMPORT_BUCKET } from "./types";
 
 type ResearchRunRow = {
   id: string;
@@ -21,9 +31,61 @@ type ResearchRunRow = {
   text_character_count: number | null;
   model: string | null;
   prompt_version: string;
+  assigned_strategy: ResearchExtractionStrategy | null;
+  displayed_strategy: ResearchExtractionStrategy | null;
+  display_override_reason: string | null;
   draft_json: unknown;
   owner_draft_json: unknown;
   error_code: string | null;
+};
+
+type ResearchAttemptRow = {
+  strategy: ResearchExtractionStrategy;
+  status: ResearchExtractionAttempt["status"];
+  model: string | null;
+  prompt_version: string;
+  schema_version: string;
+  input_character_count: number | null;
+  input_tokens: number | null;
+  output_tokens: number | null;
+  total_tokens: number | null;
+  latency_ms: number | null;
+  estimated_cost_usd: number | string | null;
+  provider_request_id: string | null;
+  draft_json: unknown;
+  error_code: string | null;
+};
+
+type ResearchOperatorRunRow = ResearchRunRow & {
+  consent_version: string;
+  adjudication_status: ResearchAdjudicationStatus;
+  adjudication_notes: string | null;
+  adjudicated_at: string | null;
+  research_import_attempts: ResearchAttemptRow[] | null;
+};
+
+type ResearchObservationRow = {
+  id: string;
+  run_id: string | null;
+  displayed_strategy: ResearchExtractionStrategy | null;
+  baseline_status: ResearchExtractionAttempt["status"];
+  challenger_status: ResearchExtractionAttempt["status"];
+  baseline_metrics: unknown;
+  challenger_metrics: unknown;
+  baseline_latency_ms: number | null;
+  challenger_latency_ms: number | null;
+  baseline_total_tokens: number | null;
+  challenger_total_tokens: number | null;
+  baseline_estimated_cost_usd: number | string | null;
+  challenger_estimated_cost_usd: number | string | null;
+  adjudication_status: ResearchAdjudicationStatus;
+  observed_at: string;
+};
+
+const nullableNumber = (value: number | string | null): number | null => {
+  if (value === null) return null;
+  const number = typeof value === "number" ? value : Number.parseFloat(value);
+  return Number.isFinite(number) ? number : null;
 };
 
 const rowToRun = (row: ResearchRunRow): ResearchImportRun => ({
@@ -41,8 +103,47 @@ const rowToRun = (row: ResearchRunRow): ResearchImportRun => ({
   errorCode: row.error_code,
 });
 
+const rowToAttempt = (row: ResearchAttemptRow): ResearchExtractionAttempt => ({
+  strategy: row.strategy,
+  status: row.status,
+  model: row.model,
+  promptVersion: row.prompt_version,
+  schemaVersion: row.schema_version,
+  inputCharacterCount: row.input_character_count,
+  inputTokens: row.input_tokens,
+  outputTokens: row.output_tokens,
+  totalTokens: row.total_tokens,
+  latencyMs: row.latency_ms,
+  estimatedCostUsd: nullableNumber(row.estimated_cost_usd),
+  providerRequestId: row.provider_request_id,
+  draft: row.draft_json as ResearchImportDraft | null,
+  errorCode: row.error_code,
+});
+
+const rowToObservation = (row: ResearchObservationRow): ResearchComparisonObservation => ({
+  id: row.id,
+  runId: row.run_id,
+  displayedStrategy: row.displayed_strategy,
+  baselineStatus: row.baseline_status,
+  challengerStatus: row.challenger_status,
+  baselineMetrics: row.baseline_metrics as ResearchAttemptMetrics | null,
+  challengerMetrics: row.challenger_metrics as ResearchAttemptMetrics | null,
+  baselineLatencyMs: row.baseline_latency_ms,
+  challengerLatencyMs: row.challenger_latency_ms,
+  baselineTotalTokens: row.baseline_total_tokens,
+  challengerTotalTokens: row.challenger_total_tokens,
+  baselineEstimatedCostUsd: nullableNumber(row.baseline_estimated_cost_usd),
+  challengerEstimatedCostUsd: nullableNumber(row.challenger_estimated_cost_usd),
+  adjudicationStatus: row.adjudication_status,
+  observedAt: row.observed_at,
+});
+
 const runColumns =
-  "id, source, status, file_name, created_at, delete_after, text_character_count, model, prompt_version, draft_json, owner_draft_json, error_code";
+  "id, source, status, file_name, created_at, delete_after, text_character_count, model, prompt_version, assigned_strategy, displayed_strategy, display_override_reason, draft_json, owner_draft_json, error_code";
+const attemptColumns =
+  "strategy, status, model, prompt_version, schema_version, input_character_count, input_tokens, output_tokens, total_tokens, latency_ms, estimated_cost_usd, provider_request_id, draft_json, error_code";
+const observationColumns =
+  "id, run_id, displayed_strategy, baseline_status, challenger_status, baseline_metrics, challenger_metrics, baseline_latency_ms, challenger_latency_ms, baseline_total_tokens, challenger_total_tokens, baseline_estimated_cost_usd, challenger_estimated_cost_usd, adjudication_status, observed_at";
 
 export const createResearchImportRun = async (input: ResearchRunStoreInput): Promise<ResearchImportRun> => {
   const admin = createAdminClient();
@@ -63,6 +164,7 @@ export const createResearchImportRun = async (input: ResearchRunStoreInput): Pro
       model: input.model,
       prompt_version: input.promptVersion ?? RESEARCH_PROMPT_VERSION,
       schema_version: RESEARCH_SCHEMA_VERSION,
+      assigned_strategy: input.assignedStrategy,
       draft_json: input.draft ?? null,
       owner_draft_json: input.ownerDraft ?? null,
       error_code: input.errorCode ?? null,
@@ -74,20 +176,107 @@ export const createResearchImportRun = async (input: ResearchRunStoreInput): Pro
   return rowToRun(data as ResearchRunRow);
 };
 
+export const claimResearchImportRunForProcessing = async (input: {
+  id: string;
+  userId: string;
+}): Promise<{
+  id: string;
+  storageKey: string;
+  fileName: string;
+  fileBytes: number;
+  contentSha256: string;
+  assignedStrategy: ResearchExtractionStrategy;
+} | null> => {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("research_import_runs")
+    .update({ status: "processing", updated_at: new Date().toISOString() })
+    .eq("id", input.id)
+    .eq("user_id", input.userId)
+    .eq("status", "uploaded")
+    .select("id, storage_key, file_name, file_bytes, content_sha256, assigned_strategy")
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data?.assigned_strategy) return null;
+  return {
+    id: data.id,
+    storageKey: data.storage_key,
+    fileName: data.file_name,
+    fileBytes: data.file_bytes,
+    contentSha256: data.content_sha256,
+    assignedStrategy: data.assigned_strategy as ResearchExtractionStrategy,
+  };
+};
+
+export const updateResearchImportSourceAnalysis = async (input: {
+  id: string;
+  userId: string;
+  contentSha256: string;
+  fileBytes: number;
+  textCharacterCount: number;
+}): Promise<void> => {
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("research_import_runs")
+    .update({
+      content_sha256: input.contentSha256,
+      file_bytes: input.fileBytes,
+      text_character_count: input.textCharacterCount,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", input.id)
+    .eq("user_id", input.userId);
+  if (error) throw new Error(error.message);
+};
+
+export const createResearchImportAttempts = async (
+  inputs: ResearchAttemptStoreInput[],
+): Promise<ResearchExtractionAttempt[]> => {
+  if (!inputs.length) return [];
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("research_import_attempts")
+    .upsert(
+      inputs.map((input) => ({
+        run_id: input.runId,
+        strategy: input.strategy,
+        status: input.status,
+        model: input.model,
+        prompt_version: input.promptVersion ?? RESEARCH_PROMPT_VERSION,
+        schema_version: RESEARCH_SCHEMA_VERSION,
+        input_character_count: input.inputCharacterCount ?? null,
+        input_tokens: input.inputTokens ?? null,
+        output_tokens: input.outputTokens ?? null,
+        total_tokens: input.totalTokens ?? null,
+        latency_ms: input.latencyMs ?? null,
+        estimated_cost_usd: input.estimatedCostUsd ?? null,
+        provider_request_id: input.providerRequestId ?? null,
+        draft_json: input.draft ?? null,
+        error_code: input.errorCode ?? null,
+      })),
+      { onConflict: "run_id,strategy" },
+    )
+    .select(attemptColumns);
+  if (error) throw new Error(error.message);
+  return ((data ?? []) as ResearchAttemptRow[]).map(rowToAttempt);
+};
+
 export const updateResearchImportRun = async (input: {
   id: string;
   userId: string;
   status: ResearchRunStatus;
   model?: string | null;
+  displayedStrategy?: ResearchExtractionStrategy | null;
+  displayOverrideReason?: string | null;
   draft?: ResearchImportDraft | null;
   ownerDraft?: ResearchImportDraft | null;
   errorCode?: string | null;
 }): Promise<ResearchImportRun | null> => {
   const admin = createAdminClient();
-  const patch: Record<string, unknown> = {
-    status: input.status,
-  };
+  const patch: Record<string, unknown> = { status: input.status, updated_at: new Date().toISOString() };
   if ("model" in input) patch.model = input.model ?? null;
+  if ("displayedStrategy" in input) patch.displayed_strategy = input.displayedStrategy ?? null;
+  if ("displayOverrideReason" in input) patch.display_override_reason = input.displayOverrideReason ?? null;
   if ("errorCode" in input) patch.error_code = input.errorCode ?? null;
   if (input.draft !== undefined) patch.draft_json = input.draft;
   if (input.ownerDraft !== undefined) patch.owner_draft_json = input.ownerDraft;
@@ -115,6 +304,217 @@ export const listResearchImportRuns = async (userId: string): Promise<ResearchIm
   return ((data ?? []) as ResearchRunRow[]).map(rowToRun);
 };
 
+export const listResearchOperatorRuns = async (): Promise<ResearchOperatorRun[]> => {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("research_import_runs")
+    .select(`${runColumns}, consent_version, adjudication_status, adjudication_notes, adjudicated_at, research_import_attempts(${attemptColumns})`)
+    .order("created_at", { ascending: false })
+    .limit(100);
+  if (error) throw new Error(error.message);
+  return ((data ?? []) as unknown as ResearchOperatorRunRow[]).map((row) => ({
+    ...rowToRun(row),
+    consentVersion: row.consent_version,
+    assignedStrategy: row.assigned_strategy,
+    displayedStrategy: row.displayed_strategy,
+    displayOverrideReason: row.display_override_reason,
+    attempts: (row.research_import_attempts ?? []).map(rowToAttempt),
+    adjudicationStatus: row.adjudication_status,
+    adjudicationNotes: row.adjudication_notes,
+    adjudicatedAt: row.adjudicated_at,
+  }));
+};
+
+export const getResearchOperatorRunDetail = async (
+  runId: string,
+): Promise<{ run: ResearchOperatorRun; pdfUrl: string } | null> => {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("research_import_runs")
+    .select(`${runColumns}, consent_version, adjudication_status, adjudication_notes, adjudicated_at, storage_key, research_import_attempts(${attemptColumns})`)
+    .eq("id", runId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+  const row = data as unknown as ResearchOperatorRunRow & { storage_key: string };
+  const { data: signedData, error: signedError } = await admin.storage
+    .from(RESEARCH_IMPORT_BUCKET)
+    .createSignedUrl(row.storage_key, 300);
+  if (signedError || !signedData?.signedUrl) throw new Error(signedError?.message ?? "Could not sign research PDF");
+  return {
+    run: {
+      ...rowToRun(row),
+      consentVersion: row.consent_version,
+      assignedStrategy: row.assigned_strategy,
+      displayedStrategy: row.displayed_strategy,
+      displayOverrideReason: row.display_override_reason,
+      attempts: (row.research_import_attempts ?? []).map(rowToAttempt),
+      adjudicationStatus: row.adjudication_status,
+      adjudicationNotes: row.adjudication_notes,
+      adjudicatedAt: row.adjudicated_at,
+    },
+    pdfUrl: signedData.signedUrl,
+  };
+};
+
+export const listResearchComparisonObservations = async (): Promise<ResearchComparisonObservation[]> => {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("research_comparison_observations")
+    .select(observationColumns)
+    .order("observed_at", { ascending: false })
+    .limit(1000);
+  if (error) throw new Error(error.message);
+  return ((data ?? []) as ResearchObservationRow[]).map(rowToObservation);
+};
+
+export const listResearchDeletionAuditEvents = async (): Promise<ResearchDeletionAuditEvent[]> => {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("research_deletion_audit_events")
+    .select("id, action, outcome, object_count, error_class, created_at")
+    .order("created_at", { ascending: false })
+    .limit(20);
+  if (error) throw new Error(error.message);
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    action: row.action as ResearchDeletionAuditEvent["action"],
+    outcome: row.outcome as ResearchDeletionAuditEvent["outcome"],
+    objectCount: row.object_count,
+    errorClass: row.error_class,
+    createdAt: row.created_at,
+  }));
+};
+
+export const refreshResearchComparisonObservation = async (runId: string): Promise<void> => {
+  const admin = createAdminClient();
+  const { data: runData, error: runError } = await admin
+    .from("research_import_runs")
+    .select("id, consent_version, displayed_strategy, owner_draft_json")
+    .eq("id", runId)
+    .maybeSingle();
+  if (runError) throw new Error(runError.message);
+  if (!runData) return;
+
+  const { data: attemptData, error: attemptError } = await admin
+    .from("research_import_attempts")
+    .select(attemptColumns)
+    .eq("run_id", runId);
+  if (attemptError) throw new Error(attemptError.message);
+
+  const attempts = ((attemptData ?? []) as ResearchAttemptRow[]).map(rowToAttempt);
+  const baseline = attempts.find((attempt) => attempt.strategy === "text-first");
+  const challenger = attempts.find((attempt) => attempt.strategy === "direct-pdf");
+  if (!baseline || !challenger) return;
+  const ownerDraft = runData.owner_draft_json as ResearchImportDraft | null;
+  const baselineMetrics = ownerDraft ? attemptMetrics(baseline, ownerDraft) : null;
+  const challengerMetrics = ownerDraft ? attemptMetrics(challenger, ownerDraft) : null;
+  const adjudicationStatus: ResearchAdjudicationStatus = ownerDraft && canSkipSourceAdjudication({
+    baseline,
+    challenger,
+    baselineMetrics,
+    challengerMetrics,
+  })
+    ? "not-required"
+    : "pending";
+  const now = new Date().toISOString();
+
+  const { error: observationError } = await admin.from("research_comparison_observations").upsert(
+    {
+      run_id: runId,
+      consent_version: runData.consent_version,
+      displayed_strategy: runData.displayed_strategy,
+      baseline_status: baseline.status,
+      challenger_status: challenger.status,
+      baseline_metrics: baselineMetrics,
+      challenger_metrics: challengerMetrics,
+      baseline_latency_ms: baseline.latencyMs,
+      challenger_latency_ms: challenger.latencyMs,
+      baseline_total_tokens: baseline.totalTokens,
+      challenger_total_tokens: challenger.totalTokens,
+      baseline_estimated_cost_usd: baseline.estimatedCostUsd,
+      challenger_estimated_cost_usd: challenger.estimatedCostUsd,
+      adjudication_status: adjudicationStatus,
+      observed_at: now,
+      updated_at: now,
+    },
+    { onConflict: "run_id" },
+  );
+  if (observationError) throw new Error(observationError.message);
+
+  if (ownerDraft) {
+    const { error: runUpdateError } = await admin
+      .from("research_import_runs")
+      .update({ adjudication_status: adjudicationStatus, updated_at: now })
+      .eq("id", runId);
+    if (runUpdateError) throw new Error(runUpdateError.message);
+  }
+};
+
+export const updateResearchAdjudication = async (input: {
+  runId: string;
+  operatorId: string;
+  status: Exclude<ResearchAdjudicationStatus, "pending">;
+  notes: string | null;
+}): Promise<boolean> => {
+  const admin = createAdminClient();
+  const now = new Date().toISOString();
+  const { data, error } = await admin
+    .from("research_import_runs")
+    .update({
+      adjudication_status: input.status,
+      adjudication_notes: input.notes,
+      adjudicated_at: now,
+      adjudicated_by: input.operatorId,
+      updated_at: now,
+    })
+    .eq("id", input.runId)
+    .select("id")
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return false;
+
+  const { error: observationError } = await admin
+    .from("research_comparison_observations")
+    .update({ adjudication_status: input.status, updated_at: now })
+    .eq("run_id", input.runId);
+  if (observationError) throw new Error(observationError.message);
+  return true;
+};
+
+export const recordResearchOperatorAudit = async (input: {
+  operatorId: string;
+  action: "view-report" | "view-run-detail" | "adjudicate-run";
+  runId?: string | null;
+}): Promise<void> => {
+  const admin = createAdminClient();
+  const { error } = await admin.from("research_operator_audit_events").insert({
+    operator_user_id: input.operatorId,
+    action: input.action,
+    run_id: input.runId ?? null,
+  });
+  if (error) throw new Error(error.message);
+};
+
+const recordResearchDeletionAudit = async (input: {
+  action: "delete-run" | "delete-participant" | "retention-cleanup";
+  outcome: "succeeded" | "failed" | "partial";
+  objectCount: number;
+  errorClass?: string | null;
+}): Promise<void> => {
+  try {
+    const admin = createAdminClient();
+    await admin.from("research_deletion_audit_events").insert({
+      action: input.action,
+      outcome: input.outcome,
+      object_count: input.objectCount,
+      error_class: input.errorClass ?? null,
+    });
+  } catch {
+    // Deletion must not be rolled back because its privacy-safe audit write failed.
+  }
+};
+
 export const deleteResearchImportRun = async (input: {
   id: string;
   userId: string;
@@ -130,14 +530,21 @@ export const deleteResearchImportRun = async (input: {
   if (!data?.storage_key) return "not-found";
 
   const { error: storageError } = await admin.storage.from(RESEARCH_IMPORT_BUCKET).remove([data.storage_key]);
-  if (storageError) throw new Error(storageError.message);
+  if (storageError) {
+    await recordResearchDeletionAudit({ action: "delete-run", outcome: "failed", objectCount: 0, errorClass: "storage-remove-failed" });
+    throw new Error(storageError.message);
+  }
 
   const { error: deleteError } = await admin
     .from("research_import_runs")
     .delete()
     .eq("id", input.id)
     .eq("user_id", input.userId);
-  if (deleteError) throw new Error(deleteError.message);
+  if (deleteError) {
+    await recordResearchDeletionAudit({ action: "delete-run", outcome: "failed", objectCount: 1, errorClass: "database-delete-failed" });
+    throw new Error(deleteError.message);
+  }
+  await recordResearchDeletionAudit({ action: "delete-run", outcome: "succeeded", objectCount: 1 });
   return "deleted";
 };
 
@@ -149,11 +556,18 @@ export const deleteResearchParticipantData = async (userId: string): Promise<voi
   const storageKeys = (data ?? []).map((run) => run.storage_key).filter((key): key is string => Boolean(key));
   if (storageKeys.length > 0) {
     const { error: storageError } = await admin.storage.from(RESEARCH_IMPORT_BUCKET).remove(storageKeys);
-    if (storageError) throw new Error(storageError.message);
+    if (storageError) {
+      await recordResearchDeletionAudit({ action: "delete-participant", outcome: "failed", objectCount: 0, errorClass: "storage-remove-failed" });
+      throw new Error(storageError.message);
+    }
   }
 
   const { error: deleteError } = await admin.from("research_import_runs").delete().eq("user_id", userId);
-  if (deleteError) throw new Error(deleteError.message);
+  if (deleteError) {
+    await recordResearchDeletionAudit({ action: "delete-participant", outcome: "failed", objectCount: storageKeys.length, errorClass: "database-delete-failed" });
+    throw new Error(deleteError.message);
+  }
+  await recordResearchDeletionAudit({ action: "delete-participant", outcome: "succeeded", objectCount: storageKeys.length });
 };
 
 export const purgeExpiredResearchImportRuns = async (limit = 20): Promise<{ considered: number; deleted: number }> => {
@@ -179,5 +593,11 @@ export const purgeExpiredResearchImportRuns = async (limit = 20): Promise<{ cons
       .lt("delete_after", now);
     if (!deleteError) deleted += 1;
   }
+  await recordResearchDeletionAudit({
+    action: "retention-cleanup",
+    outcome: deleted === (data?.length ?? 0) ? "succeeded" : deleted === 0 ? "failed" : "partial",
+    objectCount: deleted,
+    errorClass: deleted === (data?.length ?? 0) ? null : "one-or-more-deletions-failed",
+  });
   return { considered: data?.length ?? 0, deleted };
 };

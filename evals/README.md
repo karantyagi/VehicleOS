@@ -46,6 +46,14 @@ When we score extraction quality (private goldens in `vehicleos-engine/evals/gol
 | **Confidence calibration** | Low-confidence rows routed to human review — never silent promote |
 | **No hallucinated services** | Zero invented line items not on source document |
 
+For the paired CARFAX experiment in
+[ADR-017](../docs-lite/adr/ADR-017-paired-carfax-pdf-extraction-evaluation.md),
+score `text-first` and `direct-pdf` attempts from the same document against the
+owner-corrected draft. Record which attempt the owner saw, and manually
+adjudicate whole-visit disagreements against the source to control for anchoring
+bias. Compare paired quality, correction burden, latency, tokens, and cost; do
+not select a strategy from aggregate schema validity alone.
+
 ## Running evals locally
 
 ```bash

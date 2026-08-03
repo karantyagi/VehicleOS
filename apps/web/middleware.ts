@@ -8,6 +8,7 @@ export async function middleware(request: import("next/server").NextRequest) {
     const allowed =
       pathname === "/" ||
       pathname === "/login" ||
+      pathname === "/research/admin" ||
       pathname.startsWith("/auth/") ||
       pathname === "/api/health" ||
       pathname.startsWith("/api/research/");

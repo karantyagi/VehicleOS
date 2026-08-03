@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { isResearchCohortSurface, isResearchParticipantAllowed, parseResearchAllowlist } from "./policy.js";
+import {
+  isResearchCohortSurface,
+  isResearchOperatorAllowed,
+  isResearchParticipantAllowed,
+  parseResearchAllowlist,
+} from "./policy.js";
 
 describe("research cohort access policy", () => {
   it("normalizes the explicit invite allowlist", () => {
@@ -27,5 +32,12 @@ describe("research cohort access policy", () => {
   it("is only active in the dedicated research deployment", () => {
     expect(isResearchCohortSurface("research-cohort")).toBe(true);
     expect(isResearchCohortSurface("owner-app")).toBe(false);
+  });
+
+  it("keeps product-owner access separate from cohort invitations", () => {
+    const person = { id: "user-1", email: "owner@example.com" };
+    expect(isResearchParticipantAllowed(person, { allowlist: "owner@example.com", authDisabled: "false" })).toBe(true);
+    expect(isResearchOperatorAllowed(person, { allowlist: "operator@example.com", authDisabled: "false" })).toBe(false);
+    expect(isResearchOperatorAllowed(person, { allowlist: "OWNER@example.com", authDisabled: "false" })).toBe(true);
   });
 });

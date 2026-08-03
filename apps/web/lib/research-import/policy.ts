@@ -34,6 +34,21 @@ export const isResearchParticipantAllowed = (
   return allowlist.has(normalizeEmail(participant.email));
 };
 
+export const isResearchOperatorAllowed = (
+  participant: ResearchParticipant | null,
+  options: {
+    allowlist?: string | undefined;
+    authDisabled?: string | undefined;
+  } = {},
+): boolean => {
+  if (!participant) return false;
+  if ((options.authDisabled ?? process.env.AUTH_DISABLED) === "true") return true;
+  if (!participant.email) return false;
+
+  const allowlist = parseResearchAllowlist(options.allowlist ?? process.env.RESEARCH_OPERATOR_ALLOWLIST);
+  return allowlist.has(normalizeEmail(participant.email));
+};
+
 export const researchAccessFailure = (
   participant: ResearchParticipant | null,
 ): "not-research-surface" | "sign-in-required" | "not-invited" | null => {

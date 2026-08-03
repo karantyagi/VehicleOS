@@ -1,31 +1,61 @@
-import { createHash, randomUUID } from "node:crypto";
+import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { extractPdfText } from "@vehicleos/server";
 import { getResearchAccess } from "../../../../lib/research-import/access";
-import { DEFAULT_RESEARCH_IMPORT_MODEL, extractResearchCarfaxDraft } from "../../../../lib/research-import/openai-extractor";
+import { selectDisplayedAttempt } from "../../../../lib/research-import/experiment";
+import {
+  extractResearchCarfaxPdfDraft,
+  extractResearchCarfaxTextDraft,
+  type ResearchExtractionResult,
+} from "../../../../lib/research-import/openai-extractor";
 import {
   RESEARCH_IMPORT_BUCKET,
-  createResearchImportRun,
+  claimResearchImportRunForProcessing,
+  createResearchImportAttempts,
+  deleteResearchImportRun,
   listResearchImportRuns,
+  refreshResearchComparisonObservation,
+  updateResearchImportRun,
+  updateResearchImportSourceAnalysis,
 } from "../../../../lib/research-import/repository";
-import { sanitizeEvidenceFileName } from "../../../../lib/receipt-storage";
+import type { ResearchAttemptStoreInput, ResearchExtractionStrategy } from "../../../../lib/research-import/types";
 import { createAdminClient } from "../../../../lib/supabase/admin";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
 
 const MAX_IMPORT_PDF_BYTES = 15 * 1024 * 1024;
-const DEFAULT_RETENTION_DAYS = 30;
 
 const accessError = (reason: "not-research-surface" | "sign-in-required" | "not-invited") => {
   const status = reason === "sign-in-required" ? 401 : reason === "not-invited" ? 403 : 404;
   return NextResponse.json({ error: reason.replaceAll("-", "_") }, { status });
 };
 
-const retentionDeadline = (): string => {
-  const configured = Number.parseInt(process.env.RESEARCH_RETENTION_DAYS ?? "", 10);
-  const days = Number.isFinite(configured) && configured >= 1 && configured <= 90 ? configured : DEFAULT_RETENTION_DAYS;
-  return new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
-};
+const resultToAttempt = (input: {
+  runId: string;
+  strategy: ResearchExtractionStrategy;
+  result: ResearchExtractionResult;
+  inputCharacterCount: number | null;
+}): ResearchAttemptStoreInput => ({
+  runId: input.runId,
+  strategy: input.strategy,
+  status: input.result.ok
+    ? "extracted"
+    : input.result.errorCode === "model-not-configured"
+      ? "model-not-configured"
+      : "extract-failed",
+  model: input.result.model,
+  inputCharacterCount: input.inputCharacterCount,
+  inputTokens: input.result.inputTokens,
+  outputTokens: input.result.outputTokens,
+  totalTokens: input.result.totalTokens,
+  latencyMs: input.result.latencyMs,
+  estimatedCostUsd: input.result.estimatedCostUsd,
+  providerRequestId: input.result.providerRequestId,
+  draft: input.result.ok ? input.result.draft : null,
+  errorCode: input.result.ok ? null : input.result.errorCode,
+});
 
 export async function GET() {
   const access = await getResearchAccess();
@@ -42,35 +72,44 @@ export async function POST(request: Request) {
   const access = await getResearchAccess();
   if (!access.ok) return accessError(access.reason);
 
-  const formData = await request.formData();
-  const file = formData.get("file");
-  const consent = formData.get("consent") === "true";
-
-  if (!consent) return NextResponse.json({ error: "consent_required" }, { status: 400 });
-  if (!(file instanceof File)) return NextResponse.json({ error: "file_required" }, { status: 400 });
-  if (file.size === 0) return NextResponse.json({ error: "file_empty" }, { status: 400 });
-  if (file.size > MAX_IMPORT_PDF_BYTES) return NextResponse.json({ error: "file_too_large" }, { status: 413 });
-  if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
-    return NextResponse.json({ error: "pdf_required" }, { status: 415 });
+  let body: { runId?: unknown; consent?: unknown };
+  try {
+    body = (await request.json()) as typeof body;
+  } catch {
+    return NextResponse.json({ error: "invalid_json" }, { status: 400 });
+  }
+  if (body.consent !== true) return NextResponse.json({ error: "consent_required" }, { status: 400 });
+  if (typeof body.runId !== "string" || !/^[0-9a-f-]{36}$/i.test(body.runId)) {
+    return NextResponse.json({ error: "invalid_run_id" }, { status: 400 });
   }
 
-  const pdfBuffer = Buffer.from(await file.arrayBuffer());
-  if (pdfBuffer.subarray(0, 5).toString("ascii") !== "%PDF-") {
-    return NextResponse.json({ error: "invalid_pdf" }, { status: 415 });
+  let claimed;
+  try {
+    claimed = await claimResearchImportRunForProcessing({
+      id: body.runId,
+      userId: access.participant.id,
+    });
+  } catch {
+    return NextResponse.json({ error: "research_not_configured_or_unavailable" }, { status: 503 });
   }
-
-  const runId = randomUUID();
-  const safeFileName = sanitizeEvidenceFileName(file.name, "carfax.pdf");
-  const storageKey = access.participant.id + "/" + runId + "/" + safeFileName;
-  const deleteAfter = retentionDeadline();
+  if (!claimed) return NextResponse.json({ error: "upload_not_ready_or_already_processed" }, { status: 409 });
 
   try {
     const admin = createAdminClient();
-    const { error: storageError } = await admin.storage.from(RESEARCH_IMPORT_BUCKET).upload(storageKey, pdfBuffer, {
-      contentType: "application/pdf",
-      upsert: false,
-    });
-    if (storageError) throw new Error(storageError.message);
+    const { data: blob, error: downloadError } = await admin.storage
+      .from(RESEARCH_IMPORT_BUCKET)
+      .download(claimed.storageKey);
+    if (downloadError || !blob) throw new Error(downloadError?.message ?? "Uploaded PDF is unavailable");
+    const pdfBuffer = Buffer.from(await blob.arrayBuffer());
+    if (pdfBuffer.length === 0 || pdfBuffer.length > MAX_IMPORT_PDF_BYTES || pdfBuffer.subarray(0, 5).toString("ascii") !== "%PDF-") {
+      await deleteResearchImportRun({ id: claimed.id, userId: access.participant.id });
+      return NextResponse.json({ error: "invalid_pdf" }, { status: 415 });
+    }
+    const contentSha256 = createHash("sha256").update(pdfBuffer).digest("hex");
+    if (pdfBuffer.length !== claimed.fileBytes || contentSha256 !== claimed.contentSha256) {
+      await deleteResearchImportRun({ id: claimed.id, userId: access.participant.id });
+      return NextResponse.json({ error: "upload_integrity_mismatch" }, { status: 409 });
+    }
 
     let rawText = "";
     try {
@@ -78,49 +117,53 @@ export async function POST(request: Request) {
     } catch {
       rawText = "";
     }
-
-    const baseInput = {
-      id: runId,
+    await updateResearchImportSourceAnalysis({
+      id: claimed.id,
       userId: access.participant.id,
-      consentVersion: "research-cohort.v2",
-      retainForEvals: true,
-      fileName: safeFileName,
-      fileBytes: pdfBuffer.byteLength,
-      contentSha256: createHash("sha256").update(pdfBuffer).digest("hex"),
-      storageKey,
-      deleteAfter,
-    };
-
-    if (!rawText.trim()) {
-      const run = await createResearchImportRun({
-        ...baseInput,
-        textCharacterCount: 0,
-        status: "text-unavailable",
-        model: null,
-        errorCode: "pdf-text-unavailable",
-      });
-      return NextResponse.json({ run }, { status: 201 });
-    }
-
-    const extraction = await extractResearchCarfaxDraft({ rawText });
-    const run = await createResearchImportRun({
-      ...baseInput,
+      contentSha256,
+      fileBytes: pdfBuffer.length,
       textCharacterCount: rawText.length,
-      status: extraction.ok
-        ? "extracted"
-        : extraction.errorCode === "model-not-configured"
-          ? "model-not-configured"
-          : "extract-failed",
-      model: extraction.ok
-        ? extraction.model
-        : process.env.OPENAI_API_KEY
-          ? process.env.RESEARCH_OPENAI_MODEL ?? DEFAULT_RESEARCH_IMPORT_MODEL
-          : null,
-      draft: extraction.ok ? extraction.draft : null,
-      errorCode: extraction.ok ? null : extraction.errorCode,
     });
+
+    const baselinePromise: Promise<ResearchAttemptStoreInput> = rawText.trim()
+      ? extractResearchCarfaxTextDraft({ rawText }).then((result) =>
+          resultToAttempt({ runId: claimed.id, strategy: "text-first", result, inputCharacterCount: rawText.length }),
+        )
+      : Promise.resolve({
+          runId: claimed.id,
+          strategy: "text-first",
+          status: "text-unavailable",
+          model: null,
+          inputCharacterCount: 0,
+          errorCode: "pdf-text-unavailable",
+        });
+    const challengerPromise = extractResearchCarfaxPdfDraft({ pdfBuffer, fileName: "carfax.pdf" }).then((result) =>
+      resultToAttempt({ runId: claimed.id, strategy: "direct-pdf", result, inputCharacterCount: null }),
+    );
+
+    const attempts = await Promise.all([baselinePromise, challengerPromise]);
+    await createResearchImportAttempts(attempts);
+    const selection = selectDisplayedAttempt({ assignedStrategy: claimed.assignedStrategy, attempts });
+    const run = await updateResearchImportRun({
+      id: claimed.id,
+      userId: access.participant.id,
+      status: selection.status,
+      model: selection.model,
+      displayedStrategy: selection.displayedStrategy,
+      displayOverrideReason: selection.overrideReason,
+      draft: selection.draft,
+      errorCode: selection.errorCode,
+    });
+    if (!run) throw new Error("Research run disappeared before extraction completed");
+    await refreshResearchComparisonObservation(run.id);
     return NextResponse.json({ run }, { status: 201 });
   } catch {
+    await updateResearchImportRun({
+      id: claimed.id,
+      userId: access.participant.id,
+      status: "extract-failed",
+      errorCode: "paired-pipeline-failed",
+    }).catch(() => null);
     return NextResponse.json({ error: "research_not_configured_or_unavailable" }, { status: 503 });
   }
 }

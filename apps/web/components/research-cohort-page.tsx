@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import type { ResearchImportDraft, ResearchImportRun, ResearchServiceRecord } from "@/lib/research-import/types";
+import { RESEARCH_IMPORT_BUCKET, type ResearchImportDraft, type ResearchImportRun, type ResearchServiceRecord } from "@/lib/research-import/types";
+import { createClient as createSupabaseClient } from "@/lib/supabase/client";
 
 type PortalError = string | null;
 
 const statusCopy: Record<ResearchImportRun["status"], string> = {
   uploaded: "Uploaded",
+  processing: "Creating your draft.",
   "text-unavailable": "This PDF does not contain selectable text.",
   "model-not-configured": "The document was stored, but the research extractor is not enabled yet.",
   extracted: "Draft ready for your review.",
@@ -24,7 +26,14 @@ const readableError = (error: string): string =>
     invalid_pdf: "The file did not look like a valid PDF.",
     research_not_configured: "This research portal is not configured yet. Please tell Karan.",
     research_not_configured_or_unavailable: "The research service is unavailable. Please try again later.",
+    upload_not_ready_or_already_processed: "That upload could not be processed. Please upload the PDF again.",
+    invalid_file_digest: "We could not verify that PDF. Please choose it again.",
   })[error] ?? "Something went wrong. Please try again.";
+
+const sha256 = async (file: File): Promise<string> => {
+  const digest = await crypto.subtle.digest("SHA-256", await file.arrayBuffer());
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+};
 
 const cloneDraft = (draft: ResearchImportDraft): ResearchImportDraft => ({
   ...draft,
@@ -39,6 +48,15 @@ const updateRecord = (
 ): ResearchImportDraft => ({
   ...draft,
   records: draft.records.map((record, recordIndex) => (recordIndex === index ? { ...record, ...patch } : record)),
+});
+
+const emptyRecord = (): ResearchServiceRecord => ({
+  serviceDate: null,
+  mileage: null,
+  provider: null,
+  lineItems: [],
+  confidence: 1,
+  evidence: "Added by owner",
 });
 
 function ResearchAccountControl({ email }: { email: string }) {
@@ -77,8 +95,8 @@ function ResearchAccountControl({ email }: { email: string }) {
         </form>
         <p className="mt-4 text-sm font-medium text-destructive">Delete research account</p>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
-          This removes your stored PDFs, drafts, and sign-in. A test example already separated from your identity cannot
-          be linked back to you or removed later.
+          This removes your stored PDFs, drafts, and sign-in. Anonymous quality counts may remain, but they contain no
+          PDF, VIN, filename, shop, draft, or account identifier.
         </p>
         <label className="mt-3 block text-xs font-medium text-foreground">
           Type DELETE to confirm
@@ -222,9 +240,24 @@ function ResearchRunReview({
             <p className="mt-3 text-xs text-muted-foreground">
               Found in your PDF: {record.evidence || "No matching text was found."}
             </p>
+            <button
+              type="button"
+              onClick={() => setDraft({ ...draft, records: draft.records.filter((_, recordIndex) => recordIndex !== index) })}
+              className="mt-3 text-sm font-medium text-destructive underline-offset-4 hover:underline"
+            >
+              Remove this visit
+            </button>
           </article>
         ))}
       </div>
+
+      <button
+        type="button"
+        onClick={() => setDraft({ ...draft, records: [...draft.records, emptyRecord()] })}
+        className="mt-4 rounded-md border border-border px-3 py-2 text-sm font-medium hover:bg-muted"
+      >
+        Add a missed visit
+      </button>
 
       {draft.warnings.length > 0 ? (
         <p className="mt-4 rounded-md bg-amber-500/10 px-3 py-2 text-sm text-amber-900 dark:text-amber-200">
@@ -245,12 +278,13 @@ function ResearchRunReview({
   );
 }
 
-export function ResearchCohortPage({ email, invited }: { email: string | null; invited: boolean }) {
+export function ResearchCohortPage({ email, invited, operator }: { email: string | null; invited: boolean; operator: boolean }) {
   const [file, setFile] = useState<File | null>(null);
   const [consent, setConsent] = useState(false);
   const [runs, setRuns] = useState<ResearchImportRun[]>([]);
   const [loadingRuns, setLoadingRuns] = useState(invited);
   const [submitting, setSubmitting] = useState(false);
+  const [fileInputKey, setFileInputKey] = useState(0);
   const [error, setError] = useState<PortalError>(null);
 
   useEffect(() => {
@@ -278,17 +312,55 @@ export function ResearchCohortPage({ email, invited }: { email: string | null; i
     }
     setSubmitting(true);
     setError(null);
+    let initializedRunId: string | null = null;
+    let uploadCompleted = false;
     try {
-      const data = new FormData();
-      data.set("file", file);
-      data.set("consent", String(consent));
-      const response = await fetch("/api/research/imports", { method: "POST", body: data });
+      const initResponse = await fetch("/api/research/uploads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileBytes: file.size,
+          fileType: file.type,
+          contentSha256: await sha256(file),
+          consent,
+        }),
+      });
+      const initialized = (await initResponse.json()) as {
+        run?: ResearchImportRun;
+        upload?: { path: string };
+        error?: string;
+      };
+      if (!initResponse.ok || !initialized.run || !initialized.upload) {
+        throw new Error(readableError(initialized.error ?? ""));
+      }
+      initializedRunId = initialized.run.id;
+
+      const supabase = createSupabaseClient();
+      const { error: uploadError } = await supabase.storage
+        .from(RESEARCH_IMPORT_BUCKET)
+        .upload(initialized.upload.path, file, { contentType: "application/pdf", upsert: false });
+      if (uploadError) throw new Error("The private upload failed. Please try again.");
+      uploadCompleted = true;
+
+      const response = await fetch("/api/research/imports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ runId: initialized.run.id, consent }),
+      });
       const body = (await response.json()) as { run?: ResearchImportRun; error?: string };
       if (!response.ok || !body.run) throw new Error(readableError(body.error ?? ""));
       setRuns((current) => [body.run as ResearchImportRun, ...current]);
       setFile(null);
+      setFileInputKey((current) => current + 1);
       setConsent(false);
     } catch (submitError) {
+      if (initializedRunId && !uploadCompleted) {
+        await fetch(`/api/research/imports/${initializedRunId}`, { method: "DELETE" }).catch(() => null);
+      } else if (uploadCompleted) {
+        const latest = await fetch("/api/research/imports").then((response) => response.json()).catch(() => null) as { runs?: ResearchImportRun[] } | null;
+        if (latest?.runs) setRuns(latest.runs);
+      }
       setError(submitError instanceof Error ? submitError.message : "Could not process your PDF.");
     } finally {
       setSubmitting(false);
@@ -324,7 +396,10 @@ export function ResearchCohortPage({ email, invited }: { email: string | null; i
   return (
     <main id="main-content" className="mx-auto min-h-screen max-w-3xl px-5 py-8 sm:px-8 sm:py-12">
       <header className="border-b border-border pb-6">
-        <p className="text-sm font-medium text-primary">VehicleOS research</p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-medium text-primary">VehicleOS research</p>
+          {operator ? <a href="/research/admin" className="text-sm font-medium text-primary underline-offset-4 hover:underline">Research results</a> : null}
+        </div>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">Help improve CARFAX import.</h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
           Upload a CARFAX PDF. We use an AI-assisted parser to make a draft for you to check. Nothing here is added to
@@ -346,11 +421,12 @@ export function ResearchCohortPage({ email, invited }: { email: string | null; i
           <form onSubmit={(event) => void submit(event)} className="mt-8 rounded-xl border border-border bg-card p-5 shadow-sm">
             <h2 className="text-lg font-semibold">Upload a CARFAX PDF</h2>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Use CARFAX’s print-to-PDF export. PDFs must be 15 MB or smaller and contain selectable text.
+              In CARFAX, choose Print, then save as a PDF. Files can be up to 15 MB.
             </p>
             <label className="mt-4 block rounded-lg border border-dashed border-border bg-background p-4 text-sm">
               <span className="font-medium">Choose CARFAX PDF</span>
               <input
+                key={fileInputKey}
                 type="file"
                 accept="application/pdf,.pdf"
                 onChange={(event) => setFile(event.target.files?.[0] ?? null)}
@@ -366,14 +442,14 @@ export function ResearchCohortPage({ email, invited }: { email: string | null; i
                 onChange={(event) => setConsent(event.target.checked)}
                 className="mt-1 h-4 w-4"
               />
-              <span>I agree to let VehicleOS use this PDF and my corrections to improve its AI-assisted CARFAX import.</span>
+              <span>I agree that VehicleOS can send this PDF and its text to OpenAI, compare two import methods, and use my corrections to measure quality.</span>
             </label>
             <details className="mt-3 text-sm text-muted-foreground">
               <summary className="cursor-pointer font-medium text-foreground">How your information is used</summary>
               <p className="mt-2 leading-6">
-                We keep your original PDF private for up to 30 days. We send text from it—not the PDF itself—to our AI
-                provider to make the draft. We may keep a version of your corrections with direct identifiers removed to
-                test future improvements.
+                We keep the PDF and drafts private for up to 30 days, then delete them. OpenAI does not train on API data
+                by default, but may retain safety logs for up to 30 days. VehicleOS may keep anonymous quality counts;
+                they do not include the PDF, VIN, filename, shop, draft, or your account.
               </p>
             </details>
 

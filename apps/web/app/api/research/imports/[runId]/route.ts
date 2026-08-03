@@ -3,6 +3,7 @@ import { getResearchAccess } from "../../../../../lib/research-import/access";
 import { parseResearchImportDraft } from "../../../../../lib/research-import/draft";
 import {
   deleteResearchImportRun,
+  refreshResearchComparisonObservation,
   updateResearchImportRun,
 } from "../../../../../lib/research-import/repository";
 
@@ -32,6 +33,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       ownerDraft,
     });
     if (!run) return NextResponse.json({ error: "not_found" }, { status: 404 });
+    await refreshResearchComparisonObservation(run.id);
     return NextResponse.json({ run });
   } catch {
     return NextResponse.json({ error: "research_not_configured_or_unavailable" }, { status: 503 });
