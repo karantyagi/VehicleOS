@@ -28,6 +28,45 @@ describe("evaluateNextDueRecommendation", () => {
     expect(recommendation?.ruleId).toBe(ONBOARDING_BASELINE_RULE_ID);
   });
 
+  it("puts first-service onboarding before an unanchored OEM interval after an RMV import", () => {
+    const recommendation = evaluateNextDueRecommendation({
+      state: {
+        ...createEmptyVehicleState("veh-rmv-only"),
+        currentMileage: 56_221,
+        knowledgeSchedule: [
+          {
+            entryId: "code-b",
+            serviceName: "Replace engine oil and filter (Maintenance Minder B)",
+            intervalMiles: 7_500,
+            intervalMonths: 12,
+            sourceDocumentId: "acura-tlx-maintenance-minder",
+            sourcePage: "Maintenance Minder B",
+            manualTitle: "2021 Acura TLX",
+            recordedAt: "2026-08-03T00:00:00.000Z",
+          },
+        ],
+        ownershipRecords: [
+          {
+            recordId: "rmv-registration-1",
+            agency: "Massachusetts RMV (myRMV)",
+            recordDate: "2026-08-03",
+            mileage: 56_221,
+            eventType: "registration",
+            description: "Registration active",
+            details: ["Expiration date: 2027-08-31"],
+            source: "rmv_import",
+          },
+        ],
+      },
+      today: "2026-08-03",
+    });
+
+    expect(recommendation).toMatchObject({
+      title: "Log your first service",
+      ruleId: ONBOARDING_BASELINE_RULE_ID,
+    });
+  });
+
   it("prioritizes ownership overdue ahead of maintenance", () => {
     const recommendation = evaluateNextDueRecommendation({
       state: {

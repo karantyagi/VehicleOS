@@ -2,12 +2,19 @@
 
 VehicleOS uses **GitHub Actions for CI** (build verification on PRs) and **Vercel for CD** (preview + production URLs).
 
-## Projects (one repo, two Vercel projects)
+## Projects (one repo, three Vercel projects)
 
 | Vercel project | Root directory | Production domain |
 |----------------|----------------|-------------------|
 | Marketing | `apps/marketing` | `vehicleos.app` |
 | Product web | `apps/web` | `app.vehicleos.app` |
+
+## Import research cohort
+
+The invite-only import cohort uses a third Vercel project, the same apps/web
+root directory, and research.vehicleos.app. Set APP_SURFACE=research-cohort
+and use a separate Supabase project and server credentials. Its deployment
+contract is documented in [Import Research Cohort](../research-import-cohort.md).
 
 ## One-time setup
 
