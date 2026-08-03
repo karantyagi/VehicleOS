@@ -100,12 +100,14 @@ export const evaluateNextDueRecommendation = (input: {
     today,
   });
 
-  const nextActionable = dueView.items.find(isOwnerDueItemActionable);
-  if (nextActionable) return dueItemToRecommendation(nextActionable);
-
   if (maintenanceTimeline.length === 0) {
-    const knowledgeDue = evaluateKnowledgeDue(state);
-    if (knowledgeDue) return knowledgeDue;
+    // An RMV import can add a real ownership deadline, but it cannot establish
+    // when maintenance was last performed. Keep a genuine ownership deadline
+    // visible while preventing an OEM interval from being measured from mile 0.
+    const nextOwnershipActionable = dueView.items.find(
+      (item) => item.kind === "ownership" && isOwnerDueItemActionable(item),
+    );
+    if (nextOwnershipActionable) return dueItemToRecommendation(nextOwnershipActionable);
 
     return {
       recommendationId: crypto.randomUUID(),
@@ -116,6 +118,9 @@ export const evaluateNextDueRecommendation = (input: {
       ruleId: ONBOARDING_BASELINE_RULE_ID,
     };
   }
+
+  const nextActionable = dueView.items.find(isOwnerDueItemActionable);
+  if (nextActionable) return dueItemToRecommendation(nextActionable);
 
   const knowledgeDue = evaluateKnowledgeDue(state);
   if (knowledgeDue) return knowledgeDue;

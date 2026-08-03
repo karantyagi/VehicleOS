@@ -142,6 +142,9 @@ const reminderConfidence = (
 };
 
 const buildWhyNow = (row: ScheduleProjectionRow, currentMileage: number): string => {
+  if (row.status === "needs_baseline") {
+    return "A service baseline is still needed before VehicleOS can calculate when this is due.";
+  }
   if (row.dueMileage !== null) {
     const remaining = row.dueMileage - currentMileage;
     if (remaining < 0) {
