@@ -121,7 +121,7 @@ export function CommandMenu() {
             </CommandGroup>
             <CommandGroup heading="Actions">
               <CommandItem
-                value="Owner verification vehicle record driving profile"
+                value="Your garage vehicle record driving profile"
                 onSelect={() => {
                   setCommandOpen(false);
                   router.push("/garage?tab=car");
@@ -129,7 +129,7 @@ export function CommandMenu() {
                 className="flex cursor-pointer items-center gap-2.5 rounded-md text-sm"
               >
                 <CarFront className="text-muted-foreground" aria-hidden />
-                <span className="font-medium">Owner</span>
+                <span className="font-medium">Your garage</span>
               </CommandItem>
               <CommandItem
                 value="Account login identity"
@@ -176,7 +176,7 @@ export function CommandMenu() {
                 <span className="font-medium">System</span>
               </CommandItem>
               <CommandItem
-                value="Toggle owner developer view mode"
+                value="Open or exit developer tools"
                 onSelect={() => {
                   setConsoleMode(consoleMode === "developer" ? "owner" : "developer");
                   setCommandOpen(false);
@@ -189,7 +189,7 @@ export function CommandMenu() {
                   <Code2 className="text-muted-foreground" aria-hidden />
                 )}
                 <span className="font-medium">
-                  {consoleMode === "developer" ? "Switch to Owner view" : "Switch to Developer view"}
+                  {consoleMode === "developer" ? "Exit developer tools" : "Open developer tools"}
                 </span>
               </CommandItem>
               {consoleMode === "developer" ? (

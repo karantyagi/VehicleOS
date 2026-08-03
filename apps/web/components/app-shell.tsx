@@ -52,10 +52,14 @@ export function AppShell({ user, sidebarHeader, mobileBar, children }: AppShellP
   const sidebarBody = (
     <>
       <div className="border-b border-sidebar-border px-4 py-4">{sidebarHeader}</div>
-      {isDeveloper ? <SidebarUtilityRow /> : null}
-      <div className="px-3 pb-2">
-        <ConsoleModeToggle />
-      </div>
+      {isDeveloper ? (
+        <>
+          <SidebarUtilityRow />
+          <div className="px-3 pb-2">
+            <ConsoleModeToggle />
+          </div>
+        </>
+      ) : null}
       <CarIdentityNav className="pb-1" />
       <div className="mx-4 border-t border-sidebar-border" aria-hidden />
       <AppSidebar className="flex-1 overflow-y-auto py-2" />
