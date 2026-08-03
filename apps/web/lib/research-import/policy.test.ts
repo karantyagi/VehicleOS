@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  isResearchCohortPathAllowed,
   isResearchCohortSurface,
   isResearchOperatorAllowed,
   isResearchParticipantAllowed,
@@ -32,6 +33,11 @@ describe("research cohort access policy", () => {
   it("is only active in the dedicated research deployment", () => {
     expect(isResearchCohortSurface("research-cohort")).toBe(true);
     expect(isResearchCohortSurface("owner-app")).toBe(false);
+  });
+
+  it("permits the research account route while keeping unrelated routes closed", () => {
+    expect(isResearchCohortPathAllowed("/research/account")).toBe(true);
+    expect(isResearchCohortPathAllowed("/settings")).toBe(false);
   });
 
   it("keeps product-owner access separate from cohort invitations", () => {

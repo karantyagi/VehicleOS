@@ -19,6 +19,15 @@ export const isResearchCohortSurface = (
   surface = process.env.APP_SURFACE,
 ): boolean => surface === RESEARCH_COHORT_SURFACE;
 
+export const isResearchCohortPathAllowed = (pathname: string): boolean =>
+  pathname === "/" ||
+  pathname === "/login" ||
+  pathname === "/research/admin" ||
+  pathname === "/research/account" ||
+  pathname.startsWith("/auth/") ||
+  pathname === "/api/health" ||
+  pathname.startsWith("/api/research/");
+
 export const isResearchParticipantAllowed = (
   participant: ResearchParticipant | null,
   options: {
