@@ -9,6 +9,7 @@ import {
   type ServiceTimelineEntry,
   type VehicleProjectionState,
 } from "./types.js";
+import { resolveServiceRecordKind } from "../service/service-record-kind.js";
 
 export { createEmptyVehicleState };
 
@@ -54,6 +55,10 @@ export const applyEvent = (
         total: event.payload.total,
         evidenceIds: event.payload.evidenceIds,
         source: event.payload.source,
+        recordKind: resolveServiceRecordKind({
+          source: event.payload.source,
+          lineItems: event.payload.lineItems,
+        }),
       };
 
       return {
@@ -68,7 +73,7 @@ export const applyEvent = (
       const { serviceId, ...patch } = event.payload;
       const nextTimeline = state.timeline.map((entry) => {
         if (entry.serviceId !== serviceId) return entry;
-        return {
+        const updated = {
           ...entry,
           ...(patch.shop !== undefined ? { shop: patch.shop } : {}),
           ...(patch.shopLocation !== undefined
@@ -78,6 +83,10 @@ export const applyEvent = (
           ...(patch.mileage !== undefined ? { mileage: patch.mileage } : {}),
           ...(patch.lineItems !== undefined ? { lineItems: patch.lineItems } : {}),
           ...(patch.total !== undefined ? { total: patch.total } : {}),
+        };
+        return {
+          ...updated,
+          recordKind: resolveServiceRecordKind(updated),
         };
       });
 
@@ -101,16 +110,16 @@ export const applyEvent = (
         vehicleId: event.payload.vehicleId,
         timeline: state.timeline
           .filter((entry) => entry.serviceId !== event.payload.mergedServiceId)
-          .map((entry) =>
-            entry.serviceId === event.payload.targetServiceId
-              ? {
-                  ...entry,
-                  lineItems: event.payload.lineItems,
-                  evidenceIds: event.payload.evidenceIds,
-                  total: event.payload.total,
-                }
-              : entry,
-          ),
+          .map((entry) => {
+            if (entry.serviceId !== event.payload.targetServiceId) return entry;
+            const merged = {
+              ...entry,
+              lineItems: event.payload.lineItems,
+              evidenceIds: event.payload.evidenceIds,
+              total: event.payload.total,
+            };
+            return { ...merged, recordKind: resolveServiceRecordKind(merged) };
+          }),
       };
 
     case EVENT_TYPES.MAINTENANCE_RECOMMENDATION_CREATED:

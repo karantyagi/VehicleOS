@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { InMemoryEventStore, StubPolicyEngine } from "../index.js";
+import { ONBOARDING_BASELINE_RULE_ID } from "../owner-care/onboarding-baseline.js";
 import { refreshMaintenanceRecommendation } from "./refresh-maintenance-recommendation.js";
 
 describe("refreshMaintenanceRecommendation", () => {
@@ -165,5 +166,55 @@ describe("refreshMaintenanceRecommendation", () => {
 
     expect(result.created).toBe(true);
     expect(result.nowQueue.filter((item) => item.ruleId === ruleId)).toHaveLength(2);
+  });
+
+  it("auto-completes the onboarding baseline after real service history exists", async () => {
+    const eventStore = new InMemoryEventStore();
+    const vehicleId = crypto.randomUUID();
+
+    await eventStore.append({
+      aggregateType: "task",
+      aggregateId: "task-onboarding",
+      eventType: "task.created",
+      eventVersion: 1,
+      payload: {
+        vehicleId,
+        taskId: "task-onboarding",
+        recommendationId: "rec-onboarding",
+        title: "Log your first service",
+        reason: "No maintenance history yet.",
+        status: "pending",
+        taskKind: "recommendation",
+        ruleId: ONBOARDING_BASELINE_RULE_ID,
+      },
+    });
+    await eventStore.append({
+      aggregateType: "vehicle",
+      aggregateId: vehicleId,
+      eventType: "service.recorded",
+      eventVersion: 1,
+      payload: {
+        vehicleId,
+        serviceId: "svc-1",
+        shop: "Owner noted",
+        serviceDate: "2026-08-01",
+        mileage: 20_000,
+        lineItems: ["Oil change"],
+        total: "$0.00",
+        evidenceIds: [],
+        source: "owner_note",
+      },
+    });
+
+    const result = await refreshMaintenanceRecommendation({
+      eventStore,
+      policyEngine: { evaluate: () => null },
+      vehicleId,
+    });
+
+    expect(result.completedOnboardingCount).toBe(1);
+    expect(result.nowQueue.find((item) => item.taskId === "task-onboarding")?.status).toBe(
+      "completed",
+    );
   });
 });

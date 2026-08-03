@@ -8,6 +8,12 @@ import {
 import { resolveScheduleProjectionContext } from "../schedule/resolve-schedule-projection-context.js";
 import type { VehicleProjectionState } from "../projections/types.js";
 import {
+  isOnboardingBaselineRule,
+  ONBOARDING_BASELINE_DEADLINE_LABEL,
+  ONBOARDING_BASELINE_REASON,
+  ONBOARDING_BASELINE_TITLE,
+} from "../owner-care/onboarding-baseline.js";
+import {
   addDays,
   formatOwnerDeadline,
   resolveReminderUrgency,
@@ -26,7 +32,6 @@ const ruleServicePatterns: Record<string, RegExp> = {
   "schedule.policy.oil_change.v1": /oil/i,
   "schedule.policy.cabin_filter.v1": /cabin/i,
   "schedule.policy.tire_rotation.v1": /tire|rotate/i,
-  "schedule.policy.onboarding.v1": /.*/,
 };
 
 export const matchScheduleRowForRule = (
@@ -74,6 +79,16 @@ export const buildTimeFirstTaskCopy = (input: {
   scheduleRows: ScheduleProjectionRow[];
   today?: string;
 }): TimeFirstTaskCopy => {
+  if (isOnboardingBaselineRule(input.recommendation.ruleId)) {
+    return {
+      title: ONBOARDING_BASELINE_TITLE,
+      reason: ONBOARDING_BASELINE_REASON,
+      dueBy: null,
+      deadlineLabel: ONBOARDING_BASELINE_DEADLINE_LABEL,
+      urgency: "upcoming",
+    };
+  }
+
   const today = input.today ?? new Date().toISOString().slice(0, 10);
   const scheduleRow = matchScheduleRowForRule(input.recommendation.ruleId, input.scheduleRows);
   const dueBy =

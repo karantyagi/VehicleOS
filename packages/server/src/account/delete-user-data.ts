@@ -9,6 +9,7 @@ export async function deleteUserData(pool: pg.Pool, userId: string): Promise<voi
     await client.query(
       `DELETE FROM domain_events
        WHERE aggregate_id IN (SELECT id FROM vehicles WHERE user_id = $1)
+          OR (aggregate_type = 'owner' AND aggregate_id = $1::uuid)
           OR payload_json->>'vehicleId' IN (
             SELECT id::text FROM vehicles WHERE user_id = $1
           )`,

@@ -5,10 +5,11 @@ import type { OwnerDueItem } from "./build-owner-due-items.js";
 export const dueItemToRecommendation = (item: OwnerDueItem): MaintenanceRecommendation => {
   if (item.kind === "ownership" && item.ownershipRenewal) {
     const renewal = item.ownershipRenewal;
+    const deadlineSubject = renewal.title.replace(/ renewal$/, "");
     const deadlineLabel =
       renewal.status === "overdue"
-        ? `Registration expired ${renewal.expirationDate}`
-        : `Registration expires ${renewal.expirationDate}`;
+        ? `${deadlineSubject} expired ${renewal.expirationDate}`
+        : `${deadlineSubject} expires ${renewal.expirationDate}`;
 
     return {
       recommendationId: crypto.randomUUID(),

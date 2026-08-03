@@ -14,7 +14,7 @@
         "commercialStatus": "Commercial: Active|None",
         "restrictions": "Restrictions → string array"
       },
-      "mapsToImport": "owner profile (future) — not VehicleOsRmvImport v1"
+      "mapsToImport": "vehicle.record.recorded eventType license; stores class, issued date, expiration date, and passenger status only"
     },
     "vehicle": {
       "pdfLabels": ["VIN", "year make model line"],

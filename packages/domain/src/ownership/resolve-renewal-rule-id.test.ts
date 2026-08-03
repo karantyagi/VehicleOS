@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  DRIVER_LICENSE_RENEWAL_RULE_ID,
   INSPECTION_RENEWAL_RULE_ID,
   REGISTRATION_RENEWAL_GENERIC_RULE_ID,
   REGISTRATION_RENEWAL_MA_RULE_ID,
@@ -28,6 +29,10 @@ describe("resolveRenewalRuleId", () => {
 
   it("maps inspection renewals", () => {
     expect(resolveRenewalRuleId({ eventType: "inspection" })).toBe(INSPECTION_RENEWAL_RULE_ID);
+  });
+
+  it("maps driver license renewals", () => {
+    expect(resolveRenewalRuleId({ eventType: "license" })).toBe(DRIVER_LICENSE_RENEWAL_RULE_ID);
   });
 
   it("recognizes both renewal rule id families", () => {

@@ -68,6 +68,7 @@ export const privacySections = [
     bullets: [
       "Vercel — hosts the hosted early-access app and API route handlers.",
       "Supabase — hosts Postgres and authentication (Google/GitHub OAuth).",
+      "Geoapify — receives a shop name, US scope, and optional city hint only to propose a shop location. We do not send VINs, mileage, or imported files.",
       "We do not share your vehicle data with CARFAX, dealers, or LLM providers as part of the golden-path loop today.",
     ],
   },
@@ -173,7 +174,7 @@ export const securitySections = [
     title: "AI & data boundaries",
     bullets: [
       "The schedule engine is rules-first — deterministic OEM packs and alias matching, not an LLM deciding what is due.",
-      "Import enrichment may call external geocoding (OpenStreetMap Nominatim) for shop locations — you confirm before we save.",
+      "Import enrichment may call Geoapify location lookup for a shop city/state — you confirm before we save. Location data by Geoapify and OpenStreetMap contributors.",
       "LLM-assisted extraction for receipts and messy PDFs is rolling out on async paths — documented before fields leave your account.",
       "Golden-path confirmations still use structured fields you review in the UI — nothing auto-commits without owner action.",
     ],

@@ -3,12 +3,15 @@ export type ExtractionStatusVariant =
   | "llm-not-ready-pdf"
   | "llm-not-ready-receipt"
   | "upcoming-oem-search"
-  | "upcoming-places-lookup"
-  | "upcoming-shop-disambiguation-llm";
+  | "upcoming-places-lookup";
 
 export type ExtractionStatusContent = {
   title: string;
   body: string;
+  attribution?: {
+    label: string;
+    href: string;
+  };
 };
 
 export const EXTRACTION_STATUS: Record<ExtractionStatusVariant, ExtractionStatusContent> = {
@@ -30,19 +33,10 @@ export const EXTRACTION_STATUS: Record<ExtractionStatusVariant, ExtractionStatus
   },
   "upcoming-places-lookup": {
     title: "Shop location lookup",
-    body: "Missing dealer locations are resolved from your saved shop memory and OpenStreetMap geocoding (Nominatim) when you load or confirm an import. If a shop still needs review, add city/state once — we'll remember it for next time.",
-  },
-  "upcoming-shop-disambiguation-llm": {
-    title: "LLM shop disambiguation not yet initialized",
-    body: "When geocoding returns multiple matches and you need help choosing, a future LLM step may propose the best city/state — you always confirm before we save. Until then, use the location buttons on the row or type city/state manually.",
+    body: "Missing dealer locations are resolved from your saved shop memory and Geoapify location lookup when you load or confirm an import. If a shop still needs review, add city/state once — we'll remember it for next time.",
+    attribution: {
+      label: "Location data by Geoapify",
+      href: "https://www.geoapify.com/",
+    },
   },
 };
-
-export {
-  DEFAULT_DOGFOOD_FIXTURE_ID,
-  DOGFOOD_FIXTURE_PROFILES,
-  fetchDogfoodJson,
-  getDogfoodFixtureProfile,
-  type DogfoodFixtureId,
-  type DogfoodFixtureProfile,
-} from "./dogfood-fixtures";

@@ -17,11 +17,14 @@ import {
 } from "@vehicleos/domain";
 import { EmptyState } from "@/components/empty-state";
 import { MaintenanceIntelligenceSummary } from "@/components/maintenance-intelligence-summary";
+import { MaintenanceItemTrustActions } from "@/components/maintenance-item-trust-actions";
+import type { MaintenanceRecordDraft } from "@/components/maintenance-record-fields";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { isoDateToLocalDate } from "@/lib/date-input";
+import type { TimelineEntry } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
 type OwnerServiceScheduleBoardProps = {
@@ -29,11 +32,16 @@ type OwnerServiceScheduleBoardProps = {
   currentMileage: number;
   hasKnowledgeSchedule?: boolean;
   disabled?: boolean;
+  serviceTimeline?: TimelineEntry[];
+  focusedEntryId?: string | null;
   ownerContextMemory?: OwnerContextMemory | null;
   onSaveOwnerContextMemory?: (
     memory: OwnerContextMemory,
     successMessage: string,
   ) => Promise<void>;
+  onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
+  onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onUpdateCurrentMileage?: (mileage: number) => Promise<void>;
 };
 
 type GroupFilter = "All" | "Engine" | "Fluids" | "Filters" | "Brakes" | "Tires" | "Other";
@@ -101,99 +109,189 @@ function MileageTimeline({
   const width = 560;
   const height = 52;
   const trackY = 26;
-  const x = (mi: number) => pad + (mi / TIMELINE_MAX_MI) * (width - pad * 2);
-  const nowX = x(Math.min(currentMileage, TIMELINE_MAX_MI));
+  const clampMileage = (mileage: number) => Math.max(0, Math.min(mileage, TIMELINE_MAX_MI));
+  const x = (mi: number) => pad + (clampMileage(mi) / TIMELINE_MAX_MI) * (width - pad * 2);
+  const nowX = x(currentMileage);
+  const timelineLabel = [
+    `${events.length} completed service ${events.length === 1 ? "event" : "events"}`,
+    `current odometer ${formatMi(currentMileage)}`,
+    nextMileage ? `next service projected at ${formatMi(nextMileage)}` : null,
+  ]
+    .filter(Boolean)
+    .join(". ");
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="block h-auto w-full max-w-2xl text-muted-foreground">
-      <line
-        x1={pad}
-        y1={trackY}
-        x2={width - pad}
-        y2={trackY}
-        stroke="currentColor"
-        strokeOpacity={0.25}
-        strokeWidth={2}
-      />
-      {[0, 25_000, 50_000, 75_000, 100_000].map((mi) => (
-        <g key={mi}>
-          <line
-            x1={x(mi)}
-            y1={trackY - 3}
-            x2={x(mi)}
-            y2={trackY + 3}
-            stroke="currentColor"
-            strokeOpacity={0.2}
-            strokeWidth={1}
-          />
-          <text x={x(mi)} y={height - 2} textAnchor="middle" fill="currentColor" fillOpacity={0.45} fontSize={9}>
-            {mi === 0 ? "0" : `${mi / 1000}k`}
-          </text>
-        </g>
-      ))}
-      <line
-        x1={nowX}
-        y1={6}
-        x2={nowX}
-        y2={height - 8}
-        stroke="hsl(var(--primary))"
-        strokeWidth={2}
-        strokeDasharray="3 3"
-      />
-      {nextMileage ? (
-        <g>
+    <div role="img" aria-label={timelineLabel}>
+      <svg viewBox={`0 0 ${width} ${height}`} className="block h-auto w-full max-w-2xl text-muted-foreground" aria-hidden>
+        <line
+          x1={pad}
+          y1={trackY}
+          x2={width - pad}
+          y2={trackY}
+          stroke="currentColor"
+          strokeOpacity={0.25}
+          strokeWidth={2}
+        />
+        {[0, 25_000, 50_000, 75_000, 100_000].map((mi) => (
+          <g key={mi}>
+            <line
+              x1={x(mi)}
+              y1={trackY - 3}
+              x2={x(mi)}
+              y2={trackY + 3}
+              stroke="currentColor"
+              strokeOpacity={0.2}
+              strokeWidth={1}
+            />
+            <text x={x(mi)} y={height - 2} textAnchor="middle" fill="currentColor" fillOpacity={0.45} fontSize={9}>
+              {mi === 0 ? "0" : `${mi / 1000}k`}
+            </text>
+          </g>
+        ))}
+        <line
+          x1={nowX}
+          y1={6}
+          x2={nowX}
+          y2={height - 8}
+          stroke="hsl(var(--primary))"
+          strokeWidth={2}
+          strokeDasharray="3 3"
+        />
+        {nextMileage ? (
+          <g>
+            <circle
+              cx={x(nextMileage)}
+              cy={trackY}
+              r={5}
+              fill="none"
+              stroke="currentColor"
+              strokeOpacity={0.55}
+              strokeWidth={1.5}
+            />
+            <text x={x(nextMileage)} y={trackY - 10} textAnchor="middle" fill="currentColor" fillOpacity={0.55} fontSize={8}>
+              next
+            </text>
+          </g>
+        ) : null}
+        {events.map((event, index) => (
           <circle
-            cx={x(nextMileage)}
+            key={`${event.serviceId}-${event.serviceDate}-${index}`}
+            cx={x(event.mileage)}
             cy={trackY}
-            r={5}
-            fill="none"
-            stroke="currentColor"
-            strokeOpacity={0.55}
-            strokeWidth={1.5}
+            r={4}
+            fill="hsl(var(--primary))"
           />
-          <text x={x(nextMileage)} y={trackY - 10} textAnchor="middle" fill="currentColor" fillOpacity={0.55} fontSize={8}>
-            next
-          </text>
-        </g>
-      ) : null}
-      {events.map((event, index) => (
-        <circle
-          key={`${event.serviceId}-${event.serviceDate}-${index}`}
-          cx={x(Math.min(event.mileage, TIMELINE_MAX_MI))}
-          cy={trackY}
-          r={4}
-          fill="hsl(var(--primary))"
-        >
-          <title>{`${formatDate(event.serviceDate)} · ${formatMi(event.mileage)} · ${event.shop}`}</title>
-        </circle>
-      ))}
-    </svg>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+function ServiceJourney({ row, currentMileage }: { row: OwnerServiceScheduleRow; currentMileage: number }) {
+  if (row.historyEvents.length === 0) return null;
+
+  return (
+    <section className="space-y-3 rounded-lg border border-border/70 bg-background/65 p-3.5" aria-labelledby={`service-journey-${row.entryId}`}>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <p id={`service-journey-${row.entryId}`} className="text-sm font-semibold text-foreground">
+            Service journey
+          </p>
+          <p className="mt-0.5 text-xs text-muted-foreground">Completed service → current odometer → projected next service</p>
+        </div>
+        <Badge variant="secondary">
+          {row.historyEvents.length} record{row.historyEvents.length === 1 ? "" : "s"}
+        </Badge>
+      </div>
+
+      <MileageTimeline events={row.historyEvents} nextMileage={row.dueMileage} currentMileage={currentMileage} />
+
+      <dl className="grid gap-2 text-xs sm:grid-cols-3">
+        <div className="rounded-md bg-muted/45 px-2.5 py-2">
+          <dt className="font-medium text-muted-foreground">Last completed</dt>
+          <dd className="mt-0.5 font-medium tabular-nums text-foreground">
+            {formatMi(row.serviceBaseline.performedMileage ?? row.historyEvents[0]?.mileage)}
+          </dd>
+        </div>
+        <div className="rounded-md bg-primary/[0.06] px-2.5 py-2">
+          <dt className="font-medium text-muted-foreground">Current</dt>
+          <dd className="mt-0.5 font-medium tabular-nums text-foreground">{formatMi(currentMileage)}</dd>
+        </div>
+        <div className="rounded-md bg-muted/45 px-2.5 py-2">
+          <dt className="font-medium text-muted-foreground">Next due</dt>
+          <dd className="mt-0.5 font-medium tabular-nums text-foreground">
+            {row.dueMileage ? formatMi(row.dueMileage) : formatDate(row.dueDate)}
+          </dd>
+        </div>
+      </dl>
+
+      <div className="overflow-x-auto rounded-lg border border-border/70">
+        <Table className="min-w-[38rem]">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Date</TableHead>
+              <TableHead className="text-right">Mileage</TableHead>
+              <TableHead>Shop</TableHead>
+              <TableHead>Line item</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {row.historyEvents.map((event, index) => (
+              <TableRow key={`${event.serviceId}-${index}`}>
+                <TableCell className="whitespace-nowrap">{formatDate(event.serviceDate)}</TableCell>
+                <TableCell className="text-right tabular-nums">{formatMi(event.mileage)}</TableCell>
+                <TableCell>{event.shop}</TableCell>
+                <TableCell className="min-w-[16rem] whitespace-normal">{event.lineItem}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </section>
   );
 }
 
 function MaintenanceDueCard({
   row,
   currentMileage,
+  open,
+  onOpenChange,
   disabled = false,
+  serviceTimeline = [],
+  focusedEntryId = null,
   ownerContextMemory,
   onSaveOwnerContextMemory,
+  onAddService,
+  onUpdateService,
+  onUpdateCurrentMileage,
 }: {
   row: OwnerServiceScheduleRow;
   currentMileage: number;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   disabled?: boolean;
+  serviceTimeline?: TimelineEntry[];
+  focusedEntryId?: string | null;
   ownerContextMemory?: OwnerContextMemory | null;
   onSaveOwnerContextMemory?: (
     memory: OwnerContextMemory,
     successMessage: string,
   ) => Promise<void>;
+  onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
+  onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onUpdateCurrentMileage?: (mileage: number) => Promise<void>;
 }) {
-  const [open, setOpen] = useState(false);
   const [intervalInput, setIntervalInput] = useState("");
   const [saveError, setSaveError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const intelligence = row.intelligence;
   const interval = intelligence?.intervalRecommendation;
   const action = intelligence?.actionRecommendation;
+  const baselineEntry = intelligence?.serviceAction.baselineServiceId
+    ? serviceTimeline.find(
+        (entry) => entry.serviceId === intelligence.serviceAction.baselineServiceId,
+      ) ?? null
+    : null;
   const ownerInterval =
     ownerContextMemory?.intervalOverlays?.[row.entryId]?.intervalMiles ?? null;
 
@@ -201,6 +299,16 @@ function MaintenanceDueCard({
     const nextValue = ownerInterval ?? interval?.recommendedMiles ?? null;
     setIntervalInput(nextValue ? String(nextValue) : "");
   }, [interval?.recommendedMiles, ownerInterval]);
+
+  useEffect(() => {
+    if (focusedEntryId !== row.entryId || !open) return;
+    const frame = window.requestAnimationFrame(() => {
+      document
+        .getElementById(`maintenance-item-${row.entryId}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [focusedEntryId, open, row.entryId]);
 
   const persistOwnerContext = async (
     memory: OwnerContextMemory,
@@ -276,12 +384,15 @@ function MaintenanceDueCard({
   };
 
   return (
-    <article className={cn("overflow-hidden rounded-xl border shadow-sm transition-colors", verdictAccentClass(row.verdict))}>
+    <article
+      id={`maintenance-item-${row.entryId}`}
+      className={cn("overflow-hidden rounded-xl border shadow-sm transition-colors", verdictAccentClass(row.verdict))}
+    >
       <button
         type="button"
         className="flex w-full items-start gap-3 px-4 py-3.5 text-left sm:px-5 sm:py-4"
         aria-expanded={open}
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => onOpenChange(!open)}
       >
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -328,6 +439,8 @@ function MaintenanceDueCard({
               </p>
             </div>
           </div>
+
+          <ServiceJourney row={row} currentMileage={currentMileage} />
 
           {intelligence ? (
             <MaintenanceIntelligenceSummary
@@ -442,51 +555,35 @@ function MaintenanceDueCard({
             </div>
           ) : null}
 
-          {row.historyEvents.length > 0 ? (
-            <details className="rounded-lg border border-border/70 bg-background/65">
-              <summary className="cursor-pointer px-3.5 py-3 text-sm font-medium text-foreground">
-                Service history and evidence ({row.historyEvents.length})
-              </summary>
-              <div className="space-y-3 border-t border-border/60 p-3.5">
-                <MileageTimeline
-                  events={row.historyEvents}
-                  nextMileage={row.dueMileage}
-                  currentMileage={currentMileage}
-                />
-                <div className="overflow-hidden rounded-lg border border-border/70">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Date</TableHead>
-                        <TableHead className="text-right">Mileage</TableHead>
-                        <TableHead>Shop</TableHead>
-                        <TableHead>Line item</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {row.historyEvents.map((event, index) => (
-                        <TableRow key={`${event.serviceId}-${index}`}>
-                          <TableCell className="whitespace-nowrap">{formatDate(event.serviceDate)}</TableCell>
-                          <TableCell className="text-right tabular-nums">{formatMi(event.mileage)}</TableCell>
-                          <TableCell>{event.shop}</TableCell>
-                          <TableCell className="max-w-[16rem] truncate">{event.lineItem}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </div>
-            </details>
+          {intelligence?.itemKind === "tire_rotation" ? (
+            <MaintenanceItemTrustActions
+              entryId={row.entryId}
+              recordLineItem={intelligence.serviceAction.recordLineItem}
+              currentMileage={currentMileage}
+              baselineEntry={baselineEntry}
+              disabled={disabled}
+              onRecordService={onAddService}
+              onCorrectService={onUpdateService}
+              onUpdateMileage={onUpdateCurrentMileage}
+            />
           ) : null}
+
         </div>
       ) : null}
     </article>
   );
 }
 
-function OwnershipDueCard({ renewal }: { renewal: OwnershipRenewalProjection }) {
-  const [open, setOpen] = useState(false);
-  const verdict: OwnerServiceVerdict = renewal.status === "overdue" ? "overdue" : "due_soon";
+function OwnershipDueCard({
+  renewal,
+  open,
+  onOpenChange,
+}: {
+  renewal: OwnershipRenewalProjection;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const verdict: OwnerServiceVerdict = renewal.status;
 
   return (
     <article className={cn("overflow-hidden rounded-xl border shadow-sm transition-colors", verdictAccentClass(verdict))}>
@@ -494,12 +591,12 @@ function OwnershipDueCard({ renewal }: { renewal: OwnershipRenewalProjection }) 
         type="button"
         className="flex w-full items-start gap-3 px-4 py-3.5 text-left sm:px-5 sm:py-4"
         aria-expanded={open}
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => onOpenChange(!open)}
       >
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-              RMV
+              Owner · RMV
             </span>
             <Badge variant={verdictBadgeVariant(verdict)}>{verdictLabel[verdict]}</Badge>
           </div>
@@ -516,7 +613,7 @@ function OwnershipDueCard({ renewal }: { renewal: OwnershipRenewalProjection }) 
           <section className="rounded-lg border border-border/70 bg-background/75 p-3.5">
             <p className="font-semibold text-foreground">Why this needs attention</p>
             <p className="mt-1">
-              {renewal.title} expires {formatDate(renewal.expirationDate)}. The date comes from your {renewal.agency} record.
+              {renewal.title} expires {formatDate(renewal.expirationDate)}. This credential belongs to you, not a vehicle; the date comes from your {renewal.agency} record.
             </p>
           </section>
           <section className="rounded-lg border border-border/70 bg-background/75 p-3.5">
@@ -540,31 +637,52 @@ function OwnershipDueCard({ renewal }: { renewal: OwnershipRenewalProjection }) 
 
 function OwnerDueItemCard({
   item,
+  open,
+  onOpenChange,
   currentMileage,
   disabled,
+  serviceTimeline,
+  focusedEntryId,
   ownerContextMemory,
   onSaveOwnerContextMemory,
+  onAddService,
+  onUpdateService,
+  onUpdateCurrentMileage,
 }: {
   item: OwnerDueItem;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   currentMileage: number;
   disabled?: boolean;
+  serviceTimeline?: TimelineEntry[];
+  focusedEntryId?: string | null;
   ownerContextMemory?: OwnerContextMemory | null;
   onSaveOwnerContextMemory?: (
     memory: OwnerContextMemory,
     successMessage: string,
   ) => Promise<void>;
+  onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
+  onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
+  onUpdateCurrentMileage?: (mileage: number) => Promise<void>;
 }) {
   if (item.kind === "ownership" && item.ownershipRenewal) {
-    return <OwnershipDueCard renewal={item.ownershipRenewal} />;
+    return <OwnershipDueCard renewal={item.ownershipRenewal} open={open} onOpenChange={onOpenChange} />;
   }
   if (item.kind === "maintenance" && item.maintenanceRow) {
     return (
       <MaintenanceDueCard
         row={item.maintenanceRow}
         currentMileage={currentMileage}
+        open={open}
+        onOpenChange={onOpenChange}
         disabled={disabled}
+        serviceTimeline={serviceTimeline}
+        focusedEntryId={focusedEntryId}
         ownerContextMemory={ownerContextMemory}
         onSaveOwnerContextMemory={onSaveOwnerContextMemory}
+        onAddService={onAddService}
+        onUpdateService={onUpdateService}
+        onUpdateCurrentMileage={onUpdateCurrentMileage}
       />
     );
   }
@@ -576,10 +694,28 @@ export function OwnerServiceScheduleBoardView({
   currentMileage,
   hasKnowledgeSchedule = false,
   disabled = false,
+  serviceTimeline = [],
+  focusedEntryId = null,
   ownerContextMemory,
   onSaveOwnerContextMemory,
+  onAddService,
+  onUpdateService,
+  onUpdateCurrentMileage,
 }: OwnerServiceScheduleBoardProps) {
   const [group, setGroup] = useState<GroupFilter>("All");
+
+  const focusedItemId = useMemo(
+    () =>
+      dueItems?.items.find(
+        (item) => item.kind === "maintenance" && item.maintenanceRow?.entryId === focusedEntryId,
+      )?.id ?? null,
+    [dueItems, focusedEntryId],
+  );
+  const [openItemId, setOpenItemId] = useState<string | null>(focusedItemId);
+
+  useEffect(() => {
+    if (focusedItemId) setOpenItemId(focusedItemId);
+  }, [focusedItemId]);
 
   const maintenanceRows = useMemo(
     () =>
@@ -664,7 +800,7 @@ export function OwnerServiceScheduleBoardView({
             {hasOwnershipDue
               ? `${summary?.maintenanceOverdue || summary?.maintenanceDueSoon ? " · " : ""}${(summary?.ownershipOverdue ?? 0) + (summary?.ownershipDueSoon ?? 0)} RMV renewal${(summary?.ownershipOverdue ?? 0) + (summary?.ownershipDueSoon ?? 0) === 1 ? "" : "s"} due`
               : null}
-            . Expand rows for CARFAX evidence and next due dates.
+            . Open one item to see its complete service journey.
           </p>
         </div>
       ) : null}
@@ -694,9 +830,9 @@ export function OwnerServiceScheduleBoardView({
         </div>
       ) : hasOwnershipDue ? (
         <div className="history-surface p-4 sm:p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">RMV renewals</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">RMV / DMV renewals</p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Registration and inspection due dates from your RMV import — unified with OEM maintenance below when
+            Registration, inspection, and driver license due dates from your RMV import — unified with OEM maintenance below when
             loaded.
           </p>
         </div>
@@ -707,10 +843,17 @@ export function OwnerServiceScheduleBoardView({
           <OwnerDueItemCard
             key={item.id}
             item={item}
+            open={openItemId === item.id}
+            onOpenChange={(open) => setOpenItemId(open ? item.id : null)}
             currentMileage={currentMileage}
             disabled={disabled}
+            serviceTimeline={serviceTimeline}
+            focusedEntryId={focusedEntryId}
             ownerContextMemory={ownerContextMemory}
             onSaveOwnerContextMemory={onSaveOwnerContextMemory}
+            onAddService={onAddService}
+            onUpdateService={onUpdateService}
+            onUpdateCurrentMileage={onUpdateCurrentMileage}
           />
         ))}
       </div>

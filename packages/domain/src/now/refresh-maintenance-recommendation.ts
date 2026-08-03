@@ -1,5 +1,8 @@
 import { EVENT_TYPES, EVENT_VERSIONS, type CatalogDomainEvent } from "../events/catalog.js";
-import { decideTask } from "../golden-path/service-loop.js";
+import {
+  completeOnboardingBaselineTasks,
+  decideTask,
+} from "../golden-path/service-loop.js";
 import { foldEvents } from "../projections/apply.js";
 import type { EventStore } from "../ports/event-store.js";
 import type { PolicyEngine } from "../policy/policy-engine.js";
@@ -23,6 +26,7 @@ export type RefreshMaintenanceRecommendationInput = {
 
 export type RefreshMaintenanceRecommendationResult = {
   created: boolean;
+  completedOnboardingCount?: number;
   dismissedStaleCount?: number;
   skippedReason?: "none_due" | "already_pending";
   recommendation: MaintenanceRecommendation | null;
@@ -105,6 +109,15 @@ export const refreshMaintenanceRecommendation = async (
 ): Promise<RefreshMaintenanceRecommendationResult> => {
   let events = await loadVehicleEvents(input.eventStore, input.vehicleId);
   let state = foldEvents(input.vehicleId, events);
+  const completedOnboardingCount = await completeOnboardingBaselineTasks({
+    eventStore: input.eventStore,
+    vehicleId: input.vehicleId,
+    state,
+  });
+  if (completedOnboardingCount > 0) {
+    events = await loadVehicleEvents(input.eventStore, input.vehicleId);
+    state = foldEvents(input.vehicleId, events);
+  }
   const dismissedStaleCount = await dismissStaleKnowledgeReminders({
     eventStore: input.eventStore,
     vehicleId: input.vehicleId,
@@ -132,6 +145,7 @@ export const refreshMaintenanceRecommendation = async (
   if (!recommendation) {
     return {
       created: false,
+      completedOnboardingCount,
       dismissedStaleCount,
       skippedReason: "none_due",
       recommendation: null,
@@ -151,6 +165,7 @@ export const refreshMaintenanceRecommendation = async (
   if (hasBlockingSameRule) {
     return {
       created: false,
+      completedOnboardingCount,
       dismissedStaleCount,
       skippedReason: "already_pending",
       recommendation: null,
@@ -208,6 +223,7 @@ export const refreshMaintenanceRecommendation = async (
 
   return {
     created: true,
+    completedOnboardingCount,
     dismissedStaleCount,
     recommendation,
     nowQueue: foldEvents(input.vehicleId, nextEvents).nowQueue,

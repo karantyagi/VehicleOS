@@ -1,5 +1,9 @@
 export { getApiServices, type BuildServicesOptions } from "./get-services.js";
 export { createApiServices, type ApiServices } from "./services/index.js";
+export {
+  createShopLocationLookupService,
+  type ShopLocationLookupServiceOptions,
+} from "./services/shop-location-lookup-service.js";
 export { deleteUserData } from "./account/delete-user-data.js";
 export { getPool, closePool } from "./db/pool.js";
 export { extractPdfText } from "./import/pdf-text.js";
@@ -19,6 +23,8 @@ export { analyzeQuote } from "./http/quote-handlers.js";
 export { getEvidenceAccessUrl } from "./http/evidence-handlers.js";
 export { exportResaleReport, type ExportFormat, type ExportHandlerResponse } from "./http/export-handlers.js";
 export { submitVoiceMemory } from "./http/voice-handlers.js";
+export { submitOwnerHabit } from "./http/owner-habit-handlers.js";
+export { saveOwnerDriverLicense } from "./http/owner-driver-license-handlers.js";
 export { refreshSeasonalPrompts } from "./http/seasonal-handlers.js";
 export { confirmManualSchedule, previewManualSchedule } from "./http/manual-handlers.js";
 export { submitOwnerServiceNote } from "./http/note-handlers.js";

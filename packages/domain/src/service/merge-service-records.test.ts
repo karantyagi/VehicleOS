@@ -21,7 +21,7 @@ const timelineRow = (
 });
 
 describe("service record reconciliation", () => {
-  it("suggests the adjacent-day same-mileage overlap from owner history", () => {
+  it("marks the adjacent-day same-mileage overlap from owner history as strong", () => {
     const candidates = findPossibleServiceDuplicates([
       timelineRow("dealer"),
       timelineRow("diy", {
@@ -42,8 +42,39 @@ describe("service record reconciliation", () => {
       {
         firstServiceId: "dealer",
         secondServiceId: "diy",
+        confidence: "strong",
         dayDistance: 1,
+        mileageDistance: 0,
         matchingLineItems: ["Oil and filter changed"],
+      },
+    ]);
+  });
+
+  it("suggests a delayed CARFAX and owner entry as a possible duplicate", () => {
+    const candidates = findPossibleServiceDuplicates([
+      timelineRow("owner", {
+        shop: "Owner noted",
+        serviceDate: "2024-11-11",
+        mileage: 37_883,
+        lineItems: ["Oil change (synthetic)"],
+        source: "owner_note",
+      }),
+      timelineRow("carfax", {
+        serviceDate: "2024-11-19",
+        mileage: 38_120,
+        lineItems: ["Oil and filter changed"],
+        source: "carfax_import",
+      }),
+    ]);
+
+    expect(candidates).toEqual([
+      {
+        firstServiceId: "owner",
+        secondServiceId: "carfax",
+        confidence: "possible",
+        dayDistance: 8,
+        mileageDistance: 237,
+        matchingLineItems: ["Oil change (synthetic)"],
       },
     ]);
   });
@@ -54,9 +85,18 @@ describe("service record reconciliation", () => {
     expect(
       findPossibleServiceDuplicates([
         base,
-        timelineRow("different-mileage", { mileage: 37_884 }),
-        timelineRow("too-far", { serviceDate: "2024-11-13" }),
+        timelineRow("different-mileage", { mileage: 40_000 }),
+        timelineRow("too-far", { serviceDate: "2024-11-25" }),
         timelineRow("different-work", { lineItems: ["Tires rotated"] }),
+      ]),
+    ).toEqual([]);
+  });
+
+  it("does not suggest a visit-only CARFAX record for merge", () => {
+    expect(
+      findPossibleServiceDuplicates([
+        timelineRow("visit", { lineItems: ["Service visit"], source: "carfax_import" }),
+        timelineRow("service", { lineItems: ["Service visit"], source: "carfax_import" }),
       ]),
     ).toEqual([]);
   });

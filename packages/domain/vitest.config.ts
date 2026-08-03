@@ -14,7 +14,7 @@ export default defineConfig({
         "src/import/import-verify-guidance.ts",
         "src/import/infer-shop-location.ts",
         "src/import/merge-shop-locations-from-import.ts",
-        "src/import/nominatim-shop-location.ts",
+        "src/import/geoapify-shop-location.ts",
         "src/import/normalize-carfax-line-items.ts",
         "src/import/record-import-row-verification.ts",
         "src/import/resolve-shop-location-with-lookup.ts",

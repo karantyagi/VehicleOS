@@ -18,6 +18,8 @@ import {
 import { todayIsoDate } from "@/lib/date-input";
 import {
   fetchVerifiedCatalogVehicles,
+  findCatalogVehicleRow,
+  formatCatalogTrimOptionLabel,
   formatCatalogVehicleLabel,
   type CatalogVehicleRow,
 } from "@/lib/supported-vehicle-catalog";
@@ -50,7 +52,7 @@ type VehicleForm = {
 };
 
 type OnboardingWizardProps = {
-  onComplete: (vehicle: OnboardingVehicle) => void;
+  onComplete: (vehicle: OnboardingVehicle) => void | Promise<void>;
   mode?: "first" | "additional";
   onCancel?: () => void;
   prefillDogfood?: boolean;
@@ -77,7 +79,7 @@ const vehicleFormFromCatalog = (
   year: row.year,
   make: row.make,
   model: row.model,
-  trim: row.trim,
+  trim: formatCatalogTrimOptionLabel(row),
   vin: "",
   currentMileage:
     prefillDogfood && row.packId === DOGFOOD_PACK_ID ? 58_819 : 0,
@@ -128,6 +130,7 @@ export function OnboardingWizard({
   const [createdVehicle, setCreatedVehicle] = useState<OnboardingVehicle | null>(null);
   const [oemEntriesLoaded, setOemEntriesLoaded] = useState<number | null>(null);
   const [isBusy, setIsBusy] = useState(false);
+  const [isHandoffBusy, setIsHandoffBusy] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -170,8 +173,15 @@ export function OnboardingWizard({
   };
 
   const selectedVehicle = useMemo(
-    () => catalog.find((row) => row.packId === form.packId) ?? null,
-    [catalog, form.packId],
+    () =>
+      findCatalogVehicleRow(catalog, {
+        packId: form.packId,
+        year: form.year,
+        make: form.make,
+        model: form.model,
+        trim: form.trim,
+      }),
+    [catalog, form.make, form.model, form.packId, form.trim, form.year],
   );
 
   const selectVehicle = (row: CatalogVehicleRow | null) => {
@@ -179,9 +189,6 @@ export function OnboardingWizard({
       setForm((current) => ({
         ...current,
         packId: "",
-        year: 0,
-        make: "",
-        model: "",
         trim: "",
       }));
       return;
@@ -293,9 +300,14 @@ export function OnboardingWizard({
     if (vehicle) setStep("ready");
   };
 
-  const finishSetup = () => {
+  const finishSetup = async () => {
     if (!createdVehicle) return;
-    onComplete(createdVehicle);
+    setIsHandoffBusy(true);
+    try {
+      await onComplete(createdVehicle);
+    } finally {
+      setIsHandoffBusy(false);
+    }
   };
 
   const goBack = () => {
@@ -345,6 +357,7 @@ export function OnboardingWizard({
                 <VehicleYmmPicker
                   vehicles={catalog}
                   value={form.packId}
+                  valueYear={form.year}
                   disabled={isCatalogLoading || catalog.length === 0}
                   onSelect={selectVehicle}
                 />
@@ -448,7 +461,7 @@ export function OnboardingWizard({
 
         <FormActions>
           {showBack ? (
-            <Button type="button" variant="outline" disabled={isBusy} onClick={goBack}>
+            <Button type="button" variant="outline" disabled={isBusy || isHandoffBusy} onClick={goBack}>
               Back
             </Button>
           ) : null}
@@ -462,8 +475,8 @@ export function OnboardingWizard({
             </Button>
           ) : null}
           {step === "ready" && createdVehicle ? (
-            <Button type="button" disabled={isBusy} onClick={finishSetup}>
-              {mode === "additional" ? "Done" : "Go to Home"}
+            <Button type="button" disabled={isBusy || isHandoffBusy} onClick={() => void finishSetup()}>
+              {isHandoffBusy ? "Preparing Home…" : mode === "additional" ? "Done" : "Go to Home"}
             </Button>
           ) : null}
         </FormActions>

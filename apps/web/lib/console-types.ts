@@ -8,6 +8,7 @@ export type TimelineEntry = {
   total: string;
   evidenceIds: string[];
   source?: "receipt" | "voice" | "owner_note" | "dealer" | "carfax_import";
+  recordKind?: import("@vehicleos/domain").ServiceRecordKind;
 };
 
 export type QueueItem = {
@@ -148,7 +149,7 @@ export type OwnershipRecordEntry = {
   agency: string;
   recordDate: string;
   mileage: number | null;
-  eventType: "registration" | "title" | "inspection" | "lien" | "other";
+  eventType: "registration" | "title" | "inspection" | "license" | "lien" | "other";
   description: string;
   details: string[];
   source: "rmv_import" | "carfax_import" | "owner_note";

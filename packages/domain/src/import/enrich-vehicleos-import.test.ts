@@ -57,4 +57,30 @@ describe("enrichVehicleOsImport", () => {
 
     expect(enriched.services[0]?.shopLocation).toBe("Cambridge, MA");
   });
+
+  it("keeps a visit-only CARFAX row intact until an owner adds the work performed", () => {
+    const enriched = enrichVehicleOsImport({
+      version: "1",
+      source: "carfax-json",
+      exportedAt: "2026-07-24T16:00:00.000Z",
+      vehicle: {
+        vin: "19UUB6F47MA008400",
+        year: 2021,
+        make: "Acura",
+        model: "TLX",
+        currentMileage: 58819,
+      },
+      services: [
+        {
+          shop: "Genesis of Framingham",
+          serviceDate: "2022-12-22",
+          mileage: 6629,
+          lineItems: ["Service visit"],
+          total: "$0.00",
+        },
+      ],
+    });
+
+    expect(enriched.services[0]?.lineItems).toEqual(["Service visit"]);
+  });
 });

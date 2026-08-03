@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   filterCatalogVehicles,
+  catalogVehicleRowKey,
   findCatalogVehicleByPackId,
   formatCatalogTrimOptionLabel,
   formatCatalogVehicleLabel,
@@ -18,6 +19,7 @@ import { cn } from "@/lib/utils";
 type VehicleYmmPickerProps = {
   vehicles: CatalogVehicleRow[];
   value: string;
+  valueYear?: number;
   disabled?: boolean;
   onSelect: (row: CatalogVehicleRow | null) => void;
 };
@@ -28,6 +30,7 @@ const selectClassName =
 export function VehicleYmmPicker({
   vehicles,
   value,
+  valueYear,
   disabled = false,
   onSelect,
 }: VehicleYmmPickerProps) {
@@ -39,6 +42,9 @@ export function VehicleYmmPicker({
 
   useEffect(() => {
     if (!value) {
+      // Keep an in-progress cascade choice when the parent clears only the committed pack.
+      // A zero/absent year means the whole form was reset externally.
+      if (valueYear) return;
       setMake("");
       setModel("");
       setYear("");
@@ -46,13 +52,13 @@ export function VehicleYmmPicker({
       return;
     }
 
-    const row = findCatalogVehicleByPackId(vehicles, value);
+    const row = findCatalogVehicleByPackId(vehicles, value, valueYear);
     if (!row) return;
     setMake(row.make);
     setModel(row.model);
     setYear(row.year);
     setTrimPackId(row.packId);
-  }, [value, vehicles]);
+  }, [value, valueYear, vehicles]);
 
   const makes = useMemo(() => listCatalogMakes(vehicles), [vehicles]);
   const models = useMemo(() => listCatalogModels(vehicles, make), [vehicles, make]);
@@ -102,7 +108,11 @@ export function VehicleYmmPicker({
 
   const handleTrimChange = (packId: string) => {
     setTrimPackId(packId);
-    const row = findCatalogVehicleByPackId(vehicles, packId);
+    const row = findCatalogVehicleByPackId(
+      vehicles,
+      packId,
+      typeof year === "number" ? year : undefined,
+    );
     onSelect(row);
   };
 
@@ -122,7 +132,7 @@ export function VehicleYmmPicker({
       {quickMatches.length > 0 ? (
         <ul className="space-y-1 rounded-lg border border-border bg-muted/20 p-1">
           {quickMatches.map((row) => (
-            <li key={row.packId}>
+            <li key={catalogVehicleRowKey(row)}>
               <button
                 type="button"
                 disabled={disabled}

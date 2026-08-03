@@ -2,6 +2,7 @@ import { evaluateKnowledgeDue } from "../knowledge/evaluate-knowledge-due.js";
 import type { MaintenanceRecommendation } from "../policy/types.js";
 import type { PolicyEvaluationInput } from "../policy/types.js";
 import type { VehicleProjectionState } from "../projections/types.js";
+import { maintenanceServiceHistory } from "../service/service-record-kind.js";
 import {
   buildOwnerServiceScheduleBoard,
 } from "../schedule/build-owner-service-schedule-board.js";
@@ -10,6 +11,11 @@ import {
   isOwnerDueItemActionable,
 } from "./build-owner-due-items.js";
 import { dueItemToRecommendation } from "./due-item-to-recommendation.js";
+import {
+  ONBOARDING_BASELINE_REASON,
+  ONBOARDING_BASELINE_RULE_ID,
+  ONBOARDING_BASELINE_TITLE,
+} from "./onboarding-baseline.js";
 
 const hasLineItemMatch = (lineItems: string[], pattern: RegExp): boolean =>
   lineItems.some((item) => pattern.test(item.toLowerCase()));
@@ -17,12 +23,13 @@ const hasLineItemMatch = (lineItems: string[], pattern: RegExp): boolean =>
 const evaluateStubMileageFallback = (
   state: VehicleProjectionState,
 ): MaintenanceRecommendation | null => {
-  const latestService = state.timeline[state.timeline.length - 1];
+  const timeline = maintenanceServiceHistory(state.timeline);
+  const latestService = timeline[timeline.length - 1];
   if (!latestService) return null;
 
   const milesSinceLastService = Math.max(0, state.currentMileage - latestService.mileage);
 
-  const lastOilChange = [...state.timeline]
+  const lastOilChange = [...timeline]
     .reverse()
     .find((entry) => hasLineItemMatch(entry.lineItems, /oil change|oil & filter|synthetic oil/));
 
@@ -40,7 +47,7 @@ const evaluateStubMileageFallback = (
     };
   }
 
-  const lastCabinFilter = [...state.timeline]
+  const lastCabinFilter = [...timeline]
     .reverse()
     .find((entry) => hasLineItemMatch(entry.lineItems, /cabin filter|cabin air filter/));
 
@@ -78,10 +85,11 @@ export const evaluateNextDueRecommendation = (input: {
 }): MaintenanceRecommendation | null => {
   const { state } = input;
   const today = input.today ?? new Date().toISOString().slice(0, 10);
+  const maintenanceTimeline = maintenanceServiceHistory(state.timeline);
 
   const board = buildOwnerServiceScheduleBoard({
     knowledgeSchedule: state.knowledgeSchedule,
-    timeline: state.timeline,
+    timeline: maintenanceTimeline,
     currentMileage: state.currentMileage,
     today,
   });
@@ -95,18 +103,17 @@ export const evaluateNextDueRecommendation = (input: {
   const nextActionable = dueView.items.find(isOwnerDueItemActionable);
   if (nextActionable) return dueItemToRecommendation(nextActionable);
 
-  if (state.timeline.length === 0) {
+  if (maintenanceTimeline.length === 0) {
     const knowledgeDue = evaluateKnowledgeDue(state);
     if (knowledgeDue) return knowledgeDue;
 
     return {
       recommendationId: crypto.randomUUID(),
-      title: "Log your first service",
-      reason:
-        "No maintenance history yet. Upload a receipt or add a service record to start recommendations.",
+      title: ONBOARDING_BASELINE_TITLE,
+      reason: ONBOARDING_BASELINE_REASON,
       confidence: 1,
       evidenceIds: [],
-      ruleId: "schedule.policy.onboarding.v1",
+      ruleId: ONBOARDING_BASELINE_RULE_ID,
     };
   }
 

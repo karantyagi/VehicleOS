@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { enrichVehicleOsImportDraftHandler, submitVehicleOsImport } from "../http/import-handlers.js";
-import { InMemoryEventStore } from "@vehicleos/domain";
+import {
+  enrichVehicleOsImportDraftHandler,
+  submitVehicleOsImport,
+  submitVehicleOsRmvImport,
+} from "../http/import-handlers.js";
+import { InMemoryEventStore, projectOwnerDriverLicenses } from "@vehicleos/domain";
 import { InMemoryVehicleRepository } from "../repositories/in-memory-vehicle-repository.js";
 import { createApiServices } from "../services/index.js";
 
@@ -25,7 +29,7 @@ describe("import-handlers enrich + submit", () => {
           status: "resolved",
           shop,
           shopLocation: "Denver, CO",
-          source: "nominatim",
+          source: "geoapify",
         }),
       },
     });
@@ -235,5 +239,96 @@ describe("import-handlers enrich + submit", () => {
     const body = second.body as { importedCount: number; skippedCount: number };
     expect(body.importedCount).toBe(0);
     expect(body.skippedCount).toBe(1);
+  });
+
+  it("writes RMV vehicle records and driver's-license deadlines to separate aggregates", async () => {
+    const { services, vehicle } = await buildServices();
+    const response = await submitVehicleOsRmvImport(
+      services,
+      vehicle.id,
+      {
+        source: "rmv-pdf-manual",
+        records: [
+          {
+            recordDate: "2026-07-15",
+            mileage: null,
+            eventType: "registration",
+            agency: "Massachusetts RMV",
+            description: "Registration renewed",
+            details: ["Expiration Date: 2026-09-15"],
+          },
+          {
+            recordDate: "2024-04-16",
+            mileage: null,
+            eventType: "license",
+            agency: "Massachusetts RMV",
+            description: "Driver's license active",
+            details: ["Expiration Date: 2026-09-30"],
+          },
+        ],
+      },
+      { userId: vehicle.userId },
+    );
+
+    expect(response.status).toBe(201);
+    expect(response.body).toMatchObject({
+      importedCount: 2,
+      ownershipRecords: expect.arrayContaining([
+        expect.objectContaining({ eventType: "registration" }),
+        expect.objectContaining({ eventType: "license" }),
+      ]),
+    });
+    await expect(services.eventStore.loadByAggregate("owner", vehicle.userId)).resolves.toHaveLength(1);
+    await expect(services.eventStore.loadByAggregate("vehicle", vehicle.id)).resolves.not.toEqual([]);
+  });
+
+  it("requires an explicit owner decision before an RMV import changes a driver-license deadline", async () => {
+    const { services, vehicle } = await buildServices();
+    const originalLicense = {
+      recordDate: "2024-04-16",
+      mileage: null,
+      eventType: "license" as const,
+      agency: "Massachusetts RMV (myRMV)",
+      description: "Driver's license active — Class D",
+      details: ["License class: D", "Expiration Date: 2026-10-10"],
+    };
+    const importedLicense = {
+      ...originalLicense,
+      details: ["License class: D", "Expiration Date: 2031-10-10"],
+    };
+
+    expect(
+      (await submitVehicleOsRmvImport(
+        services,
+        vehicle.id,
+        { records: [originalLicense] },
+        { userId: vehicle.userId },
+      )).status,
+    ).toBe(201);
+
+    const withoutConfirmation = await submitVehicleOsRmvImport(
+      services,
+      vehicle.id,
+      { records: [importedLicense] },
+      { userId: vehicle.userId },
+    );
+    expect(withoutConfirmation.status).toBe(409);
+    expect(projectOwnerDriverLicenses(await services.eventStore.loadByAggregate("owner", vehicle.userId))).toMatchObject([
+      { expirationDate: "2026-10-10" },
+    ]);
+
+    const confirmed = await submitVehicleOsRmvImport(
+      services,
+      vehicle.id,
+      { records: [importedLicense], ownerLicenseChangeConfirmed: true },
+      { userId: vehicle.userId },
+    );
+    expect(confirmed.status).toBe(201);
+    expect(projectOwnerDriverLicenses(await services.eventStore.loadByAggregate("owner", vehicle.userId))).toMatchObject([
+      {
+        expirationDate: "2031-10-10",
+        details: expect.arrayContaining(["Imported while reviewing 2021 Acura TLX"]),
+      },
+    ]);
   });
 });

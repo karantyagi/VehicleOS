@@ -12,6 +12,11 @@ import type { MaintenanceItemIntelligence } from "../schedule/build-maintenance-
 import { parseDeviationRuleEntryId } from "../schedule/deviation-rule-id.js";
 import { parseIntervalRuleEntryId } from "../schedule/interval-rule-id.js";
 import {
+  isOnboardingBaselineRule,
+  ONBOARDING_BASELINE_DEADLINE_LABEL,
+  ONBOARDING_BASELINE_REASON,
+} from "../owner-care/onboarding-baseline.js";
+import {
   formatOwnerDeadline,
   resolveAttentionWindow,
   resolveReminderUrgency,
@@ -256,24 +261,33 @@ export const buildOwnerReminderView = (input: {
   dueItems?: OwnerDueItemsView | null;
   today: string;
 }): OwnerReminderView => {
-  const dueBy = resolveDueBy({
-    item: input.item,
-    scheduleRows: input.scheduleRows,
-    dueItems: input.dueItems,
-  });
-  const urgency = resolveReminderUrgency({
-    dueBy,
-    today: input.today,
-  });
-  const attentionWindow = resolveAttentionWindow(dueBy, input.today);
-  const deadlineLabel = formatOwnerDeadline(dueBy, input.today);
+  const isOnboardingBaseline = isOnboardingBaselineRule(input.item.ruleId);
+  const dueBy = isOnboardingBaseline
+    ? null
+    : resolveDueBy({
+        item: input.item,
+        scheduleRows: input.scheduleRows,
+        dueItems: input.dueItems,
+      });
+  const urgency = isOnboardingBaseline
+    ? "upcoming"
+    : resolveReminderUrgency({
+        dueBy,
+        today: input.today,
+      });
+  const attentionWindow = isOnboardingBaseline
+    ? "this_week"
+    : resolveAttentionWindow(dueBy, input.today);
+  const deadlineLabel = isOnboardingBaseline
+    ? ONBOARDING_BASELINE_DEADLINE_LABEL
+    : formatOwnerDeadline(dueBy, input.today);
   const intelligence = resolveMaintenanceIntelligence({
     item: input.item,
     dueItems: input.dueItems,
   });
 
-  let reason = input.item.reason;
-  if (!reason.includes(deadlineLabel)) {
+  let reason = isOnboardingBaseline ? ONBOARDING_BASELINE_REASON : input.item.reason;
+  if (!isOnboardingBaseline && !reason.includes(deadlineLabel)) {
     reason = `${deadlineLabel}. ${reason}`.trim();
   }
   const effectiveStatus: OwnerReminderView["effectiveStatus"] =

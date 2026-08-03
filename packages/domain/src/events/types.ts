@@ -1,4 +1,4 @@
-export type AggregateType = "vehicle" | "document" | "service" | "task" | "quote";
+export type AggregateType = "vehicle" | "owner" | "document" | "service" | "task" | "quote";
 
 export type DomainEventEnvelope<TType extends string = string, TPayload = unknown> = {
   id: string;

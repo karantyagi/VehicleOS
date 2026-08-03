@@ -61,9 +61,23 @@ Optional overrides in Vercel project settings:
 | `DATABASE_URL` | Supabase Postgres URI (pooler recommended) — required for hosted golden path |
 | `NEXT_PUBLIC_MARKETING_URL` | Cross-links to marketing site |
 | `NEXT_PUBLIC_APP_URL` | Canonical app URL (`https://app.vehicleos.app`) |
+| `GEOAPIFY_API_KEY` | Server-only key for optional shop city/state proposals during CARFAX import review |
+| `DEPLOYMENT_SMOKE_TOKEN` | Random server-only bearer token used only by the production Geoapify canary |
 | `NEXT_PUBLIC_API_URL` | Optional — only when pointing UI at local Fastify (`http://localhost:4000`) |
 
 See [`supabase-setup.md`](./supabase-setup.md) for DB migrations and smoke tests.
+
+### 3c. Production Geoapify canary
+
+The regular CI suite uses mocked Geoapify responses to check deterministic parsing and failure handling. The [`production-geoapify-smoke.yml`](../../.github/workflows/production-geoapify-smoke.yml) workflow adds one real request **after a Vercel production deployment is ready**:
+
+- Vercel provides `GEOAPIFY_API_KEY` and `DEPLOYMENT_SMOKE_TOKEN` to the `apps/web` **Production** environment. Add the Geoapify key to Preview too only when preview imports should use live lookup.
+- GitHub repository **Settings -> Environments -> Production – vehicle-os-web** stores the same `DEPLOYMENT_SMOKE_TOKEN` as an environment secret. This must be the project-specific environment, not the separate generic `Production` environment. GitHub never receives the Geoapify key.
+- The deployed `/api/internal/geoapify-smoke` route checks a fixed `Boston City Hall` query. It sends no owner, vehicle, mileage, VIN, or import data, returns no location data, and is indistinguishable from a 404 without the bearer token.
+- The workflow calls the stable `https://vehicle-os-web.vercel.app` production alias after Vercel signals readiness. The event’s unique deployment URL is Vercel SSO-protected and can otherwise return a redirect before the app is reached. The workflow follows at most two redirects and requires the route’s explicit `status: ok`, `integration: geoapify` response before passing.
+- The workflow is intentionally **informational**, not a Vercel Deployment Check: a temporary provider outage should not delay an unrelated release because import review safely falls back to manual `City, ST` entry.
+
+Vercel Git integration sends the `vercel.deployment.ready` repository-dispatch event after the production deployment is ready. Once this workflow is on `master`, its `Production Geoapify smoke` GitHub Action runs for every production `vehicle-os-web` deployment.
 
 ### 4. Ignored Build Step (optional, saves build minutes)
 

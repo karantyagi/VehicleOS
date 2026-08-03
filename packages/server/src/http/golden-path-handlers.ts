@@ -11,6 +11,7 @@ import {
   parseIntervalRuleEntryId,
   projectMaintenanceDeviations,
   projectMaintenanceSchedule,
+  projectOwnerDriverLicenses,
   recordOwnershipFromServiceNote,
   resolveScheduleProjectionContext,
   type MaintenanceDeviationReasonId,
@@ -238,9 +239,12 @@ export const getVehicleState = async (
     vehicleId,
     vehicleStateOptionsFromVehicle(owned.vehicle),
   );
+  const ownerDriverLicenses = projectOwnerDriverLicenses(
+    await services.eventStore.loadByAggregate("owner", auth.userId),
+  );
   return jsonResponse(200, {
     vehicle: owned.vehicle,
-    ...buildVehicleStateView(snapshot.state, owned.vehicle, snapshot.events),
+    ...buildVehicleStateView(snapshot.state, owned.vehicle, snapshot.events, ownerDriverLicenses),
     eventCount: snapshot.events.length,
   });
 };

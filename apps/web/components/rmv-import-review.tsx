@@ -13,6 +13,19 @@ export type RmvReviewRow = VehicleOsRmvRecord & {
   id: string;
   included: boolean;
   alreadyOnFile?: boolean;
+  ownerLicenseReview?: OwnerLicenseReview;
+};
+
+export type OwnerLicenseSummary = {
+  agency: string;
+  licenseClass: string | null;
+  expirationDate: string;
+};
+
+export type OwnerLicenseReview = {
+  status: "new" | "review" | "missing_expiration";
+  current?: OwnerLicenseSummary;
+  reason?: "renewal" | "different_credential";
 };
 
 type RmvImportReviewProps = {
@@ -38,6 +51,11 @@ const parseDetailsField = (raw: string): string[] =>
     .map((line) => line.trim())
     .filter(Boolean);
 
+const ownerLicenseSummaryLabel = (license: OwnerLicenseSummary): string =>
+  [license.agency, license.licenseClass ? `Class ${license.licenseClass}` : null, `Expires ${formatRecordDate(license.expirationDate)}`]
+    .filter(Boolean)
+    .join(" · ");
+
 function RmvReviewCard({
   row,
   disabled,
@@ -54,6 +72,10 @@ function RmvReviewCard({
   const [expanded, setExpanded] = useState(defaultExpanded);
   const previewDetail = row.details[0];
   const extraDetails = row.details.length - 1;
+  const isOwnerLicense = row.eventType === "license";
+  const ownerLicenseReview = row.ownerLicenseReview;
+  const needsOwnerDecision = ownerLicenseReview?.status === "review";
+  const canEdit = row.included || ownerLicenseReview?.status === "missing_expiration";
 
   return (
     <article
@@ -67,20 +89,34 @@ function RmvReviewCard({
       )}
     >
       <div className="flex items-start gap-3 p-3">
-        <input
-          type="checkbox"
-          checked={row.included}
-          disabled={disabled || isImporting || row.alreadyOnFile}
-          aria-label={`Include ${RMV_EVENT_LABELS[row.eventType]} on ${row.recordDate}`}
-          className="mt-1 h-4 w-4 rounded border-border"
-          onChange={(event) => onRowChange(row.id, { included: event.target.checked })}
-        />
+        {needsOwnerDecision ? (
+          <span className="mt-1 block h-4 w-4 shrink-0" aria-hidden />
+        ) : (
+          <input
+            type="checkbox"
+            checked={row.included}
+            disabled={disabled || isImporting || row.alreadyOnFile || ownerLicenseReview?.status === "missing_expiration"}
+            aria-label={`Include ${RMV_EVENT_LABELS[row.eventType]} on ${row.recordDate}`}
+            className="mt-1 h-4 w-4 rounded border-border"
+            onChange={(event) => onRowChange(row.id, { included: event.target.checked })}
+          />
+        )}
         <div className="min-w-0 flex-1 space-y-1">
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-sm font-medium tabular-nums">{formatRecordDate(row.recordDate)}</p>
             <Badge variant="outline" className="text-[10px] uppercase tracking-wide">
               {RMV_EVENT_LABELS[row.eventType]}
             </Badge>
+            {isOwnerLicense ? (
+              <Badge variant="outline" className="text-[10px] uppercase tracking-wide">
+                For you
+              </Badge>
+            ) : null}
+            {needsOwnerDecision ? (
+              <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
+                Review owner change
+              </Badge>
+            ) : null}
             {row.alreadyOnFile ? (
               <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
                 On file
@@ -114,6 +150,63 @@ function RmvReviewCard({
         </Button>
       </div>
 
+      {isOwnerLicense ? (
+        <div className="border-t border-border/60 px-3 pb-3 pt-2 text-xs leading-relaxed text-muted-foreground">
+          {ownerLicenseReview?.status === "new" ? (
+            <p>Saved once to your owner profile and visible across your garage. Vehicle OS does not store a license number.</p>
+          ) : null}
+          {ownerLicenseReview?.status === "missing_expiration" ? (
+            <p className="text-destructive">Add an expiration date before this owner-level record can be imported.</p>
+          ) : null}
+          {needsOwnerDecision && ownerLicenseReview.current ? (
+            <div className="space-y-3">
+              <p>
+                {ownerLicenseReview.reason === "different_credential"
+                  ? "This may be a different credential. It will not change your owner profile unless you explicitly choose the imported update."
+                  : "The imported expiration differs from the deadline already saved to your owner profile."}
+              </p>
+              <dl className="grid gap-1 rounded-md border border-border/60 bg-muted/20 p-2.5">
+                <div>
+                  <dt className="font-medium text-foreground">Currently saved</dt>
+                  <dd>{ownerLicenseSummaryLabel(ownerLicenseReview.current)}</dd>
+                </div>
+                <div>
+                  <dt className="font-medium text-foreground">Imported record</dt>
+                  <dd>
+                    {ownerLicenseSummaryLabel({
+                      agency: row.agency,
+                      licenseClass: row.details.find((detail) => detail.toLowerCase().startsWith("license class:"))?.slice("license class:".length).trim() || null,
+                      expirationDate: row.details.find((detail) => detail.toLowerCase().startsWith("expiration date:"))?.slice("expiration date:".length).trim() || row.recordDate,
+                    })}
+                  </dd>
+                </div>
+              </dl>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={row.included ? "outline" : "secondary"}
+                  disabled={disabled || isImporting}
+                  onClick={() => onRowChange(row.id, { included: false })}
+                >
+                  Keep current
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={row.included ? "secondary" : "outline"}
+                  disabled={disabled || isImporting}
+                  onClick={() => onRowChange(row.id, { included: true })}
+                >
+                  Use imported update
+                </Button>
+              </div>
+              <p>It applies across your garage. The earlier record remains in your private history.</p>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
       {expanded ? (
         <div className="space-y-3 border-t border-border/60 px-3 pb-3 pt-2">
           <div className="grid gap-3 sm:grid-cols-2">
@@ -121,7 +214,7 @@ function RmvReviewCard({
               <span className="font-medium text-muted-foreground">Date</span>
               <Input
                 value={row.recordDate}
-                disabled={disabled || isImporting || !row.included || row.alreadyOnFile}
+                disabled={disabled || isImporting || !canEdit || row.alreadyOnFile}
                 className="h-8 text-xs"
                 onChange={(event) => onRowChange(row.id, { recordDate: event.target.value })}
               />
@@ -130,7 +223,7 @@ function RmvReviewCard({
               <span className="font-medium text-muted-foreground">Agency</span>
               <Input
                 value={row.agency}
-                disabled={disabled || isImporting || !row.included || row.alreadyOnFile}
+                disabled={disabled || isImporting || !canEdit || row.alreadyOnFile}
                 className="h-8 text-xs"
                 onChange={(event) => onRowChange(row.id, { agency: event.target.value })}
               />
@@ -139,7 +232,7 @@ function RmvReviewCard({
               <span className="font-medium text-muted-foreground">Description</span>
               <Input
                 value={row.description}
-                disabled={disabled || isImporting || !row.included || row.alreadyOnFile}
+                disabled={disabled || isImporting || !canEdit || row.alreadyOnFile}
                 className="h-8 text-xs"
                 onChange={(event) => onRowChange(row.id, { description: event.target.value })}
               />
@@ -148,7 +241,7 @@ function RmvReviewCard({
               <span className="font-medium text-muted-foreground">Details</span>
               <Input
                 value={row.details.join(" · ")}
-                disabled={disabled || isImporting || !row.included || row.alreadyOnFile}
+                disabled={disabled || isImporting || !canEdit || row.alreadyOnFile}
                 className="h-8 text-xs"
                 onChange={(event) => onRowChange(row.id, { details: parseDetailsField(event.target.value) })}
               />
@@ -176,6 +269,8 @@ export function RmvImportReview({
   );
   const onFileRows = sortedRows.filter((row) => row.alreadyOnFile);
   const importRows = sortedRows.filter((row) => !row.alreadyOnFile);
+  const vehicleRows = importRows.filter((row) => row.eventType !== "license");
+  const ownerRows = importRows.filter((row) => row.eventType === "license");
   const selectedCount = importRows.filter((row) => row.included).length;
   const onFileCount = onFileRows.length;
   const readyCount = importRows.length;
@@ -247,21 +342,46 @@ export function RmvImportReview({
               </Button>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Ownership records stay on the Ownership tab — they do not appear on your maintenance timeline.
-          </p>
-          <div className="max-h-96 space-y-2 overflow-y-auto pr-1">
-            {importRows.map((row) => (
-              <RmvReviewCard
-                key={row.id}
-                row={row}
-                disabled={disabled}
-                isImporting={isImporting}
-                defaultExpanded={false}
-                onRowChange={onRowChange}
-              />
-            ))}
-          </div>
+          {vehicleRows.length > 0 ? (
+            <section className="space-y-2">
+              <div>
+                <h4 className="text-sm font-medium">For this car</h4>
+                <p className="text-xs text-muted-foreground">These ownership records stay with {vehicleLabel}.</p>
+              </div>
+              <div className="max-h-96 space-y-2 overflow-y-auto pr-1">
+                {vehicleRows.map((row) => (
+                  <RmvReviewCard
+                    key={row.id}
+                    row={row}
+                    disabled={disabled}
+                    isImporting={isImporting}
+                    defaultExpanded={row.ownerLicenseReview?.status === "missing_expiration"}
+                    onRowChange={onRowChange}
+                  />
+                ))}
+              </div>
+            </section>
+          ) : null}
+          {ownerRows.length > 0 ? (
+            <section className="space-y-2">
+              <div>
+                <h4 className="text-sm font-medium">For you</h4>
+                <p className="text-xs text-muted-foreground">Driver's-license records are saved once to your owner profile, not to a car.</p>
+              </div>
+              <div className="max-h-96 space-y-2 overflow-y-auto pr-1">
+                {ownerRows.map((row) => (
+                  <RmvReviewCard
+                    key={row.id}
+                    row={row}
+                    disabled={disabled}
+                    isImporting={isImporting}
+                    defaultExpanded={row.ownerLicenseReview?.status === "missing_expiration"}
+                    onRowChange={onRowChange}
+                  />
+                ))}
+              </div>
+            </section>
+          ) : null}
         </section>
       ) : null}
 
@@ -279,7 +399,11 @@ export function RmvImportReview({
             : `Confirm import (${selectedCount} new record${selectedCount === 1 ? "" : "s"})`}
       </Button>
       {selectedCount === 0 && importRows.length > 0 ? (
-        <p className="text-xs text-destructive">Select at least one new record to import.</p>
+        <p className="text-xs text-destructive">
+          {importRows.some((row) => row.ownerLicenseReview?.status === "review")
+            ? "Your owner license stays unchanged until you choose Use imported update."
+            : "Select at least one new record to import."}
+        </p>
       ) : null}
     </div>
   );

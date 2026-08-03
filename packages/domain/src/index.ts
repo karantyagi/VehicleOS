@@ -184,6 +184,7 @@ export {
   type MaintenanceItemIntelligence,
   type MaintenanceRationaleAxis,
   type MaintenanceRationaleAxisId,
+  type MaintenanceServiceAction,
   type QualitativeConfidence,
 } from "./schedule/build-maintenance-item-intelligence.js";
 export {
@@ -214,6 +215,13 @@ export {
   evaluateNextDueRecommendation,
   evaluateNextDueRecommendationFromPolicyInput,
 } from "./owner-care/evaluate-next-due-recommendation.js";
+export {
+  isOnboardingBaselineRule,
+  ONBOARDING_BASELINE_DEADLINE_LABEL,
+  ONBOARDING_BASELINE_REASON,
+  ONBOARDING_BASELINE_RULE_ID,
+  ONBOARDING_BASELINE_TITLE,
+} from "./owner-care/onboarding-baseline.js";
 export {
   computeOemServiceTiming,
   DEFAULT_OEM_TIMING_TOLERANCE_DAYS,
@@ -246,6 +254,16 @@ export {
   detectOwnerHabitProposals,
 } from "./schedule/detect-owner-habit-proposals.js";
 export {
+  parseOwnerHabitNote,
+  validateOwnerHabitProposal,
+} from "./owner-habits/parse-owner-habit-note.js";
+export { recordOwnerHabitProposal } from "./owner-habits/record-owner-habit-proposal.js";
+export type {
+  OwnerHabitCaptureChannel,
+  OwnerHabitExtractionMethod,
+  OwnerHabitProposalV1,
+} from "./owner-habits/types.js";
+export {
   OWNER_HABIT_DEFINITIONS,
   isOwnerHabitEntryId,
   type OwnerHabitDefinition,
@@ -271,6 +289,7 @@ export {
   type OwnershipRenewalStatus,
 } from "./ownership/evaluate-ownership-renewals.js";
 export {
+  DRIVER_LICENSE_RENEWAL_RULE_ID,
   INSPECTION_RENEWAL_RULE_ID,
   OTHER_RENEWAL_RULE_ID,
   REGISTRATION_RENEWAL_GENERIC_RULE_ID,
@@ -314,6 +333,17 @@ export {
   type RecordVehicleOsRmvImportResult,
   type VehicleOsRmvRecord,
 } from "./import/record-vehicleos-rmv-import.js";
+export {
+  ownerDriverLicenseFromRmvRecord,
+  ownerDriverLicenseFingerprint,
+  ownerDriverLicenseImportNeedsConfirmation,
+  ownerDriverLicenseToOwnershipRecord,
+  projectOwnerDriverLicenses,
+  recordOwnerDriverLicense,
+  recordOwnerDriverLicenses,
+  type OwnerDriverLicense,
+  type OwnerDriverLicenseDraft,
+} from "./ownership/owner-driver-license.js";
 export { parseCarfaxPdfText, type ParseCarfaxPdfTextResult } from "./import/parse-carfax-pdf-text.js";
 export { parseRmvPdfText, type ParseRmvPdfTextResult } from "./import/parse-rmv-pdf-text.js";
 export {
@@ -451,6 +481,14 @@ export {
   normalizeCarfaxLineItems,
 } from "./import/normalize-carfax-line-items.js";
 export {
+  isGenericCarfaxVisitLineItem,
+  isVisitOnlyServiceRecord,
+  maintenanceServiceHistory,
+  resolveServiceRecordKind,
+  stripGenericCarfaxVisitLineItems,
+  type ServiceRecordKind,
+} from "./service/service-record-kind.js";
+export {
   mergeShopLocationsFromImport,
 } from "./import/merge-shop-locations-from-import.js";
 export {
@@ -515,14 +553,16 @@ export {
   type ShopLocationHintStatus,
 } from "./import/shop-location-hints.js";
 export {
-  buildNominatimSearchQuery,
-  buildNominatimSearchUrl,
-  createNominatimShopLocationLookup,
-  formatNominatimAddress,
-  parseNominatimSearchResponse,
+  buildGeoapifySearchText,
+  buildGeoapifySearchUrl,
+  createGeoapifyShopLocationLookup,
+  formatGeoapifyLocation,
+  parseGeoapifySearchResponse,
   abbreviateUsState,
-  type NominatimFetch,
-  type NominatimSearchResult,
-} from "./import/nominatim-shop-location.js";
+  type GeoapifyFeatureProperties,
+  type GeoapifyFetch,
+  type GeoapifySearchFeature,
+  type GeoapifySearchResponse,
+} from "./import/geoapify-shop-location.js";
 export type { KnowledgeScheduleRow } from "./events/catalog.js";
 export type { KnowledgeScheduleEntry } from "./projections/types.js";

@@ -1,6 +1,7 @@
 import type { MaintenanceRecommendation } from "../policy/types.js";
 import type { VehicleProjectionState } from "../projections/types.js";
 import { findLastMatchingService } from "./match-service-name.js";
+import { maintenanceServiceHistory } from "../service/service-record-kind.js";
 
 export const evaluateKnowledgeDue = (
   state: VehicleProjectionState,
@@ -10,7 +11,7 @@ export const evaluateKnowledgeDue = (
   for (const entry of state.knowledgeSchedule) {
     if (!entry.intervalMiles) continue;
 
-    const lastMatch = findLastMatchingService(state.timeline, entry.serviceName);
+    const lastMatch = findLastMatchingService(maintenanceServiceHistory(state.timeline), entry.serviceName);
     const baselineMileage = lastMatch?.mileage ?? 0;
     const milesSince = Math.max(0, state.currentMileage - baselineMileage);
 

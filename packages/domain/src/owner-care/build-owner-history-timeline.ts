@@ -16,6 +16,7 @@ export type OwnerHistoryItem = {
   total?: string;
   evidenceIds?: string[];
   source?: ServiceTimelineEntry["source"];
+  recordKind?: ServiceTimelineEntry["recordKind"];
   agency?: string;
   eventType?: OwnershipRecordEntry["eventType"];
   description?: string;
@@ -37,6 +38,7 @@ export const buildOwnerHistoryTimeline = (input: {
     total: entry.total,
     evidenceIds: entry.evidenceIds,
     source: entry.source,
+    recordKind: entry.recordKind,
   }));
 
   const ownershipItems: OwnerHistoryItem[] = input.ownershipRecords.map((record) => ({
