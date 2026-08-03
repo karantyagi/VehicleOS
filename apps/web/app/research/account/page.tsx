@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export default async function ResearchAccountRoute() {
   if (!isResearchCohortSurface()) redirect("/");
   const user = await getSessionUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/login?next=%2Fresearch%2Faccount");
   const operator = isResearchOperatorAllowed(user);
 
   return (

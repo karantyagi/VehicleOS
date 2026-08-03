@@ -61,13 +61,13 @@ function ResearchAccountMenu({
                 <span className="text-sm font-medium text-foreground">Theme</span>
                 <ThemeSegmentedToggle />
               </div>
-              <Link
+              <a
                 href="/research/account"
                 className="group relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/80"
               >
                 <ShieldCheck className="h-4 w-4 text-muted-foreground" aria-hidden />
                 Account & data
-              </Link>
+              </a>
             </div>
             <div className="my-1 h-px bg-border/80" />
             <form action="/auth/signout" method="post" className="p-1">
