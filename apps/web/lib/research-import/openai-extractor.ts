@@ -36,10 +36,12 @@ type ExtractionTelemetry = {
 };
 
 export type ResearchExtractionResult =
-  | ({ ok: true; draft: ResearchImportDraft } & ExtractionTelemetry)
+  | ({ ok: true; draft: ResearchImportDraft; schemaValid: true; usableDraft: true } & ExtractionTelemetry)
   | ({
       ok: false;
       errorCode: string;
+      schemaValid: boolean | null;
+      usableDraft: false;
     } & ExtractionTelemetry);
 
 const publicContractInstructions = [
@@ -100,26 +102,28 @@ const maxOutputTokens = (): number => {
 const parseOpenAiResearchResponseWithError = (payload: OpenAiResponse): {
   draft: ResearchImportDraft | null;
   errorCode: string | null;
+  schemaValid: boolean;
+  usableDraft: boolean;
 } => {
   const text = outputText(payload);
-  if (!text) return { draft: null, errorCode: responseInvalidCode(payload) };
+  if (!text) return { draft: null, errorCode: responseInvalidCode(payload), schemaValid: false, usableDraft: false };
 
   let candidate: unknown;
   try {
     candidate = JSON.parse(text);
   } catch {
-    return { draft: null, errorCode: "model-response-invalid:invalid-json" };
+    return { draft: null, errorCode: "model-response-invalid:invalid-json", schemaValid: false, usableDraft: false };
   }
 
   const draft = parseResearchImportDraft(candidate);
-  if (!draft) return { draft: null, errorCode: "model-response-invalid:schema" };
+  if (!draft) return { draft: null, errorCode: "model-response-invalid:schema", schemaValid: false, usableDraft: false };
   if (draft.documentType !== "carfax-service-history") {
-    return { draft: null, errorCode: "model-response-invalid:not-carfax-service-history" };
+    return { draft: null, errorCode: "model-response-invalid:not-carfax-service-history", schemaValid: true, usableDraft: false };
   }
   if (draft.records.length === 0) {
-    return { draft: null, errorCode: "model-response-invalid:no-service-records" };
+    return { draft: null, errorCode: "model-response-invalid:no-service-records", schemaValid: true, usableDraft: false };
   }
-  return { draft, errorCode: null };
+  return { draft, errorCode: null, schemaValid: true, usableDraft: true };
 };
 
 export const parseOpenAiResearchResponse = (payload: OpenAiResponse): ResearchImportDraft | null =>
@@ -147,6 +151,8 @@ const extractWithContent = async (input: {
     return {
       ok: false,
       errorCode: "model-not-configured",
+      schemaValid: null,
+      usableDraft: false,
       model: null,
       latencyMs: 0,
       inputTokens: null,
@@ -189,6 +195,8 @@ const extractWithContent = async (input: {
     return {
       ok: false,
       errorCode: "model-request-failed",
+      schemaValid: null,
+      usableDraft: false,
       model,
       latencyMs: Date.now() - startedAt,
       inputTokens: null,
@@ -205,6 +213,8 @@ const extractWithContent = async (input: {
     return {
       ok: false,
       errorCode: requestFailureCode(response.status, failurePayload?.error?.code),
+      schemaValid: null,
+      usableDraft: false,
       model,
       latencyMs: Date.now() - startedAt,
       inputTokens: null,
@@ -228,7 +238,7 @@ const extractWithContent = async (input: {
   try {
     payload = (await response.json()) as OpenAiResponse;
   } catch {
-    return { ok: false, errorCode: "model-response-invalid:invalid-json", ...telemetry };
+    return { ok: false, errorCode: "model-response-invalid:invalid-json", schemaValid: false, usableDraft: false, ...telemetry };
   }
   const populatedTelemetry: ExtractionTelemetry = {
     ...telemetry,
@@ -238,8 +248,16 @@ const extractWithContent = async (input: {
     estimatedCostUsd: estimateResearchRequestCost(payload.usage),
   };
   const parsed = parseOpenAiResearchResponseWithError(payload);
-  if (!parsed.draft) return { ok: false, errorCode: parsed.errorCode ?? responseInvalidCode(payload), ...populatedTelemetry };
-  return { ok: true, draft: parsed.draft, ...populatedTelemetry };
+  if (!parsed.draft) {
+    return {
+      ok: false,
+      errorCode: parsed.errorCode ?? responseInvalidCode(payload),
+      schemaValid: parsed.schemaValid,
+      usableDraft: false,
+      ...populatedTelemetry,
+    };
+  }
+  return { ok: true, draft: parsed.draft, schemaValid: true, usableDraft: true, ...populatedTelemetry };
 };
 
 export const extractResearchCarfaxTextDraft = async (input: {

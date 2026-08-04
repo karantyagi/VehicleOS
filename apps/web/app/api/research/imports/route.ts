@@ -73,6 +73,8 @@ const resultToAttempt = (input: {
   latencyMs: input.result.latencyMs,
   estimatedCostUsd: input.result.estimatedCostUsd,
   providerRequestId: input.result.providerRequestId,
+  schemaValid: input.result.schemaValid,
+  usableDraft: input.result.usableDraft,
   draft: input.result.ok ? input.result.draft : null,
   errorCode: input.result.ok ? null : input.result.errorCode,
 });
@@ -162,6 +164,8 @@ export async function POST(request: Request) {
           status: "text-unavailable",
           model: null,
           inputCharacterCount: 0,
+          schemaValid: null,
+          usableDraft: false,
           errorCode: "pdf-text-unavailable",
         });
     const challengerPromise = extractResearchCarfaxPdfDraft({ pdfBuffer, fileName: "carfax.pdf" }).then((result) =>

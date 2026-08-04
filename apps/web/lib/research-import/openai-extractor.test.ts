@@ -70,7 +70,7 @@ describe("research OpenAI extractor boundary", () => {
     ));
 
     const result = await extractResearchCarfaxTextDraft({ rawText: "CARFAX", apiKey: "test-key", fetchImpl: fetchImpl as typeof fetch });
-    expect(result).toMatchObject({ ok: false, errorCode: "model-request-failed:http-400-invalid_request_error", providerRequestId: "request-400" });
+    expect(result).toMatchObject({ ok: false, errorCode: "model-request-failed:http-400-invalid_request_error", providerRequestId: "request-400", schemaValid: null, usableDraft: false });
   });
 
   it("sends a request-scoped PDF with storage disabled and strict schema output", async () => {
@@ -86,7 +86,7 @@ describe("research OpenAI extractor boundary", () => {
       fetchImpl: fetchImpl as typeof fetch,
     });
 
-    expect(result).toMatchObject({ ok: true, model: "gpt-5-mini-2025-08-07", totalTokens: 30, providerRequestId: "request-1" });
+    expect(result).toMatchObject({ ok: true, model: "gpt-5-mini-2025-08-07", totalTokens: 30, providerRequestId: "request-1", schemaValid: true, usableDraft: true });
     const request = JSON.parse(String(fetchImpl.mock.calls[0]?.[1]?.body)) as Record<string, unknown>;
     expect(request.store).toBe(false);
     expect(request.max_output_tokens).toBe(DEFAULT_RESEARCH_MAX_OUTPUT_TOKENS);
@@ -113,11 +113,11 @@ describe("research OpenAI extractor boundary", () => {
     ));
 
     const result = await extractResearchCarfaxTextDraft({ rawText: "CARFAX", apiKey: "test-key", fetchImpl: fetchImpl as typeof fetch });
-    expect(result).toMatchObject({ ok: false, errorCode: "model-response-invalid:no-service-records", providerRequestId: "request-empty" });
+    expect(result).toMatchObject({ ok: false, errorCode: "model-response-invalid:no-service-records", providerRequestId: "request-empty", schemaValid: true, usableDraft: false });
   });
 
   it("keeps text-first bounded and returns an explicit missing-key outcome", async () => {
     const result = await extractResearchCarfaxTextDraft({ rawText: "x".repeat(MAX_RESEARCH_INPUT_CHARS + 1), apiKey: "" });
-    expect(result).toMatchObject({ ok: false, errorCode: "model-not-configured", model: null });
+    expect(result).toMatchObject({ ok: false, errorCode: "model-not-configured", model: null, schemaValid: null, usableDraft: false });
   });
 });

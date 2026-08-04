@@ -67,9 +67,10 @@ Auth users, service-role key, or connection string.
 2. Run ops/research-cohort/001_research_import_cohort.sql.
 3. Run ops/research-cohort/002_paired_extraction_evaluation.sql.
 4. Run ops/research-cohort/003_participant_quota.sql.
-5. Configure Google sign-in and the callback URL for research.vehicleos.app.
-6. Keep the research-imports bucket private.
-7. Set the database and Supabase environment values only in the research
+5. Run ops/research-cohort/004_evaluation_telemetry.sql.
+6. Configure Google sign-in and the callback URL for research.vehicleos.app.
+7. Keep the research-imports bucket private.
+8. Set the database and Supabase environment values only in the research
    Vercel project.
 
 The migrations create the temporary research run, its two extraction attempts,
@@ -203,10 +204,11 @@ Add your email to RESEARCH_OPERATOR_ALLOWLIST, then open:
 https://research.vehicleos.app/research/admin
 ~~~
 
-The default report shows cohort progress; per-strategy extraction rate across
-all paired attempts, including documents that produced no reviewable draft;
-correction burden, service-line precision/recall, omissions, owner-rejected
-lines, latency, tokens, and configured cost; plus a source-adjudication queue.
+The default report shows cohort progress; per-strategy usable-draft,
+schema-valid, and attempt-failure rates across all paired attempts, including
+documents that produced no reviewable draft; correction burden, service-line
+precision/recall, omissions, owner-rejected lines, p50/p95 latency, tokens,
+and configured cost; plus a source-adjudication queue.
 It will not recommend a strategy before RESEARCH_PROMOTION_MIN_REVIEWED
 source-verified paired reviews. Pending disagreements and owner labels marked
 for correction are excluded from the decision sample. After that evidence
@@ -217,6 +219,20 @@ Routine report reads contain no raw PDF, filename, VIN, provider, evidence, or
 full draft. Choosing Inspect source creates an audit event and a five-minute
 private PDF URL. The operator records confirmed, corrected, or not-required;
 notes must not copy personal data.
+
+### Usage and billing boundary
+
+The cohort report derives per-attempt token counts from the Responses API
+response, measures request latency in the application, and calculates an
+estimated cost from versioned, configured model rates. It can therefore
+compare the text-first and direct-PDF arms using the same model key without
+pretending that an OpenAI invoice identifies an experiment arm.
+
+Account billing is a separate source of truth. If a future finance
+reconciliation is needed, run a scheduled internal-only job with a separately
+held OpenAI Admin credential, aggregate by day/model, and compare the result
+with the cohort's summed estimates. Do not add an Admin key to Vercel's
+research request path, the browser, or this pilot's required environment.
 
 ## Launch gate to owner early access
 
