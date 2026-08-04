@@ -1,5 +1,6 @@
 import { createAdminClient } from "../supabase/admin";
 import { attemptMetrics, canSkipSourceAdjudication } from "./comparison";
+import { researchReviewProgress } from "./review";
 import {
   RESEARCH_IMPORT_SOURCE,
   RESEARCH_IMPORT_BUCKET,
@@ -392,6 +393,24 @@ export const listResearchImportRuns = async (userId: string): Promise<ResearchIm
   return ((data ?? []) as ResearchRunRow[]).map(rowToRun);
 };
 
+export const getResearchParticipantPdfUrl = async (input: { id: string; userId: string }): Promise<string | null> => {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("research_import_runs")
+    .select("storage_key")
+    .eq("id", input.id)
+    .eq("user_id", input.userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  const storageKey = (data as { storage_key?: string } | null)?.storage_key;
+  if (!storageKey) return null;
+  const { data: signedData, error: signedError } = await admin.storage
+    .from(RESEARCH_IMPORT_BUCKET)
+    .createSignedUrl(storageKey, 300);
+  if (signedError || !signedData?.signedUrl) throw new Error(signedError?.message ?? "Could not sign research PDF");
+  return signedData.signedUrl;
+};
+
 export const listResearchOperatorRuns = async (): Promise<ResearchOperatorRun[]> => {
   const admin = createAdminClient();
   const { data, error } = await admin
@@ -495,9 +514,10 @@ export const refreshResearchComparisonObservation = async (runId: string): Promi
   const challenger = attempts.find((attempt) => attempt.strategy === "direct-pdf");
   if (!baseline || !challenger) return;
   const ownerDraft = runData.owner_draft_json as ResearchImportDraft | null;
-  const baselineMetrics = ownerDraft ? attemptMetrics(baseline, ownerDraft) : null;
-  const challengerMetrics = ownerDraft ? attemptMetrics(challenger, ownerDraft) : null;
-  const adjudicationStatus: ResearchAdjudicationStatus = ownerDraft && canSkipSourceAdjudication({
+  const reviewComplete = ownerDraft ? researchReviewProgress(ownerDraft).complete : false;
+  const baselineMetrics = ownerDraft && reviewComplete ? attemptMetrics(baseline, ownerDraft) : null;
+  const challengerMetrics = ownerDraft && reviewComplete ? attemptMetrics(challenger, ownerDraft) : null;
+  const adjudicationStatus: ResearchAdjudicationStatus = reviewComplete && canSkipSourceAdjudication({
     baseline,
     challenger,
     baselineMetrics,

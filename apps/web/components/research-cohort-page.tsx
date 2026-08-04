@@ -1,11 +1,20 @@
 "use client";
 
-import { FileText, LoaderCircle, Trash2 } from "lucide-react";
-import { useEffect, useState, type FormEvent } from "react";
+import { CheckCircle2, ChevronDown, ChevronUp, CircleAlert, FileText, LoaderCircle, Pencil, Plus, RotateCcw, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CARFAX_PDF_INSTRUCTIONS } from "@/lib/record-import-types";
 import { RESEARCH_IMPORT_BUCKET, type ResearchImportDraft, type ResearchImportRun, type ResearchServiceRecord } from "@/lib/research-import/types";
+import {
+  applyResearchRecordReview,
+  createResearchRecordReview,
+  isResearchRecordRejected,
+  isResearchRecordReviewComplete,
+  prepareResearchDraftForReview,
+  researchRecordAttention,
+  researchReviewProgress,
+} from "@/lib/research-import/review";
 import { createClient as createSupabaseClient } from "@/lib/supabase/client";
 
 type PortalError = string | null;
@@ -42,27 +51,13 @@ const readableError = (error: string): string =>
     research_quota_reached: "You have reached this pilot's usable-draft limit. Ask Karan if you have another PDF to include.",
     research_import_in_progress: "Your current PDF is still being processed. Please wait before starting another one.",
     research_quota_not_configured: "This research portal is not configured yet. Please tell Karan.",
+    review_incomplete: "Please choose an outcome for every visit and service item before finishing your review.",
   })[error] ?? "Something went wrong. Please try again.";
 
 const sha256 = async (file: File): Promise<string> => {
   const digest = await crypto.subtle.digest("SHA-256", await file.arrayBuffer());
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 };
-
-const cloneDraft = (draft: ResearchImportDraft): ResearchImportDraft => ({
-  ...draft,
-  records: draft.records.map((record) => ({ ...record, lineItems: [...record.lineItems] })),
-  warnings: [...draft.warnings],
-});
-
-const updateRecord = (
-  draft: ResearchImportDraft,
-  index: number,
-  patch: Partial<ResearchServiceRecord>,
-): ResearchImportDraft => ({
-  ...draft,
-  records: draft.records.map((record, recordIndex) => (recordIndex === index ? { ...record, ...patch } : record)),
-});
 
 const emptyRecord = (): ResearchServiceRecord => ({
   serviceDate: null,
@@ -71,31 +66,83 @@ const emptyRecord = (): ResearchServiceRecord => ({
   lineItems: [],
   confidence: 1,
   evidence: "Added by owner",
+  review: {
+    visitOutcome: "corrected",
+    serviceItems: [{ originalItem: null, finalItem: null, outcome: "unreviewed" }],
+  },
 });
 
-function ResearchRunReview({
+type ReviewFilter = "all" | "attention" | "not-reviewed" | "complete";
+
+const actionOutcomeCopy = {
+  confirmed: "Matches report",
+  corrected: "Corrected",
+  "not-itemized": "Not itemized",
+  "not-supported": "Not in report",
+  unsure: "Not sure",
+  added: "Added by you",
+} as const;
+
+export function ResearchRunReview({
   run,
   onSave,
 }: {
   run: ResearchImportRun;
-  onSave: (runId: string, ownerDraft: ResearchImportDraft) => Promise<void>;
+  onSave: (runId: string, ownerDraft: ResearchImportDraft, reviewComplete: boolean) => Promise<void>;
 }) {
   const initialDraft = run.ownerDraft ?? run.draft;
-  const [draft, setDraft] = useState<ResearchImportDraft | null>(initialDraft ? cloneDraft(initialDraft) : null);
+  const [draft, setDraft] = useState<ResearchImportDraft | null>(initialDraft ? prepareResearchDraftForReview(initialDraft) : null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<PortalError>(null);
+  const [filter, setFilter] = useState<ReviewFilter>("all");
+  const [expandedRecords, setExpandedRecords] = useState<Set<number>>(new Set());
+  const [editingVisits, setEditingVisits] = useState<Set<number>>(new Set());
+  const [editingServiceItems, setEditingServiceItems] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    setDraft(initialDraft ? cloneDraft(initialDraft) : null);
+    const nextDraft = initialDraft ? prepareResearchDraftForReview(initialDraft) : null;
+    setDraft(nextDraft);
+    const firstAttention = nextDraft?.records.findIndex((record) => researchRecordAttention(record).needsAttention) ?? -1;
+    setExpandedRecords(firstAttention >= 0 ? new Set([firstAttention]) : new Set());
+    setEditingVisits(new Set());
+    setEditingServiceItems(new Set());
   }, [run.id, run.ownerDraft, run.draft]);
 
   if (!draft) return null;
 
-  const save = async () => {
+  const replaceRecord = (index: number, update: (record: ResearchServiceRecord) => ResearchServiceRecord) => {
+    setDraft((current) => current
+      ? { ...current, records: current.records.map((record, recordIndex) => (recordIndex === index ? update(record) : record)) }
+      : current);
+  };
+  const updateVisitOutcome = (index: number, visitOutcome: NonNullable<ResearchServiceRecord["review"]>["visitOutcome"]) => {
+    replaceRecord(index, (record) => applyResearchRecordReview(record, { ...createResearchRecordReview(record), ...record.review, visitOutcome }));
+  };
+  const updateVisit = (index: number, patch: Partial<ResearchServiceRecord>) => {
+    replaceRecord(index, (record) => {
+      const review = { ...createResearchRecordReview(record), ...record.review, visitOutcome: "corrected" as const };
+      return applyResearchRecordReview({ ...record, ...patch }, review);
+    });
+  };
+  const updateServiceItem = (recordIndex: number, itemIndex: number, patch: Partial<NonNullable<ResearchServiceRecord["review"]>["serviceItems"][number]>) => {
+    replaceRecord(recordIndex, (record) => {
+      const review = { ...createResearchRecordReview(record), ...record.review };
+      review.serviceItems = review.serviceItems.map((item, currentIndex) => currentIndex === itemIndex ? { ...item, ...patch } : item);
+      return applyResearchRecordReview(record, review);
+    });
+  };
+  const addServiceItem = (recordIndex: number) => {
+    replaceRecord(recordIndex, (record) => {
+      const review = { ...createResearchRecordReview(record), ...record.review };
+      review.serviceItems = [...review.serviceItems, { originalItem: null, finalItem: "", outcome: "unreviewed" }];
+      return applyResearchRecordReview(record, review);
+    });
+  };
+  const save = async (reviewComplete: boolean) => {
     setSaving(true);
     setSaveError(null);
     try {
-      await onSave(run.id, draft);
+      await onSave(run.id, draft, reviewComplete);
     } catch (error) {
       setSaveError(error instanceof Error ? error.message : "Could not save your review.");
     } finally {
@@ -103,128 +150,108 @@ function ResearchRunReview({
     }
   };
 
+  const progress = researchReviewProgress(draft);
+  const attentionByRecord = useMemo(() => draft.records.map(researchRecordAttention), [draft.records]);
+  const counts = {
+    attention: draft.records.filter((record, index) => attentionByRecord[index].needsAttention && !isResearchRecordReviewComplete(record)).length,
+    notReviewed: draft.records.filter((record) => !isResearchRecordReviewComplete(record)).length,
+    complete: progress.reviewedVisits,
+  };
+  const visibleRecords = draft.records.map((record, index) => ({ record, index })).filter(({ record, index }) => {
+    if (filter === "attention") return attentionByRecord[index].needsAttention && !isResearchRecordReviewComplete(record);
+    if (filter === "not-reviewed") return !isResearchRecordReviewComplete(record);
+    if (filter === "complete") return isResearchRecordReviewComplete(record);
+    return true;
+  });
+  const toggleRecord = (index: number) => setExpandedRecords((current) => {
+    const next = new Set(current);
+    if (next.has(index)) next.delete(index);
+    else next.add(index);
+    return next;
+  });
+  const reviewNext = () => {
+    const next = draft.records.findIndex((record) => !isResearchRecordReviewComplete(record));
+    if (next >= 0) {
+      setFilter("all");
+      setExpandedRecords(new Set([next]));
+    }
+  };
+
   return (
     <section className="mt-5 rounded-xl border border-border bg-card p-4 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold">Review the draft</h2>
-          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            You are the final check. Fix anything that is wrong or incomplete. Nothing here changes your VehicleOS
-            maintenance history.
-          </p>
+          <h2 className="text-base font-semibold">Review every visit</h2>
+          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">Each decision becomes research feedback. Amber rows are a shortcut, but every visit still needs a decision before you finish. Nothing here changes your VehicleOS maintenance history.</p>
         </div>
-        <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-          {draft.records.length} visits
-        </span>
+        <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">{progress.reviewedVisits} of {progress.totalVisits} visits reviewed</span>
       </div>
 
-      <label className="mt-4 block text-sm font-medium">
-        VIN shown in the document
-        <input
-          value={draft.vehicleVin ?? ""}
-          onChange={(event) => setDraft({ ...draft, vehicleVin: event.target.value || null })}
-          placeholder="Not shown"
-          className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-        />
-      </label>
+      <div className="mt-4 rounded-lg border border-border bg-muted/40 p-3 text-sm">
+        <p className="font-medium">{progress.reviewedVisits} of {progress.totalVisits} visits reviewed · {progress.reviewedServiceItems} of {progress.totalServiceItems} service items reviewed</p>
+        <p className="mt-1 text-muted-foreground">Choose “not itemized” when the report does not name the work. That is useful feedback, not a model failure.</p>
+      </div>
+      <details className="mt-4 rounded-lg border border-border bg-background px-3 py-2">
+        <summary className="cursor-pointer text-sm font-medium">Vehicle identifier</summary>
+        <label className="mt-3 block text-sm font-medium">VIN shown in the document<input value={draft.vehicleVin ?? ""} onChange={(event) => setDraft({ ...draft, vehicleVin: event.target.value || null })} placeholder="Not shown" className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm" /></label>
+      </details>
 
-      <div className="mt-4 space-y-4">
-        {draft.records.map((record, index) => (
-          <article key={index} className="rounded-lg border border-border bg-background p-3">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <label className="text-sm font-medium">
-                Service date
-                <input
-                  value={record.serviceDate ?? ""}
-                  onChange={(event) =>
-                    setDraft(updateRecord(draft, index, { serviceDate: event.target.value || null }))
-                  }
-                  placeholder="YYYY-MM-DD"
-                  className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm"
-                />
-              </label>
-              <label className="text-sm font-medium">
-                Mileage
-                <input
-                  inputMode="numeric"
-                  value={record.mileage ?? ""}
-                  onChange={(event) => {
-                    const mileage = Number(event.target.value);
-                    setDraft(
-                      updateRecord(draft, index, {
-                        mileage: event.target.value === "" || !Number.isFinite(mileage) ? null : mileage,
-                      }),
-                    );
-                  }}
-                  placeholder="Not shown"
-                  className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm"
-                />
-              </label>
-              <label className="text-sm font-medium sm:col-span-2">
-                Shop or provider
-                <input
-                  value={record.provider ?? ""}
-                  onChange={(event) => setDraft(updateRecord(draft, index, { provider: event.target.value || null }))}
-                  placeholder="Not shown"
-                  className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm"
-                />
-              </label>
-              <label className="text-sm font-medium sm:col-span-2">
-                Work performed <span className="font-normal text-muted-foreground">(one item per line)</span>
-                <textarea
-                  value={record.lineItems.join("\n")}
-                  onChange={(event) =>
-                    setDraft(
-                      updateRecord(draft, index, {
-                        lineItems: event.target.value
-                          .split("\n")
-                          .map((line) => line.trim())
-                          .filter(Boolean),
-                      }),
-                    )
-                  }
-                  rows={Math.max(2, record.lineItems.length)}
-                  className="mt-1 w-full rounded-md border border-input bg-card px-3 py-2 text-sm"
-                />
-              </label>
-            </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              Found in your PDF: {record.evidence || "No matching text was found."}
-            </p>
-            <button
-              type="button"
-              onClick={() => setDraft({ ...draft, records: draft.records.filter((_, recordIndex) => recordIndex !== index) })}
-              className="mt-3 text-sm font-medium text-destructive underline-offset-4 hover:underline"
-            >
-              Remove this visit
-            </button>
-          </article>
-        ))}
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        {([
+          ["all", `All ${draft.records.length}`],
+          ["attention", `Needs attention ${counts.attention}`],
+          ["not-reviewed", `Not reviewed ${counts.notReviewed}`],
+          ["complete", `Complete ${counts.complete}`],
+        ] as const).map(([value, label]) => <Button key={value} type="button" size="sm" variant={filter === value ? "default" : "outline"} onClick={() => setFilter(value)}>{label}</Button>)}
+        <span className="flex-1" />
+        <Button type="button" size="sm" variant="ghost" onClick={() => setExpandedRecords(new Set(draft.records.map((_, index) => index)))}><ChevronDown className="h-4 w-4" aria-hidden /> Expand all</Button>
+        <Button type="button" size="sm" variant="ghost" onClick={() => setExpandedRecords(new Set())}><ChevronUp className="h-4 w-4" aria-hidden /> Collapse all</Button>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setDraft({ ...draft, records: [...draft.records, emptyRecord()] })}
-        className="mt-4 rounded-md border border-border px-3 py-2 text-sm font-medium hover:bg-muted"
-      >
-        Add a missed visit
-      </button>
+      <div className="mt-3 space-y-3">
+        {visibleRecords.map(({ record, index }) => {
+          const review = record.review ?? createResearchRecordReview(record);
+          const attention = attentionByRecord[index];
+          const complete = isResearchRecordReviewComplete(record);
+          const rejected = isResearchRecordRejected(record);
+          const open = expandedRecords.has(index);
+          return (
+            <article key={index} className={`rounded-lg border bg-background ${open ? "border-primary/40 shadow-sm" : "border-border"}`}>
+              <button type="button" onClick={() => toggleRecord(index)} className="flex w-full items-start gap-3 p-3 text-left">
+                {open ? <ChevronUp className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden /> : <ChevronDown className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />}
+                <span className="min-w-0 flex-1"><span className="block text-sm font-medium">{record.serviceDate ?? "Date not shown"} · {record.mileage === null ? "Mileage not shown" : `${record.mileage.toLocaleString()} mi`} · {record.provider ?? "Shop not shown"}</span><span className="mt-1 block truncate text-xs text-muted-foreground">{rejected ? "Marked as not a service visit" : record.lineItems.join(" · ") || "No service item listed"}</span></span>
+                {complete ? <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">Reviewed</span> : attention.needsAttention ? <span className="rounded-full bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-900 dark:text-amber-200">Needs attention</span> : <span className="rounded-full bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">Not reviewed</span>}
+              </button>
+              {open ? <div className="border-t border-border px-3 pb-4 pt-3">
+                {attention.reasons.length ? <div className="flex gap-2 rounded-md border border-amber-500/30 bg-amber-500/5 p-3 text-sm text-amber-950 dark:text-amber-100"><CircleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden /><div><p className="font-medium">Check this visit closely</p><p className="mt-1 text-xs leading-5">{attention.reasons.join(" ")}</p></div></div> : null}
+                {rejected ? <div className="mt-3 rounded-md bg-muted p-3 text-sm"><p className="font-medium">You marked this as not a service visit.</p><button type="button" onClick={() => updateVisitOutcome(index, "unreviewed")} className="mt-2 text-sm font-medium text-primary underline-offset-4 hover:underline">Change answer</button></div> : <>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    {review.visitOutcome === "unreviewed" ? <><Button type="button" size="sm" onClick={() => updateVisitOutcome(index, "confirmed")}><CheckCircle2 className="h-4 w-4" aria-hidden /> Visit details match</Button><Button type="button" size="sm" variant="outline" onClick={() => setEditingVisits((current) => new Set(current).add(index))}><Pencil className="h-4 w-4" aria-hidden /> Edit visit details</Button><Button type="button" size="sm" variant="ghost" onClick={() => updateVisitOutcome(index, "not-a-visit")}>Not a service visit</Button><Button type="button" size="sm" variant="ghost" onClick={() => updateVisitOutcome(index, "unsure")}>I’m not sure</Button></> : <><span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">Visit {review.visitOutcome === "confirmed" ? "matches report" : review.visitOutcome === "corrected" ? "corrected" : "needs source review"}</span><button type="button" onClick={() => updateVisitOutcome(index, "unreviewed")} className="text-sm font-medium text-primary underline-offset-4 hover:underline">Change answer</button></>}
+                  </div>
+                  {editingVisits.has(index) ? <div className="mt-3 grid gap-3 rounded-md border border-border bg-muted/30 p-3 sm:grid-cols-2"><label className="text-sm font-medium">Service date<input value={record.serviceDate ?? ""} onChange={(event) => updateVisit(index, { serviceDate: event.target.value || null })} placeholder="YYYY-MM-DD" className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm" /></label><label className="text-sm font-medium">Mileage<input inputMode="numeric" value={record.mileage ?? ""} onChange={(event) => { const mileage = Number(event.target.value); updateVisit(index, { mileage: event.target.value === "" || !Number.isFinite(mileage) ? null : mileage }); }} placeholder="Not shown" className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm" /></label><label className="text-sm font-medium sm:col-span-2">Shop or provider<input value={record.provider ?? ""} onChange={(event) => updateVisit(index, { provider: event.target.value || null })} placeholder="Not shown" className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm" /></label><Button type="button" size="sm" variant="outline" onClick={() => setEditingVisits((current) => { const next = new Set(current); next.delete(index); return next; })}>Done editing visit</Button></div> : null}
+                  <div className="mt-4 border-t border-border pt-3"><p className="text-sm font-medium">Service actions</p><p className="mt-1 text-xs text-muted-foreground">Review each action separately. “Not itemized” means the report did not provide enough detail to judge it.</p><div className="mt-3 space-y-2">
+                    {review.serviceItems.map((item, itemIndex) => {
+                      const itemKey = `${index}:${itemIndex}`;
+                      const editingItem = editingServiceItems.has(itemKey);
+                      const label = item.finalItem || item.originalItem || "No service item was proposed";
+                      return <div key={itemKey} className="rounded-md border border-border bg-card p-3"><div className="flex flex-wrap items-center justify-between gap-2"><p className="text-sm font-medium">{label}</p>{item.outcome !== "unreviewed" ? <span className="rounded-full bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">{actionOutcomeCopy[item.outcome]}</span> : null}</div>{editingItem || (item.originalItem === null && item.outcome === "unreviewed") ? <div className="mt-3 flex flex-wrap gap-2"><input value={item.finalItem ?? ""} onChange={(event) => updateServiceItem(index, itemIndex, { finalItem: event.target.value })} placeholder="Service item" className="h-9 min-w-52 flex-1 rounded-md border border-input bg-background px-3 text-sm" /><Button type="button" size="sm" disabled={!item.finalItem?.trim()} onClick={() => { updateServiceItem(index, itemIndex, { outcome: item.originalItem === null ? "added" : "corrected" }); setEditingServiceItems((current) => { const next = new Set(current); next.delete(itemKey); return next; }); }}>{item.originalItem === null ? "Add service item" : "Save correction"}</Button></div> : null}{item.outcome === "unreviewed" && item.originalItem !== null ? <div className="mt-3 flex flex-wrap gap-2"><Button type="button" size="sm" onClick={() => updateServiceItem(index, itemIndex, { outcome: "confirmed" })}><CheckCircle2 className="h-4 w-4" aria-hidden /> Matches report</Button><Button type="button" size="sm" variant="outline" onClick={() => setEditingServiceItems((current) => new Set(current).add(itemKey))}><Pencil className="h-4 w-4" aria-hidden /> Edit</Button><Button type="button" size="sm" variant="ghost" onClick={() => updateServiceItem(index, itemIndex, { finalItem: null, outcome: "not-itemized" })}>Not itemized</Button><Button type="button" size="sm" variant="ghost" onClick={() => updateServiceItem(index, itemIndex, { finalItem: null, outcome: "not-supported" })}>Not in report</Button><Button type="button" size="sm" variant="ghost" onClick={() => updateServiceItem(index, itemIndex, { outcome: "unsure" })}>I’m not sure</Button></div> : null}{item.outcome !== "unreviewed" ? <button type="button" onClick={() => updateServiceItem(index, itemIndex, { finalItem: item.originalItem, outcome: "unreviewed" })} className="mt-3 text-sm font-medium text-primary underline-offset-4 hover:underline">Change answer</button> : null}</div>;
+                    })}
+                  </div><Button type="button" size="sm" variant="outline" className="mt-3" onClick={() => addServiceItem(index)}><Plus className="h-4 w-4" aria-hidden /> Add a service item</Button></div>
+                </>}
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <a href={`/api/research/imports/${run.id}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 hover:underline"><FileText className="h-4 w-4" aria-hidden /> Open your original PDF</a>
+                </div>
+                <details className="mt-3 rounded-md bg-muted/40 p-3 text-xs text-muted-foreground"><summary className="cursor-pointer font-medium text-foreground">Why we found this</summary><p className="mt-2 leading-5">{record.evidence || "No matching text was found."}</p></details>
+              </div> : null}
+            </article>
+          );
+        })}
+      </div>
 
-      {draft.warnings.length > 0 ? (
-        <p className="mt-4 rounded-md bg-amber-500/10 px-3 py-2 text-sm text-amber-900 dark:text-amber-200">
-          {draft.warnings.join(" ")}
-        </p>
-      ) : null}
-
+      <Button type="button" variant="outline" className="mt-4" onClick={() => { const nextIndex = draft.records.length; setDraft((current) => current ? { ...current, records: [...current.records, emptyRecord()] } : current); setFilter("all"); setExpandedRecords((current) => new Set([...current, nextIndex])); }}><Plus className="h-4 w-4" aria-hidden /> Add a missed visit</Button>
+      {draft.warnings.length > 0 ? <p className="mt-4 rounded-md bg-amber-500/10 px-3 py-2 text-sm text-amber-900 dark:text-amber-200">{draft.warnings.join(" ")}</p> : null}
       {saveError ? <p className="mt-3 text-sm text-destructive">{saveError}</p> : null}
-      <button
-        type="button"
-        disabled={saving}
-        onClick={() => void save()}
-        className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 disabled:opacity-50"
-      >
-        {saving ? "Saving…" : "Save my corrections"}
-      </button>
+      <div className="mt-4 flex flex-wrap items-center gap-3"><Button type="button" variant="outline" disabled={saving} onClick={() => void save(false)}>{saving ? "Saving…" : "Save progress"}</Button><Button type="button" disabled={saving || !progress.complete} onClick={() => void save(true)}>{saving ? "Saving…" : run.status === "reviewed" ? "Update completed review" : "Finish review"}</Button>{!progress.complete ? <Button type="button" variant="ghost" onClick={reviewNext}><RotateCcw className="h-4 w-4" aria-hidden /> Review next · {progress.totalVisits - progress.reviewedVisits} visits remaining</Button> : <span className="text-sm text-primary">Every visit has a review outcome.</span>}</div>
     </section>
   );
 }
@@ -392,11 +419,11 @@ export function ResearchCohortPage({ invited }: { invited: boolean }) {
     }
   };
 
-  const saveReview = async (runId: string, ownerDraft: ResearchImportDraft) => {
+  const saveReview = async (runId: string, ownerDraft: ResearchImportDraft, reviewComplete: boolean) => {
     const response = await fetch("/api/research/imports/" + runId, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ownerDraft }),
+      body: JSON.stringify({ ownerDraft, reviewComplete }),
     });
     const body = (await response.json()) as { run?: ResearchImportRun; error?: string };
     if (!response.ok || !body.run) throw new Error(readableError(body.error ?? ""));
@@ -522,7 +549,9 @@ export function ResearchCohortPage({ invited }: { invited: boolean }) {
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <h3 className="font-medium">{run.fileName}</h3>
-                      <p className="mt-1 text-sm text-muted-foreground">{statusCopy[run.status]}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {run.status === "extracted" && run.ownerDraft ? "Review in progress. You can pick up where you left off." : statusCopy[run.status]}
+                      </p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         Delete by {new Date(run.deleteAfter).toLocaleDateString()}
                         {run.model ? " · " + run.model : ""}

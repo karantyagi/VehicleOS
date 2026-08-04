@@ -28,6 +28,33 @@ export type ResearchRunStatus =
   | "extract-failed"
   | "reviewed";
 
+export type ResearchVisitReviewOutcome =
+  | "unreviewed"
+  | "confirmed"
+  | "corrected"
+  | "not-a-visit"
+  | "unsure";
+
+export type ResearchServiceItemReviewOutcome =
+  | "unreviewed"
+  | "confirmed"
+  | "corrected"
+  | "not-itemized"
+  | "not-supported"
+  | "unsure"
+  | "added";
+
+export type ResearchServiceItemReview = {
+  originalItem: string | null;
+  finalItem: string | null;
+  outcome: ResearchServiceItemReviewOutcome;
+};
+
+export type ResearchRecordReview = {
+  visitOutcome: ResearchVisitReviewOutcome;
+  serviceItems: ResearchServiceItemReview[];
+};
+
 export type ResearchServiceRecord = {
   serviceDate: string | null;
   mileage: number | null;
@@ -35,6 +62,9 @@ export type ResearchServiceRecord = {
   lineItems: string[];
   confidence: number;
   evidence: string;
+  // This is added only by the owner-review UI. Model drafts intentionally do
+  // not contain it, which keeps the extraction contract unchanged.
+  review?: ResearchRecordReview;
 };
 
 export type ResearchImportDraft = {
@@ -94,6 +124,7 @@ export type ResearchAttemptMetrics = {
   exactDateMatches: number;
   exactMileageMatches: number;
   exactProviderMatches: number;
+  unverifiableServiceRecords: number;
 };
 
 export type ResearchOperatorRun = ResearchImportRun & {
@@ -145,6 +176,7 @@ export type ResearchStrategySummary = {
   averageServiceLineRecall: number | null;
   unsupportedServiceLines: number;
   omittedServiceLines: number;
+  unverifiableServiceRecords: number;
   p50LatencyMs: number | null;
   p95LatencyMs: number | null;
   averageTotalTokens: number | null;

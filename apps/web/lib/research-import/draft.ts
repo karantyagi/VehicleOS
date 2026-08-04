@@ -1,4 +1,11 @@
-import type { ResearchImportDraft, ResearchServiceRecord } from "./types";
+import type {
+  ResearchImportDraft,
+  ResearchRecordReview,
+  ResearchServiceItemReview,
+  ResearchServiceRecord,
+  ResearchServiceItemReviewOutcome,
+  ResearchVisitReviewOutcome,
+} from "./types";
 
 export const CARFAX_SERVICE_HISTORY_JSON_SCHEMA = {
   type: "object",
@@ -44,6 +51,25 @@ const isNullableString = (value: unknown): value is string | null =>
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+const isVisitReviewOutcome = (value: unknown): value is ResearchVisitReviewOutcome =>
+  value === "unreviewed" || value === "confirmed" || value === "corrected" || value === "not-a-visit" || value === "unsure";
+
+const isServiceItemReviewOutcome = (value: unknown): value is ResearchServiceItemReviewOutcome =>
+  value === "unreviewed" || value === "confirmed" || value === "corrected" || value === "not-itemized" ||
+  value === "not-supported" || value === "unsure" || value === "added";
+
+const isResearchServiceItemReview = (value: unknown): value is ResearchServiceItemReview =>
+  isRecord(value) &&
+  isNullableString(value.originalItem) &&
+  isNullableString(value.finalItem) &&
+  isServiceItemReviewOutcome(value.outcome);
+
+const isResearchRecordReview = (value: unknown): value is ResearchRecordReview =>
+  isRecord(value) &&
+  isVisitReviewOutcome(value.visitOutcome) &&
+  Array.isArray(value.serviceItems) &&
+  value.serviceItems.every(isResearchServiceItemReview);
+
 const isResearchServiceRecord = (value: unknown): value is ResearchServiceRecord => {
   if (!isRecord(value)) return false;
   return (
@@ -56,7 +82,8 @@ const isResearchServiceRecord = (value: unknown): value is ResearchServiceRecord
     Number.isFinite(value.confidence) &&
     value.confidence >= 0 &&
     value.confidence <= 1 &&
-    typeof value.evidence === "string"
+    typeof value.evidence === "string" &&
+    (value.review === undefined || isResearchRecordReview(value.review))
   );
 };
 

@@ -32,6 +32,26 @@ describe("research comparison metrics", () => {
     });
   });
 
+  it("does not treat service details the report never itemized as a model rejection", () => {
+    const sourceUnclear: ResearchImportDraft = {
+      ...proposed,
+      records: [{
+        ...proposed.records[0],
+        lineItems: [],
+        review: {
+          visitOutcome: "confirmed",
+          serviceItems: [{ originalItem: "Invented service", finalItem: null, outcome: "not-itemized" }],
+        },
+      }],
+    };
+
+    expect(compareDraftToOwnerCorrection(proposed, sourceUnclear)).toMatchObject({
+      unsupportedServiceLines: 0,
+      omittedServiceLines: 0,
+      unverifiableServiceRecords: 1,
+    });
+  });
+
   it("does not recommend a strategy before the evidence floor", () => {
     const observation: ResearchComparisonObservation = {
       id: "observation-1",

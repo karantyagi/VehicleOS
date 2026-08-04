@@ -42,11 +42,33 @@ Invited owner signs in
   -> signed direct upload to private Supabase Storage
   -> paired text-first + direct-PDF schema-bound attempts
   -> one pre-assigned valid draft shown to owner
-  -> owner edits, adds, or removes visits
+  -> owner explicitly reviews every visit and service action
   -> anonymous comparison measurement + operator adjudication
 
 No arrow reaches the VehicleOS owner event store.
 ~~~
+
+### Review-label protocol
+
+The cohort is not evaluated merely because an owner clicks Save. A completed
+review requires an explicit outcome for every visit and each proposed service
+action: matches report, corrected, added by owner, not in report, not itemized
+in the source, or unsure. Owners can save incomplete progress and return later,
+but only a completed review refreshes paired quality metrics.
+
+The review queue keeps every visit visible. It may prioritize amber rows whose
+evidence is incomplete, generic, missing a core field, or low confidence, but
+those flags never silently accept the remaining rows. Green means an owner has
+reviewed the row, not that a model assigned it a high confidence.
+
+While reviewing, an invited owner can open only their own original PDF through
+a five-minute, participant-scoped URL. They never see both hidden extraction
+attempts, so this source check does not reveal or bias the paired assignment.
+
+`not itemized` and `unsure` are source-availability outcomes, not automatic
+model failures. Their service lines are excluded from precision/recall and
+force source adjudication. An owner-rejected action remains a model-quality
+signal; an owner-added action remains an omission signal.
 
 The portal also captures valuable failure states: no selectable PDF text, model
 not configured, invalid structured response, and model request failure. Each
@@ -222,8 +244,9 @@ https://research.vehicleos.app/research/admin
 The default report shows cohort progress; per-strategy usable-draft,
 schema-valid, and attempt-failure rates across all paired attempts, including
 documents that produced no reviewable draft; correction burden, service-line
-precision/recall, omissions, owner-rejected lines, p50/p95 latency, tokens,
-and configured cost; plus a source-adjudication queue.
+precision/recall, omissions, owner-rejected lines, source-unclear visits,
+p50/p95 latency, tokens, and configured cost; plus a source-adjudication
+queue.
 It will not recommend a strategy before RESEARCH_PROMOTION_MIN_REVIEWED
 source-verified paired reviews. Pending disagreements and owner labels marked
 for correction are excluded from the decision sample. After that evidence
