@@ -113,6 +113,8 @@ describe("OwnerServiceScheduleBoardView service journey", () => {
     const markup = renderBoard(null);
 
     expect(markup).toContain("Due in 3 weeks");
+    expect(markup).toContain("Next 3 weeks");
+    expect(markup).toContain('aria-controls="maintenance-time-group-next_three_weeks"');
   });
 
   it("calls out items due in the current calendar week", () => {
@@ -121,6 +123,7 @@ describe("OwnerServiceScheduleBoardView service journey", () => {
     const markup = renderBoard(null);
 
     expect(markup).toContain("Due this week");
+    expect(markup).toContain('aria-controls="maintenance-time-group-this_week"');
   });
 
   it("does not describe the following calendar week as this week", () => {

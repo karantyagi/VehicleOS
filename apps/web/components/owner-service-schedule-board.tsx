@@ -45,8 +45,16 @@ type OwnerServiceScheduleBoardProps = {
 };
 
 type GroupFilter = "All" | "Engine" | "Fluids" | "Filters" | "Brakes" | "Tires" | "Other";
+type TimeGroup = "overdue" | "this_week" | "next_three_weeks" | "later";
 
 const GROUP_FILTERS: GroupFilter[] = ["All", "Engine", "Fluids", "Filters", "Brakes", "Tires", "Other"];
+
+const TIME_GROUPS: { id: TimeGroup; label: string; defaultOpen: boolean }[] = [
+  { id: "overdue", label: "Overdue", defaultOpen: true },
+  { id: "this_week", label: "This week", defaultOpen: true },
+  { id: "next_three_weeks", label: "Next 3 weeks", defaultOpen: false },
+  { id: "later", label: "Later / on track", defaultOpen: false },
+];
 
 const TIMELINE_MAX_MI = 100_000;
 
@@ -122,6 +130,21 @@ const timeFirstVerdictLabel = (row: OwnerServiceScheduleRow, today = todayIsoDat
   if (daysUntil <= daysThroughSunday) return "Due this week";
 
   return `Due in ${formatElapsedTime(daysUntil)}`;
+};
+
+const timeGroupForDueItem = (item: OwnerDueItem, today = todayIsoDate()): TimeGroup => {
+  if (item.verdict === "overdue") return "overdue";
+  if (item.verdict !== "due_soon") return "later";
+  if (!item.dueDate) return "this_week";
+
+  const daysUntil = calendarDaysBetween(today, item.dueDate);
+  if (daysUntil === null || daysUntil <= 0) return "this_week";
+
+  const todayDate = isoDateToLocalDate(today);
+  const daysThroughSunday = todayDate ? (7 - todayDate.getDay()) % 7 : 0;
+  if (daysUntil <= daysThroughSunday) return "this_week";
+  if (daysUntil <= 21) return "next_three_weeks";
+  return "later";
 };
 
 const inferGroup = (row: OwnerServiceScheduleRow): GroupFilter => {
@@ -744,6 +767,9 @@ export function OwnerServiceScheduleBoardView({
   onUpdateCurrentMileage,
 }: OwnerServiceScheduleBoardProps) {
   const [group, setGroup] = useState<GroupFilter>("All");
+  const [openTimeGroups, setOpenTimeGroups] = useState<Record<TimeGroup, boolean>>(() =>
+    Object.fromEntries(TIME_GROUPS.map((timeGroup) => [timeGroup.id, timeGroup.defaultOpen])) as Record<TimeGroup, boolean>,
+  );
 
   const focusedItemId = useMemo(
     () =>
@@ -783,6 +809,27 @@ export function OwnerServiceScheduleBoardView({
       return item.maintenanceRow ? allowedGroups.has(item.maintenanceRow.entryId) : false;
     });
   }, [dueItems, group, maintenanceRows]);
+
+  const today = todayIsoDate();
+  const itemsByTimeGroup = useMemo(() => {
+    const items = new Map<TimeGroup, OwnerDueItem[]>(TIME_GROUPS.map((timeGroup) => [timeGroup.id, []]));
+    for (const item of filteredItems) {
+      items.get(timeGroupForDueItem(item, today))?.push(item);
+    }
+    return items;
+  }, [filteredItems, today]);
+
+  const focusedTimeGroup = useMemo(() => {
+    const focusedItem = filteredItems.find((item) => item.id === focusedItemId);
+    return focusedItem ? timeGroupForDueItem(focusedItem, today) : null;
+  }, [filteredItems, focusedItemId, today]);
+
+  useEffect(() => {
+    if (!focusedTimeGroup) return;
+    setOpenTimeGroups((current) =>
+      current[focusedTimeGroup] ? current : { ...current, [focusedTimeGroup]: true },
+    );
+  }, [focusedTimeGroup]);
 
   const summary = dueItems?.summary;
   const actionCount = (summary?.overdue ?? 0) + (summary?.dueSoon ?? 0);
@@ -880,23 +927,59 @@ export function OwnerServiceScheduleBoardView({
       ) : null}
 
       <div className="space-y-3">
-        {filteredItems.map((item) => (
-          <OwnerDueItemCard
-            key={item.id}
-            item={item}
-            open={openItemId === item.id}
-            onOpenChange={(open) => setOpenItemId(open ? item.id : null)}
-            currentMileage={currentMileage}
-            disabled={disabled}
-            serviceTimeline={serviceTimeline}
-            focusedEntryId={focusedEntryId}
-            ownerContextMemory={ownerContextMemory}
-            onSaveOwnerContextMemory={onSaveOwnerContextMemory}
-            onAddService={onAddService}
-            onUpdateService={onUpdateService}
-            onUpdateCurrentMileage={onUpdateCurrentMileage}
-          />
-        ))}
+        {TIME_GROUPS.map((timeGroup) => {
+          const items = itemsByTimeGroup.get(timeGroup.id) ?? [];
+          if (items.length === 0) return null;
+
+          const isOpen = openTimeGroups[timeGroup.id];
+          const panelId = `maintenance-time-group-${timeGroup.id}`;
+
+          return (
+            <section key={timeGroup.id} className="overflow-hidden rounded-xl border border-border/70 bg-card/90">
+              <button
+                type="button"
+                className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset sm:px-5"
+                aria-expanded={isOpen}
+                aria-controls={panelId}
+                onClick={() =>
+                  setOpenTimeGroups((current) => ({ ...current, [timeGroup.id]: !current[timeGroup.id] }))
+                }
+              >
+                <span className="flex min-w-0 items-center gap-2">
+                  <span className="text-sm font-semibold text-foreground">{timeGroup.label}</span>
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
+                    {items.length}
+                  </span>
+                </span>
+                {isOpen ? (
+                  <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                ) : (
+                  <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                )}
+              </button>
+
+              <div id={panelId} hidden={!isOpen} className="space-y-3 border-t border-border/60 p-3 sm:p-4">
+                {items.map((item) => (
+                  <OwnerDueItemCard
+                    key={item.id}
+                    item={item}
+                    open={openItemId === item.id}
+                    onOpenChange={(open) => setOpenItemId(open ? item.id : null)}
+                    currentMileage={currentMileage}
+                    disabled={disabled}
+                    serviceTimeline={serviceTimeline}
+                    focusedEntryId={focusedEntryId}
+                    ownerContextMemory={ownerContextMemory}
+                    onSaveOwnerContextMemory={onSaveOwnerContextMemory}
+                    onAddService={onAddService}
+                    onUpdateService={onUpdateService}
+                    onUpdateCurrentMileage={onUpdateCurrentMileage}
+                  />
+                ))}
+              </div>
+            </section>
+          );
+        })}
       </div>
 
       <p className="text-xs text-muted-foreground">
