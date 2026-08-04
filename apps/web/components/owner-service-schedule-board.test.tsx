@@ -1,6 +1,6 @@
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { OwnerDueItemsView } from "@vehicleos/domain";
 
 vi.mock("./maintenance-item-trust-actions", () => ({
@@ -80,6 +80,14 @@ const renderBoard = (focusedEntryId: string | null) =>
   );
 
 describe("OwnerServiceScheduleBoardView service journey", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("keeps detailed service history quiet while a maintenance item is collapsed", () => {
     const markup = renderBoard(null);
 
@@ -97,5 +105,30 @@ describe("OwnerServiceScheduleBoardView service journey", () => {
     expect(markup).toContain("42,045 mi");
     expect(markup).toContain("Quick Lube");
     expect(markup).toContain("Engine oil and filter");
+  });
+
+  it("uses a concrete time cue before the owner opens a due-soon item", () => {
+    vi.setSystemTime(new Date("2026-08-03T12:00:00"));
+
+    const markup = renderBoard(null);
+
+    expect(markup).toContain("Due in 3 weeks");
+  });
+
+  it("calls out items due in the current calendar week", () => {
+    vi.setSystemTime(new Date("2026-08-17T12:00:00"));
+
+    const markup = renderBoard(null);
+
+    expect(markup).toContain("Due this week");
+  });
+
+  it("does not describe the following calendar week as this week", () => {
+    vi.setSystemTime(new Date("2026-08-16T12:00:00"));
+
+    const markup = renderBoard(null);
+
+    expect(markup).toContain("Due in 4 days");
+    expect(markup).not.toContain("Due this week");
   });
 });

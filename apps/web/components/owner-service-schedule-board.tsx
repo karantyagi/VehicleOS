@@ -23,7 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { isoDateToLocalDate } from "@/lib/date-input";
+import { isoDateToLocalDate, todayIsoDate } from "@/lib/date-input";
 import type { TimelineEntry } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
@@ -84,6 +84,45 @@ const formatDate = (iso: string | null): string => {
 const formatMi = (value: number | null | undefined): string => {
   if (value === null || value === undefined) return "—";
   return `${value.toLocaleString()} mi`;
+};
+
+const calendarDaysBetween = (from: string, to: string): number | null => {
+  const fromDate = isoDateToLocalDate(from);
+  const toDate = isoDateToLocalDate(to);
+  if (!fromDate || !toDate) return null;
+
+  const fromUtc = Date.UTC(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+  const toUtc = Date.UTC(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+  return Math.round((toUtc - fromUtc) / 86_400_000);
+};
+
+const formatElapsedTime = (days: number): string => {
+  if (days === 1) return "1 day";
+  if (days < 7) return `${days} days`;
+
+  const weeks = Math.ceil(days / 7);
+  return `${weeks} week${weeks === 1 ? "" : "s"}`;
+};
+
+const timeFirstVerdictLabel = (row: OwnerServiceScheduleRow, today = todayIsoDate()): string => {
+  if (row.verdict === "overdue") {
+    const daysOverdue = row.dueDate ? calendarDaysBetween(row.dueDate, today) : null;
+    if (daysOverdue && daysOverdue > 0) return `Overdue by ${formatElapsedTime(daysOverdue)}`;
+    return row.dueMileage ? "Overdue by mileage" : "Overdue";
+  }
+
+  if (row.verdict !== "due_soon") return verdictLabel[row.verdict];
+  if (!row.dueDate) return "Due soon by mileage";
+
+  const daysUntil = calendarDaysBetween(today, row.dueDate);
+  if (daysUntil === null) return "Due soon";
+  if (daysUntil <= 0) return "Due today";
+
+  const todayDate = isoDateToLocalDate(today);
+  const daysThroughSunday = todayDate ? (7 - todayDate.getDay()) % 7 : 0;
+  if (daysUntil <= daysThroughSunday) return "Due this week";
+
+  return `Due in ${formatElapsedTime(daysUntil)}`;
 };
 
 const inferGroup = (row: OwnerServiceScheduleRow): GroupFilter => {
@@ -294,6 +333,8 @@ function MaintenanceDueCard({
     : null;
   const ownerInterval =
     ownerContextMemory?.intervalOverlays?.[row.entryId]?.intervalMiles ?? null;
+  const urgencyLabel = timeFirstVerdictLabel(row);
+  const dueLineLabel = row.verdict === "overdue" || row.verdict === "due_soon" ? urgencyLabel : "Next due";
 
   useEffect(() => {
     const nextValue = ownerInterval ?? interval?.recommendedMiles ?? null;
@@ -404,14 +445,15 @@ function MaintenanceDueCard({
                 MM {row.mmCode}
               </span>
             ) : null}
-            <Badge variant={verdictBadgeVariant(row.verdict)}>{verdictLabel[row.verdict]}</Badge>
+            <Badge variant={verdictBadgeVariant(row.verdict)}>{urgencyLabel}</Badge>
           </div>
           <h3 className="mt-1.5 text-base font-semibold tracking-tight text-foreground">{row.displayName}</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             {interval?.activeLabel ?? row.oemRuleLabel}
           </p>
           <p className="mt-1 text-sm tabular-nums text-muted-foreground">
-            Next {formatDate(row.dueDate)}
+            {dueLineLabel}
+            {row.dueDate ? ` · ${formatDate(row.dueDate)}` : ""}
             {row.dueMileage ? ` · ${formatMi(row.dueMileage)}` : ""}
           </p>
         </div>
@@ -432,7 +474,7 @@ function MaintenanceDueCard({
               </p>
             </div>
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Next due</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{dueLineLabel}</p>
               <p className="mt-1 text-sm font-medium tabular-nums">
                 {formatDate(row.dueDate)}
                 {row.dueMileage ? ` · ${formatMi(row.dueMileage)}` : ""}
@@ -771,7 +813,7 @@ export function OwnerServiceScheduleBoardView({
           <p className="mt-0.5 text-sm text-muted-foreground">Odometer</p>
         </div>
         <div>
-          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Action now</p>
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Overdue</p>
           <p className="mt-1 text-2xl font-semibold tabular-nums text-destructive">{summary?.overdue ?? 0}</p>
         </div>
         <div>
