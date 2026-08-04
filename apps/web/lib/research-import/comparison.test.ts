@@ -47,6 +47,10 @@ describe("research comparison metrics", () => {
       challengerTotalTokens: 2000,
       baselineEstimatedCostUsd: 0.01,
       challengerEstimatedCostUsd: 0.02,
+      baselineSchemaValid: true,
+      challengerSchemaValid: true,
+      baselineUsableDraft: true,
+      challengerUsableDraft: true,
       adjudicationStatus: "pending",
       observedAt: "2026-08-02T00:00:00.000Z",
     };
@@ -80,6 +84,8 @@ describe("research comparison metrics", () => {
       latencyMs: 1,
       estimatedCostUsd: 0.001,
       providerRequestId: "request",
+      schemaValid: true,
+      usableDraft: true,
       errorCode: null,
       draft: sharedDraft,
     };
@@ -90,5 +96,50 @@ describe("research comparison metrics", () => {
       baselineMetrics: metrics,
       challengerMetrics: metrics,
     })).toBe(false);
+  });
+
+  it("reports explicit quality rates and tail latency from paired observations", () => {
+    const observations: ResearchComparisonObservation[] = Array.from({ length: 20 }, (_, index) => ({
+      id: `observation-${index}`,
+      runId: `run-${index}`,
+      displayedStrategy: "text-first",
+      baselineStatus: index === 19 ? "extract-failed" : "extracted",
+      challengerStatus: "extracted",
+      baselineMetrics: null,
+      challengerMetrics: null,
+      baselineLatencyMs: (index + 1) * 100,
+      challengerLatencyMs: (index + 1) * 200,
+      baselineTotalTokens: index + 1,
+      challengerTotalTokens: (index + 1) * 2,
+      baselineEstimatedCostUsd: (index + 1) / 10_000,
+      challengerEstimatedCostUsd: (index + 1) / 5_000,
+      baselineSchemaValid: index === 18 ? false : true,
+      challengerSchemaValid: null,
+      baselineUsableDraft: index !== 19,
+      challengerUsableDraft: true,
+      adjudicationStatus: "pending",
+      observedAt: "2026-08-03T00:00:00.000Z",
+    }));
+
+    const report = buildResearchOperatorReport({ runs: [], observations });
+    expect(report.baseline).toMatchObject({
+      attempted: 20,
+      usableDrafts: 19,
+      usableDraftRate: 0.95,
+      schemaValidResponses: 19,
+      schemaValidityObserved: 20,
+      schemaValidRate: 0.95,
+      failedAttempts: 1,
+      failureRate: 0.05,
+      p50LatencyMs: 1050,
+      p95LatencyMs: 1900,
+      p95EstimatedCostUsd: 0.0019,
+    });
+    expect(report.challenger).toMatchObject({
+      schemaValidityObserved: 0,
+      schemaValidRate: null,
+      p50LatencyMs: 2100,
+      p95LatencyMs: 3800,
+    });
   });
 });

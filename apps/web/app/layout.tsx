@@ -7,6 +7,7 @@ import { AppProviders } from "../components/app-providers";
 import { PwaServiceWorker } from "../components/pwa-service-worker";
 import { Toaster } from "../components/ui/sonner";
 import { pwaConfig } from "../lib/pwa-config";
+import { shouldEnableOwnerShellIntegrations } from "../lib/research-import/policy";
 import { siteConfig } from "../lib/site-config";
 
 const inter = Inter({
@@ -51,6 +52,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const ownerShellIntegrationsEnabled = shouldEnableOwnerShellIntegrations();
+
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <body>
@@ -63,9 +66,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </a>
           {children}
           <Toaster />
-          <PwaServiceWorker />
-          <Analytics />
-          <SpeedInsights />
+          {ownerShellIntegrationsEnabled ? (
+            <>
+              <PwaServiceWorker />
+              <Analytics />
+              <SpeedInsights />
+            </>
+          ) : null}
         </AppProviders>
       </body>
     </html>

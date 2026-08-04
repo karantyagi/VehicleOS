@@ -15,6 +15,10 @@ const quotaMigration = readFileSync(
   new URL("../../../../ops/research-cohort/003_participant_quota.sql", import.meta.url),
   "utf8",
 );
+const telemetryMigration = readFileSync(
+  new URL("../../../../ops/research-cohort/004_evaluation_telemetry.sql", import.meta.url),
+  "utf8",
+);
 
 describe("research security and retention contract", () => {
   it("requires the full-PDF consent version", () => {
@@ -51,5 +55,13 @@ describe("research security and retention contract", () => {
     expect(quotaMigration).toContain("active_slots >= 1");
     expect(quotaMigration).toContain("revoke all on function reserve_research_import_quota");
     expect(quotaMigration).toContain("grant execute on function reserve_research_import_quota(uuid, text, integer) to service_role");
+  });
+
+  it("records forward-only evaluation states without copying owner data", () => {
+    expect(telemetryMigration).toContain("schema_valid boolean null");
+    expect(telemetryMigration).toContain("usable_draft boolean not null default false");
+    expect(telemetryMigration).toContain("baseline_schema_valid boolean null");
+    expect(telemetryMigration).toContain("challenger_usable_draft boolean not null default false");
+    expect(telemetryMigration).not.toMatch(/add column[^;\n]*(vin|filename|draft_json|user_id)/i);
   });
 });

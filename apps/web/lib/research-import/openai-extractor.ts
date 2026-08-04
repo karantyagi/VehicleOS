@@ -3,6 +3,7 @@ import type { ResearchImportDraft } from "./types";
 
 export const DEFAULT_RESEARCH_IMPORT_MODEL = "gpt-5-mini-2025-08-07";
 export const MAX_RESEARCH_INPUT_CHARS = 60_000;
+export const DEFAULT_RESEARCH_MAX_OUTPUT_TOKENS = 8_000;
 
 type FetchLike = typeof fetch;
 
@@ -35,10 +36,12 @@ type ExtractionTelemetry = {
 };
 
 export type ResearchExtractionResult =
-  | ({ ok: true; draft: ResearchImportDraft } & ExtractionTelemetry)
+  | ({ ok: true; draft: ResearchImportDraft; schemaValid: true; usableDraft: true } & ExtractionTelemetry)
   | ({
       ok: false;
       errorCode: string;
+      schemaValid: boolean | null;
+      usableDraft: false;
     } & ExtractionTelemetry);
 
 const publicContractInstructions = [
@@ -57,16 +60,6 @@ const outputText = (payload: OpenAiResponse): string | null => {
     }
   }
   return null;
-};
-
-export const parseOpenAiResearchResponse = (payload: OpenAiResponse): ResearchImportDraft | null => {
-  const text = outputText(payload);
-  if (!text) return null;
-  try {
-    return parseResearchImportDraft(JSON.parse(text));
-  } catch {
-    return null;
-  }
 };
 
 const safeProviderCode = (value: unknown): string | null =>
@@ -99,6 +92,43 @@ const requestTimeoutMs = (): number => {
   return Number.isFinite(configured) && configured >= 5_000 && configured <= 55_000 ? configured : 45_000;
 };
 
+const maxOutputTokens = (): number => {
+  const configured = Number.parseInt(process.env.RESEARCH_OPENAI_MAX_OUTPUT_TOKENS ?? "", 10);
+  return Number.isFinite(configured) && configured >= 512 && configured <= 16_000
+    ? configured
+    : DEFAULT_RESEARCH_MAX_OUTPUT_TOKENS;
+};
+
+const parseOpenAiResearchResponseWithError = (payload: OpenAiResponse): {
+  draft: ResearchImportDraft | null;
+  errorCode: string | null;
+  schemaValid: boolean;
+  usableDraft: boolean;
+} => {
+  const text = outputText(payload);
+  if (!text) return { draft: null, errorCode: responseInvalidCode(payload), schemaValid: false, usableDraft: false };
+
+  let candidate: unknown;
+  try {
+    candidate = JSON.parse(text);
+  } catch {
+    return { draft: null, errorCode: "model-response-invalid:invalid-json", schemaValid: false, usableDraft: false };
+  }
+
+  const draft = parseResearchImportDraft(candidate);
+  if (!draft) return { draft: null, errorCode: "model-response-invalid:schema", schemaValid: false, usableDraft: false };
+  if (draft.documentType !== "carfax-service-history") {
+    return { draft: null, errorCode: "model-response-invalid:not-carfax-service-history", schemaValid: true, usableDraft: false };
+  }
+  if (draft.records.length === 0) {
+    return { draft: null, errorCode: "model-response-invalid:no-service-records", schemaValid: true, usableDraft: false };
+  }
+  return { draft, errorCode: null, schemaValid: true, usableDraft: true };
+};
+
+export const parseOpenAiResearchResponse = (payload: OpenAiResponse): ResearchImportDraft | null =>
+  parseOpenAiResearchResponseWithError(payload).draft;
+
 export const estimateResearchRequestCost = (usage: OpenAiUsage | undefined): number | null => {
   const inputRate = configuredRate("RESEARCH_OPENAI_INPUT_COST_PER_MILLION");
   const outputRate = configuredRate("RESEARCH_OPENAI_OUTPUT_COST_PER_MILLION");
@@ -121,6 +151,8 @@ const extractWithContent = async (input: {
     return {
       ok: false,
       errorCode: "model-not-configured",
+      schemaValid: null,
+      usableDraft: false,
       model: null,
       latencyMs: 0,
       inputTokens: null,
@@ -148,6 +180,7 @@ const extractWithContent = async (input: {
           .filter(Boolean)
           .join("\n\n"),
         input: [{ role: "user", content: input.content }],
+        max_output_tokens: maxOutputTokens(),
         text: {
           format: {
             type: "json_schema",
@@ -162,6 +195,8 @@ const extractWithContent = async (input: {
     return {
       ok: false,
       errorCode: "model-request-failed",
+      schemaValid: null,
+      usableDraft: false,
       model,
       latencyMs: Date.now() - startedAt,
       inputTokens: null,
@@ -178,6 +213,8 @@ const extractWithContent = async (input: {
     return {
       ok: false,
       errorCode: requestFailureCode(response.status, failurePayload?.error?.code),
+      schemaValid: null,
+      usableDraft: false,
       model,
       latencyMs: Date.now() - startedAt,
       inputTokens: null,
@@ -188,19 +225,39 @@ const extractWithContent = async (input: {
     };
   }
 
-  const payload = (await response.json()) as OpenAiResponse;
   const telemetry: ExtractionTelemetry = {
     model,
     latencyMs: Date.now() - startedAt,
+    inputTokens: null,
+    outputTokens: null,
+    totalTokens: null,
+    estimatedCostUsd: null,
+    providerRequestId,
+  };
+  let payload: OpenAiResponse;
+  try {
+    payload = (await response.json()) as OpenAiResponse;
+  } catch {
+    return { ok: false, errorCode: "model-response-invalid:invalid-json", schemaValid: false, usableDraft: false, ...telemetry };
+  }
+  const populatedTelemetry: ExtractionTelemetry = {
+    ...telemetry,
     inputTokens: finiteTokenCount(payload.usage?.input_tokens),
     outputTokens: finiteTokenCount(payload.usage?.output_tokens),
     totalTokens: finiteTokenCount(payload.usage?.total_tokens),
     estimatedCostUsd: estimateResearchRequestCost(payload.usage),
-    providerRequestId,
   };
-  const draft = parseOpenAiResearchResponse(payload);
-  if (!draft) return { ok: false, errorCode: responseInvalidCode(payload), ...telemetry };
-  return { ok: true, draft, ...telemetry };
+  const parsed = parseOpenAiResearchResponseWithError(payload);
+  if (!parsed.draft) {
+    return {
+      ok: false,
+      errorCode: parsed.errorCode ?? responseInvalidCode(payload),
+      schemaValid: parsed.schemaValid,
+      usableDraft: false,
+      ...populatedTelemetry,
+    };
+  }
+  return { ok: true, draft: parsed.draft, schemaValid: true, usableDraft: true, ...populatedTelemetry };
 };
 
 export const extractResearchCarfaxTextDraft = async (input: {
@@ -230,6 +287,10 @@ export const extractResearchCarfaxPdfDraft = async (input: {
         type: "input_file",
         filename: input.fileName,
         file_data: `data:application/pdf;base64,${input.pdfBuffer.toString("base64")}`,
+        // The pinned GPT-5 mini release otherwise defaults PDF page images to
+        // low detail. CARFAX service rows are dense enough to warrant the
+        // research challenger's explicit, bounded high-detail pass.
+        detail: "high",
       },
     ],
   });

@@ -86,13 +86,16 @@ const average = (values: Array<number | null>): number | null => {
   return present.length ? present.reduce((sum, value) => sum + value, 0) / present.length : null;
 };
 
-const median = (values: Array<number | null>): number | null => {
+const percentile = (values: Array<number | null>, quantile: number): number | null => {
   const present = values
     .filter((value): value is number => value !== null && Number.isFinite(value))
     .sort((left, right) => left - right);
   if (!present.length) return null;
-  const middle = Math.floor(present.length / 2);
-  return present.length % 2 ? present[middle] : (present[middle - 1] + present[middle]) / 2;
+  if (quantile === 0.5 && present.length % 2 === 0) {
+    const upper = present.length / 2;
+    return (present[upper - 1] + present[upper]) / 2;
+  }
+  return present[Math.min(present.length - 1, Math.max(0, Math.ceil(present.length * quantile) - 1))];
 };
 
 const summarizeStrategy = (
@@ -105,21 +108,42 @@ const summarizeStrategy = (
   const latencyKey = strategy === "baseline" ? "baselineLatencyMs" : "challengerLatencyMs";
   const tokensKey = strategy === "baseline" ? "baselineTotalTokens" : "challengerTotalTokens";
   const costKey = strategy === "baseline" ? "baselineEstimatedCostUsd" : "challengerEstimatedCostUsd";
+  const schemaValidKey = strategy === "baseline" ? "baselineSchemaValid" : "challengerSchemaValid";
+  const usableDraftKey = strategy === "baseline" ? "baselineUsableDraft" : "challengerUsableDraft";
   const metrics = qualityObservations.map((observation) => observation[metricsKey]).filter(Boolean) as ResearchAttemptMetrics[];
   const extracted = observations.filter((observation) => observation[statusKey] === "extracted").length;
+  const schemaObserved = observations.filter((observation) => observation[schemaValidKey] !== null);
+  const schemaValidResponses = schemaObserved.filter((observation) => observation[schemaValidKey] === true).length;
+  const usableDrafts = observations.filter((observation) => observation[usableDraftKey]).length;
+  const failedAttempts = observations.filter((observation) => {
+    const status = observation[statusKey];
+    return status === "extract-failed" || status === "model-not-configured";
+  }).length;
+  const latencies = observations.map((observation) => observation[latencyKey]);
+  const costs = observations.map((observation) => observation[costKey]);
 
   return {
     attempted: observations.length,
     extracted,
     extractionRate: ratio(extracted, observations.length),
+    schemaValidResponses,
+    schemaValidityObserved: schemaObserved.length,
+    schemaValidRate: schemaObserved.length ? ratio(schemaValidResponses, schemaObserved.length) : null,
+    usableDrafts,
+    usableDraftRate: ratio(usableDrafts, observations.length),
+    failedAttempts,
+    failureRate: ratio(failedAttempts, observations.length),
     averageCorrectionChanges: average(metrics.map((value) => value.correctionChanges)),
     averageServiceLinePrecision: average(metrics.map((value) => value.serviceLinePrecision)),
     averageServiceLineRecall: average(metrics.map((value) => value.serviceLineRecall)),
     unsupportedServiceLines: metrics.reduce((sum, value) => sum + value.unsupportedServiceLines, 0),
     omittedServiceLines: metrics.reduce((sum, value) => sum + value.omittedServiceLines, 0),
-    medianLatencyMs: median(observations.map((observation) => observation[latencyKey])),
+    p50LatencyMs: percentile(latencies, 0.5),
+    p95LatencyMs: percentile(latencies, 0.95),
     averageTotalTokens: average(observations.map((observation) => observation[tokensKey])),
-    averageEstimatedCostUsd: average(observations.map((observation) => observation[costKey])),
+    averageEstimatedCostUsd: average(costs),
+    p50EstimatedCostUsd: percentile(costs, 0.5),
+    p95EstimatedCostUsd: percentile(costs, 0.95),
   };
 };
 

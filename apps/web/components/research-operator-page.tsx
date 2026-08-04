@@ -194,21 +194,30 @@ export function ResearchOperatorPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {[
-                  ["Successful extractions", `${report.baseline.extracted} / ${report.baseline.attempted}`, `${report.challenger.extracted} / ${report.challenger.attempted}`],
-                  ["Extraction rate", percent(report.baseline.extractionRate), percent(report.challenger.extractionRate)],
+                  ["Usable drafts", `${report.baseline.usableDrafts} / ${report.baseline.attempted}`, `${report.challenger.usableDrafts} / ${report.challenger.attempted}`],
+                  ["Usable-draft rate", percent(report.baseline.usableDraftRate), percent(report.challenger.usableDraftRate)],
+                  ["Schema-valid responses", `${report.baseline.schemaValidResponses} / ${report.baseline.schemaValidityObserved}`, `${report.challenger.schemaValidResponses} / ${report.challenger.schemaValidityObserved}`],
+                  ["Schema-valid rate", percent(report.baseline.schemaValidRate), percent(report.challenger.schemaValidRate)],
+                  ["Attempt failure rate", percent(report.baseline.failureRate), percent(report.challenger.failureRate)],
                   ["Avg correction changes", number(report.baseline.averageCorrectionChanges, 1), number(report.challenger.averageCorrectionChanges, 1)],
                   ["Service-line precision", percent(report.baseline.averageServiceLinePrecision), percent(report.challenger.averageServiceLinePrecision)],
                   ["Service-line recall", percent(report.baseline.averageServiceLineRecall), percent(report.challenger.averageServiceLineRecall)],
                   ["Owner-rejected lines", number(report.baseline.unsupportedServiceLines), number(report.challenger.unsupportedServiceLines)],
                   ["Omitted lines", number(report.baseline.omittedServiceLines), number(report.challenger.omittedServiceLines)],
-                  ["Median latency", report.baseline.medianLatencyMs === null ? "—" : `${number(report.baseline.medianLatencyMs)} ms`, report.challenger.medianLatencyMs === null ? "—" : `${number(report.challenger.medianLatencyMs)} ms`],
+                  ["p50 latency", report.baseline.p50LatencyMs === null ? "—" : `${number(report.baseline.p50LatencyMs)} ms`, report.challenger.p50LatencyMs === null ? "—" : `${number(report.challenger.p50LatencyMs)} ms`],
+                  ["p95 latency", report.baseline.p95LatencyMs === null ? "—" : `${number(report.baseline.p95LatencyMs)} ms`, report.challenger.p95LatencyMs === null ? "—" : `${number(report.challenger.p95LatencyMs)} ms`],
                   ["Avg tokens", number(report.baseline.averageTotalTokens), number(report.challenger.averageTotalTokens)],
                   ["Avg estimated cost", money(report.baseline.averageEstimatedCostUsd), money(report.challenger.averageEstimatedCostUsd)],
+                  ["p50 estimated cost", money(report.baseline.p50EstimatedCostUsd), money(report.challenger.p50EstimatedCostUsd)],
+                  ["p95 estimated cost", money(report.baseline.p95EstimatedCostUsd), money(report.challenger.p95EstimatedCostUsd)],
                 ].map(([label, baseline, challenger]) => (
                   <tr key={String(label)}><th className="py-2 font-medium">{label}</th><td className="py-2">{baseline}</td><td className="py-2">{challenger}</td></tr>
                 ))}
               </tbody>
             </table>
+            <p className="mt-3 text-xs leading-5 text-muted-foreground">
+              Latency is measured around each model request. Cost is an estimate from returned token usage and the configured model rates; account billing is reconciled separately and never uses a browser key.
+            </p>
           </section>
 
           <section className="mt-6">

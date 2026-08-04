@@ -52,6 +52,8 @@ type ResearchAttemptRow = {
   latency_ms: number | null;
   estimated_cost_usd: number | string | null;
   provider_request_id: string | null;
+  schema_valid: boolean | null;
+  usable_draft: boolean;
   draft_json: unknown;
   error_code: string | null;
 };
@@ -78,6 +80,10 @@ type ResearchObservationRow = {
   challenger_total_tokens: number | null;
   baseline_estimated_cost_usd: number | string | null;
   challenger_estimated_cost_usd: number | string | null;
+  baseline_schema_valid: boolean | null;
+  challenger_schema_valid: boolean | null;
+  baseline_usable_draft: boolean;
+  challenger_usable_draft: boolean;
   adjudication_status: ResearchAdjudicationStatus;
   observed_at: string;
 };
@@ -128,6 +134,8 @@ const rowToAttempt = (row: ResearchAttemptRow): ResearchExtractionAttempt => ({
   latencyMs: row.latency_ms,
   estimatedCostUsd: nullableNumber(row.estimated_cost_usd),
   providerRequestId: row.provider_request_id,
+  schemaValid: row.schema_valid,
+  usableDraft: row.usable_draft,
   draft: row.draft_json as ResearchImportDraft | null,
   errorCode: row.error_code,
 });
@@ -146,6 +154,10 @@ const rowToObservation = (row: ResearchObservationRow): ResearchComparisonObserv
   challengerTotalTokens: row.challenger_total_tokens,
   baselineEstimatedCostUsd: nullableNumber(row.baseline_estimated_cost_usd),
   challengerEstimatedCostUsd: nullableNumber(row.challenger_estimated_cost_usd),
+  baselineSchemaValid: row.baseline_schema_valid,
+  challengerSchemaValid: row.challenger_schema_valid,
+  baselineUsableDraft: row.baseline_usable_draft,
+  challengerUsableDraft: row.challenger_usable_draft,
   adjudicationStatus: row.adjudication_status,
   observedAt: row.observed_at,
 });
@@ -153,9 +165,9 @@ const rowToObservation = (row: ResearchObservationRow): ResearchComparisonObserv
 const runColumns =
   "id, source, status, file_name, created_at, delete_after, text_character_count, model, prompt_version, assigned_strategy, displayed_strategy, display_override_reason, draft_json, owner_draft_json, error_code";
 const attemptColumns =
-  "strategy, status, model, prompt_version, schema_version, input_character_count, input_tokens, output_tokens, total_tokens, latency_ms, estimated_cost_usd, provider_request_id, draft_json, error_code";
+  "strategy, status, model, prompt_version, schema_version, input_character_count, input_tokens, output_tokens, total_tokens, latency_ms, estimated_cost_usd, provider_request_id, schema_valid, usable_draft, draft_json, error_code";
 const observationColumns =
-  "id, run_id, displayed_strategy, baseline_status, challenger_status, baseline_metrics, challenger_metrics, baseline_latency_ms, challenger_latency_ms, baseline_total_tokens, challenger_total_tokens, baseline_estimated_cost_usd, challenger_estimated_cost_usd, adjudication_status, observed_at";
+  "id, run_id, displayed_strategy, baseline_status, challenger_status, baseline_metrics, challenger_metrics, baseline_latency_ms, challenger_latency_ms, baseline_total_tokens, challenger_total_tokens, baseline_estimated_cost_usd, challenger_estimated_cost_usd, baseline_schema_valid, challenger_schema_valid, baseline_usable_draft, challenger_usable_draft, adjudication_status, observed_at";
 
 export const createResearchImportRun = async (input: ResearchRunStoreInput): Promise<ResearchImportRun> => {
   const admin = createAdminClient();
@@ -325,6 +337,8 @@ export const createResearchImportAttempts = async (
         latency_ms: input.latencyMs ?? null,
         estimated_cost_usd: input.estimatedCostUsd ?? null,
         provider_request_id: input.providerRequestId ?? null,
+        schema_valid: input.schemaValid ?? null,
+        usable_draft: input.usableDraft ?? false,
         draft_json: input.draft ?? null,
         error_code: input.errorCode ?? null,
       })),
@@ -508,6 +522,10 @@ export const refreshResearchComparisonObservation = async (runId: string): Promi
       challenger_total_tokens: challenger.totalTokens,
       baseline_estimated_cost_usd: baseline.estimatedCostUsd,
       challenger_estimated_cost_usd: challenger.estimatedCostUsd,
+      baseline_schema_valid: baseline.schemaValid,
+      challenger_schema_valid: challenger.schemaValid,
+      baseline_usable_draft: baseline.usableDraft,
+      challenger_usable_draft: challenger.usableDraft,
       adjudication_status: adjudicationStatus,
       observed_at: now,
       updated_at: now,

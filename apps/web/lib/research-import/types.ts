@@ -68,6 +68,13 @@ export type ResearchExtractionAttempt = {
   latencyMs: number | null;
   estimatedCostUsd: number | null;
   providerRequestId: string | null;
+  // Null means the provider did not return a parseable structured response
+  // (for example, timeout or HTTP failure). False means it did return one,
+  // but it did not satisfy the public draft schema.
+  schemaValid: boolean | null;
+  // A usable draft is schema-valid CARFAX service history with at least one
+  // service record. This is intentionally stricter than schema validity.
+  usableDraft: boolean;
   draft: ResearchImportDraft | null;
   errorCode: string | null;
 };
@@ -110,6 +117,10 @@ export type ResearchComparisonObservation = {
   challengerTotalTokens: number | null;
   baselineEstimatedCostUsd: number | null;
   challengerEstimatedCostUsd: number | null;
+  baselineSchemaValid: boolean | null;
+  challengerSchemaValid: boolean | null;
+  baselineUsableDraft: boolean;
+  challengerUsableDraft: boolean;
   adjudicationStatus: ResearchAdjudicationStatus;
   observedAt: string;
 };
@@ -118,14 +129,24 @@ export type ResearchStrategySummary = {
   attempted: number;
   extracted: number;
   extractionRate: number;
+  schemaValidResponses: number;
+  schemaValidityObserved: number;
+  schemaValidRate: number | null;
+  usableDrafts: number;
+  usableDraftRate: number;
+  failedAttempts: number;
+  failureRate: number;
   averageCorrectionChanges: number | null;
   averageServiceLinePrecision: number | null;
   averageServiceLineRecall: number | null;
   unsupportedServiceLines: number;
   omittedServiceLines: number;
-  medianLatencyMs: number | null;
+  p50LatencyMs: number | null;
+  p95LatencyMs: number | null;
   averageTotalTokens: number | null;
   averageEstimatedCostUsd: number | null;
+  p50EstimatedCostUsd: number | null;
+  p95EstimatedCostUsd: number | null;
 };
 
 export type ResearchDecisionState =
@@ -191,6 +212,8 @@ export type ResearchAttemptStoreInput = {
   latencyMs?: number | null;
   estimatedCostUsd?: number | null;
   providerRequestId?: string | null;
+  schemaValid?: boolean | null;
+  usableDraft?: boolean;
   draft?: ResearchImportDraft | null;
   errorCode?: string | null;
 };
