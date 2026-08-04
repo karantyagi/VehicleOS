@@ -72,9 +72,11 @@ describe("import-handlers enrich + submit", () => {
     const body = response.body as {
       draft: { services: { shopLocation?: string }[] };
       shopLocationHints: Record<string, { candidates?: string[] }>;
+      locationEvidence: Record<string, { status: string; location?: string }>;
     };
     expect(body.draft.services[0]?.shopLocation).toBe("Denver, CO");
     expect(body.shopLocationHints).toEqual({});
+    expect(body.locationEvidence["mystery shop"]).toEqual({ status: "geoapify", location: "Denver, CO" });
   });
 
   it("returns ambiguous hints when lookup is inconclusive", async () => {
@@ -135,9 +137,11 @@ describe("import-handlers enrich + submit", () => {
     const body = response.body as {
       draft: { services: { shopLocation?: string }[] };
       shopLocationHints: Record<string, { candidates?: string[] }>;
+      locationEvidence: Record<string, { status: string }>;
     };
     expect(body.draft.services[0]?.shopLocation).toBeUndefined();
     expect(body.shopLocationHints["mystery shop"]?.candidates).toEqual(["Framingham, MA", "Natick, MA"]);
+    expect(body.locationEvidence["mystery shop"]?.status).toBe("ambiguous");
   });
 
   it("uses lookup on submit safety net", async () => {

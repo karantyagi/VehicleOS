@@ -506,6 +506,11 @@ export {
   type TierImportSummary,
 } from "./import/tier-import-rows.js";
 export {
+  isCarfaxLocationLookupApplicable,
+  resolveCarfaxSourceTrust,
+  type CarfaxSourceTrust,
+} from "./import/carfax-source-trust.js";
+export {
   crossDayMileageRegressionByIndex,
   shouldFlagCrossDayMileageRegression,
   CROSS_DAY_MILEAGE_TOLERANCE_MI,
@@ -552,6 +557,10 @@ export {
   type ShopLocationHint,
   type ShopLocationHintStatus,
 } from "./import/shop-location-hints.js";
+export {
+  type ImportLocationEvidence,
+  type ImportLocationEvidenceStatus,
+} from "./import/import-location-evidence.js";
 export {
   buildGeoapifySearchText,
   buildGeoapifySearchUrl,

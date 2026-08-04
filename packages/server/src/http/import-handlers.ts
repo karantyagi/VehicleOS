@@ -70,12 +70,12 @@ export const enrichVehicleOsImportDraftHandler = async (
     return jsonResponse(400, { error: "draft.services is required" });
   }
 
-  const { draft, shopLocationHints } = await enrichVehicleOsImportWithLookupAndHints(
+  const { draft, shopLocationHints, locationEvidence } = await enrichVehicleOsImportWithLookupAndHints(
     body.draft,
     enrichLookupOptions(vehicle, services),
   );
 
-  return jsonResponse(200, { draft, shopLocationHints });
+  return jsonResponse(200, { draft, shopLocationHints, locationEvidence });
 };
 
 export const submitVehicleOsImport = async (

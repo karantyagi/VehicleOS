@@ -26,11 +26,27 @@ describe("tierImportRows", () => {
     expect(summary.rows[0]?.ownerGuidance[0]?.code).toBe("missing_shop_location");
   });
 
-  it("allows self-reported rows without location", () => {
+  it("requires owner confirmation for self-reported maintenance", () => {
     const summary = tierImportRows([
       service({ shop: "Self Reported", shopLocation: undefined }),
     ]);
-    expect(summary.autoCount).toBe(1);
+    expect(summary.verifyCount).toBe(1);
+    expect(summary.rows[0]?.ownerGuidance[0]?.code).toBe("owner_reported_service");
+  });
+
+  it("requires owner confirmation for DIY maintenance and state inspection entries", () => {
+    const summary = tierImportRows([
+      service({ shop: "Self-Service (DIY)", shopLocation: undefined }),
+      service({
+        shop: "Massachusetts",
+        shopLocation: "Massachusetts",
+        lineItems: ["Passed safety inspection"],
+      }),
+    ]);
+
+    expect(summary.verifyCount).toBe(2);
+    expect(summary.rows[0]?.ownerGuidance[0]?.code).toBe("owner_diy_service");
+    expect(summary.rows[1]?.ownerGuidance[0]?.code).toBe("state_inspection_record");
   });
 
   it("flags meaningful cross-day mileage rollback", () => {

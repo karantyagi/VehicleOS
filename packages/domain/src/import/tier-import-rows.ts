@@ -1,12 +1,15 @@
 import type { VehicleOsImportService } from "./record-vehicleos-import.js";
 import type { ServiceTimelineEntry } from "../projections/types.js";
-import { normalizeShopKey } from "./shop-location-keys.js";
 import { crossDayMileageRegressionByIndex } from "./cross-day-mileage-regression.js";
 import { stripGenericCarfaxVisitLineItems } from "../service/service-record-kind.js";
+import { resolveCarfaxSourceTrust } from "./carfax-source-trust.js";
 import {
   guidanceSummaryLine,
   mileageCrossDayGuidance,
   missingShopLocationGuidance,
+  ownerDiyServiceGuidance,
+  ownerReportedServiceGuidance,
+  stateInspectionRecordGuidance,
   type ImportVerifyGuidance,
 } from "./import-verify-guidance.js";
 
@@ -31,13 +34,7 @@ export type TierImportSummary = {
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
-const SHOPS_WITHOUT_LOCATION = new Set([
-  "self reported",
-  "self-service (diy)",
-  "massachusetts",
-]);
-
-const shopNeedsLocation = (shop: string): boolean => !SHOPS_WITHOUT_LOCATION.has(normalizeShopKey(shop));
+const shopNeedsLocation = (shop: string): boolean => resolveCarfaxSourceTrust(shop) === "provider";
 
 const isValidServiceRow = (service: VehicleOsImportService): string | null => {
   if (!service.serviceDate?.trim() || !ISO_DATE_RE.test(service.serviceDate.trim())) {
@@ -95,6 +92,21 @@ export const tierImportRows = (services: VehicleOsImportService[]): TierImportSu
       const guidance = missingShopLocationGuidance(service.shop);
       ownerGuidance.push(guidance);
       reasons.push(guidanceSummaryLine(guidance));
+    }
+
+    const sourceTrust = resolveCarfaxSourceTrust(service.shop);
+    const sourceGuidance =
+      sourceTrust === "owner_reported"
+        ? ownerReportedServiceGuidance()
+        : sourceTrust === "owner_diy"
+          ? ownerDiyServiceGuidance()
+          : sourceTrust === "state_record"
+            ? stateInspectionRecordGuidance()
+            : undefined;
+    if (sourceGuidance) {
+      tier = "verify";
+      ownerGuidance.push(sourceGuidance);
+      reasons.push(guidanceSummaryLine(sourceGuidance));
     }
 
     if (tier === "auto" && reasons.length === 0) {

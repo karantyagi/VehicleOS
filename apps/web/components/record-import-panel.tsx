@@ -32,6 +32,7 @@ import {
   isDuplicateServiceRow,
   normalizeShopKey,
   tierImportRows,
+  type ImportLocationEvidence,
   type ShopLocationHint,
   ownerDriverLicenseFingerprint,
   ownershipRecordFingerprint,
@@ -183,12 +184,14 @@ const stripCarfaxReviewUiFields = ({
   assistantVerdict: _verdict,
   alreadyOnFile: _alreadyOnFile,
   locationCandidates: _candidates,
+  locationEvidence: _locationEvidence,
   ...service
 }: CarfaxReviewRow): VehicleOsImportService => service;
 
 const initCarfaxReviewRows = (
   services: VehicleOsImportService[],
   shopLocationHints?: Record<string, ShopLocationHint>,
+  locationEvidence?: Record<string, ImportLocationEvidence>,
   existingTimeline?: TimelineEntry[],
 ): CarfaxReviewRow[] => {
   const summary = tierImportRows(services);
@@ -207,6 +210,7 @@ const initCarfaxReviewRows = (
       ownerReviewPhase: alreadyOnFile ? "done" : tiered.tier === "verify" ? "active" : "none",
       alreadyOnFile,
       locationCandidates: shopLocationHints?.[normalizeShopKey(tiered.service.shop)]?.candidates,
+      locationEvidence: locationEvidence?.[normalizeShopKey(tiered.service.shop)],
     };
   });
 };
@@ -316,9 +320,11 @@ export function RecordImportPanel({
     draft: VehicleOsImportV1,
     warnings: string[] = [],
     shopLocationHints?: Record<string, ShopLocationHint>,
+    initialLocationEvidence?: Record<string, ImportLocationEvidence>,
   ) => {
     let enriched = enrichVehicleOsImport(draft, { ownerShopLocations });
     let hints = shopLocationHints;
+    let locationEvidence = initialLocationEvidence;
     try {
       const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/import/enrich`, {
         method: "POST",
@@ -329,9 +335,11 @@ export function RecordImportPanel({
         const body = (await response.json()) as {
           draft?: VehicleOsImportV1;
           shopLocationHints?: Record<string, ShopLocationHint>;
+          locationEvidence?: Record<string, ImportLocationEvidence>;
         };
         if (body.draft) enriched = body.draft;
         if (body.shopLocationHints) hints = body.shopLocationHints;
+        if (body.locationEvidence) locationEvidence = body.locationEvidence;
       }
     } catch {
       // Client-side enrich fallback when server enrich is unavailable.
@@ -340,7 +348,7 @@ export function RecordImportPanel({
     setCarfaxPreview(enriched);
     setRmvPreview(null);
     setRmvReviewRows([]);
-    setCarfaxReviewRows(initCarfaxReviewRows(enriched.services, hints, existingTimeline));
+    setCarfaxReviewRows(initCarfaxReviewRows(enriched.services, hints, locationEvidence, existingTimeline));
     setJsonDraft(JSON.stringify(enriched, null, 2));
     setParseError("");
     setExtractWarnings(warnings);
