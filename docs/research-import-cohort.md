@@ -96,7 +96,9 @@ RESEARCH_COHORT_ALLOWLIST=friend1@example.com,friend2@example.com
 RESEARCH_OPERATOR_ALLOWLIST=you@example.com
 OPENAI_API_KEY=<research-project-only-openai-key>
 RESEARCH_OPENAI_MODEL=gpt-5-mini-2025-08-07
-RESEARCH_OPENAI_TIMEOUT_MS=45000
+# The import route allows 120 seconds; values below 90 seconds are ignored so
+# legacy 45-second settings cannot prematurely cancel direct-PDF processing.
+RESEARCH_OPENAI_TIMEOUT_MS=100000
 RESEARCH_OPENAI_MAX_OUTPUT_TOKENS=8000
 RESEARCH_RETENTION_DAYS=30
 RESEARCH_MAX_SUCCESSFUL_DRAFTS=5
@@ -124,6 +126,13 @@ downloads the object with the service role, revalidates its bytes and PDF
 signature, and recomputes the SHA-256 digest before model calls. Storage URLs
 and provider file metadata use fixed opaque filenames, not the owner's original
 filename.
+
+The synchronous processing route has a 120-second Vercel duration. It reserves
+the final 20 seconds for the attempt writes and quota outcome, and gives the
+model request up to 100 seconds. The v2 extraction recipe uses GPT-5 mini with
+minimal reasoning and low-detail PDF page images; PDF inputs still include both
+the file's extracted text and page images. This makes scanned CARFAX reports
+viable within the request budget while keeping the same strict output schema.
 
 The research login uses the shared application code but the research Supabase
 Auth tenant, so it is not the same session or user database as the owner app.
@@ -167,6 +176,12 @@ per-strategy status, safe error code, model, latency, token count, and provider
 request ID. Vercel logs contain matching `research_import_attempt_failure`
 events keyed only by opaque run ID. They never log the PDF, filename, VIN,
 extracted text, draft, or provider response body.
+
+`model-request-timeout` means the route cancelled the provider call before a
+response arrived; it is distinct from a provider HTTP rejection, whose safe
+status/code suffix is retained in `model-request-failed`. The original v1
+high-detail, 45-second configuration is retained only in historical attempt
+telemetry; v2 attempts are recorded under a new prompt version for comparison.
 
 Before inviting more participants after a deployment, verify that
 `GET /sw.js` returns JavaScript without a redirect, the research browser

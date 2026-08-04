@@ -2,7 +2,11 @@ export const RESEARCH_COHORT_SURFACE = "research-cohort";
 export const RESEARCH_IMPORT_SOURCE = "carfax-pdf";
 export const RESEARCH_IMPORT_BUCKET = "research-imports";
 export const RESEARCH_SCHEMA_VERSION = "carfax-service-history.v1";
-export const RESEARCH_PROMPT_VERSION = "research-carfax-contract.v1";
+// v2 keeps the public extraction contract but changes the bounded execution
+// recipe: low-detail PDF images and minimal model reasoning for the
+// synchronous research route. This keeps new telemetry distinguishable from
+// the high-detail, 45-second configuration.
+export const RESEARCH_PROMPT_VERSION = "research-carfax-contract.v2";
 export const RESEARCH_CONSENT_VERSION = "research-cohort.v3";
 
 export type ResearchExtractionStrategy = "text-first" | "direct-pdf";

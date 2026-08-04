@@ -4,6 +4,7 @@ import type { ResearchImportDraft } from "./types";
 export const DEFAULT_RESEARCH_IMPORT_MODEL = "gpt-5-mini-2025-08-07";
 export const MAX_RESEARCH_INPUT_CHARS = 60_000;
 export const DEFAULT_RESEARCH_MAX_OUTPUT_TOKENS = 8_000;
+export const DEFAULT_RESEARCH_REQUEST_TIMEOUT_MS = 100_000;
 
 type FetchLike = typeof fetch;
 
@@ -89,7 +90,13 @@ const configuredRate = (name: string): number | null => {
 
 const requestTimeoutMs = (): number => {
   const configured = Number.parseInt(process.env.RESEARCH_OPENAI_TIMEOUT_MS ?? "", 10);
-  return Number.isFinite(configured) && configured >= 5_000 && configured <= 55_000 ? configured : 45_000;
+  // The import route has a 120-second Vercel budget. Reserve time after the
+  // model call to persist both attempts and release the quota. Configurations
+  // from the original 45-second route are deliberately treated as stale so a
+  // deployment of this fix takes effect without a separate environment edit.
+  return Number.isFinite(configured) && configured >= 90_000 && configured <= 105_000
+    ? configured
+    : DEFAULT_RESEARCH_REQUEST_TIMEOUT_MS;
 };
 
 const maxOutputTokens = (): number => {
@@ -98,6 +105,11 @@ const maxOutputTokens = (): number => {
     ? configured
     : DEFAULT_RESEARCH_MAX_OUTPUT_TOKENS;
 };
+
+const requestFailureFromError = (error: unknown): "model-request-timeout" | "model-request-failed" =>
+  error instanceof Error && error.name === "TimeoutError"
+    ? "model-request-timeout"
+    : "model-request-failed";
 
 const parseOpenAiResearchResponseWithError = (payload: OpenAiResponse): {
   draft: ResearchImportDraft | null;
@@ -180,6 +192,7 @@ const extractWithContent = async (input: {
           .filter(Boolean)
           .join("\n\n"),
         input: [{ role: "user", content: input.content }],
+        reasoning: { effort: "minimal" },
         max_output_tokens: maxOutputTokens(),
         text: {
           format: {
@@ -191,10 +204,10 @@ const extractWithContent = async (input: {
         },
       }),
     });
-  } catch {
+  } catch (error) {
     return {
       ok: false,
-      errorCode: "model-request-failed",
+      errorCode: requestFailureFromError(error),
       schemaValid: null,
       usableDraft: false,
       model,
@@ -287,10 +300,10 @@ export const extractResearchCarfaxPdfDraft = async (input: {
         type: "input_file",
         filename: input.fileName,
         file_data: `data:application/pdf;base64,${input.pdfBuffer.toString("base64")}`,
-        // The pinned GPT-5 mini release otherwise defaults PDF page images to
-        // low detail. CARFAX service rows are dense enough to warrant the
-        // research challenger's explicit, bounded high-detail pass.
-        detail: "high",
+        // A PDF input still includes its extracted text and page images at low
+        // detail. High detail caused scanned CARFAX reports to exceed the
+        // synchronous research-route budget before OpenAI responded.
+        detail: "low",
       },
     ],
   });
