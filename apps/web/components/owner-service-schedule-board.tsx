@@ -23,7 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { isoDateToLocalDate } from "@/lib/date-input";
+import { isoDateToLocalDate, todayIsoDate } from "@/lib/date-input";
 import type { TimelineEntry } from "@/lib/console-types";
 import { cn } from "@/lib/utils";
 
@@ -45,8 +45,16 @@ type OwnerServiceScheduleBoardProps = {
 };
 
 type GroupFilter = "All" | "Engine" | "Fluids" | "Filters" | "Brakes" | "Tires" | "Other";
+type TimeGroup = "overdue" | "this_week" | "next_three_weeks" | "later";
 
 const GROUP_FILTERS: GroupFilter[] = ["All", "Engine", "Fluids", "Filters", "Brakes", "Tires", "Other"];
+
+const TIME_GROUPS: { id: TimeGroup; label: string; defaultOpen: boolean }[] = [
+  { id: "overdue", label: "Overdue", defaultOpen: true },
+  { id: "this_week", label: "This week", defaultOpen: true },
+  { id: "next_three_weeks", label: "Next 3 weeks", defaultOpen: false },
+  { id: "later", label: "Later / on track", defaultOpen: false },
+];
 
 const TIMELINE_MAX_MI = 100_000;
 
@@ -84,6 +92,59 @@ const formatDate = (iso: string | null): string => {
 const formatMi = (value: number | null | undefined): string => {
   if (value === null || value === undefined) return "—";
   return `${value.toLocaleString()} mi`;
+};
+
+const calendarDaysBetween = (from: string, to: string): number | null => {
+  const fromDate = isoDateToLocalDate(from);
+  const toDate = isoDateToLocalDate(to);
+  if (!fromDate || !toDate) return null;
+
+  const fromUtc = Date.UTC(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+  const toUtc = Date.UTC(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+  return Math.round((toUtc - fromUtc) / 86_400_000);
+};
+
+const formatElapsedTime = (days: number): string => {
+  if (days <= 7) return "1 week";
+  if (days <= 14) return "2 weeks";
+  if (days <= 21) return "3 weeks";
+  return "1 month+";
+};
+
+const timeFirstVerdictLabel = (row: OwnerServiceScheduleRow, today = todayIsoDate()): string => {
+  if (row.verdict === "overdue") {
+    const daysOverdue = row.dueDate ? calendarDaysBetween(row.dueDate, today) : null;
+    if (daysOverdue && daysOverdue > 0) return `Overdue by ${formatElapsedTime(daysOverdue)}`;
+    return row.dueMileage ? "Overdue by mileage" : "Overdue";
+  }
+
+  if (row.verdict !== "due_soon") return verdictLabel[row.verdict];
+  if (!row.dueDate) return "Due soon by mileage";
+
+  const daysUntil = calendarDaysBetween(today, row.dueDate);
+  if (daysUntil === null) return "Due soon";
+  if (daysUntil <= 0) return "Due today";
+
+  const todayDate = isoDateToLocalDate(today);
+  const daysThroughSunday = todayDate ? (7 - todayDate.getDay()) % 7 : 0;
+  if (daysUntil <= daysThroughSunday) return "Due this week";
+
+  return `Due in ${formatElapsedTime(daysUntil)}`;
+};
+
+const timeGroupForDueItem = (item: OwnerDueItem, today = todayIsoDate()): TimeGroup => {
+  if (item.verdict === "overdue") return "overdue";
+  if (item.verdict !== "due_soon") return "later";
+  if (!item.dueDate) return "this_week";
+
+  const daysUntil = calendarDaysBetween(today, item.dueDate);
+  if (daysUntil === null || daysUntil <= 0) return "this_week";
+
+  const todayDate = isoDateToLocalDate(today);
+  const daysThroughSunday = todayDate ? (7 - todayDate.getDay()) % 7 : 0;
+  if (daysUntil <= daysThroughSunday) return "this_week";
+  if (daysUntil <= 21) return "next_three_weeks";
+  return "later";
 };
 
 const inferGroup = (row: OwnerServiceScheduleRow): GroupFilter => {
@@ -294,6 +355,8 @@ function MaintenanceDueCard({
     : null;
   const ownerInterval =
     ownerContextMemory?.intervalOverlays?.[row.entryId]?.intervalMiles ?? null;
+  const urgencyLabel = timeFirstVerdictLabel(row);
+  const dueLineLabel = row.verdict === "overdue" || row.verdict === "due_soon" ? urgencyLabel : "Next due";
 
   useEffect(() => {
     const nextValue = ownerInterval ?? interval?.recommendedMiles ?? null;
@@ -404,14 +467,15 @@ function MaintenanceDueCard({
                 MM {row.mmCode}
               </span>
             ) : null}
-            <Badge variant={verdictBadgeVariant(row.verdict)}>{verdictLabel[row.verdict]}</Badge>
+            <Badge variant={verdictBadgeVariant(row.verdict)}>{urgencyLabel}</Badge>
           </div>
           <h3 className="mt-1.5 text-base font-semibold tracking-tight text-foreground">{row.displayName}</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             {interval?.activeLabel ?? row.oemRuleLabel}
           </p>
           <p className="mt-1 text-sm tabular-nums text-muted-foreground">
-            Next {formatDate(row.dueDate)}
+            {dueLineLabel}
+            {row.dueDate ? ` · ${formatDate(row.dueDate)}` : ""}
             {row.dueMileage ? ` · ${formatMi(row.dueMileage)}` : ""}
           </p>
         </div>
@@ -432,7 +496,7 @@ function MaintenanceDueCard({
               </p>
             </div>
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Next due</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{dueLineLabel}</p>
               <p className="mt-1 text-sm font-medium tabular-nums">
                 {formatDate(row.dueDate)}
                 {row.dueMileage ? ` · ${formatMi(row.dueMileage)}` : ""}
@@ -703,6 +767,9 @@ export function OwnerServiceScheduleBoardView({
   onUpdateCurrentMileage,
 }: OwnerServiceScheduleBoardProps) {
   const [group, setGroup] = useState<GroupFilter>("All");
+  const [openTimeGroups, setOpenTimeGroups] = useState<Record<TimeGroup, boolean>>(() =>
+    Object.fromEntries(TIME_GROUPS.map((timeGroup) => [timeGroup.id, timeGroup.defaultOpen])) as Record<TimeGroup, boolean>,
+  );
 
   const focusedItemId = useMemo(
     () =>
@@ -743,6 +810,27 @@ export function OwnerServiceScheduleBoardView({
     });
   }, [dueItems, group, maintenanceRows]);
 
+  const today = todayIsoDate();
+  const itemsByTimeGroup = useMemo(() => {
+    const items = new Map<TimeGroup, OwnerDueItem[]>(TIME_GROUPS.map((timeGroup) => [timeGroup.id, []]));
+    for (const item of filteredItems) {
+      items.get(timeGroupForDueItem(item, today))?.push(item);
+    }
+    return items;
+  }, [filteredItems, today]);
+
+  const focusedTimeGroup = useMemo(() => {
+    const focusedItem = filteredItems.find((item) => item.id === focusedItemId);
+    return focusedItem ? timeGroupForDueItem(focusedItem, today) : null;
+  }, [filteredItems, focusedItemId, today]);
+
+  useEffect(() => {
+    if (!focusedTimeGroup) return;
+    setOpenTimeGroups((current) =>
+      current[focusedTimeGroup] ? current : { ...current, [focusedTimeGroup]: true },
+    );
+  }, [focusedTimeGroup]);
+
   const summary = dueItems?.summary;
   const actionCount = (summary?.overdue ?? 0) + (summary?.dueSoon ?? 0);
   const hasMaintenanceRows = maintenanceRows.length > 0;
@@ -771,7 +859,7 @@ export function OwnerServiceScheduleBoardView({
           <p className="mt-0.5 text-sm text-muted-foreground">Odometer</p>
         </div>
         <div>
-          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Action now</p>
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Overdue</p>
           <p className="mt-1 text-2xl font-semibold tabular-nums text-destructive">{summary?.overdue ?? 0}</p>
         </div>
         <div>
@@ -839,23 +927,59 @@ export function OwnerServiceScheduleBoardView({
       ) : null}
 
       <div className="space-y-3">
-        {filteredItems.map((item) => (
-          <OwnerDueItemCard
-            key={item.id}
-            item={item}
-            open={openItemId === item.id}
-            onOpenChange={(open) => setOpenItemId(open ? item.id : null)}
-            currentMileage={currentMileage}
-            disabled={disabled}
-            serviceTimeline={serviceTimeline}
-            focusedEntryId={focusedEntryId}
-            ownerContextMemory={ownerContextMemory}
-            onSaveOwnerContextMemory={onSaveOwnerContextMemory}
-            onAddService={onAddService}
-            onUpdateService={onUpdateService}
-            onUpdateCurrentMileage={onUpdateCurrentMileage}
-          />
-        ))}
+        {TIME_GROUPS.map((timeGroup) => {
+          const items = itemsByTimeGroup.get(timeGroup.id) ?? [];
+          if (items.length === 0) return null;
+
+          const isOpen = openTimeGroups[timeGroup.id];
+          const panelId = `maintenance-time-group-${timeGroup.id}`;
+
+          return (
+            <section key={timeGroup.id} className="overflow-hidden rounded-xl border border-border/70 bg-card/90">
+              <button
+                type="button"
+                className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset sm:px-5"
+                aria-expanded={isOpen}
+                aria-controls={panelId}
+                onClick={() =>
+                  setOpenTimeGroups((current) => ({ ...current, [timeGroup.id]: !current[timeGroup.id] }))
+                }
+              >
+                <span className="flex min-w-0 items-center gap-2">
+                  <span className="text-sm font-semibold text-foreground">{timeGroup.label}</span>
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
+                    {items.length}
+                  </span>
+                </span>
+                {isOpen ? (
+                  <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                ) : (
+                  <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                )}
+              </button>
+
+              <div id={panelId} hidden={!isOpen} className="space-y-3 border-t border-border/60 p-3 sm:p-4">
+                {items.map((item) => (
+                  <OwnerDueItemCard
+                    key={item.id}
+                    item={item}
+                    open={openItemId === item.id}
+                    onOpenChange={(open) => setOpenItemId(open ? item.id : null)}
+                    currentMileage={currentMileage}
+                    disabled={disabled}
+                    serviceTimeline={serviceTimeline}
+                    focusedEntryId={focusedEntryId}
+                    ownerContextMemory={ownerContextMemory}
+                    onSaveOwnerContextMemory={onSaveOwnerContextMemory}
+                    onAddService={onAddService}
+                    onUpdateService={onUpdateService}
+                    onUpdateCurrentMileage={onUpdateCurrentMileage}
+                  />
+                ))}
+              </div>
+            </section>
+          );
+        })}
       </div>
 
       <p className="text-xs text-muted-foreground">
