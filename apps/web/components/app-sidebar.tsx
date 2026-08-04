@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 
 const SECTION_ICONS: Record<AppSection, typeof ListChecks> = {
   reminders: Home,
+  attention: ListChecks,
   now: ListChecks,
   timeline: Clock3,
   imports: FileInput,
@@ -49,9 +50,10 @@ export function AppSidebar({ onNavigate, className }: AppSidebarProps) {
       {visibleSections.map((section) => {
         const Icon = SECTION_ICONS[section.id];
         const isActive = isSectionActive(section.id);
-        const verificationCount =
-          consoleMode === "owner" && section.id === "reminders"
-            ? (vehicleConsole?.snapshot?.pendingVerificationCount ?? 0)
+        const attentionCount =
+          consoleMode === "owner" && section.id === "attention"
+            ? (vehicleConsole?.snapshot?.pendingReminderCount ?? 0) +
+              (vehicleConsole?.snapshot?.pendingVerificationCount ?? 0)
             : 0;
         return (
           <button
@@ -72,7 +74,7 @@ export function AppSidebar({ onNavigate, className }: AppSidebarProps) {
           >
             <Icon className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
             <span className="font-medium leading-tight">{section.label}</span>
-            {verificationCount > 0 ? (
+            {attentionCount > 0 ? (
               <span
                 className={cn(
                   "ml-auto inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-[11px] font-semibold tabular-nums",
@@ -80,9 +82,9 @@ export function AppSidebar({ onNavigate, className }: AppSidebarProps) {
                     ? "bg-primary-foreground/18 text-primary-foreground"
                     : "bg-amber-100 text-amber-900 dark:bg-amber-950/50 dark:text-amber-200",
                 )}
-                aria-label={`${verificationCount} ${verificationCount === 1 ? "question" : "questions"} need confirmation`}
+                aria-label={`${attentionCount} open ${attentionCount === 1 ? "item" : "items"} in your attention`}
               >
-                {verificationCount}
+                {attentionCount}
               </span>
             ) : null}
           </button>

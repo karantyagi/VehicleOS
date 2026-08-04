@@ -5,6 +5,7 @@ import type { ConsoleDensity } from "@/lib/console-types";
 
 export type AppSection =
   | "reminders"
+  | "attention"
   | "now"
   | "timeline"
   | "imports"
@@ -20,6 +21,11 @@ export const APP_SECTIONS: { id: AppSection; label: string; description: string 
     id: "reminders",
     label: "Home",
     description: "What needs attention this week, next week, and this month",
+  },
+  {
+    id: "attention",
+    label: "Your attention",
+    description: "Every open car action and assistant question",
   },
   {
     id: "now",
@@ -69,12 +75,13 @@ export const SECTION_SHORTCUTS: Record<AppSection, string> = {
   reminders: "1",
   timeline: "2",
   imports: "3",
-  now: "4",
-  receipts: "5",
-  evidence: "6",
-  context: "7",
-  notes: "8",
-  quotes: "9",
+  attention: "4",
+  now: "5",
+  receipts: "6",
+  evidence: "7",
+  context: "8",
+  notes: "9",
+  quotes: "0",
 };
 
 type AppUiState = {

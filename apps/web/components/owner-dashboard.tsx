@@ -16,6 +16,7 @@ import {
   parseMaintenanceItemDeepLink,
   parseOwnerAttentionDeepLink,
 } from "@/lib/attention-deep-link";
+import { parseDashboardSection } from "@/lib/app-section-nav";
 import { notify, notifyAuto } from "@/lib/notify";
 import { toast } from "sonner";
 import { getApiBase } from "../lib/api-base";
@@ -152,7 +153,9 @@ export function OwnerDashboard() {
   useEffect(() => {
     const reminderTaskId = parseOwnerAttentionDeepLink(window.location.search);
     const scheduleEntryId = parseMaintenanceItemDeepLink(window.location.search);
+    const requestedSection = parseDashboardSection(window.location.search);
     setFocusedReminderTaskId(reminderTaskId);
+    setFocusedVerificationTaskId(reminderTaskId);
     setFocusedScheduleEntryId(scheduleEntryId);
 
     if (scheduleEntryId) {
@@ -161,7 +164,11 @@ export function OwnerDashboard() {
       return;
     }
     if (reminderTaskId) {
-      setActiveSection("reminders");
+      setActiveSection("attention");
+      return;
+    }
+    if (requestedSection) {
+      setActiveSection(requestedSection);
     }
   }, [setActiveSection]);
 
@@ -449,7 +456,7 @@ export function OwnerDashboard() {
       setTimeline(body.timeline);
       applyQueueState(body);
       if (body.conflict) {
-        feedback("Conflict detected — check Owner verification in the sidebar.");
+        feedback("Conflict detected — review it in Your attention.");
       } else if (body.duplicateSkipped) {
         feedback(
           "This service visit is already on file (same date, mileage, and shop). Receipt saved to Evidence vault — no duplicate row added.",
@@ -702,10 +709,10 @@ export function OwnerDashboard() {
       }
       applyQueueState(body);
       if (body.created && body.recommendation) {
-        feedback(`Needs attention: ${body.recommendation.title}`);
-        setActiveSection("reminders");
+        feedback(`New car action: ${body.recommendation.title}`);
+        setActiveSection("attention");
       } else if (body.skippedReason === "already_pending") {
-        feedback("That item already needs attention on Home.");
+        feedback("That item is already open in Your attention.");
       } else {
         feedback("No new maintenance actions due right now.");
       }
@@ -729,7 +736,7 @@ export function OwnerDashboard() {
 
   const openVerificationTask = (taskId: string) => {
     setFocusedVerificationTaskId(taskId);
-    setActiveSection("reminders");
+    setActiveSection("attention");
   };
 
   const reviewVerificationTarget = (item: QueueItem) => {
@@ -755,7 +762,7 @@ export function OwnerDashboard() {
   };
 
   const headerAction =
-    isDeveloper && (activeSection === "reminders" || activeSection === "now") ? (
+    isDeveloper && (activeSection === "reminders" || activeSection === "attention" || activeSection === "now") ? (
       <Button
         type="button"
         variant="outline"
@@ -826,6 +833,11 @@ export function OwnerDashboard() {
               ) : null}
               {activeSection === "reminders" && pendingReminderCount > 0 ? (
                 <Badge className="tabular-nums">{pendingReminderCount} due</Badge>
+              ) : null}
+              {activeSection === "attention" && pendingReminderCount + pendingVerificationCount > 0 ? (
+                <Badge className="tabular-nums">
+                  {pendingReminderCount + pendingVerificationCount} open
+                </Badge>
               ) : null}
               {activeSection === "now" && pendingVerificationCount > 0 ? (
                 <Badge className="tabular-nums">{pendingVerificationCount} to verify</Badge>
@@ -963,6 +975,83 @@ export function OwnerDashboard() {
         </div>
       ) : null}
 
+      {activeSection === "attention" ? (
+        <div className="space-y-6">
+          <PanelCard
+            hideHeader={!isDeveloper}
+            title="Act for your car"
+            description="Every open maintenance or compliance action, with the current next step."
+          >
+            <RemindersConsole
+              items={reminders}
+              disabled={isBusy}
+              focusTaskId={focusedReminderTaskId}
+              onScheduled={(taskId) => void decide(taskId, "schedule")}
+              onNotNeeded={(taskId) => void decide(taskId, "dismiss")}
+              onRecordDone={(item) => {
+                setHistoryCompletionTaskId(item.taskId);
+                setHistoryCompletionLineItem(
+                  item.intelligence?.serviceAction.recordLineItem ?? item.title,
+                );
+                setServiceHistoryTab("history");
+                setHistoryAddRequest((current) => current + 1);
+                setActiveSection("timeline");
+                feedback("Add the completed service so the schedule can update from the record.");
+              }}
+              onStartBaseline={() => {
+                setHistoryCompletionTaskId(null);
+                setHistoryCompletionLineItem(null);
+                setServiceHistoryTab("history");
+                setHistoryAddRequest((current) => current + 1);
+                setActiveSection("timeline");
+                feedback("Add any completed service to set your maintenance baseline.");
+              }}
+              onFixData={(item) => {
+                const serviceAction = item.intelligence?.serviceAction;
+                setServiceHistoryTab("history");
+                setActiveSection("timeline");
+                if (serviceAction?.baselineServiceId) {
+                  setSelectedTimelineId(serviceAction.baselineServiceId);
+                  feedback("Opened the exact service record that anchors this action.");
+                  return;
+                }
+                setHistoryCompletionTaskId(null);
+                setHistoryCompletionLineItem(serviceAction?.recordLineItem ?? item.title);
+                setHistoryAddRequest((current) => current + 1);
+                feedback("No baseline exists yet. Add the missing service record here.");
+              }}
+              minimal={!isDeveloper}
+            />
+          </PanelCard>
+
+          <PanelCard
+            hideHeader={!isDeveloper}
+            title="Help the assistant"
+            description="Answer only what VehicleOS cannot safely settle or personalize on its own."
+          >
+            <NowQueueConsole
+              items={verifications.length > 0 ? verifications : nowQueue}
+              disabled={isBusy}
+              vehicleId={vehicle.id}
+              apiBase={apiBase}
+              currentMileage={vehicle.currentMileage}
+              onDecide={decide}
+              onReviewTarget={reviewVerificationTarget}
+              focusTaskId={focusedVerificationTaskId}
+              ownerSimple={!isDeveloper}
+              onOdometerSaved={() => {
+                if (vehicle) void loadVehicleState(vehicle);
+              }}
+              onVerificationResolved={() => {
+                if (vehicle) void loadVehicleState(vehicle);
+                feedback("Saved. The assistant will use this context going forward.");
+              }}
+              onError={(message) => feedback(message)}
+            />
+          </PanelCard>
+        </div>
+      ) : null}
+
       {activeSection === "now" ? (
         <PanelCard
           hideHeader={!isDeveloper}
@@ -1052,8 +1141,8 @@ export function OwnerDashboard() {
               records={ownershipRecords.filter((record) => record.eventType === "license")}
               disabled={isBusy}
               onHabitProposed={() => {
-                feedback("Habit extracted — confirm or edit the interval in Owner verification.");
-                setActiveSection("now");
+                feedback("Habit extracted — confirm or edit the interval in Your attention.");
+                setActiveSection("attention");
                 void loadVehicleState(vehicle);
               }}
               onComplianceSaved={() => {

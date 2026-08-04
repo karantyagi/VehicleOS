@@ -41,6 +41,7 @@ import { cn } from "@/lib/utils";
 
 const SECTION_ICONS = {
   reminders: Home,
+  attention: ListChecks,
   now: ListChecks,
   timeline: Clock3,
   imports: FileInput,

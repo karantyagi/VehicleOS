@@ -40,7 +40,7 @@ This queue records adopted product direction. It does not authorize notification
 
 ## Owner attention center rollout
 
-**Status:** Accepted direction; implementation pending
+**Status:** Slice 1 is implemented in PR #101; deployment and owner dogfood are pending.
 
 **Canonical behavior:** [owner attention model](./owner-attention-model.md)
 
@@ -50,8 +50,8 @@ authorize the next one; owner feedback may change the remaining sequence.
 
 | ID | Priority | Status | Task | Deployment and owner acceptance boundary |
 |----|----------|--------|------|------------------------------------------|
-| ATTN-0 | P0 | In this PR | Record vocabulary, surface roles, attention policy, progressive disclosure, and notification boundary | Product direction is reviewable in ADR-018 and `owner-attention-model.md`; no UI or domain behavior changes in this slice |
-| ATTN-1 | P0 | Next | Add the **Your attention** navigation route and stable targets for current unresolved owner work | After deployment, the owner can find every existing unresolved item, open it, and return to its source context; no notification delivery |
+| ATTN-0 | P0 | Implemented in PR #101 | Record vocabulary, surface roles, attention policy, progressive disclosure, and notification boundary | Product direction is reviewable in ADR-018 and `owner-attention-model.md`; no UI or domain behavior changes in this slice |
+| ATTN-1 | P0 | Implemented — owner dogfood pending | Add the **Your attention** navigation route and stable targets for current unresolved owner work | Exposes existing car actions and assistant questions under distinct labels on shared task state. Home remains unchanged until the next delivery slice; no notification delivery. |
 | ATTN-2 | P0 | Next after ATTN-1 dogfood | Group existing verify/personalize work as **Help the assistant** and retain one shared resolution state across source context and attention | After deployment, imported-record questions are clear, answerable, and never duplicated; the owner explicitly approves the interaction before the next slice |
 | ATTN-3 | P0 | Next after ATTN-2 dogfood and schedule-semantic prerequisites | Group actionable reminders as **Act for your car**, make Home a calm summary linked to the full queue, and add the **Next Care Brief** | After deployment, the brief gives one compact, source-grounded next-care explanation without replacing the full queue. It does not present a mileage forecast as an actual due date, and only describes an earlier trigger when the OEM source explicitly supports it. Home remains reassuring while Your attention shows all open work; no arbitrary item truncation or auto-expanded pile of details |
 | ATTN-4 | P1 | Next after ATTN-3 dogfood | Add compact item-level callouts in Maintenance and move long evidence/history into deeper reveals | After deployment, the owner can act from Maintenance without losing access to the service journey and records |
