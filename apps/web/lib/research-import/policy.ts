@@ -19,9 +19,19 @@ export const isResearchCohortSurface = (
   surface = process.env.APP_SURFACE,
 ): boolean => surface === RESEARCH_COHORT_SURFACE;
 
+/**
+ * The research deployment intentionally has a very small route allowlist.
+ * These shell integrations are useful in the owner product, but are neither
+ * needed nor appropriate for a private document-research surface.
+ */
+export const shouldEnableOwnerShellIntegrations = (
+  surface = process.env.APP_SURFACE,
+): boolean => !isResearchCohortSurface(surface);
+
 export const isResearchCohortPathAllowed = (pathname: string): boolean =>
   pathname === "/" ||
   pathname === "/login" ||
+  pathname === "/sw.js" ||
   pathname === "/research/admin" ||
   pathname === "/research/account" ||
   pathname.startsWith("/auth/") ||

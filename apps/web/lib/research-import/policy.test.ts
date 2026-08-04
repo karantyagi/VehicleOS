@@ -5,6 +5,7 @@ import {
   isResearchOperatorAllowed,
   isResearchParticipantAllowed,
   parseResearchAllowlist,
+  shouldEnableOwnerShellIntegrations,
 } from "./policy.js";
 
 describe("research cohort access policy", () => {
@@ -33,11 +34,14 @@ describe("research cohort access policy", () => {
   it("is only active in the dedicated research deployment", () => {
     expect(isResearchCohortSurface("research-cohort")).toBe(true);
     expect(isResearchCohortSurface("owner-app")).toBe(false);
+    expect(shouldEnableOwnerShellIntegrations("research-cohort")).toBe(false);
+    expect(shouldEnableOwnerShellIntegrations("owner-app")).toBe(true);
   });
 
   it("permits the research account route while keeping unrelated routes closed", () => {
     expect(isResearchCohortPathAllowed("/research/account")).toBe(true);
     expect(isResearchCohortPathAllowed("/api/account/delete")).toBe(true);
+    expect(isResearchCohortPathAllowed("/sw.js")).toBe(true);
     expect(isResearchCohortPathAllowed("/settings")).toBe(false);
   });
 

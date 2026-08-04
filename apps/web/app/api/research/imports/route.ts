@@ -31,6 +31,22 @@ export const dynamic = "force-dynamic";
 
 const MAX_IMPORT_PDF_BYTES = 15 * 1024 * 1024;
 
+const attemptLog = (attempt: ResearchAttemptStoreInput) => ({
+  strategy: attempt.strategy,
+  status: attempt.status,
+  errorCode: attempt.errorCode ?? null,
+  model: attempt.model,
+  inputCharacterCount: attempt.inputCharacterCount ?? null,
+  latencyMs: attempt.latencyMs ?? null,
+  totalTokens: attempt.totalTokens ?? null,
+  providerRequestId: attempt.providerRequestId ?? null,
+});
+
+const safeErrorClass = (error: unknown): string =>
+  error instanceof Error && /^[A-Za-z][A-Za-z0-9_.:-]{0,79}$/.test(error.name)
+    ? error.name
+    : "unknown";
+
 const accessError = (reason: "not-research-surface" | "sign-in-required" | "not-invited") => {
   const status = reason === "sign-in-required" ? 401 : reason === "not-invited" ? 403 : 404;
   return NextResponse.json({ error: reason.replaceAll("-", "_") }, { status });
@@ -57,6 +73,8 @@ const resultToAttempt = (input: {
   latencyMs: input.result.latencyMs,
   estimatedCostUsd: input.result.estimatedCostUsd,
   providerRequestId: input.result.providerRequestId,
+  schemaValid: input.result.schemaValid,
+  usableDraft: input.result.usableDraft,
   draft: input.result.ok ? input.result.draft : null,
   errorCode: input.result.ok ? null : input.result.errorCode,
 });
@@ -146,6 +164,8 @@ export async function POST(request: Request) {
           status: "text-unavailable",
           model: null,
           inputCharacterCount: 0,
+          schemaValid: null,
+          usableDraft: false,
           errorCode: "pdf-text-unavailable",
         });
     const challengerPromise = extractResearchCarfaxPdfDraft({ pdfBuffer, fileName: "carfax.pdf" }).then((result) =>
@@ -153,6 +173,21 @@ export async function POST(request: Request) {
     );
 
     const attempts = await Promise.all([baselinePromise, challengerPromise]);
+    // Do not log the PDF, extracted text, filename, draft, or provider body.
+    // These compact fields make a failed run diagnosable in Vercel without
+    // compromising the cohort's document-privacy boundary.
+    const failedAttempts = attempts.filter((attempt) => attempt.status !== "extracted");
+    if (failedAttempts.length > 0) {
+      console.warn("research_import_attempt_failure", {
+        runId: claimed.id,
+        attempts: failedAttempts.map(attemptLog),
+      });
+    } else {
+      console.info("research_import_attempts_completed", {
+        runId: claimed.id,
+        attempts: attempts.map(attemptLog),
+      });
+    }
     await createResearchImportAttempts(attempts);
     const selection = selectDisplayedAttempt({ assignedStrategy: claimed.assignedStrategy, attempts });
     const run = await updateResearchImportRun({
@@ -174,7 +209,11 @@ export async function POST(request: Request) {
     }
     await refreshResearchComparisonObservation(run.id).catch(() => null);
     return NextResponse.json({ run }, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error("research_import_pipeline_failed", {
+      runId: claimed.id,
+      errorClass: safeErrorClass(error),
+    });
     await releaseResearchImportQuota(claimed.id).catch(() => null);
     await updateResearchImportRun({
       id: claimed.id,
