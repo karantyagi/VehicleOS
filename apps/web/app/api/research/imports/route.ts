@@ -26,7 +26,10 @@ import type { ResearchAttemptStoreInput, ResearchExtractionStrategy } from "../.
 import { createAdminClient } from "../../../../lib/supabase/admin";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+// A direct PDF request can include page-image processing. This is deliberately
+// longer than the request's 100-second model timeout so the run can persist its
+// paired-attempt telemetry and quota outcome before Vercel ends the function.
+export const maxDuration = 120;
 export const dynamic = "force-dynamic";
 
 const MAX_IMPORT_PDF_BYTES = 15 * 1024 * 1024;
