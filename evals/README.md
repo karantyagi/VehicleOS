@@ -54,6 +54,10 @@ adjudicate whole-visit disagreements against the source to control for anchoring
 bias. Compare paired quality, correction burden, latency, tokens, and cost; do
 not select a strategy from aggregate schema validity alone.
 
+For the exact capability boundary, human-label protocol, metric denominators,
+and interview articulation, read [CARFAX paired extraction
+evaluation](./carfax-paired-extraction-evaluation.md).
+
 ## Running evals locally
 
 ```bash

@@ -277,3 +277,8 @@ VehicleOS treats the model as an uncertain proposal generator:
 > into measurable regressions before early access.
 
 Related: ADR-009, ADR-011, ADR-016, ADR-017, and evals/README.md.
+
+For the narrower interview-facing definition of what this study evaluates, how
+participants create source labels, and which metrics do not treat skipped or
+unitemized rows as model success, see
+[CARFAX paired extraction evaluation](../evals/carfax-paired-extraction-evaluation.md).
