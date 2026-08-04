@@ -2,6 +2,8 @@
 
 **Status:** Product principle (v1). See [ADR-005](../../docs-lite/adr/ADR-005-owners-only-positioning.md).
 
+**Owner attention direction:** [ADR-018](../../docs-lite/adr/ADR-018-owner-attention-center-and-assistant-work-model.md) and the [owner attention model](./owner-attention-model.md) define the accepted target surface model. Existing UI remains the current build until its deployable slices ship.
+
 ---
 
 ## The product
@@ -30,7 +32,7 @@ See marketing site `#early-access`, `#positioning` (category gap cards), and wor
 - **Mobile:** camera/image capture with on-device crop and rotation, real-time voice transcript review, upload status, and a link to web review when needed.
 - **Notifications:** deferred as a separate product and architecture track; current in-app attention is not notification delivery.
 
-See [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md) and the [owner product implementation queue](./product-implementation-queue.md).
+See [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md), [ADR-018](../../docs-lite/adr/ADR-018-owner-attention-center-and-assistant-work-model.md), the [owner attention model](./owner-attention-model.md), and the [owner product implementation queue](./product-implementation-queue.md).
 
 ## Workspace continuity
 
@@ -49,20 +51,48 @@ Home is a stable owner canvas, not a sequence of replacement screens:
 The transition does not depend on motion. Width and shell transitions are not
 used to mask loading.
 
+## Adopted owner-attention model (implementation pending)
+
+VehicleOS has four connected owner surfaces:
+
+| Surface | Owner job |
+|---------|-----------|
+| **Home** | Calm overview: what matters now, compact counts, and the next relevant care item. |
+| **Your attention** | Review every unresolved action or assistant question. |
+| **Maintenance** | Explore the durable care plan and item-specific recommendations. |
+| **Add records** | Capture/import evidence and resolve uncertainty where it first appears. |
+
+Your attention groups compact, collapsed rows into **Act for your car** and
+**Help the assistant**. It is the durable owner-work surface; Home is not a
+truncated duplicate queue. A related Maintenance, History, or import callout
+opens the same underlying item and resolution state.
+
+The target model distinguishes:
+
+- **Act** — the owner needs to do or arrange care for the car;
+- **Verify** — VehicleOS needs a fact confirmed before it can rely on it;
+- **Personalize** — the owner can tailor a current plan;
+- **Consider** — a non-blocking recommendation that stays with its maintenance
+  item; and
+- **Understand** — source evidence and rationale revealed only on demand.
+
+See the [owner attention model](./owner-attention-model.md) for visibility,
+trust, and notification-readiness rules.
+
 ## Maintenance item interaction
 
 Maintenance items are quiet, owner-correctable assistant surfaces:
 
 - collapsed by default;
 - one status and one next action;
-- only one item expanded at a time;
-- evidence, recommendation confidence, and the four-axis rationale revealed by
-  chevron;
-- first expansion shows the complete owner-facing service journey: recorded
-  service dots, current odometer, projected next service, and every matching
-  service record with its date, mileage, shop, and line item;
-- raw source metadata remains optional, but service history never requires a
-  second expansion;
+- only one item expanded at a time, with a clear selected outline and a subtle
+  tinted surface;
+- first expansion answers what it is, what the owner can do now, and why it is
+  shown now;
+- evidence, recommendation confidence, and the four-axis rationale are
+  on-demand disclosure, not default card chrome;
+- service journey, full records, raw source metadata, and audit detail are a
+  deeper explicit reveal rather than a mandatory first expansion;
 - owner interval entry always available after expansion;
 - OEM, Assistant, and Owner intervals visibly distinguished;
 - unfinished item intelligence labeled `Phase 2 · upcoming · in development`.
