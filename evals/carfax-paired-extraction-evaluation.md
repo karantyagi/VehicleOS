@@ -37,7 +37,7 @@ CARFAX PDF --> schema-bound service-history proposal --> human source label
 | Capability | Evaluation question |
 | --- | --- |
 | Document understanding | Did the attempt read the relevant text, layout, and pages? |
-| Field extraction | Did it capture the correct service date, mileage, and provider? |
+| Field extraction | Did it capture the correct service date, mileage, provider, record kind, reporter, and source evidence? |
 | Visit grouping | Did it keep facts and service actions from the same visit together? |
 | Service-action extraction | Did it capture work performed without adding unsupported work? |
 | Evidence grounding | Is each proposal traceable to the source document? |
@@ -46,10 +46,12 @@ CARFAX PDF --> schema-bound service-history proposal --> human source label
 
 This evaluation does **not** measure mechanical diagnosis, maintenance
 recommendation quality, general chat quality, owner-memory accuracy, or
-shop-location resolution. The current research record does not contain a
-location field. A future location field must distinguish an exact location
-reported in the PDF from not-reported or ambiguous; it must not use an
-unverified map guess as extraction ground truth.
+map-based shop-location resolution. The research record carries optional
+city/state metadata only to make the source easier to inspect: the model may
+propose it, but the server retains it only after a deterministic match to the
+provider's printed CARFAX review-link text. Otherwise it is `not-reported` or
+`ambiguous`. It is shown under collapsed **Shop details** and is not a required
+per-action label or an external lookup target.
 
 ## Who evaluates the output
 
@@ -72,13 +74,12 @@ service action.
 
 ### Current implementation boundary
 
-The current cohort stores an owner-corrected draft and supports draft edits plus
-adding or removing visits. It does not yet capture the explicit per-visit and
-per-action outcomes below. Until that review contract is implemented, an
-unchanged **Save corrections** action means only that a draft was saved; it
-must not be scored as a human confirmation or credited as model accuracy.
-
-The following protocol is the next review/evaluation contract.
+The current cohort captures the explicit per-visit and per-action outcomes
+below, including added and rejected visits. **Finish review** remains disabled
+until every visit and every proposed service action has an outcome. **Save
+progress** is intentionally not a confirmation and is never scored as model
+accuracy. The original proposal, the outcome labels, and the corrected draft
+remain distinct for evaluation.
 
 ### Visit-level outcome
 

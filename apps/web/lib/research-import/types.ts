@@ -1,12 +1,13 @@
 export const RESEARCH_COHORT_SURFACE = "research-cohort";
 export const RESEARCH_IMPORT_SOURCE = "carfax-pdf";
 export const RESEARCH_IMPORT_BUCKET = "research-imports";
-export const RESEARCH_SCHEMA_VERSION = "carfax-service-history.v1";
-// v2 keeps the public extraction contract but changes the bounded execution
-// recipe: low-detail PDF images and minimal model reasoning for the
-// synchronous research route. This keeps new telemetry distinguishable from
-// the high-detail, 45-second configuration.
-export const RESEARCH_PROMPT_VERSION = "research-carfax-contract.v2";
+// v2 adds source-grounding fields that let the cohort distinguish a service
+// record from a registration or inspection and show a location only when the
+// document itself reported one.
+export const RESEARCH_SCHEMA_VERSION = "carfax-service-history.v2";
+// v3 retains the bounded v2 execution recipe (low-detail PDF images and
+// minimal reasoning) and adds the v2 source-grounding extraction contract.
+export const RESEARCH_PROMPT_VERSION = "research-carfax-contract.v3";
 export const RESEARCH_CONSENT_VERSION = "research-cohort.v3";
 
 export type ResearchExtractionStrategy = "text-first" | "direct-pdf";
@@ -55,6 +56,19 @@ export type ResearchRecordReview = {
   serviceItems: ResearchServiceItemReview[];
 };
 
+export type ResearchRecordKind = "service" | "inspection" | "registration" | "unknown";
+
+export type ResearchReportedBy = "shop" | "government" | "owner" | "diy" | "unknown";
+
+export type ResearchServiceDetailStatus = "itemized" | "not-itemized" | "not-applicable" | "unknown";
+
+export type ResearchProviderLocation = {
+  city: string | null;
+  state: string | null;
+  status: "reported" | "not-reported" | "ambiguous";
+  source: "carfax-review-link" | "record-text" | null;
+};
+
 export type ResearchServiceRecord = {
   serviceDate: string | null;
   mileage: number | null;
@@ -62,8 +76,14 @@ export type ResearchServiceRecord = {
   lineItems: string[];
   confidence: number;
   evidence: string;
-  // This is added only by the owner-review UI. Model drafts intentionally do
-  // not contain it, which keeps the extraction contract unchanged.
+  // Evidence pages and the remaining fields are model proposal fields. The
+  // import route applies deterministic validation/enrichment before storage.
+  evidencePages: number[];
+  recordKind: ResearchRecordKind;
+  reportedBy: ResearchReportedBy;
+  serviceDetailStatus: ResearchServiceDetailStatus;
+  providerLocation: ResearchProviderLocation;
+  // This is added only by the owner-review UI, never requested from the model.
   review?: ResearchRecordReview;
 };
 

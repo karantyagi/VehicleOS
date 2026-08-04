@@ -151,10 +151,26 @@ filename.
 
 The synchronous processing route has a 120-second Vercel duration. It reserves
 the final 20 seconds for the attempt writes and quota outcome, and gives the
-model request up to 100 seconds. The v2 extraction recipe uses GPT-5 mini with
+model request up to 100 seconds. The v3 extraction recipe uses GPT-5 mini with
 minimal reasoning and low-detail PDF page images; PDF inputs still include both
 the file's extracted text and page images. This makes scanned CARFAX reports
-viable within the request budget while keeping the same strict output schema.
+viable within the request budget while keeping a versioned strict output schema.
+
+### Source-grounding fields
+
+Each draft record includes a short evidence excerpt, the source page numbers,
+record kind (`service`, `inspection`, or `registration`), reporter, and whether
+the service action is itemized. These fields help participants decide whether a
+row is a maintenance action or a report/source limitation; they do not add a
+second LLM call.
+
+City/state is optional and deliberately conservative. The model must preserve
+`not-reported` rather than invent it, and the server overwrites every proposed
+location unless it can deterministically match that provider to a printed
+CARFAX review link in the document text. Multiple possible matches remain
+`ambiguous`. The participant sees this low-priority context under collapsed
+**Shop details**, not in the primary per-action review flow. No address, map
+search, or name-only location guess is stored.
 
 The research login uses the shared application code but the research Supabase
 Auth tenant, so it is not the same session or user database as the owner app.
@@ -203,7 +219,8 @@ extracted text, draft, or provider response body.
 response arrived; it is distinct from a provider HTTP rejection, whose safe
 status/code suffix is retained in `model-request-failed`. The original v1
 high-detail, 45-second configuration is retained only in historical attempt
-telemetry; v2 attempts are recorded under a new prompt version for comparison.
+telemetry. The v2 bounded recipe and v3 source-grounding contract have distinct
+prompt versions, so their results are never silently mixed.
 
 Before inviting more participants after a deployment, verify that
 `GET /sw.js` returns JavaScript without a redirect, the research browser

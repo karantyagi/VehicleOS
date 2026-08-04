@@ -66,6 +66,11 @@ const emptyRecord = (): ResearchServiceRecord => ({
   lineItems: [],
   confidence: 1,
   evidence: "Added by owner",
+  evidencePages: [],
+  recordKind: "service",
+  reportedBy: "owner",
+  serviceDetailStatus: "unknown",
+  providerLocation: { city: null, state: null, status: "not-reported", source: null },
   review: {
     visitOutcome: "corrected",
     serviceItems: [{ originalItem: null, finalItem: null, outcome: "unreviewed" }],
@@ -82,6 +87,28 @@ const actionOutcomeCopy = {
   unsure: "Not sure",
   added: "Added by you",
 } as const;
+
+const recordKindCopy = {
+  service: "Service",
+  inspection: "Inspection",
+  registration: "Registration",
+  unknown: "Record type not clear",
+} as const;
+
+const reportedByCopy = {
+  shop: "Shop",
+  government: "Government record",
+  owner: "Owner-reported",
+  diy: "DIY",
+  unknown: "Reporter not clear",
+} as const;
+
+const providerLocationCopy = (record: ResearchServiceRecord): string => {
+  const location = record.providerLocation;
+  if (location.status === "reported" && location.city && location.state) return `${location.city}, ${location.state} (shown by CARFAX)`;
+  if (location.status === "ambiguous") return "CARFAX showed more than one possible location for this provider.";
+  return "CARFAX did not show a city and state for this provider.";
+};
 
 export function ResearchRunReview({
   run,
@@ -229,6 +256,7 @@ export function ResearchRunReview({
                     {review.visitOutcome === "unreviewed" ? <><Button type="button" size="sm" onClick={() => updateVisitOutcome(index, "confirmed")}><CheckCircle2 className="h-4 w-4" aria-hidden /> Visit details match</Button><Button type="button" size="sm" variant="outline" onClick={() => setEditingVisits((current) => new Set(current).add(index))}><Pencil className="h-4 w-4" aria-hidden /> Edit visit details</Button><Button type="button" size="sm" variant="ghost" onClick={() => updateVisitOutcome(index, "not-a-visit")}>Not a service visit</Button><Button type="button" size="sm" variant="ghost" onClick={() => updateVisitOutcome(index, "unsure")}>I’m not sure</Button></> : <><span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">Visit {review.visitOutcome === "confirmed" ? "matches report" : review.visitOutcome === "corrected" ? "corrected" : "needs source review"}</span><button type="button" onClick={() => updateVisitOutcome(index, "unreviewed")} className="text-sm font-medium text-primary underline-offset-4 hover:underline">Change answer</button></>}
                   </div>
                   {editingVisits.has(index) ? <div className="mt-3 grid gap-3 rounded-md border border-border bg-muted/30 p-3 sm:grid-cols-2"><label className="text-sm font-medium">Service date<input value={record.serviceDate ?? ""} onChange={(event) => updateVisit(index, { serviceDate: event.target.value || null })} placeholder="YYYY-MM-DD" className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm" /></label><label className="text-sm font-medium">Mileage<input inputMode="numeric" value={record.mileage ?? ""} onChange={(event) => { const mileage = Number(event.target.value); updateVisit(index, { mileage: event.target.value === "" || !Number.isFinite(mileage) ? null : mileage }); }} placeholder="Not shown" className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm" /></label><label className="text-sm font-medium sm:col-span-2">Shop or provider<input value={record.provider ?? ""} onChange={(event) => updateVisit(index, { provider: event.target.value || null })} placeholder="Not shown" className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm" /></label><Button type="button" size="sm" variant="outline" onClick={() => setEditingVisits((current) => { const next = new Set(current); next.delete(index); return next; })}>Done editing visit</Button></div> : null}
+                  <details className="mt-3 rounded-md bg-muted/40 p-3 text-xs text-muted-foreground"><summary className="cursor-pointer font-medium text-foreground">Shop details</summary><dl className="mt-2 grid gap-2 sm:grid-cols-3"><div><dt className="font-medium text-foreground">Location</dt><dd className="mt-1 leading-5">{providerLocationCopy(record)}</dd></div><div><dt className="font-medium text-foreground">Record type</dt><dd className="mt-1 leading-5">{recordKindCopy[record.recordKind]}</dd></div><div><dt className="font-medium text-foreground">Reported by</dt><dd className="mt-1 leading-5">{reportedByCopy[record.reportedBy]}</dd></div></dl></details>
                   <div className="mt-4 border-t border-border pt-3"><p className="text-sm font-medium">Service actions</p><p className="mt-1 text-xs text-muted-foreground">Review each action separately. “Not itemized” means the report did not provide enough detail to judge it.</p><div className="mt-3 space-y-2">
                     {review.serviceItems.map((item, itemIndex) => {
                       const itemKey = `${index}:${itemIndex}`;
@@ -241,7 +269,7 @@ export function ResearchRunReview({
                 <div className="mt-4 flex flex-wrap items-center gap-3">
                   <a href={`/api/research/imports/${run.id}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 hover:underline"><FileText className="h-4 w-4" aria-hidden /> Open your original PDF</a>
                 </div>
-                <details className="mt-3 rounded-md bg-muted/40 p-3 text-xs text-muted-foreground"><summary className="cursor-pointer font-medium text-foreground">Why we found this</summary><p className="mt-2 leading-5">{record.evidence || "No matching text was found."}</p></details>
+                <details className="mt-3 rounded-md bg-muted/40 p-3 text-xs text-muted-foreground"><summary className="cursor-pointer font-medium text-foreground">Why we found this</summary>{record.evidencePages.length ? <p className="mt-2">PDF page{record.evidencePages.length === 1 ? "" : "s"}: {record.evidencePages.join(", ")}</p> : <p className="mt-2">Page not captured</p>}<p className="mt-1 leading-5">{record.evidence || "No matching text was found."}</p></details>
               </div> : null}
             </article>
           );

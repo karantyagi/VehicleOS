@@ -12,6 +12,11 @@ const proposed: ResearchImportDraft = {
     lineItems: ["Oil changed", "Invented service"],
     confidence: 0.9,
     evidence: "source",
+    evidencePages: [1],
+    recordKind: "service",
+    reportedBy: "shop",
+    serviceDetailStatus: "itemized",
+    providerLocation: { city: null, state: null, status: "not-reported", source: null },
   }],
   warnings: [],
 };

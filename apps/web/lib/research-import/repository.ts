@@ -1,5 +1,6 @@
 import { createAdminClient } from "../supabase/admin";
 import { attemptMetrics, canSkipSourceAdjudication } from "./comparison";
+import { parseResearchImportDraft } from "./draft";
 import { researchReviewProgress } from "./review";
 import {
   RESEARCH_IMPORT_SOURCE,
@@ -107,6 +108,9 @@ const nullableNumber = (value: number | string | null): number | null => {
   return Number.isFinite(number) ? number : null;
 };
 
+const storedDraft = (value: unknown): ResearchImportDraft | null =>
+  parseResearchImportDraft(value);
+
 const rowToRun = (row: ResearchRunRow): ResearchImportRun => ({
   id: row.id,
   source: RESEARCH_IMPORT_SOURCE,
@@ -117,8 +121,8 @@ const rowToRun = (row: ResearchRunRow): ResearchImportRun => ({
   textCharacterCount: row.text_character_count,
   model: row.model,
   promptVersion: row.prompt_version,
-  draft: row.draft_json as ResearchImportDraft | null,
-  ownerDraft: row.owner_draft_json as ResearchImportDraft | null,
+  draft: storedDraft(row.draft_json),
+  ownerDraft: storedDraft(row.owner_draft_json),
   errorCode: row.error_code,
 });
 
@@ -137,7 +141,7 @@ const rowToAttempt = (row: ResearchAttemptRow): ResearchExtractionAttempt => ({
   providerRequestId: row.provider_request_id,
   schemaValid: row.schema_valid,
   usableDraft: row.usable_draft,
-  draft: row.draft_json as ResearchImportDraft | null,
+  draft: storedDraft(row.draft_json),
   errorCode: row.error_code,
 });
 
@@ -513,7 +517,7 @@ export const refreshResearchComparisonObservation = async (runId: string): Promi
   const baseline = attempts.find((attempt) => attempt.strategy === "text-first");
   const challenger = attempts.find((attempt) => attempt.strategy === "direct-pdf");
   if (!baseline || !challenger) return;
-  const ownerDraft = runData.owner_draft_json as ResearchImportDraft | null;
+  const ownerDraft = storedDraft(runData.owner_draft_json);
   const reviewComplete = ownerDraft ? researchReviewProgress(ownerDraft).complete : false;
   const baselineMetrics = ownerDraft && reviewComplete ? attemptMetrics(baseline, ownerDraft) : null;
   const challengerMetrics = ownerDraft && reviewComplete ? attemptMetrics(challenger, ownerDraft) : null;

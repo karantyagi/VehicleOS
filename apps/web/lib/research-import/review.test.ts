@@ -18,6 +18,11 @@ const draft: ResearchImportDraft = {
     lineItems: ["Tires rotated"],
     confidence: 0.98,
     evidence: "Page 1: Costco Tire Center, Tires rotated.",
+    evidencePages: [1],
+    recordKind: "service",
+    reportedBy: "shop",
+    serviceDetailStatus: "itemized",
+    providerLocation: { city: null, state: null, status: "not-reported", source: null },
   }],
   warnings: [],
 };

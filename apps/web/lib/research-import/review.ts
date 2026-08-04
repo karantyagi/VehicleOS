@@ -100,6 +100,9 @@ export const researchRecordAttention = (record: ResearchServiceRecord): Research
   if (record.lineItems.some((item) => genericServicePattern.test(item.trim()))) {
     reasons.push("The service description is too general to verify as a maintenance action.");
   }
+  if (record.serviceDetailStatus === "not-itemized" && !record.lineItems.some((item) => genericServicePattern.test(item.trim()))) {
+    reasons.push("The report supports this visit but did not itemize the work performed.");
+  }
   if (!record.serviceDate || record.mileage === null || !record.provider) {
     reasons.push("One or more visit details were not shown in the draft.");
   }
