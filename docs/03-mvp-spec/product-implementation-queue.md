@@ -53,9 +53,20 @@ authorize the next one; owner feedback may change the remaining sequence.
 | ATTN-0 | P0 | In this PR | Record vocabulary, surface roles, attention policy, progressive disclosure, and notification boundary | Product direction is reviewable in ADR-018 and `owner-attention-model.md`; no UI or domain behavior changes in this slice |
 | ATTN-1 | P0 | Next | Add the **Your attention** navigation route and stable targets for current unresolved owner work | After deployment, the owner can find every existing unresolved item, open it, and return to its source context; no notification delivery |
 | ATTN-2 | P0 | Next after ATTN-1 dogfood | Group existing verify/personalize work as **Help the assistant** and retain one shared resolution state across source context and attention | After deployment, imported-record questions are clear, answerable, and never duplicated; the owner explicitly approves the interaction before the next slice |
-| ATTN-3 | P0 | Next after ATTN-2 dogfood | Group actionable reminders as **Act for your car** and make Home a calm summary linked to the full queue | After deployment, Home is reassuring while Your attention shows all open work; no arbitrary item truncation or auto-expanded pile of details |
+| ATTN-3 | P0 | Next after ATTN-2 dogfood and schedule-semantic prerequisites | Group actionable reminders as **Act for your car**, make Home a calm summary linked to the full queue, and add the **Next Care Brief** | After deployment, the brief gives one compact, source-grounded next-care explanation without replacing the full queue. It does not present a mileage forecast as an actual due date, and only describes an earlier trigger when the OEM source explicitly supports it. Home remains reassuring while Your attention shows all open work; no arbitrary item truncation or auto-expanded pile of details |
 | ATTN-4 | P1 | Next after ATTN-3 dogfood | Add compact item-level callouts in Maintenance and move long evidence/history into deeper reveals | After deployment, the owner can act from Maintenance without losing access to the service journey and records |
 | ATTN-5 | P1 | Deferred product discovery | Research notification cadence, channels, interruption policy, and owner controls using the proven attention model | Separate decision before any notification delivery build |
+
+## Schedule semantics and demo evidence
+
+These are prerequisites for the Next Care Brief. The existing calendar-first
+behavior remains the default until a source-backed semantic says otherwise.
+
+| ID | Priority | Status | Task | Acceptance boundary |
+|----|----------|--------|------|---------------------|
+| OEM-SEM-1 | P0 | Next before ATTN-3 | Carry an explicit OEM trigger semantic through the schedule contract and projector | The runtime can distinguish at least calendar-first, mileage-only, source-backed earlier-of, and minder-or-condition behavior. A mileage forecast never rewrites a hard calendar schedule; it may explain planning only. Only an OEM entry explicitly marked earlier-of can identify the earlier expected trigger. Tests cover each semantic and current calendar-first behavior remains the fallback for unclassified packs |
+| OEM-SEM-2 | P0 | Next before ATTN-3 | Preserve OEM `itemType` from source extract through the validated runtime pack | The runtime pack and public schedule contract retain source values such as inspect, replace, and rotate without reconstructing them with an LLM. Validation and fixture tests prove the field survives extraction, loading, and projection |
+| DEMO-OEM-1 | P0 | Next before ATTN-3 | Audit the Hyundai Elantra demo schedule pack against its OEM evidence | Every demo item used by the owner flow has a traceable source, interval, trigger semantic, and `itemType`; missing or ambiguous source evidence is visible to maintainers and does not support a misleading Next Care Brief claim |
 
 ## Explicitly deferred
 
@@ -67,6 +78,8 @@ authorize the next one; owner feedback may change the remaining sequence.
 | NOTIFY-DESIGN-4 | Deferred | Define future mute/defer semantics | Separate attention state, actual due time, and next allowed nudge |
 | NOTIFY-BUILD | Blocked by design | Implement notification delivery and user controls | NOTIFY-DESIGN-1 through NOTIFY-DESIGN-4 accepted |
 | OWNER-HABIT-LLM | Deferred | Expand natural-language habit extraction beyond the deterministic Techron pilot | Private tuned prompt/evals that emit the public `OwnerHabitProposalV1` schema |
+| QUOTE-CONTAIN-1 | Next containment slice | Hide quote analysis from the active product and disable new analysis | No Owner or Developer surface presents quote analysis as an available capability, and no new analysis can be started. Existing stored evidence is retained rather than deleted or rewritten |
+| QUOTE-EXEC-1 | Far future / blocked | Reconsider quote analysis only within an owner-authorized execution assistant | First establish trusted recommendations, explicit per-action owner approval, constrained tool permissions, provenance, cost/merchant safeguards, audit history, cancellation, and recovery. The assistant may then execute on the owner's behalf after a recommendation; quote analysis is not an early standalone feature |
 
 ## Guardrails
 
@@ -77,6 +90,8 @@ authorize the next one; owner feedback may change the remaining sequence.
 - Deep-link targets may be implemented before notification delivery, but they must not imply that cadence, channel, permissions, or delivery reliability exist.
 - Do not let notification preferences modify maintenance history or actual due dates.
 - Do not add per-item delay controls as part of web-attention work.
+- Do not change a schedule globally to "whichever occurs first". Respect the OEM entry's explicit trigger semantic; calendar-first is the compatibility default.
+- Do not expose or run quote analysis while `QUOTE-CONTAIN-1` is incomplete. Retaining prior evidence does not make the feature active.
 - Do not expand mobile into a second full review application during the capture phase.
 - Do not let voice, rules, or LLM extraction silently change an owner interval.
 - Do not store a driver's-license number or date of birth in the compliance-deadline contract.
