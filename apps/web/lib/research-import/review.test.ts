@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
-  applyResearchRecordReview,
+  confirmResearchRecord,
+  correctResearchRecord,
   isResearchRecordSourceUnverifiable,
   prepareResearchDraftForReview,
   researchRecordAttention,
   researchReviewProgress,
+  resetResearchRecordReview,
 } from "./review.js";
 import type { ResearchImportDraft } from "./types.js";
 
@@ -28,7 +30,7 @@ const draft: ResearchImportDraft = {
 };
 
 describe("research owner-review protocol", () => {
-  it("requires an explicit visit and service-item outcome before a draft is complete", () => {
+  it("turns one visit confirmation into deterministic completed action labels", () => {
     const prepared = prepareResearchDraftForReview(draft);
     expect(researchReviewProgress(prepared)).toMatchObject({
       totalVisits: 1,
@@ -38,11 +40,7 @@ describe("research owner-review protocol", () => {
       complete: false,
     });
 
-    const record = prepared.records[0];
-    const completed = applyResearchRecordReview(record, {
-      visitOutcome: "confirmed",
-      serviceItems: [{ originalItem: "Tires rotated", finalItem: "Tires rotated", outcome: "confirmed" }],
-    });
+    const completed = confirmResearchRecord(prepared.records[0]);
     expect(researchReviewProgress({ ...prepared, records: [completed] })).toMatchObject({
       reviewedVisits: 1,
       reviewedServiceItems: 1,
@@ -63,12 +61,31 @@ describe("research owner-review protocol", () => {
     const record = unclearDraft.records[0];
     expect(researchRecordAttention(record).reasons).toContain("The report did not clearly name the work performed.");
 
-    const markedNotItemized = applyResearchRecordReview(record, {
-      visitOutcome: "confirmed",
-      serviceItems: [{ originalItem: "Vehicle serviced", finalItem: null, outcome: "not-itemized" }],
-    });
+    const markedNotItemized = confirmResearchRecord({ ...record, serviceDetailStatus: "not-itemized" });
     expect(researchReviewProgress({ ...unclearDraft, records: [markedNotItemized] }).complete).toBe(true);
     expect(isResearchRecordSourceUnverifiable(markedNotItemized)).toBe(true);
     expect(markedNotItemized.lineItems).toEqual([]);
+  });
+
+  it("reconciles a compact visit correction into existing evaluation labels", () => {
+    const corrected = correctResearchRecord(prepareResearchDraftForReview(draft).records[0], {
+      serviceDate: "2026-07-15",
+      mileage: 58_819,
+      provider: "Costco Tire Center",
+      lineItems: ["Tires rotated", "Oil changed"],
+    });
+
+    expect(corrected.review).toMatchObject({
+      visitOutcome: "corrected",
+      serviceItems: [
+        { originalItem: "Tires rotated", finalItem: "Tires rotated", outcome: "confirmed" },
+        { originalItem: null, finalItem: "Oil changed", outcome: "added" },
+      ],
+    });
+    expect(resetResearchRecordReview(corrected).review?.serviceItems[0]).toMatchObject({
+      originalItem: "Tires rotated",
+      finalItem: "Tires rotated",
+      outcome: "unreviewed",
+    });
   });
 });

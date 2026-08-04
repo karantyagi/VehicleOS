@@ -59,6 +59,73 @@ export const applyResearchRecordReview = (
   },
 });
 
+const normalizedServiceLine = (value: string): string =>
+  value.trim().replace(/\s+/g, " ").toLocaleLowerCase();
+
+const sourceDoesNotItemize = (record: ResearchServiceRecord): boolean =>
+  record.serviceDetailStatus === "not-itemized" || record.lineItems.length === 0;
+
+// The cohort asks a person to make one source-backed judgment per visit. This
+// records the corresponding per-action labels deterministically, so the
+// operator can still calculate precision/recall without making the person
+// answer a separate mini-survey for every line.
+export const confirmResearchRecord = (record: ResearchServiceRecord): ResearchServiceRecord => {
+  const review = createResearchRecordReview(record);
+  const notItemized = sourceDoesNotItemize(record);
+  return applyResearchRecordReview(record, {
+    visitOutcome: "confirmed",
+    serviceItems: review.serviceItems.map((item) => ({
+      ...item,
+      finalItem: notItemized ? null : item.finalItem,
+      outcome: notItemized ? "not-itemized" : "confirmed",
+    })),
+  });
+};
+
+export type ResearchRecordCorrection = Pick<ResearchServiceRecord, "serviceDate" | "mileage" | "provider" | "lineItems">;
+
+// A compact visit edit reconciles action labels by position. It preserves an
+// unchanged line as confirmed, records a replacement as corrected, and makes
+// additions/removals visible to the existing comparison metrics.
+export const correctResearchRecord = (
+  record: ResearchServiceRecord,
+  correction: ResearchRecordCorrection,
+): ResearchServiceRecord => {
+  const nextLineItems = correction.lineItems.map((item) => item.trim()).filter(Boolean);
+  const originalItems = createResearchRecordReview(record).serviceItems;
+  const serviceItems: ResearchServiceItemReview[] = [];
+  const itemCount = Math.max(originalItems.length, nextLineItems.length);
+  for (let index = 0; index < itemCount; index += 1) {
+    const original = originalItems[index];
+    const finalItem = nextLineItems[index] ?? null;
+    if (!original) {
+      serviceItems.push({ originalItem: null, finalItem, outcome: "added" });
+    } else if (!finalItem) {
+      serviceItems.push({ originalItem: original.originalItem, finalItem: null, outcome: "not-supported" });
+    } else if (original.finalItem && normalizedServiceLine(original.finalItem) === normalizedServiceLine(finalItem)) {
+      serviceItems.push({ originalItem: original.originalItem, finalItem, outcome: "confirmed" });
+    } else {
+      serviceItems.push({ originalItem: original.originalItem, finalItem, outcome: "corrected" });
+    }
+  }
+  return applyResearchRecordReview({ ...record, ...correction, lineItems: nextLineItems }, {
+    visitOutcome: "corrected",
+    serviceItems,
+  });
+};
+
+export const resetResearchRecordReview = (record: ResearchServiceRecord): ResearchServiceRecord => {
+  const review = record.review ?? createResearchRecordReview(record);
+  return applyResearchRecordReview(record, {
+    visitOutcome: "unreviewed",
+    serviceItems: review.serviceItems.map((item) => ({
+      ...item,
+      finalItem: item.originalItem,
+      outcome: "unreviewed",
+    })),
+  });
+};
+
 export const prepareResearchDraftForReview = (draft: ResearchImportDraft): ResearchImportDraft => ({
   ...draft,
   records: draft.records.map((record) => applyResearchRecordReview(record, normalizedReview(record))),

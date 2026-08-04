@@ -42,7 +42,7 @@ Invited owner signs in
   -> signed direct upload to private Supabase Storage
   -> paired text-first + direct-PDF schema-bound attempts
   -> one pre-assigned valid draft shown to owner
-  -> owner explicitly reviews every visit and service action
+  -> owner explicitly checks every visit
   -> anonymous comparison measurement + operator adjudication
 
 No arrow reaches the VehicleOS owner event store.
@@ -51,10 +51,17 @@ No arrow reaches the VehicleOS owner event store.
 ### Review-label protocol
 
 The cohort is not evaluated merely because an owner clicks Save. A completed
-review requires an explicit outcome for every visit and each proposed service
-action: matches report, corrected, added by owner, not in report, not itemized
-in the source, or unsure. Owners can save incomplete progress and return later,
-but only a completed review refreshes paired quality metrics.
+review requires one explicit outcome for every visit: **Looks right**, a compact
+**Fix it** correction, or **Not a service visit**. Owners can save incomplete
+progress and return later, but only a completed review refreshes paired quality
+metrics.
+
+The interface does not ask a participant to grade every individual service
+line. A visit confirmation deterministically confirms its itemized lines, or
+marks a source-limited visit as not itemized. A compact correction reconciles
+the edited list into retained, corrected, added, and removed action labels for
+the operator metrics. This preserves the evaluation signal without turning the
+cohort into a multi-choice survey.
 
 The review queue keeps every visit visible. It may prioritize amber rows whose
 evidence is incomplete, generic, missing a core field, or low confidence, but

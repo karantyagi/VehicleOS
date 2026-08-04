@@ -42,9 +42,13 @@ describe("ResearchRunReview", () => {
       <ResearchRunReview run={run} onSave={async () => undefined} />,
     );
 
-    expect(markup).toContain("Review every visit");
-    expect(markup).toContain("Needs attention 1");
-    expect(markup).toContain("Not reviewed 1");
+    expect(markup).toContain("Quick visit check");
+    expect(markup).toContain("To check 1");
+    expect(markup).toContain("Looks right");
+    expect(markup).toContain("Fix it");
+    expect(markup).not.toContain("Not itemized");
+    expect(markup).not.toContain("Not in report");
+    expect(markup).not.toContain("I’m not sure");
     expect(markup).toContain("Expand all");
     expect(markup).toContain("Collapse all");
     expect(markup).toContain("Finish review");

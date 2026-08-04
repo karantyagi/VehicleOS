@@ -8,12 +8,15 @@ import { CARFAX_PDF_INSTRUCTIONS } from "@/lib/record-import-types";
 import { RESEARCH_IMPORT_BUCKET, type ResearchImportDraft, type ResearchImportRun, type ResearchServiceRecord } from "@/lib/research-import/types";
 import {
   applyResearchRecordReview,
+  confirmResearchRecord,
+  correctResearchRecord,
   createResearchRecordReview,
   isResearchRecordRejected,
   isResearchRecordReviewComplete,
   prepareResearchDraftForReview,
   researchRecordAttention,
   researchReviewProgress,
+  resetResearchRecordReview,
 } from "@/lib/research-import/review";
 import { createClient as createSupabaseClient } from "@/lib/supabase/client";
 
@@ -51,7 +54,7 @@ const readableError = (error: string): string =>
     research_quota_reached: "You have reached this pilot's usable-draft limit. Ask Karan if you have another PDF to include.",
     research_import_in_progress: "Your current PDF is still being processed. Please wait before starting another one.",
     research_quota_not_configured: "This research portal is not configured yet. Please tell Karan.",
-    review_incomplete: "Please choose an outcome for every visit and service item before finishing your review.",
+    review_incomplete: "Please check every visit before finishing your review.",
   })[error] ?? "Something went wrong. Please try again.";
 
 const sha256 = async (file: File): Promise<string> => {
@@ -72,21 +75,26 @@ const emptyRecord = (): ResearchServiceRecord => ({
   serviceDetailStatus: "unknown",
   providerLocation: { city: null, state: null, status: "not-reported", source: null },
   review: {
-    visitOutcome: "corrected",
+    visitOutcome: "unreviewed",
     serviceItems: [{ originalItem: null, finalItem: null, outcome: "unreviewed" }],
   },
 });
 
-type ReviewFilter = "all" | "attention" | "not-reviewed" | "complete";
+type ReviewFilter = "all" | "not-reviewed" | "complete";
 
-const actionOutcomeCopy = {
-  confirmed: "Matches report",
-  corrected: "Corrected",
-  "not-itemized": "Not itemized",
-  "not-supported": "Not in report",
-  unsure: "Not sure",
-  added: "Added by you",
-} as const;
+type VisitEdit = {
+  serviceDate: string;
+  mileage: string;
+  provider: string;
+  lineItems: string;
+};
+
+const visitEditFrom = (record: ResearchServiceRecord): VisitEdit => ({
+  serviceDate: record.serviceDate ?? "",
+  mileage: record.mileage === null ? "" : String(record.mileage),
+  provider: record.provider ?? "",
+  lineItems: record.lineItems.join("\n"),
+});
 
 const recordKindCopy = {
   service: "Service",
@@ -122,17 +130,20 @@ export function ResearchRunReview({
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<PortalError>(null);
   const [filter, setFilter] = useState<ReviewFilter>("all");
-  const [expandedRecords, setExpandedRecords] = useState<Set<number>>(new Set());
+  const [expandedRecords, setExpandedRecords] = useState<Set<number>>(() => {
+    const firstUnreviewed = initialDraft?.records.findIndex((record) => !isResearchRecordReviewComplete(record)) ?? -1;
+    return firstUnreviewed >= 0 ? new Set([firstUnreviewed]) : new Set();
+  });
   const [editingVisits, setEditingVisits] = useState<Set<number>>(new Set());
-  const [editingServiceItems, setEditingServiceItems] = useState<Set<string>>(new Set());
+  const [visitEdits, setVisitEdits] = useState<Record<number, VisitEdit>>({});
 
   useEffect(() => {
     const nextDraft = initialDraft ? prepareResearchDraftForReview(initialDraft) : null;
     setDraft(nextDraft);
-    const firstAttention = nextDraft?.records.findIndex((record) => researchRecordAttention(record).needsAttention) ?? -1;
-    setExpandedRecords(firstAttention >= 0 ? new Set([firstAttention]) : new Set());
+    const firstUnreviewed = nextDraft?.records.findIndex((record) => !isResearchRecordReviewComplete(record)) ?? -1;
+    setExpandedRecords(firstUnreviewed >= 0 ? new Set([firstUnreviewed]) : new Set());
     setEditingVisits(new Set());
-    setEditingServiceItems(new Set());
+    setVisitEdits({});
   }, [run.id, run.ownerDraft, run.draft]);
 
   if (!draft) return null;
@@ -142,29 +153,43 @@ export function ResearchRunReview({
       ? { ...current, records: current.records.map((record, recordIndex) => (recordIndex === index ? update(record) : record)) }
       : current);
   };
-  const updateVisitOutcome = (index: number, visitOutcome: NonNullable<ResearchServiceRecord["review"]>["visitOutcome"]) => {
-    replaceRecord(index, (record) => applyResearchRecordReview(record, { ...createResearchRecordReview(record), ...record.review, visitOutcome }));
+  const confirmVisit = (index: number) => replaceRecord(index, confirmResearchRecord);
+  const beginCorrection = (index: number, record: ResearchServiceRecord) => {
+    setVisitEdits((current) => ({ ...current, [index]: visitEditFrom(record) }));
+    setEditingVisits((current) => new Set(current).add(index));
   };
-  const updateVisit = (index: number, patch: Partial<ResearchServiceRecord>) => {
-    replaceRecord(index, (record) => {
-      const review = { ...createResearchRecordReview(record), ...record.review, visitOutcome: "corrected" as const };
-      return applyResearchRecordReview({ ...record, ...patch }, review);
+  const cancelCorrection = (index: number) => {
+    setEditingVisits((current) => {
+      const next = new Set(current);
+      next.delete(index);
+      return next;
+    });
+    setVisitEdits((current) => {
+      const next = { ...current };
+      delete next[index];
+      return next;
     });
   };
-  const updateServiceItem = (recordIndex: number, itemIndex: number, patch: Partial<NonNullable<ResearchServiceRecord["review"]>["serviceItems"][number]>) => {
-    replaceRecord(recordIndex, (record) => {
-      const review = { ...createResearchRecordReview(record), ...record.review };
-      review.serviceItems = review.serviceItems.map((item, currentIndex) => currentIndex === itemIndex ? { ...item, ...patch } : item);
-      return applyResearchRecordReview(record, review);
-    });
+  const saveCorrection = (index: number) => {
+    const edit = visitEdits[index];
+    if (!edit) return;
+    const parsedMileage = Number(edit.mileage);
+    replaceRecord(index, (record) => correctResearchRecord(record, {
+      serviceDate: edit.serviceDate || null,
+      mileage: edit.mileage === "" || !Number.isFinite(parsedMileage) ? null : parsedMileage,
+      provider: edit.provider || null,
+      lineItems: edit.lineItems.split("\n"),
+    }));
+    cancelCorrection(index);
   };
-  const addServiceItem = (recordIndex: number) => {
-    replaceRecord(recordIndex, (record) => {
-      const review = { ...createResearchRecordReview(record), ...record.review };
-      review.serviceItems = [...review.serviceItems, { originalItem: null, finalItem: "", outcome: "unreviewed" }];
-      return applyResearchRecordReview(record, review);
-    });
+  const markNotAVisit = (index: number) => {
+    replaceRecord(index, (record) => applyResearchRecordReview(record, {
+      ...createResearchRecordReview(record),
+      visitOutcome: "not-a-visit",
+    }));
+    cancelCorrection(index);
   };
+  const clearVisitAnswer = (index: number) => replaceRecord(index, resetResearchRecordReview);
   const save = async (reviewComplete: boolean) => {
     setSaving(true);
     setSaveError(null);
@@ -180,12 +205,10 @@ export function ResearchRunReview({
   const progress = researchReviewProgress(draft);
   const attentionByRecord = useMemo(() => draft.records.map(researchRecordAttention), [draft.records]);
   const counts = {
-    attention: draft.records.filter((record, index) => attentionByRecord[index].needsAttention && !isResearchRecordReviewComplete(record)).length,
     notReviewed: draft.records.filter((record) => !isResearchRecordReviewComplete(record)).length,
     complete: progress.reviewedVisits,
   };
   const visibleRecords = draft.records.map((record, index) => ({ record, index })).filter(({ record, index }) => {
-    if (filter === "attention") return attentionByRecord[index].needsAttention && !isResearchRecordReviewComplete(record);
     if (filter === "not-reviewed") return !isResearchRecordReviewComplete(record);
     if (filter === "complete") return isResearchRecordReviewComplete(record);
     return true;
@@ -208,15 +231,15 @@ export function ResearchRunReview({
     <section className="mt-5 rounded-xl border border-border bg-card p-4 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold">Review every visit</h2>
-          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">Each decision becomes research feedback. Amber rows are a shortcut, but every visit still needs a decision before you finish. Nothing here changes your VehicleOS maintenance history.</p>
+          <h2 className="text-base font-semibold">Quick visit check</h2>
+          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">Open a visit, then choose “Looks right” or “Fix it.” You never need to grade each line one by one. Nothing here changes your VehicleOS maintenance history.</p>
         </div>
         <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">{progress.reviewedVisits} of {progress.totalVisits} visits reviewed</span>
       </div>
 
       <div className="mt-4 rounded-lg border border-border bg-muted/40 p-3 text-sm">
-        <p className="font-medium">{progress.reviewedVisits} of {progress.totalVisits} visits reviewed · {progress.reviewedServiceItems} of {progress.totalServiceItems} service items reviewed</p>
-        <p className="mt-1 text-muted-foreground">Choose “not itemized” when the report does not name the work. That is useful feedback, not a model failure.</p>
+        <p className="font-medium">{progress.reviewedVisits} of {progress.totalVisits} visits checked</p>
+        <p className="mt-1 text-muted-foreground">A visit confirmation covers its date, mileage, shop, and listed work together. If CARFAX did not list the exact work, we record that automatically.</p>
       </div>
       <details className="mt-4 rounded-lg border border-border bg-background px-3 py-2">
         <summary className="cursor-pointer text-sm font-medium">Vehicle identifier</summary>
@@ -226,9 +249,8 @@ export function ResearchRunReview({
       <div className="mt-4 flex flex-wrap items-center gap-2">
         {([
           ["all", `All ${draft.records.length}`],
-          ["attention", `Needs attention ${counts.attention}`],
-          ["not-reviewed", `Not reviewed ${counts.notReviewed}`],
-          ["complete", `Complete ${counts.complete}`],
+          ["not-reviewed", `To check ${counts.notReviewed}`],
+          ["complete", `Checked ${counts.complete}`],
         ] as const).map(([value, label]) => <Button key={value} type="button" size="sm" variant={filter === value ? "default" : "outline"} onClick={() => setFilter(value)}>{label}</Button>)}
         <span className="flex-1" />
         <Button type="button" size="sm" variant="ghost" onClick={() => setExpandedRecords(new Set(draft.records.map((_, index) => index)))}><ChevronDown className="h-4 w-4" aria-hidden /> Expand all</Button>
@@ -237,7 +259,6 @@ export function ResearchRunReview({
 
       <div className="mt-3 space-y-3">
         {visibleRecords.map(({ record, index }) => {
-          const review = record.review ?? createResearchRecordReview(record);
           const attention = attentionByRecord[index];
           const complete = isResearchRecordReviewComplete(record);
           const rejected = isResearchRecordRejected(record);
@@ -251,21 +272,8 @@ export function ResearchRunReview({
               </button>
               {open ? <div className="border-t border-border px-3 pb-4 pt-3">
                 {attention.reasons.length ? <div className="flex gap-2 rounded-md border border-amber-500/30 bg-amber-500/5 p-3 text-sm text-amber-950 dark:text-amber-100"><CircleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden /><div><p className="font-medium">Check this visit closely</p><p className="mt-1 text-xs leading-5">{attention.reasons.join(" ")}</p></div></div> : null}
-                {rejected ? <div className="mt-3 rounded-md bg-muted p-3 text-sm"><p className="font-medium">You marked this as not a service visit.</p><button type="button" onClick={() => updateVisitOutcome(index, "unreviewed")} className="mt-2 text-sm font-medium text-primary underline-offset-4 hover:underline">Change answer</button></div> : <>
-                  <div className="mt-3 flex flex-wrap items-center gap-2">
-                    {review.visitOutcome === "unreviewed" ? <><Button type="button" size="sm" onClick={() => updateVisitOutcome(index, "confirmed")}><CheckCircle2 className="h-4 w-4" aria-hidden /> Visit details match</Button><Button type="button" size="sm" variant="outline" onClick={() => setEditingVisits((current) => new Set(current).add(index))}><Pencil className="h-4 w-4" aria-hidden /> Edit visit details</Button><Button type="button" size="sm" variant="ghost" onClick={() => updateVisitOutcome(index, "not-a-visit")}>Not a service visit</Button><Button type="button" size="sm" variant="ghost" onClick={() => updateVisitOutcome(index, "unsure")}>I’m not sure</Button></> : <><span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">Visit {review.visitOutcome === "confirmed" ? "matches report" : review.visitOutcome === "corrected" ? "corrected" : "needs source review"}</span><button type="button" onClick={() => updateVisitOutcome(index, "unreviewed")} className="text-sm font-medium text-primary underline-offset-4 hover:underline">Change answer</button></>}
-                  </div>
-                  {editingVisits.has(index) ? <div className="mt-3 grid gap-3 rounded-md border border-border bg-muted/30 p-3 sm:grid-cols-2"><label className="text-sm font-medium">Service date<input value={record.serviceDate ?? ""} onChange={(event) => updateVisit(index, { serviceDate: event.target.value || null })} placeholder="YYYY-MM-DD" className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm" /></label><label className="text-sm font-medium">Mileage<input inputMode="numeric" value={record.mileage ?? ""} onChange={(event) => { const mileage = Number(event.target.value); updateVisit(index, { mileage: event.target.value === "" || !Number.isFinite(mileage) ? null : mileage }); }} placeholder="Not shown" className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm" /></label><label className="text-sm font-medium sm:col-span-2">Shop or provider<input value={record.provider ?? ""} onChange={(event) => updateVisit(index, { provider: event.target.value || null })} placeholder="Not shown" className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm" /></label><Button type="button" size="sm" variant="outline" onClick={() => setEditingVisits((current) => { const next = new Set(current); next.delete(index); return next; })}>Done editing visit</Button></div> : null}
-                  <details className="mt-3 rounded-md bg-muted/40 p-3 text-xs text-muted-foreground"><summary className="cursor-pointer font-medium text-foreground">Shop details</summary><dl className="mt-2 grid gap-2 sm:grid-cols-3"><div><dt className="font-medium text-foreground">Location</dt><dd className="mt-1 leading-5">{providerLocationCopy(record)}</dd></div><div><dt className="font-medium text-foreground">Record type</dt><dd className="mt-1 leading-5">{recordKindCopy[record.recordKind]}</dd></div><div><dt className="font-medium text-foreground">Reported by</dt><dd className="mt-1 leading-5">{reportedByCopy[record.reportedBy]}</dd></div></dl></details>
-                  <div className="mt-4 border-t border-border pt-3"><p className="text-sm font-medium">Service actions</p><p className="mt-1 text-xs text-muted-foreground">Review each action separately. “Not itemized” means the report did not provide enough detail to judge it.</p><div className="mt-3 space-y-2">
-                    {review.serviceItems.map((item, itemIndex) => {
-                      const itemKey = `${index}:${itemIndex}`;
-                      const editingItem = editingServiceItems.has(itemKey);
-                      const label = item.finalItem || item.originalItem || "No service item was proposed";
-                      return <div key={itemKey} className="rounded-md border border-border bg-card p-3"><div className="flex flex-wrap items-center justify-between gap-2"><p className="text-sm font-medium">{label}</p>{item.outcome !== "unreviewed" ? <span className="rounded-full bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">{actionOutcomeCopy[item.outcome]}</span> : null}</div>{editingItem || (item.originalItem === null && item.outcome === "unreviewed") ? <div className="mt-3 flex flex-wrap gap-2"><input value={item.finalItem ?? ""} onChange={(event) => updateServiceItem(index, itemIndex, { finalItem: event.target.value })} placeholder="Service item" className="h-9 min-w-52 flex-1 rounded-md border border-input bg-background px-3 text-sm" /><Button type="button" size="sm" disabled={!item.finalItem?.trim()} onClick={() => { updateServiceItem(index, itemIndex, { outcome: item.originalItem === null ? "added" : "corrected" }); setEditingServiceItems((current) => { const next = new Set(current); next.delete(itemKey); return next; }); }}>{item.originalItem === null ? "Add service item" : "Save correction"}</Button></div> : null}{item.outcome === "unreviewed" && item.originalItem !== null ? <div className="mt-3 flex flex-wrap gap-2"><Button type="button" size="sm" onClick={() => updateServiceItem(index, itemIndex, { outcome: "confirmed" })}><CheckCircle2 className="h-4 w-4" aria-hidden /> Matches report</Button><Button type="button" size="sm" variant="outline" onClick={() => setEditingServiceItems((current) => new Set(current).add(itemKey))}><Pencil className="h-4 w-4" aria-hidden /> Edit</Button><Button type="button" size="sm" variant="ghost" onClick={() => updateServiceItem(index, itemIndex, { finalItem: null, outcome: "not-itemized" })}>Not itemized</Button><Button type="button" size="sm" variant="ghost" onClick={() => updateServiceItem(index, itemIndex, { finalItem: null, outcome: "not-supported" })}>Not in report</Button><Button type="button" size="sm" variant="ghost" onClick={() => updateServiceItem(index, itemIndex, { outcome: "unsure" })}>I’m not sure</Button></div> : null}{item.outcome !== "unreviewed" ? <button type="button" onClick={() => updateServiceItem(index, itemIndex, { finalItem: item.originalItem, outcome: "unreviewed" })} className="mt-3 text-sm font-medium text-primary underline-offset-4 hover:underline">Change answer</button> : null}</div>;
-                    })}
-                  </div><Button type="button" size="sm" variant="outline" className="mt-3" onClick={() => addServiceItem(index)}><Plus className="h-4 w-4" aria-hidden /> Add a service item</Button></div>
-                </>}
+                {rejected ? <div className="mt-3 rounded-md bg-muted p-3 text-sm"><p className="font-medium">You marked this as not a service visit.</p><button type="button" onClick={() => clearVisitAnswer(index)} className="mt-2 text-sm font-medium text-primary underline-offset-4 hover:underline">Change answer</button></div> : complete ? <div className="mt-3 rounded-md bg-primary/5 p-3 text-sm"><p className="font-medium">You checked this visit.</p><button type="button" onClick={() => clearVisitAnswer(index)} className="mt-2 text-sm font-medium text-primary underline-offset-4 hover:underline">Change answer</button></div> : editingVisits.has(index) ? <div className="mt-3 grid gap-3 rounded-md border border-border bg-muted/30 p-3 sm:grid-cols-2"><label className="text-sm font-medium">Service date<input value={visitEdits[index]?.serviceDate ?? ""} onChange={(event) => setVisitEdits((current) => ({ ...current, [index]: { ...(current[index] ?? visitEditFrom(record)), serviceDate: event.target.value } }))} placeholder="YYYY-MM-DD" className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm" /></label><label className="text-sm font-medium">Mileage<input inputMode="numeric" value={visitEdits[index]?.mileage ?? ""} onChange={(event) => setVisitEdits((current) => ({ ...current, [index]: { ...(current[index] ?? visitEditFrom(record)), mileage: event.target.value } }))} placeholder="Not shown" className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm" /></label><label className="text-sm font-medium sm:col-span-2">Shop or provider<input value={visitEdits[index]?.provider ?? ""} onChange={(event) => setVisitEdits((current) => ({ ...current, [index]: { ...(current[index] ?? visitEditFrom(record)), provider: event.target.value } }))} placeholder="Not shown" className="mt-1 h-10 w-full rounded-md border border-input bg-card px-3 text-sm" /></label><label className="text-sm font-medium sm:col-span-2">Work done <span className="font-normal text-muted-foreground">(one item per line)</span><textarea value={visitEdits[index]?.lineItems ?? ""} onChange={(event) => setVisitEdits((current) => ({ ...current, [index]: { ...(current[index] ?? visitEditFrom(record)), lineItems: event.target.value } }))} placeholder="CARFAX did not list the exact work" className="mt-1 min-h-24 w-full rounded-md border border-input bg-card px-3 py-2 text-sm" /></label><div className="flex flex-wrap gap-2 sm:col-span-2"><Button type="button" size="sm" onClick={() => saveCorrection(index)}>Save correction</Button><Button type="button" size="sm" variant="outline" onClick={() => cancelCorrection(index)}>Cancel</Button><Button type="button" size="sm" variant="ghost" onClick={() => markNotAVisit(index)}>This is not a service visit</Button></div></div> : <div className="mt-3 rounded-md bg-muted/40 p-3"><p className="text-sm font-medium">Does this visit look right?</p><p className="mt-1 text-xs text-muted-foreground">{record.serviceDetailStatus === "not-itemized" ? "CARFAX shows the visit but not the exact work. We will record that automatically." : "Confirm the date, mileage, shop, and listed work together."}</p><div className="mt-3 flex flex-wrap gap-2"><Button type="button" size="sm" onClick={() => confirmVisit(index)}><CheckCircle2 className="h-4 w-4" aria-hidden /> Looks right</Button><Button type="button" size="sm" variant="outline" onClick={() => beginCorrection(index, record)}><Pencil className="h-4 w-4" aria-hidden /> Fix it</Button></div></div>}
+                <details className="mt-3 rounded-md bg-muted/40 p-3 text-xs text-muted-foreground"><summary className="cursor-pointer font-medium text-foreground">Shop details</summary><dl className="mt-2 grid gap-2 sm:grid-cols-3"><div><dt className="font-medium text-foreground">Location</dt><dd className="mt-1 leading-5">{providerLocationCopy(record)}</dd></div><div><dt className="font-medium text-foreground">Record type</dt><dd className="mt-1 leading-5">{recordKindCopy[record.recordKind]}</dd></div><div><dt className="font-medium text-foreground">Reported by</dt><dd className="mt-1 leading-5">{reportedByCopy[record.reportedBy]}</dd></div></dl></details>
                 <div className="mt-4 flex flex-wrap items-center gap-3">
                   <a href={`/api/research/imports/${run.id}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 hover:underline"><FileText className="h-4 w-4" aria-hidden /> Open your original PDF</a>
                 </div>
@@ -276,10 +284,10 @@ export function ResearchRunReview({
         })}
       </div>
 
-      <Button type="button" variant="outline" className="mt-4" onClick={() => { const nextIndex = draft.records.length; setDraft((current) => current ? { ...current, records: [...current.records, emptyRecord()] } : current); setFilter("all"); setExpandedRecords((current) => new Set([...current, nextIndex])); }}><Plus className="h-4 w-4" aria-hidden /> Add a missed visit</Button>
+      <Button type="button" variant="outline" className="mt-4" onClick={() => { const nextIndex = draft.records.length; const record = emptyRecord(); setDraft((current) => current ? { ...current, records: [...current.records, record] } : current); setVisitEdits((current) => ({ ...current, [nextIndex]: visitEditFrom(record) })); setEditingVisits((current) => new Set([...current, nextIndex])); setFilter("all"); setExpandedRecords((current) => new Set([...current, nextIndex])); }}><Plus className="h-4 w-4" aria-hidden /> Add a missed visit</Button>
       {draft.warnings.length > 0 ? <p className="mt-4 rounded-md bg-amber-500/10 px-3 py-2 text-sm text-amber-900 dark:text-amber-200">{draft.warnings.join(" ")}</p> : null}
       {saveError ? <p className="mt-3 text-sm text-destructive">{saveError}</p> : null}
-      <div className="mt-4 flex flex-wrap items-center gap-3"><Button type="button" variant="outline" disabled={saving} onClick={() => void save(false)}>{saving ? "Saving…" : "Save progress"}</Button><Button type="button" disabled={saving || !progress.complete} onClick={() => void save(true)}>{saving ? "Saving…" : run.status === "reviewed" ? "Update completed review" : "Finish review"}</Button>{!progress.complete ? <Button type="button" variant="ghost" onClick={reviewNext}><RotateCcw className="h-4 w-4" aria-hidden /> Review next · {progress.totalVisits - progress.reviewedVisits} visits remaining</Button> : <span className="text-sm text-primary">Every visit has a review outcome.</span>}</div>
+      <div className="mt-4 flex flex-wrap items-center gap-3"><Button type="button" variant="outline" disabled={saving} onClick={() => void save(false)}>{saving ? "Saving…" : "Save progress"}</Button><Button type="button" disabled={saving || !progress.complete} onClick={() => void save(true)}>{saving ? "Saving…" : run.status === "reviewed" ? "Update completed review" : "Finish review"}</Button>{!progress.complete ? <Button type="button" variant="ghost" onClick={reviewNext}><RotateCcw className="h-4 w-4" aria-hidden /> Review next · {progress.totalVisits - progress.reviewedVisits} visits remaining</Button> : <span className="text-sm text-primary">Every visit is checked.</span>}</div>
     </section>
   );
 }
