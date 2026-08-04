@@ -18,13 +18,21 @@ export type ResearchRecordAttention = {
   needsAttention: boolean;
 };
 
+export type ResearchRecordSourceGuidanceCode =
+  | "work-not-itemized"
+  | "visit-details-missing"
+  | "source-evidence-unclear"
+  | "low-confidence";
+
+export type ResearchRecordSourceGuidance = {
+  code: ResearchRecordSourceGuidanceCode;
+  title: string;
+  why: string;
+  nextStep: string;
+};
+
 const genericServicePattern = /^(vehicle )?(serviced|service performed|maintenance performed|service completed)$/i;
 const sourceUnclearPattern = /not (fully )?(visible|shown|itemized)|specific services? (?:are |were )?not|service details? (?:are |were )?(?:not )?(?:visible|available)|could not (?:see|read|identify)/i;
-
-export const isResearchRecordServiceDetailSourceLimited = (record: ResearchServiceRecord): boolean =>
-  record.serviceDetailStatus === "not-itemized"
-  || (record.reportedBy !== "owner" && record.lineItems.length === 0)
-  || record.lineItems.some((item) => genericServicePattern.test(item.trim()));
 
 const cloneServiceItem = (item: ResearchServiceItemReview): ResearchServiceItemReview => ({ ...item });
 
@@ -68,7 +76,65 @@ const normalizedServiceLine = (value: string): string =>
   value.trim().replace(/\s+/g, " ").toLocaleLowerCase();
 
 const sourceDoesNotItemize = (record: ResearchServiceRecord): boolean =>
-  record.serviceDetailStatus === "not-itemized" || record.lineItems.length === 0;
+  record.serviceDetailStatus === "not-itemized"
+  || record.lineItems.length === 0
+  || record.lineItems.every((item) => genericServicePattern.test(item.trim()));
+
+const listWords = (values: string[]): string => {
+  if (values.length <= 1) return values[0] ?? "";
+  if (values.length === 2) return `${values[0]} and ${values[1]}`;
+  return `${values.slice(0, -1).join(", ")}, and ${values.at(-1)}`;
+};
+
+// These codes are derived from validated record fields, not from an arbitrary
+// service-description phrase. They make every source limitation explainable
+// without adding another model call or another participant choice.
+export const researchRecordSourceGuidance = (
+  record: ResearchServiceRecord,
+): ResearchRecordSourceGuidance | null => {
+  const missingVisitDetails = [
+    !record.serviceDate ? "date" : null,
+    record.mileage === null ? "mileage" : null,
+    !record.provider ? "shop" : null,
+  ].filter((value): value is string => value !== null);
+
+  if (
+    record.serviceDetailStatus === "not-itemized"
+    || (record.recordKind === "service" && record.reportedBy !== "owner" && sourceDoesNotItemize(record))
+  ) {
+    return {
+      code: "work-not-itemized",
+      title: "CARFAX did not list the exact work",
+      why: "CARFAX shows a visit, but does not name a specific maintenance task.",
+      nextStep: "Check that the date, mileage, and shop match your PDF. If they do, choose Looks right. You do not need to guess or add the missing work.",
+    };
+  }
+  if (missingVisitDetails.length) {
+    return {
+      code: "visit-details-missing",
+      title: "CARFAX did not show every visit detail",
+      why: `The draft does not show the ${listWords(missingVisitDetails)} for this visit.`,
+      nextStep: "Check your PDF. Use Fix it only if it shows a different value; if the PDF also leaves it out, leave it blank and choose Looks right.",
+    };
+  }
+  if (sourceUnclearPattern.test(record.evidence)) {
+    return {
+      code: "source-evidence-unclear",
+      title: "This part of the report was not clear",
+      why: "The source text for this visit was not fully visible or readable in the draft.",
+      nextStep: "Compare the shown details with your PDF. Choose Looks right when they match, or Fix it when a shown detail is wrong.",
+    };
+  }
+  if (record.confidence < 0.8) {
+    return {
+      code: "low-confidence",
+      title: "This visit needs a quick source check",
+      why: "The extraction had limited confidence in the details it found.",
+      nextStep: "Compare the shown details with your PDF. Choose Looks right when they match, or Fix it when a shown detail is wrong.",
+    };
+  }
+  return null;
+};
 
 // The cohort asks a person to make one source-backed judgment per visit. This
 // records the corresponding per-action labels deterministically, so the

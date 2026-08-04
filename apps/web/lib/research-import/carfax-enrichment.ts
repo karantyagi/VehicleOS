@@ -123,7 +123,13 @@ const reportedByFor = (record: ResearchServiceRecord, recordKind: ResearchRecord
 
 const serviceDetailStatusFor = (record: ResearchServiceRecord, recordKind: ResearchRecordKind): ResearchServiceDetailStatus => {
   if (recordKind !== "service") return "not-applicable";
-  if (!record.lineItems.length || record.lineItems.every((item) => genericServicePattern.test(item.trim()))) return "not-itemized";
+  // Preserve the extractor's explicit source-limit classification, while
+  // retaining deterministic guards for empty and known-generic records.
+  if (
+    record.serviceDetailStatus === "not-itemized"
+    || !record.lineItems.length
+    || record.lineItems.every((item) => genericServicePattern.test(item.trim()))
+  ) return "not-itemized";
   return "itemized";
 };
 

@@ -13,7 +13,7 @@ const run: ResearchImportRun = {
   deleteAfter: "2026-09-03T12:00:00.000Z",
   textCharacterCount: 1_200,
   model: "gpt-5-mini-2025-08-07",
-  promptVersion: "research-carfax-contract.v3",
+  promptVersion: "research-carfax-contract.v4",
   draft: {
     documentType: "carfax-service-history",
     vehicleVin: null,
@@ -21,7 +21,7 @@ const run: ResearchImportRun = {
       serviceDate: "2026-05-13",
       mileage: 57_160,
       provider: "MetroWest Acura",
-      lineItems: ["Vehicle serviced"],
+      lineItems: ["Routine maintenance"],
       confidence: 0.6,
       evidence: "Page 1 and 3: specific services not fully visible in summary.",
       evidencePages: [1, 3],

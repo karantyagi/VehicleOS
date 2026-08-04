@@ -115,11 +115,12 @@ requires each visit to be explicitly confirmed, corrected, or marked not a
 visit.
 
 A participant-facing source note must be actionable rather than a generic
-warning. For a source-limited row such as `Vehicle serviced`, it names the
-missing information, asks the participant to compare the visit's date,
-mileage, and provider with the PDF, and says that no missing maintenance action
-needs to be inferred. This keeps the human label focused on what the source can
-actually support.
+warning. Deterministic guidance codes cover work not itemized, missing core
+visit details, unclear source evidence, and low extraction confidence. Each
+code names the problem and tells the participant whether to compare the PDF,
+leave a truly absent value blank, or correct a shown value. This keeps the human
+label focused on what the source can actually support without asking the person
+to infer a missing maintenance action.
 
 ## How metrics are derived
 

@@ -51,7 +51,7 @@ const publicContractInstructions = [
   "Copy only facts visible in the document. Do not infer a service, mileage, date, provider, or VIN.",
   "Use null when a scalar fact is absent. Keep uncertain rows and explain the uncertainty in warnings.",
   "For every record, provide page numbers and a short evidence excerpt tied to the source.",
-  "Classify record kind, reporter, and service-detail status from visible report text. Use unknown when the text does not support a classification.",
+  "Classify record kind, reporter, and service-detail status from visible report text. Set serviceDetailStatus to not-itemized whenever CARFAX shows a visit but does not print a specific maintenance task, including generic service wording. Set it to itemized only when at least one concrete task is printed. Use unknown when the text does not support a classification.",
   "For providerLocation, report a city and state only when the CARFAX document itself prints them. Use not-reported with null city, state, and source when absent; never use a web search, a name-only guess, or outside knowledge.",
   "This is a proposal for an owner to review; it never commits data.",
 ].join(" ");

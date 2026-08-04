@@ -5,6 +5,7 @@ import {
   isResearchRecordSourceUnverifiable,
   prepareResearchDraftForReview,
   researchRecordAttention,
+  researchRecordSourceGuidance,
   researchReviewProgress,
   resetResearchRecordReview,
 } from "./review.js";
@@ -65,6 +66,39 @@ describe("research owner-review protocol", () => {
     expect(researchReviewProgress({ ...unclearDraft, records: [markedNotItemized] }).complete).toBe(true);
     expect(isResearchRecordSourceUnverifiable(markedNotItemized)).toBe(true);
     expect(markedNotItemized.lineItems).toEqual([]);
+  });
+
+  it("derives an actionable source note from validated record fields", () => {
+    const sourceLimited = researchRecordSourceGuidance({
+      ...draft.records[0],
+      lineItems: ["Routine maintenance"],
+      serviceDetailStatus: "not-itemized",
+    });
+    expect(sourceLimited).toMatchObject({
+      code: "work-not-itemized",
+      title: "CARFAX did not list the exact work",
+    });
+    expect(sourceLimited?.nextStep).toContain("You do not need to guess or add the missing work.");
+
+    const missingDetails = researchRecordSourceGuidance({
+      ...draft.records[0],
+      serviceDate: null,
+      mileage: null,
+    });
+    expect(missingDetails).toMatchObject({
+      code: "visit-details-missing",
+      title: "CARFAX did not show every visit detail",
+    });
+    expect(missingDetails?.why).toContain("date and mileage");
+
+    expect(researchRecordSourceGuidance({
+      ...draft.records[0],
+      evidence: "Specific services not fully visible in summary.",
+    })?.code).toBe("source-evidence-unclear");
+    expect(researchRecordSourceGuidance({
+      ...draft.records[0],
+      confidence: 0.6,
+    })?.code).toBe("low-confidence");
   });
 
   it("reconciles a compact visit correction into existing evaluation labels", () => {
