@@ -55,6 +55,7 @@ export const applyEvent = (
         total: event.payload.total,
         evidenceIds: event.payload.evidenceIds,
         source: event.payload.source,
+        carfaxImport: event.payload.carfaxImport,
         recordKind: resolveServiceRecordKind({
           source: event.payload.source,
           lineItems: event.payload.lineItems,

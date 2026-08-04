@@ -1,5 +1,12 @@
 import { enrichVehicleOsImport } from "@vehicleos/domain";
 
+export type CarfaxImportReviewSubmission = {
+  /** Sent only after the signed-in owner finishes a required row review. */
+  ownerConfirmed?: true;
+  /** UI evidence retained for the server to audit and persist with the record. */
+  locationEvidence?: import("@vehicleos/domain").ImportLocationEvidence;
+};
+
 export type VehicleOsImportService = {
   shop: string;
   shopLocation?: string;
@@ -8,6 +15,7 @@ export type VehicleOsImportService = {
   lineItems: string[];
   total: string;
   evidenceIds?: string[];
+  carfaxReview?: CarfaxImportReviewSubmission;
 };
 
 export type VehicleOsImportV1 = {

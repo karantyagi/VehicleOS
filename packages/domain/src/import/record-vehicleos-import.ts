@@ -2,6 +2,7 @@ import { EVENT_TYPES, EVENT_VERSIONS } from "../events/catalog.js";
 import { foldEvents } from "../projections/apply.js";
 import type { VehicleProjectionState } from "../projections/types.js";
 import type { EventStore } from "../ports/event-store.js";
+import type { CarfaxImportProvenance } from "./carfax-import-provenance.js";
 import { filterNewImportServices } from "./dedupe-import-rows.js";
 
 export type VehicleOsImportService = {
@@ -12,6 +13,8 @@ export type VehicleOsImportService = {
   lineItems: string[];
   total: string;
   evidenceIds?: string[];
+  /** Canonical CARFAX import context, set by the authenticated import handler. */
+  carfaxImport?: CarfaxImportProvenance;
 };
 
 export type RecordVehicleOsImportInput = {
@@ -69,6 +72,7 @@ export const recordVehicleOsImport = async (deps: {
         total: service.total,
         evidenceIds: service.evidenceIds ?? [],
         source: "carfax_import",
+        carfaxImport: service.carfaxImport,
       },
       correlationId,
     });

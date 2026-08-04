@@ -59,6 +59,37 @@ describe("recordVehicleOsImport", () => {
     expect(schedule.rows[0]?.serviceBaseline.performedDate).toBe("2026-01-12");
   });
 
+  it("keeps CARFAX review provenance with the recorded service", async () => {
+    const eventStore = new InMemoryEventStore();
+    const result = await recordVehicleOsImport({
+      eventStore,
+      input: {
+        vehicleId: "veh-provenance",
+        importSource: "carfax-connect-cli",
+        services: [
+          {
+            shop: "Self Reported",
+            serviceDate: "2025-05-11",
+            mileage: 43_190,
+            lineItems: ["Oil and filter changed"],
+            total: "$0.00",
+            carfaxImport: {
+              sourceTrust: "owner_reported",
+              locationEvidence: { status: "owner_reported" },
+              ownerConfirmedAt: "2026-08-03T12:00:00.000Z",
+            },
+          },
+        ],
+      },
+    });
+
+    expect(result.state.timeline[0]?.carfaxImport).toEqual({
+      sourceTrust: "owner_reported",
+      locationEvidence: { status: "owner_reported" },
+      ownerConfirmedAt: "2026-08-03T12:00:00.000Z",
+    });
+  });
+
   it("skips duplicate services on re-import", async () => {
     const eventStore = new InMemoryEventStore();
     const vehicleId = "veh-dedupe";

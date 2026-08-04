@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   enrichVehicleOsImportServiceWithLookup,
   enrichVehicleOsImportWithLookup,
+  enrichVehicleOsImportWithLookupAndHints,
 } from "./enrich-vehicleos-import-with-lookup.js";
 import type { ShopLocationLookupPort } from "./lookup-shop-location-port.js";
 
@@ -163,5 +164,55 @@ describe("enrichVehicleOsImportWithLookup", () => {
 
     expect(enriched.services[0]?.shopLocation).toBe("Somewhere, CO");
     expect(enriched.services[1]?.shopLocation).toBe("Waltham, MA");
+  });
+});
+
+describe("enrichVehicleOsImportWithLookupAndHints", () => {
+  it("keeps the owner-visible source for Geoapify and non-mappable CARFAX rows", async () => {
+    const result = await enrichVehicleOsImportWithLookupAndHints(
+      {
+        version: "1",
+        source: "test",
+        exportedAt: "2026-01-01T00:00:00.000Z",
+        vehicle: {
+          vin: "1",
+          year: 2021,
+          make: "Acura",
+          model: "TLX",
+          currentMileage: 1000,
+        },
+        services: [
+          {
+            shop: "Mystery Motors",
+            serviceDate: "2025-01-01",
+            mileage: 1000,
+            lineItems: ["Oil changed"],
+            total: "$0.00",
+          },
+          {
+            shop: "Self Reported",
+            serviceDate: "2025-01-02",
+            mileage: 1001,
+            lineItems: ["Oil changed"],
+            total: "$0.00",
+          },
+          {
+            shop: "Massachusetts",
+            serviceDate: "2025-01-03",
+            mileage: 1002,
+            lineItems: ["Passed safety inspection"],
+            total: "$0.00",
+          },
+        ],
+      },
+      { lookupPort: resolvedLookup("Boston, MA") },
+    );
+
+    expect(result.locationEvidence["mystery motors"]).toEqual({
+      status: "geoapify",
+      location: "Boston, MA",
+    });
+    expect(result.locationEvidence["self reported"]?.status).toBe("owner_reported");
+    expect(result.locationEvidence.massachusetts?.status).toBe("state_record");
   });
 });

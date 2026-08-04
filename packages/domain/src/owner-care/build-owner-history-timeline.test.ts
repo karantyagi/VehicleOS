@@ -14,6 +14,10 @@ describe("buildOwnerHistoryTimeline", () => {
           total: "$0.00",
           evidenceIds: [],
           source: "carfax_import",
+          carfaxImport: {
+            sourceTrust: "provider",
+            locationEvidence: { status: "geoapify", location: "Boston, MA" },
+          },
         },
       ],
       ownershipRecords: [
@@ -33,5 +37,9 @@ describe("buildOwnerHistoryTimeline", () => {
     expect(items).toHaveLength(2);
     expect(items[0]?.kind).toBe("ownership");
     expect(items[1]?.kind).toBe("service");
+    expect(items[1]?.carfaxImport).toEqual({
+      sourceTrust: "provider",
+      locationEvidence: { status: "geoapify", location: "Boston, MA" },
+    });
   });
 });

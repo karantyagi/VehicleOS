@@ -10,7 +10,7 @@ const fixturePath = join(
 );
 
 describe("CARFAX TLX dogfood smoke", () => {
-  it("enriches and tiers the dogfood fixture with high ready ratio", () => {
+  it("enriches the dogfood fixture while holding low-trust sources for confirmation", () => {
     const raw = readFileSync(fixturePath, "utf8");
     const draft = JSON.parse(raw) as VehicleOsImportDraft;
     const enriched = enrichVehicleOsImport(draft);
@@ -19,7 +19,19 @@ describe("CARFAX TLX dogfood smoke", () => {
     expect(enriched.services.length).toBeGreaterThan(20);
     expect(summary.blockCount).toBe(0);
     expect(summary.readyCount + summary.verifyCount).toBe(enriched.services.length);
-    expect(summary.readyCount / enriched.services.length).toBeGreaterThan(0.7);
+    expect(summary.readyCount).toBeGreaterThan(0);
+
+    const lowTrustShops = new Set(["self reported", "self-service (diy)", "massachusetts"]);
+    const lowTrustRowCount = enriched.services.filter((service) =>
+      lowTrustShops.has(service.shop.toLowerCase()),
+    ).length;
+    const lowTrustReviewCount = summary.rows.filter(
+      (row) =>
+        lowTrustShops.has(row.service.shop.toLowerCase()) &&
+        row.tier === "verify" &&
+        row.ownerGuidance.length > 0,
+    ).length;
+    expect(lowTrustReviewCount).toBe(lowTrustRowCount);
 
     const withLocation = enriched.services.filter((service) => service.shopLocation?.trim()).length;
     expect(withLocation / enriched.services.length).toBeGreaterThan(0.75);

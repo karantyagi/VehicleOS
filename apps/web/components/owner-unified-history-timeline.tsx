@@ -99,6 +99,7 @@ const serviceEntryFromItem = (item: OwnerHistoryItem): TimelineEntry => ({
   evidenceIds: item.evidenceIds ?? [],
   source: item.source,
   recordKind: item.recordKind,
+  carfaxImport: item.carfaxImport,
 });
 
 const entryToDraft = (entry: TimelineEntry): ServiceDraft => ({
@@ -133,6 +134,39 @@ const isEvidenceBackedSource = (entry: TimelineEntry): boolean =>
 const formatShopLine = (entry: TimelineEntry): string => {
   const location = entry.shopLocation?.trim();
   return location ? `${entry.shop} · ${location}` : entry.shop;
+};
+
+const carfaxImportEvidenceText = (entry: TimelineEntry): string | null => {
+  const provenance = entry.carfaxImport;
+  if (!provenance) return null;
+
+  const { locationEvidence } = provenance;
+  const evidenceText = (() => {
+    switch (locationEvidence.status) {
+      case "geoapify":
+        return `Map match used for location: ${locationEvidence.location}`;
+      case "carfax_reported":
+        return `CARFAX reported location: ${locationEvidence.location}`;
+      case "owner_memory":
+        return `Your saved shop location: ${locationEvidence.location}`;
+      case "curated_pack":
+        return `Known shop location: ${locationEvidence.location}`;
+      case "owner_confirmed":
+        return `Location you set during import: ${locationEvidence.location}`;
+      case "owner_reported":
+        return "Owner-reported work";
+      case "owner_diy":
+        return "DIY work";
+      case "state_record":
+        return "State inspection record";
+      case "ambiguous":
+      case "not_found":
+      case "not_initialized":
+        return locationEvidence.message ?? "Location was not confirmed";
+    }
+  })();
+
+  return provenance.ownerConfirmedAt ? `You confirmed this during import · ${evidenceText}` : evidenceText;
 };
 
 const resolutionLabel = (item: QueueItem): string => {
@@ -966,6 +1000,7 @@ export function OwnerUnifiedHistoryTimeline({
                         duplicateCandidate !== undefined &&
                         duplicateAnchorServiceId(duplicateCandidate) === item.id;
                       const pendingVerification = pendingVerificationByRecordId.get(item.id);
+                      const importEvidence = carfaxImportEvidenceText(entry);
                       const location = entry.shopLocation?.trim();
                       const shopLine = location ? `${entry.shop} · ${location}` : entry.shop;
 
@@ -1029,6 +1064,11 @@ export function OwnerUnifiedHistoryTimeline({
                                   ))}
                                 </ul>
                               )}
+                              {importEvidence ? (
+                                <p className="mt-3 rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
+                                  {importEvidence}
+                                </p>
+                              ) : null}
                               <div className="mt-3 flex flex-wrap gap-2">
                                 {pendingVerification && onReviewVerification ? (
                                   <Button

@@ -72,9 +72,11 @@ describe("import-handlers enrich + submit", () => {
     const body = response.body as {
       draft: { services: { shopLocation?: string }[] };
       shopLocationHints: Record<string, { candidates?: string[] }>;
+      locationEvidence: Record<string, { status: string; location?: string }>;
     };
     expect(body.draft.services[0]?.shopLocation).toBe("Denver, CO");
     expect(body.shopLocationHints).toEqual({});
+    expect(body.locationEvidence["mystery shop"]).toEqual({ status: "geoapify", location: "Denver, CO" });
   });
 
   it("returns ambiguous hints when lookup is inconclusive", async () => {
@@ -135,9 +137,11 @@ describe("import-handlers enrich + submit", () => {
     const body = response.body as {
       draft: { services: { shopLocation?: string }[] };
       shopLocationHints: Record<string, { candidates?: string[] }>;
+      locationEvidence: Record<string, { status: string }>;
     };
     expect(body.draft.services[0]?.shopLocation).toBeUndefined();
     expect(body.shopLocationHints["mystery shop"]?.candidates).toEqual(["Framingham, MA", "Natick, MA"]);
+    expect(body.locationEvidence["mystery shop"]?.status).toBe("ambiguous");
   });
 
   it("uses lookup on submit safety net", async () => {
@@ -162,6 +166,59 @@ describe("import-handlers enrich + submit", () => {
     expect(response.status).toBe(201);
     const body = response.body as { importedCount: number };
     expect(body.importedCount).toBe(1);
+  });
+
+  it("requires owner confirmation for low-trust CARFAX rows and persists that decision", async () => {
+    const { services, vehicle } = await buildServices();
+    const service = {
+      shop: "Self Reported",
+      serviceDate: "2025-05-11",
+      mileage: 43_190,
+      lineItems: ["Oil and filter changed"],
+      total: "$0.00",
+    };
+
+    const withoutConfirmation = await submitVehicleOsImport(
+      services,
+      vehicle.id,
+      { services: [service] },
+      { userId: vehicle.userId },
+    );
+    expect(withoutConfirmation.status).toBe(409);
+    expect(await services.eventStore.loadByAggregate("vehicle", vehicle.id)).toHaveLength(0);
+
+    const confirmed = await submitVehicleOsImport(
+      services,
+      vehicle.id,
+      {
+        services: [
+          {
+            ...service,
+            carfaxReview: {
+              ownerConfirmed: true,
+              locationEvidence: { status: "owner_reported" },
+            },
+          },
+        ],
+      },
+      { userId: vehicle.userId },
+    );
+
+    expect(confirmed.status).toBe(201);
+    expect(confirmed.body).toMatchObject({
+      importedCount: 1,
+      verificationTaskId: undefined,
+      importReview: { verifyCount: 0 },
+      timeline: [
+        expect.objectContaining({
+          carfaxImport: expect.objectContaining({
+            sourceTrust: "owner_reported",
+            locationEvidence: expect.objectContaining({ status: "owner_reported" }),
+            ownerConfirmedAt: expect.any(String),
+          }),
+        }),
+      ],
+    });
   });
 
   it("does not create verification tasks when re-importing duplicate rows", async () => {

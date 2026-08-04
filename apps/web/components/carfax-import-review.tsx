@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, ChevronRight, ChevronUp, FileJson } from "lucide-react";
+import { CheckCircle2, ChevronRight, ChevronUp, FileJson, MapPin } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ExtractionStatusBanner } from "@/components/extraction-status-banner";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   isVisitOnlyServiceRecord,
+  resolveCarfaxSourceTrust,
+  type ImportLocationEvidence,
   type ImportTrustTier,
   type ImportVerifyGuidance,
   type TierImportSummary,
@@ -30,6 +32,7 @@ export type CarfaxReviewRow = VehicleOsImportService & {
   assistantVerdict?: string;
   alreadyOnFile?: boolean;
   locationCandidates?: string[];
+  locationEvidence?: ImportLocationEvidence;
 };
 
 type CarfaxImportReviewProps = {
@@ -60,6 +63,37 @@ const formatShopLine = (row: CarfaxReviewRow): string => {
 const isInReviewQueue = (row: CarfaxReviewRow): boolean =>
   row.ownerReviewPhase === "active" || row.ownerReviewPhase === "awaiting_confirm";
 
+const locationEvidenceText = (row: CarfaxReviewRow): string => {
+  const evidence = row.locationEvidence;
+  if (!evidence) {
+    return row.shopLocation ? `CARFAX location: ${row.shopLocation}` : "Location was not provided.";
+  }
+
+  switch (evidence.status) {
+    case "geoapify":
+      return `Geoapify matched: ${evidence.location}`;
+    case "carfax_reported":
+      return `CARFAX reported: ${evidence.location}`;
+    case "owner_memory":
+      return `Your saved shop location: ${evidence.location}`;
+    case "curated_pack":
+      return `Known shop location: ${evidence.location}`;
+    case "owner_reported":
+      return "Owner-reported work — no shop location to validate";
+    case "owner_diy":
+      return "DIY work — no shop location to validate";
+    case "state_record":
+      return "State inspection record — no individual shop location supplied";
+    case "owner_confirmed":
+      return `You set the location: ${evidence.location}`;
+    case "ambiguous":
+      return "Location needs your confirmation";
+    case "not_initialized":
+    case "not_found":
+      return evidence.message ?? "Location could not be validated";
+  }
+};
+
 const tierBadgeVariant = (row: CarfaxReviewRow): "secondary" | "warning" | "destructive" => {
   if (row.alreadyOnFile) return "secondary";
   if (isInReviewQueue(row)) return "warning";
@@ -76,6 +110,7 @@ const tierLabel = (row: CarfaxReviewRow): string => {
   if (row.ownerReviewPhase === "done" && row.tier === "verify") return "Accepted";
   if (row.tier === "auto") return "Ready";
   if (row.tier === "enriched") return "Cleaned";
+  if (row.tier === "verify" && resolveCarfaxSourceTrust(row.shop) !== "provider") return "Confirm";
   if (row.tier === "verify") return "Review";
   return "Blocked";
 };
@@ -104,6 +139,15 @@ function ReviewCard({
   const previewItem = visitOnly ? "Dealer visit" : row.lineItems[0];
   const extraCount = row.lineItems.length - 1;
   const inReview = isInReviewQueue(row);
+  const sourceTrust = resolveCarfaxSourceTrust(row.shop);
+  const acceptAsReportedLabel =
+    sourceTrust === "owner_reported"
+      ? "I recognize this owner-reported work"
+      : sourceTrust === "owner_diy"
+        ? "I recognize this DIY work"
+        : sourceTrust === "state_record"
+          ? "I recognize this state inspection"
+          : "CARFAX looks correct";
 
   return (
     <article
@@ -137,6 +181,10 @@ function ReviewCard({
             </Badge>
           </div>
           <p className="text-sm text-foreground">{formatShopLine(row)}</p>
+          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            {locationEvidenceText(row)}
+          </p>
           {!expanded ? (
             <p className="text-xs text-muted-foreground">
               {previewItem}
@@ -195,10 +243,12 @@ function ReviewCard({
                 variant="outline"
                 size="sm"
                 className="h-7 text-xs"
+                aria-label={acceptAsReportedLabel}
+                title={acceptAsReportedLabel}
                 disabled={disabled || isImporting || !row.included}
                 onClick={() => onAcceptAsReported(row.id)}
               >
-                CARFAX looks correct — no changes
+                {acceptAsReportedLabel}
               </Button>
             </div>
           ) : null}
@@ -517,12 +567,14 @@ export function CarfaxImportReview({
       <Button
         type="button"
         className="history-cta"
-        disabled={disabled || isImporting || selectedCount === 0}
+        disabled={disabled || isImporting || selectedCount === 0 || reviewCount > 0}
         onClick={onConfirm}
       >
         <FileJson className="mr-2 h-4 w-4" aria-hidden />
         {isImporting
           ? "Importing…"
+          : reviewCount > 0
+            ? `Confirm ${reviewCount} row${reviewCount === 1 ? "" : "s"} first`
           : selectedCount === 0 && onFileCount > 0
             ? "Nothing new to import"
             : `Confirm import (${selectedCount} new record${selectedCount === 1 ? "" : "s"})`}

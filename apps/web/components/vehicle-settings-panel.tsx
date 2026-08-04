@@ -1,87 +1,68 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FormActions, FormField } from "@/components/form-field";
 import { DateField } from "@/components/date-field";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import type { VehicleOwnerProfile } from "@/lib/driver-habits";
 import { todayIsoDate } from "@/lib/date-input";
+import type { GarageVehicleSummary } from "@/lib/garage/types";
 import { notify } from "@/lib/notify";
 
-export function VehicleSettingsPanel({
-  vehicleId,
-  minimal = false,
-}: {
-  vehicleId: string | null;
+type VehicleForm = {
+  year: string;
+  make: string;
+  model: string;
+  trim: string;
+  mileage: string;
+  vin: string;
+  ownedSince: string;
+};
+
+const vehicleFormFromRecord = (vehicle: GarageVehicleSummary | null): VehicleForm => ({
+  year: vehicle ? String(vehicle.year) : "",
+  make: vehicle?.make ?? "",
+  model: vehicle?.model ?? "",
+  trim: vehicle?.trim ?? "",
+  mileage: vehicle ? String(vehicle.currentMileage) : "",
+  vin: vehicle?.vin ?? "",
+  ownedSince: vehicle?.ownedSince ?? "",
+});
+
+type VehicleSettingsPanelProps = {
+  vehicle: GarageVehicleSummary | null;
   minimal?: boolean;
-}) {
-  const router = useRouter();
-  const [vehicle, setVehicle] = useState<VehicleOwnerProfile | null>(null);
-  const [form, setForm] = useState({
-    year: "",
-    make: "",
-    model: "",
-    trim: "",
-    mileage: "",
-    vin: "",
-    ownedSince: "",
-  });
-  const [isLoading, setIsLoading] = useState(true);
+  onVehicleUpdated?: () => Promise<void>;
+};
+
+export function VehicleSettingsPanel({
+  vehicle,
+  minimal = false,
+  onVehicleUpdated,
+}: VehicleSettingsPanelProps) {
+  const [form, setForm] = useState<VehicleForm>(() => vehicleFormFromRecord(vehicle));
+  const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!vehicleId) {
-      setVehicle(null);
-      setIsLoading(false);
-      return;
-    }
+  const startEditing = () => {
+    setForm(vehicleFormFromRecord(vehicle));
+    setError("");
+    setIsEditing(true);
+  };
 
-    void (async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch("/api/vehicles");
-        const body = (await response.json()) as {
-          vehicles?: (VehicleOwnerProfile & {
-            year: number;
-            make: string;
-            model: string;
-            trim?: string;
-            currentMileage: number;
-            vin: string;
-          })[];
-          error?: string;
-        };
-        if (!response.ok) throw new Error(body.error ?? "Could not load vehicle");
-        const match = body.vehicles?.find((entry) => entry.id === vehicleId) ?? null;
-        setVehicle(match);
-        if (match) {
-          setForm({
-            year: String(match.year),
-            make: match.make,
-            model: match.model,
-            trim: match.trim ?? "",
-            mileage: String(match.currentMileage),
-            vin: match.vin,
-            ownedSince: match.ownedSince ?? "",
-          });
-        }
-      } catch (loadError) {
-        setError(loadError instanceof Error ? loadError.message : "Could not load vehicle");
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, [vehicleId]);
+  const cancelEditing = () => {
+    setForm(vehicleFormFromRecord(vehicle));
+    setError("");
+    setIsEditing(false);
+  };
 
   const saveVehicle = async () => {
     if (!vehicle) return;
     if (!form.ownedSince.trim()) {
-      setError("Owned since is required — it anchors calendar planning when receipts are missing.");
+      setError("Owned since is required - it anchors calendar planning when receipts are missing.");
       return;
     }
     setIsSaving(true);
@@ -100,21 +81,11 @@ export function VehicleSettingsPanel({
           ownedSince: form.ownedSince.trim(),
         }),
       });
-      const body = (await response.json()) as {
-        vehicle?: VehicleOwnerProfile & {
-          year: number;
-          make: string;
-          model: string;
-          trim?: string;
-          currentMileage: number;
-          vin: string;
-        };
-        error?: string;
-      };
+      const body = (await response.json()) as { vehicle?: GarageVehicleSummary; error?: string };
       if (!response.ok || !body.vehicle) throw new Error(body.error ?? "Update failed");
-      setVehicle(body.vehicle);
+      await onVehicleUpdated?.();
+      setIsEditing(false);
       notify("Vehicle updated.", "success");
-      router.refresh();
     } catch (saveError) {
       setError(saveError instanceof Error ? saveError.message : "Update failed");
     } finally {
@@ -122,87 +93,116 @@ export function VehicleSettingsPanel({
     }
   };
 
-  if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Vehicles</CardTitle>
-          <CardDescription>Loading…</CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
-
   if (!vehicle) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>Vehicles</CardTitle>
-          <CardDescription>No vehicle on file — complete onboarding from the assistant workspace.</CardDescription>
+          <CardDescription>No vehicle on file - complete onboarding from the assistant workspace.</CardDescription>
         </CardHeader>
       </Card>
     );
   }
 
+  const vehicleLabel = [vehicle.year, vehicle.make, vehicle.model, vehicle.trim].filter(Boolean).join(" ");
+  const vinEnding = vehicle.vin ? `Ending ${vehicle.vin.slice(-4)}` : "Not recorded";
+
   return (
     <Card>
-      <CardHeader>
-        {!minimal ? (
-          <>
-            <CardTitle>Vehicles</CardTitle>
-            <CardDescription>Update mileage or details when your situation changes.</CardDescription>
-          </>
-        ) : (
-          <CardTitle className="sr-only">Vehicles</CardTitle>
-        )}
+      <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0 pb-4">
+        <div className="space-y-1.5">
+          {!minimal ? (
+            <>
+              <CardTitle>Vehicles</CardTitle>
+              <CardDescription>Keep the details that anchor your schedule up to date.</CardDescription>
+            </>
+          ) : (
+            <CardTitle className="sr-only">Vehicles</CardTitle>
+          )}
+        </div>
+        {!isEditing ? (
+          <Button type="button" variant="outline" size="sm" onClick={startEditing}>
+            Edit vehicle
+          </Button>
+        ) : null}
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <FormField label="Year" htmlFor="vehicle-year">
-            <Input
-              id="vehicle-year"
-              type="number"
-              value={form.year}
-              onChange={(event) => setForm({ ...form, year: event.target.value })}
-            />
-          </FormField>
-          <FormField label="Current mileage" htmlFor="vehicle-mileage">
-            <Input
-              id="vehicle-mileage"
-              type="number"
-              className="tabular-nums"
-              value={form.mileage}
-              onChange={(event) => setForm({ ...form, mileage: event.target.value })}
-            />
-          </FormField>
-          <FormField
-            label="Owned since"
-            htmlFor="vehicle-owned-since"
-            hint="Required — calendar anchor when receipts are missing"
-          >
-            <DateField
-              id="vehicle-owned-since"
-              value={form.ownedSince}
-              max={todayIsoDate()}
-              onChange={(ownedSince) => setForm({ ...form, ownedSince })}
-            />
-          </FormField>
-          <FormField label="Make" htmlFor="vehicle-make">
-            <Input id="vehicle-make" value={form.make} onChange={(event) => setForm({ ...form, make: event.target.value })} />
-          </FormField>
-          <FormField label="Model" htmlFor="vehicle-model">
-            <Input id="vehicle-model" value={form.model} onChange={(event) => setForm({ ...form, model: event.target.value })} />
-          </FormField>
-          <FormField label="Trim (optional)" htmlFor="vehicle-trim">
-            <Input id="vehicle-trim" value={form.trim} onChange={(event) => setForm({ ...form, trim: event.target.value })} />
-          </FormField>
-        </div>
+        {isEditing ? (
+          <>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField label="Year" htmlFor="vehicle-year">
+                <Input
+                  id="vehicle-year"
+                  type="number"
+                  value={form.year}
+                  onChange={(event) => setForm({ ...form, year: event.target.value })}
+                />
+              </FormField>
+              <FormField label="Current mileage" htmlFor="vehicle-mileage">
+                <Input
+                  id="vehicle-mileage"
+                  type="number"
+                  className="tabular-nums"
+                  value={form.mileage}
+                  onChange={(event) => setForm({ ...form, mileage: event.target.value })}
+                />
+              </FormField>
+              <FormField
+                label="Owned since"
+                htmlFor="vehicle-owned-since"
+                hint="Required - calendar anchor when receipts are missing"
+              >
+                <DateField
+                  id="vehicle-owned-since"
+                  value={form.ownedSince}
+                  max={todayIsoDate()}
+                  onChange={(ownedSince) => setForm({ ...form, ownedSince })}
+                />
+              </FormField>
+              <FormField label="Make" htmlFor="vehicle-make">
+                <Input id="vehicle-make" value={form.make} onChange={(event) => setForm({ ...form, make: event.target.value })} />
+              </FormField>
+              <FormField label="Model" htmlFor="vehicle-model">
+                <Input id="vehicle-model" value={form.model} onChange={(event) => setForm({ ...form, model: event.target.value })} />
+              </FormField>
+              <FormField label="Trim (optional)" htmlFor="vehicle-trim">
+                <Input id="vehicle-trim" value={form.trim} onChange={(event) => setForm({ ...form, trim: event.target.value })} />
+              </FormField>
+            </div>
 
-        <FormActions>
-          <Button type="button" disabled={isSaving} onClick={() => void saveVehicle()}>
-            {isSaving ? "Saving…" : "Save changes"}
-          </Button>
-        </FormActions>
+            <FormActions>
+              <Button type="button" disabled={isSaving} onClick={() => void saveVehicle()}>
+                {isSaving ? "Saving..." : "Save changes"}
+              </Button>
+              <Button type="button" variant="ghost" disabled={isSaving} onClick={cancelEditing}>
+                Cancel
+              </Button>
+            </FormActions>
+          </>
+        ) : (
+          <div className="space-y-5">
+            <div>
+              <p className="text-base font-semibold text-foreground">{vehicleLabel}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Your schedule uses these details as its vehicle anchor.</p>
+            </div>
+            <dl className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-lg border border-border/70 bg-muted/30 p-3">
+                <dt className="text-xs font-medium text-muted-foreground">Odometer</dt>
+                <dd className="mt-1 text-sm font-medium tabular-nums text-foreground">
+                  {vehicle.currentMileage.toLocaleString()} mi
+                </dd>
+              </div>
+              <div className="rounded-lg border border-border/70 bg-muted/30 p-3">
+                <dt className="text-xs font-medium text-muted-foreground">Owned since</dt>
+                <dd className="mt-1 text-sm font-medium text-foreground">{vehicle.ownedSince || "Not recorded"}</dd>
+              </div>
+              <div className="rounded-lg border border-border/70 bg-muted/30 p-3">
+                <dt className="text-xs font-medium text-muted-foreground">VIN</dt>
+                <dd className="mt-1 text-sm font-medium text-foreground">{vinEnding}</dd>
+              </div>
+            </dl>
+          </div>
+        )}
 
         {error ? <Alert variant="destructive">{error}</Alert> : null}
       </CardContent>

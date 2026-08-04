@@ -1,73 +1,64 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DrivingStyleFields } from "@/components/driving-style-fields";
 import { Button } from "@/components/ui/button";
 import { PanelCard } from "@/components/panel-card";
 import {
   buildOwnerContextWithPrimaryCity,
+  DEFAULT_MILES_PER_YEAR,
+  drivingStyleLabel,
   parseStatedMilesPerYear,
   patchVehicleProfile,
   STATED_MILES_INVALID_MESSAGE,
   STATED_MILES_REQUIRED_MESSAGE,
   vehicleProfileFromRecord,
   type DriverHabitsDraft,
-  type VehicleOwnerProfile,
 } from "@/lib/driver-habits";
-import type { OwnerContextMemory } from "@/lib/owner-context";
+import type { GarageVehicleSummary } from "@/lib/garage/types";
 import { notify } from "@/lib/notify";
 
 export type { DriverHabitsDraft, DrivingStyle } from "@/lib/driver-habits";
 
 type DriverHabitsPanelProps = {
-  vehicleId: string | null;
+  vehicle: GarageVehicleSummary | null;
   minimal?: boolean;
+  onVehicleUpdated?: () => Promise<void>;
 };
 
-export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPanelProps) {
-  const [draft, setDraft] = useState<DriverHabitsDraft>({
-    drivingStyle: "casual",
-    statedMilesPerYear: null,
-    primaryCity: "",
-  });
-  const [existingContext, setExistingContext] = useState<OwnerContextMemory | null>(null);
-  const [milesInput, setMilesInput] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+const profileDraft = (vehicle: GarageVehicleSummary | null): DriverHabitsDraft =>
+  vehicleProfileFromRecord(vehicle);
+
+export function DriverHabitsPanel({ vehicle, minimal = false, onVehicleUpdated }: DriverHabitsPanelProps) {
+  const [draft, setDraft] = useState<DriverHabitsDraft>(() => profileDraft(vehicle));
+  const [existingContext, setExistingContext] = useState(() => vehicle?.ownerContextMemory ?? null);
+  const [milesInput, setMilesInput] = useState(() =>
+    draft.statedMilesPerYear ? String(draft.statedMilesPerYear) : "",
+  );
+  const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    if (!vehicleId) {
-      setIsLoading(false);
-      return;
-    }
+  const startEditing = () => {
+    const nextDraft = profileDraft(vehicle);
+    setDraft(nextDraft);
+    setExistingContext(vehicle?.ownerContextMemory ?? null);
+    setMilesInput(nextDraft.statedMilesPerYear ? String(nextDraft.statedMilesPerYear) : "");
+    setIsEditing(true);
+  };
 
-    void (async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch("/api/vehicles");
-        const body = (await response.json()) as { vehicles?: VehicleOwnerProfile[]; error?: string };
-        if (!response.ok) throw new Error(body.error ?? "Could not load vehicle");
-        const vehicle = body.vehicles?.find((entry) => entry.id === vehicleId) ?? null;
-        const loaded = vehicleProfileFromRecord(vehicle);
-        setExistingContext(vehicle?.ownerContextMemory ?? null);
-        setDraft(loaded);
-        setMilesInput(loaded.statedMilesPerYear ? String(loaded.statedMilesPerYear) : "");
-      } catch (loadError) {
-        notify(loadError instanceof Error ? loadError.message : "Could not load driver profile", "error");
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, [vehicleId]);
+  const cancelEditing = () => {
+    startEditing();
+    setIsEditing(false);
+  };
 
   const saveDraft = async () => {
-    if (!vehicleId) {
+    if (!vehicle) {
       notify("Add a vehicle first.", "error");
       return;
     }
 
     if (!draft.primaryCity.trim()) {
-      notify("Home city is required — it anchors seasonal planning and shop lookups.", "error");
+      notify("Home city is required - it anchors seasonal planning and shop lookups.", "error");
       return;
     }
 
@@ -83,17 +74,21 @@ export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPa
 
     setIsSaving(true);
     try {
-      await patchVehicleProfile(vehicleId, {
+      const nextContext = buildOwnerContextWithPrimaryCity(existingContext, draft.primaryCity);
+      await patchVehicleProfile(vehicle.id, {
         drivingStyle: draft.drivingStyle,
         statedMilesPerYear: parsedMiles,
-        ownerContextMemory: buildOwnerContextWithPrimaryCity(existingContext, draft.primaryCity),
+        ownerContextMemory: nextContext,
       });
-      setExistingContext(buildOwnerContextWithPrimaryCity(existingContext, draft.primaryCity));
+      setExistingContext(nextContext);
       setDraft({
         drivingStyle: draft.drivingStyle,
         statedMilesPerYear: parsedMiles,
         primaryCity: draft.primaryCity.trim(),
       });
+      setMilesInput(String(parsedMiles));
+      await onVehicleUpdated?.();
+      setIsEditing(false);
       notify("Driving profile saved.", "success");
     } catch (saveError) {
       notify(saveError instanceof Error ? saveError.message : "Save failed", "error");
@@ -102,21 +97,28 @@ export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPa
     }
   };
 
+  if (!vehicle) {
+    return (
+      <PanelCard
+        hideHeader={minimal}
+        title="Driving profile"
+        description="Add a vehicle before setting how you drive."
+      >
+        <p className="text-sm text-muted-foreground">No vehicle on file yet.</p>
+      </PanelCard>
+    );
+  }
+
+  const annualMiles = draft.statedMilesPerYear ?? DEFAULT_MILES_PER_YEAR;
+  const profileComplete = Boolean(draft.primaryCity.trim() && draft.statedMilesPerYear);
+
   return (
     <PanelCard
       hideHeader={minimal}
       title="Driving profile"
-      description="How you drive and your home city shape preemptive recommendations — not OEM due dates."
+      description="Your normal driving and home city shape proactive guidance - not OEM due dates."
     >
-      {!minimal ? (
-        <p className="text-xs leading-relaxed text-muted-foreground">
-          Schedule dates assume 10,000 mi/year unless you set annual mileage or we learn from receipts.
-        </p>
-      ) : null}
-
-      {isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading driving profile…</p>
-      ) : (
+      {isEditing ? (
         <>
           <DrivingStyleFields
             draft={draft}
@@ -125,10 +127,46 @@ export function DriverHabitsPanel({ vehicleId, minimal = false }: DriverHabitsPa
             onMilesInputChange={setMilesInput}
           />
 
-          <Button type="button" onClick={() => void saveDraft()} disabled={!vehicleId || isSaving}>
-            {isSaving ? "Saving…" : "Save driving profile"}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" onClick={() => void saveDraft()} disabled={isSaving}>
+              {isSaving ? "Saving..." : "Save driving profile"}
+            </Button>
+            <Button type="button" variant="ghost" onClick={cancelEditing} disabled={isSaving}>
+              Cancel
+            </Button>
+          </div>
         </>
+      ) : (
+        <div className="space-y-5">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="space-y-1">
+              <p className="text-base font-semibold text-foreground">Your driving profile</p>
+              <p className="text-sm text-muted-foreground">
+                {profileComplete
+                  ? "Used to tailor attention windows and local guidance."
+                  : "Add the last two details to personalize future guidance."}
+              </p>
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={startEditing}>
+              {profileComplete ? "Edit driving profile" : "Set up driving profile"}
+            </Button>
+          </div>
+
+          <dl className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-lg border border-border/70 bg-muted/30 p-3">
+              <dt className="text-xs font-medium text-muted-foreground">Driving style</dt>
+              <dd className="mt-1 text-sm font-medium text-foreground">{drivingStyleLabel(draft.drivingStyle)}</dd>
+            </div>
+            <div className="rounded-lg border border-border/70 bg-muted/30 p-3">
+              <dt className="text-xs font-medium text-muted-foreground">Home city</dt>
+              <dd className="mt-1 text-sm font-medium text-foreground">{draft.primaryCity || "Not set"}</dd>
+            </div>
+            <div className="rounded-lg border border-border/70 bg-muted/30 p-3">
+              <dt className="text-xs font-medium text-muted-foreground">Annual miles</dt>
+              <dd className="mt-1 text-sm font-medium text-foreground">{annualMiles.toLocaleString()} mi/year</dd>
+            </div>
+          </dl>
+        </div>
       )}
     </PanelCard>
   );

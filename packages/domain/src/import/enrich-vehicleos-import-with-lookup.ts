@@ -8,12 +8,13 @@ import {
 import type { ShopLocationLookupPort } from "./lookup-shop-location-port.js";
 import { normalizeShopKey } from "./shop-location-keys.js";
 import { resolveShopLocationWithLookup } from "./resolve-shop-location-with-lookup.js";
+import { inferShopLocation } from "./infer-shop-location.js";
+import { resolveCarfaxSourceTrust } from "./carfax-source-trust.js";
+import type { ImportLocationEvidence } from "./import-location-evidence.js";
 import {
   shopLocationHintFromLookup,
   type ShopLocationHint,
 } from "./shop-location-hints.js";
-
-const SHOPS_SKIP_LOOKUP = new Set(["self reported", "self-service (diy)", "massachusetts"]);
 
 export type EnrichWithLookupOptions = EnrichVehicleOsImportOptions & {
   hintCity?: string;
@@ -23,9 +24,15 @@ export type EnrichWithLookupOptions = EnrichVehicleOsImportOptions & {
 export type EnrichWithLookupResult = {
   draft: VehicleOsImportDraft;
   shopLocationHints: Record<string, ShopLocationHint>;
+  locationEvidence: Record<string, ImportLocationEvidence>;
 };
 
 type LookupCache = Map<string, Awaited<ReturnType<typeof resolveShopLocationWithLookup>>>;
+
+export type EnrichedServiceWithLocationEvidence = {
+  service: VehicleOsImportService;
+  evidence: ImportLocationEvidence;
+};
 
 const recordLookupHint = (
   hints: Record<string, ShopLocationHint>,
@@ -37,18 +44,68 @@ const recordLookupHint = (
   if (hint) hints[key] = hint;
 };
 
-export const enrichVehicleOsImportServiceWithLookup = async (
+const enrichServiceWithLocationEvidence = async (
   service: VehicleOsImportService,
   options?: EnrichWithLookupOptions,
   lookupCache?: LookupCache,
   hints?: Record<string, ShopLocationHint>,
-): Promise<VehicleOsImportService> => {
+): Promise<EnrichedServiceWithLocationEvidence> => {
   const base = enrichVehicleOsImportService(service, {
     ownerShopLocations: options?.ownerShopLocations,
   });
-  if (base.shopLocation) return base;
-  if (SHOPS_SKIP_LOOKUP.has(normalizeShopKey(service.shop))) return base;
-  if (!options?.lookupPort) return base;
+  const sourceTrust = resolveCarfaxSourceTrust(service.shop);
+  if (sourceTrust === "owner_reported") {
+    return {
+      service: base,
+      evidence: {
+        status: "owner_reported",
+        message: "Owner-reported work has no service-provider location to validate.",
+      },
+    };
+  }
+  if (sourceTrust === "owner_diy") {
+    return {
+      service: base,
+      evidence: {
+        status: "owner_diy",
+        message: "DIY work has no service-provider location to validate.",
+      },
+    };
+  }
+  if (sourceTrust === "state_record") {
+    return {
+      service: base,
+      evidence: {
+        status: "state_record",
+        message: "State record â€” CARFAX did not provide an individual inspection location.",
+      },
+    };
+  }
+
+  const explicitLocation = service.shopLocation?.trim();
+  if (explicitLocation) {
+    return { service: base, evidence: { status: "carfax_reported", location: explicitLocation } };
+  }
+
+  const ownerLocation = options?.ownerShopLocations?.[normalizeShopKey(service.shop)]?.trim();
+  if (ownerLocation) {
+    return { service: base, evidence: { status: "owner_memory", location: ownerLocation } };
+  }
+
+  const curatedLocation = inferShopLocation(service.shop);
+  if (curatedLocation) {
+    return { service: base, evidence: { status: "curated_pack", location: curatedLocation } };
+  }
+
+  if (!options?.lookupPort) {
+    return {
+      service: base,
+      evidence: {
+        status: "not_initialized",
+        message: "Shop location lookup is unavailable for this import.",
+      },
+    };
+  }
 
   const cacheKey = normalizeShopKey(service.shop);
   const cache = lookupCache ?? new Map<string, Awaited<ReturnType<typeof resolveShopLocationWithLookup>>>();
@@ -72,11 +129,35 @@ export const enrichVehicleOsImportServiceWithLookup = async (
   if (hints) recordLookupHint(hints, service.shop, lookupResult);
 
   if (lookupResult?.shopLocation) {
-    return { ...base, shopLocation: lookupResult.shopLocation };
+    return {
+      service: { ...base, shopLocation: lookupResult.shopLocation },
+      evidence: { status: "geoapify", location: lookupResult.shopLocation },
+    };
   }
 
-  return base;
+  const lookup = lookupResult?.lookup;
+  const message = lookup && lookup.status !== "resolved" ? lookup.message : undefined;
+  return {
+    service: base,
+    evidence: {
+      status:
+        lookup?.status === "ambiguous"
+          ? "ambiguous"
+          : lookup?.status === "not_initialized"
+            ? "not_initialized"
+            : "not_found",
+      message,
+    },
+  };
 };
+
+export const enrichVehicleOsImportServiceWithLookup = async (
+  service: VehicleOsImportService,
+  options?: EnrichWithLookupOptions,
+  lookupCache?: LookupCache,
+  hints?: Record<string, ShopLocationHint>,
+): Promise<VehicleOsImportService> =>
+  (await enrichServiceWithLocationEvidence(service, options, lookupCache, hints)).service;
 
 export const enrichVehicleOsImportWithLookup = async (
   draft: VehicleOsImportDraft,
@@ -92,29 +173,37 @@ export const enrichVehicleOsImportWithLookupAndHints = async (
 ): Promise<EnrichWithLookupResult> => {
   const cache: LookupCache = new Map();
   const shopLocationHints: Record<string, ShopLocationHint> = {};
+  const locationEvidence: Record<string, ImportLocationEvidence> = {};
   const services: VehicleOsImportService[] = [];
 
   for (const service of draft.services) {
-    services.push(
-      await enrichVehicleOsImportServiceWithLookup(service, options, cache, shopLocationHints),
-    );
+    const enriched = await enrichServiceWithLocationEvidence(service, options, cache, shopLocationHints);
+    services.push(enriched.service);
+    locationEvidence[normalizeShopKey(service.shop)] = enriched.evidence;
   }
 
   return {
     draft: enrichVehicleOsImport({ ...draft, services }, { ownerShopLocations: options?.ownerShopLocations }),
     shopLocationHints,
+    locationEvidence,
   };
 };
 
 export const enrichVehicleOsImportServicesWithLookup = async (
   services: VehicleOsImportService[],
   options?: EnrichWithLookupOptions,
-): Promise<VehicleOsImportService[]> => {
+): Promise<VehicleOsImportService[]> =>
+  (await enrichVehicleOsImportServicesWithLookupAndEvidence(services, options)).map(({ service }) => service);
+
+export const enrichVehicleOsImportServicesWithLookupAndEvidence = async (
+  services: VehicleOsImportService[],
+  options?: EnrichWithLookupOptions,
+): Promise<EnrichedServiceWithLocationEvidence[]> => {
   const cache: LookupCache = new Map();
-  const enriched: VehicleOsImportService[] = [];
+  const enriched: EnrichedServiceWithLocationEvidence[] = [];
 
   for (const service of services) {
-    enriched.push(await enrichVehicleOsImportServiceWithLookup(service, options, cache));
+    enriched.push(await enrichServiceWithLocationEvidence(service, options, cache));
   }
 
   return enriched;

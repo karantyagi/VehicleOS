@@ -17,6 +17,7 @@ export function VehicleContextBar() {
   const consoleMode = useAppUiStore((s) => s.consoleMode);
   const density = useAppUiStore((s) => s.density);
   const toggleDensity = useAppUiStore((s) => s.toggleDensity);
+  const setActiveSection = useAppUiStore((s) => s.setActiveSection);
 
   if (!garage || garage.isLoading) return null;
 
@@ -44,16 +45,30 @@ export function VehicleContextBar() {
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           {showSwitcher ? <VehicleGarageSwitcher compact className="min-w-[12rem] max-w-full" /> : null}
           {!isDeveloper && snapshot && snapshot.pendingReminderCount > 0 ? (
-            <Badge variant="default" className="gap-1 tabular-nums">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 rounded-full bg-primary/10 px-2.5 text-primary hover:bg-primary/15 hover:text-primary"
+              aria-label={`Open ${snapshot.pendingReminderCount} item${snapshot.pendingReminderCount === 1 ? "" : "s"} needing attention`}
+              onClick={() => setActiveSection("reminders")}
+            >
               <CircleAlert className="h-3 w-3" aria-hidden />
-              {snapshot.pendingReminderCount} need attention
-            </Badge>
+              {snapshot.pendingReminderCount} {snapshot.pendingReminderCount === 1 ? "needs" : "need"} attention
+            </Button>
           ) : null}
           {!isDeveloper && snapshot && snapshot.pendingVerificationCount > 0 ? (
-            <Badge variant="warning" className="gap-1 tabular-nums">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 rounded-full border border-amber-200 bg-amber-50 px-2.5 text-amber-900 hover:bg-amber-100 hover:text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200 dark:hover:bg-amber-950/60 dark:hover:text-amber-100"
+              aria-label={`Open ${snapshot.pendingVerificationCount} item${snapshot.pendingVerificationCount === 1 ? "" : "s"} to verify`}
+              onClick={() => setActiveSection("now")}
+            >
               <ListChecks className="h-3 w-3" aria-hidden />
               {snapshot.pendingVerificationCount} to verify
-            </Badge>
+            </Button>
           ) : null}
         </div>
 

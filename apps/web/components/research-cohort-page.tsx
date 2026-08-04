@@ -1,6 +1,9 @@
 "use client";
 
+import { FileText, LoaderCircle, Trash2 } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CARFAX_PDF_INSTRUCTIONS } from "@/lib/record-import-types";
 import { RESEARCH_IMPORT_BUCKET, type ResearchImportDraft, type ResearchImportRun, type ResearchServiceRecord } from "@/lib/research-import/types";
 import { createClient as createSupabaseClient } from "@/lib/supabase/client";
@@ -226,6 +229,68 @@ function ResearchRunReview({
   );
 }
 
+export function ResearchDeleteDialog({
+  run,
+  deleting,
+  error,
+  onOpenChange,
+  onConfirm,
+}: {
+  run: ResearchImportRun | null;
+  deleting: boolean;
+  error: PortalError;
+  onOpenChange: (open: boolean) => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <Dialog open={Boolean(run)} onOpenChange={(open) => {
+      if (!deleting) onOpenChange(open);
+    }}>
+      <DialogContent showClose={!deleting} aria-describedby="research-delete-description" className="max-w-md">
+        <div className="border-b border-destructive/15 bg-destructive/5 px-5 py-5 sm:px-6">
+          <div className="flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
+              <Trash2 className="h-5 w-5" aria-hidden />
+            </span>
+            <DialogHeader className="pt-0.5 text-left">
+              <DialogTitle>Delete this research PDF?</DialogTitle>
+              <p id="research-delete-description" className="pt-1 text-sm leading-6 text-muted-foreground">
+                This permanently removes the PDF and its AI-assisted research draft. It will not change your VehicleOS
+                maintenance history.
+              </p>
+            </DialogHeader>
+          </div>
+        </div>
+
+        <div className="space-y-4 px-5 pb-5 pt-1 sm:px-6 sm:pb-6">
+          <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/40 px-3 py-3">
+            <FileText className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+            <span className="min-w-0 truncate text-sm font-medium">{run?.fileName}</span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            This cannot be undone. You can upload the PDF again later if you still have a copy.
+          </p>
+          {error ? (
+            <p role="alert" className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+              {error}
+            </p>
+          ) : null}
+        </div>
+
+        <div className="flex flex-col-reverse gap-2 border-t border-border bg-muted/20 px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+          <Button type="button" variant="outline" disabled={deleting} onClick={() => onOpenChange(false)}>
+            Keep PDF
+          </Button>
+          <Button type="button" variant="destructive" disabled={deleting} onClick={onConfirm}>
+            {deleting ? <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden /> : <Trash2 className="h-4 w-4" aria-hidden />}
+            {deleting ? "Deleting PDF…" : "Delete PDF"}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export function ResearchCohortPage({ invited }: { invited: boolean }) {
   const [file, setFile] = useState<File | null>(null);
   const [consent, setConsent] = useState(false);
@@ -235,6 +300,9 @@ export function ResearchCohortPage({ invited }: { invited: boolean }) {
   const [submitting, setSubmitting] = useState(false);
   const [fileInputKey, setFileInputKey] = useState(0);
   const [error, setError] = useState<PortalError>(null);
+  const [runPendingDeletion, setRunPendingDeletion] = useState<ResearchImportRun | null>(null);
+  const [deletingRunId, setDeletingRunId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<PortalError>(null);
   const importInProgress = (quota?.activeSlots ?? 0) > 0;
   const pilotLimitReached = quota?.remaining === 0;
 
@@ -335,9 +403,12 @@ export function ResearchCohortPage({ invited }: { invited: boolean }) {
     setRuns((current) => current.map((run) => (run.id === runId ? (body.run as ResearchImportRun) : run)));
   };
 
-  const deleteRun = async (runId: string) => {
-    if (!window.confirm("Delete this PDF and its research result now? This cannot be undone.")) return;
+  const deleteRun = async () => {
+    const runId = runPendingDeletion?.id;
+    if (!runId) return;
+    setDeletingRunId(runId);
     setError(null);
+    setDeleteError(null);
     try {
       const response = await fetch("/api/research/imports/" + runId, { method: "DELETE" });
       if (!response.ok && response.status !== 404) {
@@ -345,9 +416,18 @@ export function ResearchCohortPage({ invited }: { invited: boolean }) {
         throw new Error(readableError(body.error ?? ""));
       }
       setRuns((current) => current.filter((run) => run.id !== runId));
+      setRunPendingDeletion(null);
     } catch (deleteError) {
-      setError(deleteError instanceof Error ? deleteError.message : "Could not delete this research upload.");
+      setDeleteError(deleteError instanceof Error ? deleteError.message : "Could not delete this research upload.");
+    } finally {
+      setDeletingRunId(null);
     }
+  };
+
+  const closeDeleteDialog = () => {
+    if (deletingRunId) return;
+    setRunPendingDeletion(null);
+    setDeleteError(null);
   };
 
   return (
@@ -450,7 +530,11 @@ export function ResearchCohortPage({ invited }: { invited: boolean }) {
                     </div>
                     <button
                       type="button"
-                      onClick={() => void deleteRun(run.id)}
+                      onClick={() => {
+                        setDeleteError(null);
+                        setRunPendingDeletion(run);
+                      }}
+                      aria-label={`Delete ${run.fileName}`}
                       className="text-sm font-medium text-destructive underline-offset-4 hover:underline"
                     >
                       Delete PDF
@@ -463,6 +547,15 @@ export function ResearchCohortPage({ invited }: { invited: boolean }) {
           </section>
         </>
       )}
+      <ResearchDeleteDialog
+        run={runPendingDeletion}
+        deleting={deletingRunId === runPendingDeletion?.id}
+        error={deleteError}
+        onOpenChange={(open) => {
+          if (!open) closeDeleteDialog();
+        }}
+        onConfirm={() => void deleteRun()}
+      />
     </section>
   );
 }
