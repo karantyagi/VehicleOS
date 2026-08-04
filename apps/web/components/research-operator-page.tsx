@@ -58,6 +58,7 @@ const metricCells = (metrics: ResearchAttemptMetrics | null) => ({
   recall: metrics ? percent(metrics.serviceLineRecall) : "—",
   unsupported: metrics ? number(metrics.unsupportedServiceLines) : "—",
   omitted: metrics ? number(metrics.omittedServiceLines) : "—",
+  sourceUnclear: metrics ? number(metrics.unverifiableServiceRecords) : "—",
 });
 
 export function ResearchOperatorPage() {
@@ -204,6 +205,7 @@ export function ResearchOperatorPage() {
                   ["Service-line recall", percent(report.baseline.averageServiceLineRecall), percent(report.challenger.averageServiceLineRecall)],
                   ["Owner-rejected lines", number(report.baseline.unsupportedServiceLines), number(report.challenger.unsupportedServiceLines)],
                   ["Omitted lines", number(report.baseline.omittedServiceLines), number(report.challenger.omittedServiceLines)],
+                  ["Source-unclear visits", number(report.baseline.unverifiableServiceRecords), number(report.challenger.unverifiableServiceRecords)],
                   ["p50 latency", report.baseline.p50LatencyMs === null ? "—" : `${number(report.baseline.p50LatencyMs)} ms`, report.challenger.p50LatencyMs === null ? "—" : `${number(report.challenger.p50LatencyMs)} ms`],
                   ["p95 latency", report.baseline.p95LatencyMs === null ? "—" : `${number(report.baseline.p95LatencyMs)} ms`, report.challenger.p95LatencyMs === null ? "—" : `${number(report.challenger.p95LatencyMs)} ms`],
                   ["Avg tokens", number(report.baseline.averageTotalTokens), number(report.challenger.averageTotalTokens)],
@@ -249,8 +251,8 @@ export function ResearchOperatorPage() {
                     </div>
                     {observation ? (
                       <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
-                        <p className="rounded-md bg-muted p-2">Text-first: {baselineMetrics.corrections} changes · {baselineMetrics.unsupported} rejected · {baselineMetrics.omitted} omitted</p>
-                        <p className="rounded-md bg-muted p-2">Direct PDF: {challengerMetrics.corrections} changes · {challengerMetrics.unsupported} rejected · {challengerMetrics.omitted} omitted</p>
+                        <p className="rounded-md bg-muted p-2">Text-first: {baselineMetrics.corrections} changes · {baselineMetrics.unsupported} rejected · {baselineMetrics.omitted} omitted · {baselineMetrics.sourceUnclear} source unclear</p>
+                        <p className="rounded-md bg-muted p-2">Direct PDF: {challengerMetrics.corrections} changes · {challengerMetrics.unsupported} rejected · {challengerMetrics.omitted} omitted · {challengerMetrics.sourceUnclear} source unclear</p>
                       </div>
                     ) : <p className="mt-3 text-xs text-muted-foreground">Waiting for the owner correction.</p>}
                     {run.attempts.some((attempt) => attempt.errorCode) ? (

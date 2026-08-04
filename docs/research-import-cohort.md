@@ -42,11 +42,33 @@ Invited owner signs in
   -> signed direct upload to private Supabase Storage
   -> paired text-first + direct-PDF schema-bound attempts
   -> one pre-assigned valid draft shown to owner
-  -> owner edits, adds, or removes visits
+  -> owner explicitly reviews every visit and service action
   -> anonymous comparison measurement + operator adjudication
 
 No arrow reaches the VehicleOS owner event store.
 ~~~
+
+### Review-label protocol
+
+The cohort is not evaluated merely because an owner clicks Save. A completed
+review requires an explicit outcome for every visit and each proposed service
+action: matches report, corrected, added by owner, not in report, not itemized
+in the source, or unsure. Owners can save incomplete progress and return later,
+but only a completed review refreshes paired quality metrics.
+
+The review queue keeps every visit visible. It may prioritize amber rows whose
+evidence is incomplete, generic, missing a core field, or low confidence, but
+those flags never silently accept the remaining rows. Green means an owner has
+reviewed the row, not that a model assigned it a high confidence.
+
+While reviewing, an invited owner can open only their own original PDF through
+a five-minute, participant-scoped URL. They never see both hidden extraction
+attempts, so this source check does not reveal or bias the paired assignment.
+
+`not itemized` and `unsure` are source-availability outcomes, not automatic
+model failures. Their service lines are excluded from precision/recall and
+force source adjudication. An owner-rejected action remains a model-quality
+signal; an owner-added action remains an omission signal.
 
 The portal also captures valuable failure states: no selectable PDF text, model
 not configured, invalid structured response, and model request failure. Each
@@ -129,10 +151,26 @@ filename.
 
 The synchronous processing route has a 120-second Vercel duration. It reserves
 the final 20 seconds for the attempt writes and quota outcome, and gives the
-model request up to 100 seconds. The v2 extraction recipe uses GPT-5 mini with
+model request up to 100 seconds. The v3 extraction recipe uses GPT-5 mini with
 minimal reasoning and low-detail PDF page images; PDF inputs still include both
 the file's extracted text and page images. This makes scanned CARFAX reports
-viable within the request budget while keeping the same strict output schema.
+viable within the request budget while keeping a versioned strict output schema.
+
+### Source-grounding fields
+
+Each draft record includes a short evidence excerpt, the source page numbers,
+record kind (`service`, `inspection`, or `registration`), reporter, and whether
+the service action is itemized. These fields help participants decide whether a
+row is a maintenance action or a report/source limitation; they do not add a
+second LLM call.
+
+City/state is optional and deliberately conservative. The model must preserve
+`not-reported` rather than invent it, and the server overwrites every proposed
+location unless it can deterministically match that provider to a printed
+CARFAX review link in the document text. Multiple possible matches remain
+`ambiguous`. The participant sees this low-priority context under collapsed
+**Shop details**, not in the primary per-action review flow. No address, map
+search, or name-only location guess is stored.
 
 The research login uses the shared application code but the research Supabase
 Auth tenant, so it is not the same session or user database as the owner app.
@@ -181,7 +219,8 @@ extracted text, draft, or provider response body.
 response arrived; it is distinct from a provider HTTP rejection, whose safe
 status/code suffix is retained in `model-request-failed`. The original v1
 high-detail, 45-second configuration is retained only in historical attempt
-telemetry; v2 attempts are recorded under a new prompt version for comparison.
+telemetry. The v2 bounded recipe and v3 source-grounding contract have distinct
+prompt versions, so their results are never silently mixed.
 
 Before inviting more participants after a deployment, verify that
 `GET /sw.js` returns JavaScript without a redirect, the research browser
@@ -222,8 +261,9 @@ https://research.vehicleos.app/research/admin
 The default report shows cohort progress; per-strategy usable-draft,
 schema-valid, and attempt-failure rates across all paired attempts, including
 documents that produced no reviewable draft; correction burden, service-line
-precision/recall, omissions, owner-rejected lines, p50/p95 latency, tokens,
-and configured cost; plus a source-adjudication queue.
+precision/recall, omissions, owner-rejected lines, source-unclear visits,
+p50/p95 latency, tokens, and configured cost; plus a source-adjudication
+queue.
 It will not recommend a strategy before RESEARCH_PROMOTION_MIN_REVIEWED
 source-verified paired reviews. Pending disagreements and owner labels marked
 for correction are excluded from the decision sample. After that evidence

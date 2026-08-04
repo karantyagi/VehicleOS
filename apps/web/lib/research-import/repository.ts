@@ -1,5 +1,7 @@
 import { createAdminClient } from "../supabase/admin";
 import { attemptMetrics, canSkipSourceAdjudication } from "./comparison";
+import { parseResearchImportDraft } from "./draft";
+import { researchReviewProgress } from "./review";
 import {
   RESEARCH_IMPORT_SOURCE,
   RESEARCH_IMPORT_BUCKET,
@@ -106,6 +108,9 @@ const nullableNumber = (value: number | string | null): number | null => {
   return Number.isFinite(number) ? number : null;
 };
 
+const storedDraft = (value: unknown): ResearchImportDraft | null =>
+  parseResearchImportDraft(value);
+
 const rowToRun = (row: ResearchRunRow): ResearchImportRun => ({
   id: row.id,
   source: RESEARCH_IMPORT_SOURCE,
@@ -116,8 +121,8 @@ const rowToRun = (row: ResearchRunRow): ResearchImportRun => ({
   textCharacterCount: row.text_character_count,
   model: row.model,
   promptVersion: row.prompt_version,
-  draft: row.draft_json as ResearchImportDraft | null,
-  ownerDraft: row.owner_draft_json as ResearchImportDraft | null,
+  draft: storedDraft(row.draft_json),
+  ownerDraft: storedDraft(row.owner_draft_json),
   errorCode: row.error_code,
 });
 
@@ -136,7 +141,7 @@ const rowToAttempt = (row: ResearchAttemptRow): ResearchExtractionAttempt => ({
   providerRequestId: row.provider_request_id,
   schemaValid: row.schema_valid,
   usableDraft: row.usable_draft,
-  draft: row.draft_json as ResearchImportDraft | null,
+  draft: storedDraft(row.draft_json),
   errorCode: row.error_code,
 });
 
@@ -392,6 +397,24 @@ export const listResearchImportRuns = async (userId: string): Promise<ResearchIm
   return ((data ?? []) as ResearchRunRow[]).map(rowToRun);
 };
 
+export const getResearchParticipantPdfUrl = async (input: { id: string; userId: string }): Promise<string | null> => {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("research_import_runs")
+    .select("storage_key")
+    .eq("id", input.id)
+    .eq("user_id", input.userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  const storageKey = (data as { storage_key?: string } | null)?.storage_key;
+  if (!storageKey) return null;
+  const { data: signedData, error: signedError } = await admin.storage
+    .from(RESEARCH_IMPORT_BUCKET)
+    .createSignedUrl(storageKey, 300);
+  if (signedError || !signedData?.signedUrl) throw new Error(signedError?.message ?? "Could not sign research PDF");
+  return signedData.signedUrl;
+};
+
 export const listResearchOperatorRuns = async (): Promise<ResearchOperatorRun[]> => {
   const admin = createAdminClient();
   const { data, error } = await admin
@@ -494,10 +517,11 @@ export const refreshResearchComparisonObservation = async (runId: string): Promi
   const baseline = attempts.find((attempt) => attempt.strategy === "text-first");
   const challenger = attempts.find((attempt) => attempt.strategy === "direct-pdf");
   if (!baseline || !challenger) return;
-  const ownerDraft = runData.owner_draft_json as ResearchImportDraft | null;
-  const baselineMetrics = ownerDraft ? attemptMetrics(baseline, ownerDraft) : null;
-  const challengerMetrics = ownerDraft ? attemptMetrics(challenger, ownerDraft) : null;
-  const adjudicationStatus: ResearchAdjudicationStatus = ownerDraft && canSkipSourceAdjudication({
+  const ownerDraft = storedDraft(runData.owner_draft_json);
+  const reviewComplete = ownerDraft ? researchReviewProgress(ownerDraft).complete : false;
+  const baselineMetrics = ownerDraft && reviewComplete ? attemptMetrics(baseline, ownerDraft) : null;
+  const challengerMetrics = ownerDraft && reviewComplete ? attemptMetrics(challenger, ownerDraft) : null;
+  const adjudicationStatus: ResearchAdjudicationStatus = reviewComplete && canSkipSourceAdjudication({
     baseline,
     challenger,
     baselineMetrics,

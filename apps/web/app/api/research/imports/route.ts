@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { extractPdfText } from "@vehicleos/server";
 import { getResearchAccess } from "../../../../lib/research-import/access";
+import { enrichResearchCarfaxDraft } from "../../../../lib/research-import/carfax-enrichment";
 import { selectDisplayedAttempt } from "../../../../lib/research-import/experiment";
 import {
   extractResearchCarfaxPdfDraft,
@@ -175,7 +176,11 @@ export async function POST(request: Request) {
       resultToAttempt({ runId: claimed.id, strategy: "direct-pdf", result, inputCharacterCount: null }),
     );
 
-    const attempts = await Promise.all([baselinePromise, challengerPromise]);
+    const attempts = (await Promise.all([baselinePromise, challengerPromise])).map((attempt) =>
+      attempt.draft
+        ? { ...attempt, draft: enrichResearchCarfaxDraft(attempt.draft, rawText) }
+        : attempt,
+    );
     // Do not log the PDF, extracted text, filename, draft, or provider body.
     // These compact fields make a failed run diagnosable in Vercel without
     // compromising the cohort's document-privacy boundary.

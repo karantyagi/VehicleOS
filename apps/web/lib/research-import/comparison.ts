@@ -7,6 +7,7 @@ import type {
   ResearchOperatorRun,
   ResearchStrategySummary,
 } from "./types";
+import { isResearchRecordRejected, isResearchRecordSourceUnverifiable } from "./review";
 
 const normalize = (value: string): string => value.trim().toLowerCase().replace(/\s+/g, " ");
 
@@ -21,7 +22,21 @@ const multisetDifference = (left: string[], right: string[]): number => {
   return difference;
 };
 
-const lineItems = (draft: ResearchImportDraft): string[] => draft.records.flatMap((record) => record.lineItems);
+const comparableLineItems = (
+  proposed: ResearchImportDraft,
+  corrected: ResearchImportDraft,
+): { proposedLines: string[]; correctedLines: string[]; unverifiableServiceRecords: number } => {
+  const sourceUnverifiable = corrected.records.map(isResearchRecordSourceUnverifiable);
+  const proposedLines = proposed.records.flatMap((record, index) => sourceUnverifiable[index] ? [] : record.lineItems);
+  const correctedLines = corrected.records.flatMap((record, index) =>
+    sourceUnverifiable[index] || isResearchRecordRejected(record) ? [] : record.lineItems,
+  );
+  return {
+    proposedLines,
+    correctedLines,
+    unverifiableServiceRecords: corrected.records.filter(isResearchRecordSourceUnverifiable).length,
+  };
+};
 
 const ratio = (numerator: number, denominator: number): number =>
   denominator === 0 ? (numerator === 0 ? 1 : 0) : numerator / denominator;
@@ -30,8 +45,7 @@ export const compareDraftToOwnerCorrection = (
   proposed: ResearchImportDraft,
   corrected: ResearchImportDraft,
 ): ResearchAttemptMetrics => {
-  const proposedLines = lineItems(proposed);
-  const correctedLines = lineItems(corrected);
+  const { proposedLines, correctedLines, unverifiableServiceRecords } = comparableLineItems(proposed, corrected);
   const unsupportedServiceLines = multisetDifference(proposedLines, correctedLines);
   const omittedServiceLines = multisetDifference(correctedLines, proposedLines);
   const sharedLineCount = Math.max(0, proposedLines.length - unsupportedServiceLines);
@@ -47,6 +61,7 @@ export const compareDraftToOwnerCorrection = (
   for (let index = 0; index < comparableVisitCount; index += 1) {
     const left = proposed.records[index];
     const right = corrected.records[index];
+    if (isResearchRecordRejected(right)) continue;
     if (left.serviceDate === right.serviceDate) exactDateMatches += 1;
     else fieldChanges += 1;
     if (left.mileage === right.mileage) exactMileageMatches += 1;
@@ -55,7 +70,8 @@ export const compareDraftToOwnerCorrection = (
     else fieldChanges += 1;
   }
 
-  const visitCountChanges = Math.abs(proposed.records.length - corrected.records.length);
+  const correctedVisitCount = corrected.records.filter((record) => !isResearchRecordRejected(record)).length;
+  const visitCountChanges = Math.abs(proposed.records.length - correctedVisitCount);
   return {
     correctionChanges: fieldChanges + visitCountChanges + unsupportedServiceLines + omittedServiceLines,
     proposedVisits: proposed.records.length,
@@ -67,6 +83,7 @@ export const compareDraftToOwnerCorrection = (
     exactDateMatches,
     exactMileageMatches,
     exactProviderMatches,
+    unverifiableServiceRecords,
   };
 };
 
@@ -78,6 +95,8 @@ export const canSkipSourceAdjudication = (input: {
 }): boolean => {
   if (!input.baseline.draft || !input.challenger.draft) return false;
   if (JSON.stringify(input.baseline.draft) !== JSON.stringify(input.challenger.draft)) return false;
+  if ((input.baselineMetrics?.unverifiableServiceRecords ?? 0) > 0) return false;
+  if ((input.challengerMetrics?.unverifiableServiceRecords ?? 0) > 0) return false;
   return input.baselineMetrics?.correctionChanges === 0 && input.challengerMetrics?.correctionChanges === 0;
 };
 
@@ -138,6 +157,7 @@ const summarizeStrategy = (
     averageServiceLineRecall: average(metrics.map((value) => value.serviceLineRecall)),
     unsupportedServiceLines: metrics.reduce((sum, value) => sum + value.unsupportedServiceLines, 0),
     omittedServiceLines: metrics.reduce((sum, value) => sum + value.omittedServiceLines, 0),
+    unverifiableServiceRecords: metrics.reduce((sum, value) => sum + value.unverifiableServiceRecords, 0),
     p50LatencyMs: percentile(latencies, 0.5),
     p95LatencyMs: percentile(latencies, 0.95),
     averageTotalTokens: average(observations.map((observation) => observation[tokensKey])),

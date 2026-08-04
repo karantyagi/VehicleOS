@@ -12,6 +12,11 @@ const proposed: ResearchImportDraft = {
     lineItems: ["Oil changed", "Invented service"],
     confidence: 0.9,
     evidence: "source",
+    evidencePages: [1],
+    recordKind: "service",
+    reportedBy: "shop",
+    serviceDetailStatus: "itemized",
+    providerLocation: { city: null, state: null, status: "not-reported", source: null },
   }],
   warnings: [],
 };
@@ -29,6 +34,26 @@ describe("research comparison metrics", () => {
       omittedServiceLines: 1,
       serviceLinePrecision: 0.5,
       serviceLineRecall: 0.5,
+    });
+  });
+
+  it("does not treat service details the report never itemized as a model rejection", () => {
+    const sourceUnclear: ResearchImportDraft = {
+      ...proposed,
+      records: [{
+        ...proposed.records[0],
+        lineItems: [],
+        review: {
+          visitOutcome: "confirmed",
+          serviceItems: [{ originalItem: "Invented service", finalItem: null, outcome: "not-itemized" }],
+        },
+      }],
+    };
+
+    expect(compareDraftToOwnerCorrection(proposed, sourceUnclear)).toMatchObject({
+      unsupportedServiceLines: 0,
+      omittedServiceLines: 0,
+      unverifiableServiceRecords: 1,
     });
   });
 
