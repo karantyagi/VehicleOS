@@ -45,6 +45,14 @@ describe("CARFAX deterministic enrichment", () => {
     expect(enriched.records[0].providerLocation).toEqual({ city: null, state: null, status: "not-reported", source: null });
   });
 
+  it("preserves an explicit no-detail finding beyond the deterministic generic-label list", () => {
+    const enriched = enrichResearchCarfaxDraft(draft([
+      record({ lineItems: ["Routine maintenance"], serviceDetailStatus: "not-itemized" }),
+    ]), "Routine maintenance");
+
+    expect(enriched.records[0].serviceDetailStatus).toBe("not-itemized");
+  });
+
   it("keeps a repeated provider ambiguous when its printed links cannot be tied to one visit", () => {
     const enriched = enrichResearchCarfaxDraft(
       draft([record({ provider: "Jiffy Lube", serviceDate: null })]),

@@ -42,7 +42,7 @@ Invited owner signs in
   -> signed direct upload to private Supabase Storage
   -> paired text-first + direct-PDF schema-bound attempts
   -> one pre-assigned valid draft shown to owner
-  -> owner explicitly reviews every visit and service action
+  -> owner explicitly checks every visit
   -> anonymous comparison measurement + operator adjudication
 
 No arrow reaches the VehicleOS owner event store.
@@ -51,15 +51,32 @@ No arrow reaches the VehicleOS owner event store.
 ### Review-label protocol
 
 The cohort is not evaluated merely because an owner clicks Save. A completed
-review requires an explicit outcome for every visit and each proposed service
-action: matches report, corrected, added by owner, not in report, not itemized
-in the source, or unsure. Owners can save incomplete progress and return later,
-but only a completed review refreshes paired quality metrics.
+review requires one explicit outcome for every visit: **Looks right**, a compact
+**Fix it** correction, or **Not a service visit**. Owners can save incomplete
+progress and return later, but only a completed review refreshes paired quality
+metrics.
+
+The interface does not ask a participant to grade every individual service
+line. A visit confirmation deterministically confirms its itemized lines, or
+marks a source-limited visit as not itemized. A compact correction reconciles
+the edited list into retained, corrected, added, and removed action labels for
+the operator metrics. This preserves the evaluation signal without turning the
+cohort into a multi-choice survey.
 
 The review queue keeps every visit visible. It may prioritize amber rows whose
 evidence is incomplete, generic, missing a core field, or low confidence, but
 those flags never silently accept the remaining rows. Green means an owner has
 reviewed the row, not that a model assigned it a high confidence.
+
+Source notes are derived from validated record fields, not from a growing list
+of service-description phrases. They cover: work not itemized, a missing date,
+mileage, or shop, unclear source evidence, and low extraction confidence. Each
+one names the limitation and gives a single next step. For example, when a
+validated record says work is not itemized, the portal asks the participant to
+compare the date, mileage, and shop with their PDF and makes clear that they
+must not guess or add a missing service item. If those visit details match,
+**Looks right** is the correct response; the system records the missing service
+detail as a source limitation automatically.
 
 While reviewing, an invited owner can open only their own original PDF through
 a five-minute, participant-scoped URL. They never see both hidden extraction
@@ -151,7 +168,7 @@ filename.
 
 The synchronous processing route has a 120-second Vercel duration. It reserves
 the final 20 seconds for the attempt writes and quota outcome, and gives the
-model request up to 100 seconds. The v3 extraction recipe uses GPT-5 mini with
+model request up to 100 seconds. The v4 extraction recipe uses GPT-5 mini with
 minimal reasoning and low-detail PDF page images; PDF inputs still include both
 the file's extracted text and page images. This makes scanned CARFAX reports
 viable within the request budget while keeping a versioned strict output schema.
@@ -219,8 +236,9 @@ extracted text, draft, or provider response body.
 response arrived; it is distinct from a provider HTTP rejection, whose safe
 status/code suffix is retained in `model-request-failed`. The original v1
 high-detail, 45-second configuration is retained only in historical attempt
-telemetry. The v2 bounded recipe and v3 source-grounding contract have distinct
-prompt versions, so their results are never silently mixed.
+telemetry. The v2 bounded recipe, v3 source-grounding contract, and v4
+source-limitation contract have distinct prompt versions, so their results are
+never silently mixed.
 
 Before inviting more participants after a deployment, verify that
 `GET /sw.js` returns JavaScript without a redirect, the research browser

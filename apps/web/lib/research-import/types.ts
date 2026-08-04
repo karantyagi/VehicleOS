@@ -5,9 +5,9 @@ export const RESEARCH_IMPORT_BUCKET = "research-imports";
 // record from a registration or inspection and show a location only when the
 // document itself reported one.
 export const RESEARCH_SCHEMA_VERSION = "carfax-service-history.v2";
-// v3 retains the bounded v2 execution recipe (low-detail PDF images and
-// minimal reasoning) and adds the v2 source-grounding extraction contract.
-export const RESEARCH_PROMPT_VERSION = "research-carfax-contract.v3";
+// v4 retains the bounded v2 execution recipe (low-detail PDF images and
+// minimal reasoning) and makes service-detail source limits explicit.
+export const RESEARCH_PROMPT_VERSION = "research-carfax-contract.v4";
 export const RESEARCH_CONSENT_VERSION = "research-cohort.v3";
 
 export type ResearchExtractionStrategy = "text-first" | "direct-pdf";

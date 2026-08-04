@@ -18,6 +18,19 @@ export type ResearchRecordAttention = {
   needsAttention: boolean;
 };
 
+export type ResearchRecordSourceGuidanceCode =
+  | "work-not-itemized"
+  | "visit-details-missing"
+  | "source-evidence-unclear"
+  | "low-confidence";
+
+export type ResearchRecordSourceGuidance = {
+  code: ResearchRecordSourceGuidanceCode;
+  title: string;
+  why: string;
+  nextStep: string;
+};
+
 const genericServicePattern = /^(vehicle )?(serviced|service performed|maintenance performed|service completed)$/i;
 const sourceUnclearPattern = /not (fully )?(visible|shown|itemized)|specific services? (?:are |were )?not|service details? (?:are |were )?(?:not )?(?:visible|available)|could not (?:see|read|identify)/i;
 
@@ -59,6 +72,131 @@ export const applyResearchRecordReview = (
   },
 });
 
+const normalizedServiceLine = (value: string): string =>
+  value.trim().replace(/\s+/g, " ").toLocaleLowerCase();
+
+const sourceDoesNotItemize = (record: ResearchServiceRecord): boolean =>
+  record.serviceDetailStatus === "not-itemized"
+  || record.lineItems.length === 0
+  || record.lineItems.every((item) => genericServicePattern.test(item.trim()));
+
+const listWords = (values: string[]): string => {
+  if (values.length <= 1) return values[0] ?? "";
+  if (values.length === 2) return `${values[0]} and ${values[1]}`;
+  return `${values.slice(0, -1).join(", ")}, and ${values.at(-1)}`;
+};
+
+// These codes are derived from validated record fields, not from an arbitrary
+// service-description phrase. They make every source limitation explainable
+// without adding another model call or another participant choice.
+export const researchRecordSourceGuidance = (
+  record: ResearchServiceRecord,
+): ResearchRecordSourceGuidance | null => {
+  const missingVisitDetails = [
+    !record.serviceDate ? "date" : null,
+    record.mileage === null ? "mileage" : null,
+    !record.provider ? "shop" : null,
+  ].filter((value): value is string => value !== null);
+
+  if (
+    record.serviceDetailStatus === "not-itemized"
+    || (record.recordKind === "service" && record.reportedBy !== "owner" && sourceDoesNotItemize(record))
+  ) {
+    return {
+      code: "work-not-itemized",
+      title: "CARFAX did not list the exact work",
+      why: "CARFAX shows a visit, but does not name a specific maintenance task.",
+      nextStep: "Check that the date, mileage, and shop match your PDF. If they do, choose Looks right. You do not need to guess or add the missing work.",
+    };
+  }
+  if (missingVisitDetails.length) {
+    return {
+      code: "visit-details-missing",
+      title: "CARFAX did not show every visit detail",
+      why: `The draft does not show the ${listWords(missingVisitDetails)} for this visit.`,
+      nextStep: "Check your PDF. Use Fix it only if it shows a different value; if the PDF also leaves it out, leave it blank and choose Looks right.",
+    };
+  }
+  if (sourceUnclearPattern.test(record.evidence)) {
+    return {
+      code: "source-evidence-unclear",
+      title: "This part of the report was not clear",
+      why: "The source text for this visit was not fully visible or readable in the draft.",
+      nextStep: "Compare the shown details with your PDF. Choose Looks right when they match, or Fix it when a shown detail is wrong.",
+    };
+  }
+  if (record.confidence < 0.8) {
+    return {
+      code: "low-confidence",
+      title: "This visit needs a quick source check",
+      why: "The extraction had limited confidence in the details it found.",
+      nextStep: "Compare the shown details with your PDF. Choose Looks right when they match, or Fix it when a shown detail is wrong.",
+    };
+  }
+  return null;
+};
+
+// The cohort asks a person to make one source-backed judgment per visit. This
+// records the corresponding per-action labels deterministically, so the
+// operator can still calculate precision/recall without making the person
+// answer a separate mini-survey for every line.
+export const confirmResearchRecord = (record: ResearchServiceRecord): ResearchServiceRecord => {
+  const review = createResearchRecordReview(record);
+  const notItemized = sourceDoesNotItemize(record);
+  return applyResearchRecordReview(record, {
+    visitOutcome: "confirmed",
+    serviceItems: review.serviceItems.map((item) => ({
+      ...item,
+      finalItem: notItemized ? null : item.finalItem,
+      outcome: notItemized ? "not-itemized" : "confirmed",
+    })),
+  });
+};
+
+export type ResearchRecordCorrection = Pick<ResearchServiceRecord, "serviceDate" | "mileage" | "provider" | "lineItems">;
+
+// A compact visit edit reconciles action labels by position. It preserves an
+// unchanged line as confirmed, records a replacement as corrected, and makes
+// additions/removals visible to the existing comparison metrics.
+export const correctResearchRecord = (
+  record: ResearchServiceRecord,
+  correction: ResearchRecordCorrection,
+): ResearchServiceRecord => {
+  const nextLineItems = correction.lineItems.map((item) => item.trim()).filter(Boolean);
+  const originalItems = createResearchRecordReview(record).serviceItems;
+  const serviceItems: ResearchServiceItemReview[] = [];
+  const itemCount = Math.max(originalItems.length, nextLineItems.length);
+  for (let index = 0; index < itemCount; index += 1) {
+    const original = originalItems[index];
+    const finalItem = nextLineItems[index] ?? null;
+    if (!original) {
+      serviceItems.push({ originalItem: null, finalItem, outcome: "added" });
+    } else if (!finalItem) {
+      serviceItems.push({ originalItem: original.originalItem, finalItem: null, outcome: "not-supported" });
+    } else if (original.finalItem && normalizedServiceLine(original.finalItem) === normalizedServiceLine(finalItem)) {
+      serviceItems.push({ originalItem: original.originalItem, finalItem, outcome: "confirmed" });
+    } else {
+      serviceItems.push({ originalItem: original.originalItem, finalItem, outcome: "corrected" });
+    }
+  }
+  return applyResearchRecordReview({ ...record, ...correction, lineItems: nextLineItems }, {
+    visitOutcome: "corrected",
+    serviceItems,
+  });
+};
+
+export const resetResearchRecordReview = (record: ResearchServiceRecord): ResearchServiceRecord => {
+  const review = record.review ?? createResearchRecordReview(record);
+  return applyResearchRecordReview(record, {
+    visitOutcome: "unreviewed",
+    serviceItems: review.serviceItems.map((item) => ({
+      ...item,
+      finalItem: item.originalItem,
+      outcome: "unreviewed",
+    })),
+  });
+};
+
 export const prepareResearchDraftForReview = (draft: ResearchImportDraft): ResearchImportDraft => ({
   ...draft,
   records: draft.records.map((record) => applyResearchRecordReview(record, normalizedReview(record))),
@@ -95,13 +233,13 @@ export const researchReviewProgress = (draft: ResearchImportDraft): ResearchRevi
 export const researchRecordAttention = (record: ResearchServiceRecord): ResearchRecordAttention => {
   const reasons: string[] = [];
   if (sourceUnclearPattern.test(record.evidence)) {
-    reasons.push("The report did not clearly name the work performed.");
+    reasons.push("CARFAX does not clearly name the work performed for this visit.");
   }
   if (record.lineItems.some((item) => genericServicePattern.test(item.trim()))) {
-    reasons.push("The service description is too general to verify as a maintenance action.");
+    reasons.push("CARFAX uses a general service label but does not say what work was done.");
   }
   if (record.serviceDetailStatus === "not-itemized" && !record.lineItems.some((item) => genericServicePattern.test(item.trim()))) {
-    reasons.push("The report supports this visit but did not itemize the work performed.");
+    reasons.push("CARFAX shows this visit but does not list the work performed.");
   }
   if (!record.serviceDate || record.mileage === null || !record.provider) {
     reasons.push("One or more visit details were not shown in the draft.");

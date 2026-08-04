@@ -13,7 +13,7 @@ const run: ResearchImportRun = {
   deleteAfter: "2026-09-03T12:00:00.000Z",
   textCharacterCount: 1_200,
   model: "gpt-5-mini-2025-08-07",
-  promptVersion: "research-carfax-contract.v3",
+  promptVersion: "research-carfax-contract.v4",
   draft: {
     documentType: "carfax-service-history",
     vehicleVin: null,
@@ -21,7 +21,7 @@ const run: ResearchImportRun = {
       serviceDate: "2026-05-13",
       mileage: 57_160,
       provider: "MetroWest Acura",
-      lineItems: ["Vehicle serviced"],
+      lineItems: ["Routine maintenance"],
       confidence: 0.6,
       evidence: "Page 1 and 3: specific services not fully visible in summary.",
       evidencePages: [1, 3],
@@ -42,9 +42,18 @@ describe("ResearchRunReview", () => {
       <ResearchRunReview run={run} onSave={async () => undefined} />,
     );
 
-    expect(markup).toContain("Review every visit");
-    expect(markup).toContain("Needs attention 1");
-    expect(markup).toContain("Not reviewed 1");
+    expect(markup).toContain("Quick visit check");
+    expect(markup).toContain("To check 1");
+    expect(markup).toContain("Looks right");
+    expect(markup).toContain("Fix it");
+    expect(markup).toContain("CARFAX did not list the exact work");
+    expect(markup).toContain("You do not need to guess or add the missing work.");
+    expect(markup).toContain("Source note");
+    expect(markup).not.toContain("Check this visit closely");
+    expect(markup).not.toContain("Needs attention");
+    expect(markup).not.toContain("Not itemized");
+    expect(markup).not.toContain("Not in report");
+    expect(markup).not.toContain("I’m not sure");
     expect(markup).toContain("Expand all");
     expect(markup).toContain("Collapse all");
     expect(markup).toContain("Finish review");

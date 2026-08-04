@@ -68,18 +68,24 @@ draft-anchored correction from becoming unchallenged ground truth.
 
 ## Required human label protocol
 
-Saving a draft without edits is not evidence that every item was reviewed. A
-completed evaluation needs an explicit outcome for every visit and every
-service action.
+Saving a draft without edits is not evidence that a visit was reviewed. A
+completed evaluation needs one explicit outcome for every visit.
 
 ### Current implementation boundary
 
-The current cohort captures the explicit per-visit and per-action outcomes
-below, including added and rejected visits. **Finish review** remains disabled
-until every visit and every proposed service action has an outcome. **Save
-progress** is intentionally not a confirmation and is never scored as model
-accuracy. The original proposal, the outcome labels, and the corrected draft
-remain distinct for evaluation.
+The current cohort gives the participant only two primary choices: **Looks
+right** or **Fix it**. **Not a service visit** appears only within the
+correction path. **Finish review** remains disabled until every visit has one
+of these outcomes. **Save progress** is intentionally not a confirmation and
+is never scored as model accuracy. The original proposal, the outcome labels,
+and the corrected draft remain distinct for evaluation.
+
+A visit-level confirmation deterministically confirms all itemized actions. If
+CARFAX does not itemize the work, it records the action as source-limited
+without asking the participant to choose a separate label. A compact correction
+deterministically reconciles the old and edited action lists into corrected,
+added, and unsupported labels. The operator retains per-action metrics, but
+the participant performs one source check per visit.
 
 ### Visit-level outcome
 
@@ -88,9 +94,11 @@ remain distinct for evaluation.
 | Confirmed accurate | The date, mileage, provider, and visit are supported by the report. |
 | Corrected | One or more visit fields were changed to match the report. |
 | Not a visit | The proposed visit is unsupported and is removed. |
-| Unsure | The participant cannot decide from the report; operator adjudication is required. |
 
 ### Service-action outcome
+
+These are derived or operator-level labels, not choices shown to the
+participant.
 
 | Outcome | Meaning for evaluation |
 | --- | --- |
@@ -101,10 +109,18 @@ remain distinct for evaluation.
 | Not itemized in report | The visit is supported, but the report does not name the work. This is a source limitation, not an LLM error. |
 | Unsure | Hold out of the promotion sample until source adjudication. |
 
-The review UI should show progress for **all** visits, not merely a small
-attention queue. A message such as "3 need attention" is a prioritization aid,
-not permission to skip the remaining rows. Completion requires each row to be
-explicitly confirmed, corrected, marked unavailable, or sent for adjudication.
+The review UI should show progress for **all** visits. A source note gives
+context for a row; it is not permission to skip the remaining rows. Completion
+requires each visit to be explicitly confirmed, corrected, or marked not a
+visit.
+
+A participant-facing source note must be actionable rather than a generic
+warning. Deterministic guidance codes cover work not itemized, missing core
+visit details, unclear source evidence, and low extraction confidence. Each
+code names the problem and tells the participant whether to compare the PDF,
+leave a truly absent value blank, or correct a shown value. This keeps the human
+label focused on what the source can actually support without asking the person
+to infer a missing maintenance action.
 
 ## How metrics are derived
 
