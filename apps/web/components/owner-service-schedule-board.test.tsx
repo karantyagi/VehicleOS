@@ -128,7 +128,15 @@ describe("OwnerServiceScheduleBoardView service journey", () => {
 
     const markup = renderBoard(null);
 
-    expect(markup).toContain("Due in 4 days");
+    expect(markup).toContain("Due in 1 week");
     expect(markup).not.toContain("Due this week");
+  });
+
+  it("caps longer lead times at one month", () => {
+    vi.setSystemTime(new Date("2026-07-20T12:00:00"));
+
+    const markup = renderBoard(null);
+
+    expect(markup).toContain("Due in 1 month+");
   });
 });

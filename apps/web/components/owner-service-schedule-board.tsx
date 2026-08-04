@@ -97,11 +97,10 @@ const calendarDaysBetween = (from: string, to: string): number | null => {
 };
 
 const formatElapsedTime = (days: number): string => {
-  if (days === 1) return "1 day";
-  if (days < 7) return `${days} days`;
-
-  const weeks = Math.ceil(days / 7);
-  return `${weeks} week${weeks === 1 ? "" : "s"}`;
+  if (days <= 7) return "1 week";
+  if (days <= 14) return "2 weeks";
+  if (days <= 21) return "3 weeks";
+  return "1 month+";
 };
 
 const timeFirstVerdictLabel = (row: OwnerServiceScheduleRow, today = todayIsoDate()): string => {
