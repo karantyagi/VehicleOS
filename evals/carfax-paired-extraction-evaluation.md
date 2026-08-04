@@ -109,10 +109,17 @@ participant.
 | Not itemized in report | The visit is supported, but the report does not name the work. This is a source limitation, not an LLM error. |
 | Unsure | Hold out of the promotion sample until source adjudication. |
 
-The review UI should show progress for **all** visits, not merely a small
-attention queue. A message such as "3 need attention" is a prioritization aid,
-not permission to skip the remaining rows. Completion requires each visit to
-be explicitly confirmed, corrected, or marked not a visit.
+The review UI should show progress for **all** visits. A source note gives
+context for a row; it is not permission to skip the remaining rows. Completion
+requires each visit to be explicitly confirmed, corrected, or marked not a
+visit.
+
+A participant-facing source note must be actionable rather than a generic
+warning. For a source-limited row such as `Vehicle serviced`, it names the
+missing information, asks the participant to compare the visit's date,
+mileage, and provider with the PDF, and says that no missing maintenance action
+needs to be inferred. This keeps the human label focused on what the source can
+actually support.
 
 ## How metrics are derived
 

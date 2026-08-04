@@ -59,7 +59,7 @@ describe("research owner-review protocol", () => {
       }],
     });
     const record = unclearDraft.records[0];
-    expect(researchRecordAttention(record).reasons).toContain("The report did not clearly name the work performed.");
+    expect(researchRecordAttention(record).reasons).toContain("CARFAX does not clearly name the work performed for this visit.");
 
     const markedNotItemized = confirmResearchRecord({ ...record, serviceDetailStatus: "not-itemized" });
     expect(researchReviewProgress({ ...unclearDraft, records: [markedNotItemized] }).complete).toBe(true);

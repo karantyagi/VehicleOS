@@ -46,6 +46,11 @@ describe("ResearchRunReview", () => {
     expect(markup).toContain("To check 1");
     expect(markup).toContain("Looks right");
     expect(markup).toContain("Fix it");
+    expect(markup).toContain("CARFAX did not list the exact work");
+    expect(markup).toContain("You do not need to guess or add the missing work.");
+    expect(markup).toContain("Source note");
+    expect(markup).not.toContain("Check this visit closely");
+    expect(markup).not.toContain("Needs attention");
     expect(markup).not.toContain("Not itemized");
     expect(markup).not.toContain("Not in report");
     expect(markup).not.toContain("I’m not sure");

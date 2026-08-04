@@ -68,6 +68,14 @@ evidence is incomplete, generic, missing a core field, or low confidence, but
 those flags never silently accept the remaining rows. Green means an owner has
 reviewed the row, not that a model assigned it a high confidence.
 
+Source notes must explain both the limitation and the participant's next step.
+For example, when CARFAX says only `Vehicle serviced`, the portal says that
+CARFAX did not name the work, asks the participant to compare the date,
+mileage, and shop with their PDF, and makes clear that they must not guess or
+add a missing service item. If those visit details match, **Looks right** is
+the correct response; the system records the missing service detail as a
+source limitation automatically.
+
 While reviewing, an invited owner can open only their own original PDF through
 a five-minute, participant-scoped URL. They never see both hidden extraction
 attempts, so this source check does not reveal or bias the paired assignment.

@@ -21,6 +21,11 @@ export type ResearchRecordAttention = {
 const genericServicePattern = /^(vehicle )?(serviced|service performed|maintenance performed|service completed)$/i;
 const sourceUnclearPattern = /not (fully )?(visible|shown|itemized)|specific services? (?:are |were )?not|service details? (?:are |were )?(?:not )?(?:visible|available)|could not (?:see|read|identify)/i;
 
+export const isResearchRecordServiceDetailSourceLimited = (record: ResearchServiceRecord): boolean =>
+  record.serviceDetailStatus === "not-itemized"
+  || (record.reportedBy !== "owner" && record.lineItems.length === 0)
+  || record.lineItems.some((item) => genericServicePattern.test(item.trim()));
+
 const cloneServiceItem = (item: ResearchServiceItemReview): ResearchServiceItemReview => ({ ...item });
 
 const defaultServiceItems = (record: ResearchServiceRecord): ResearchServiceItemReview[] =>
@@ -162,13 +167,13 @@ export const researchReviewProgress = (draft: ResearchImportDraft): ResearchRevi
 export const researchRecordAttention = (record: ResearchServiceRecord): ResearchRecordAttention => {
   const reasons: string[] = [];
   if (sourceUnclearPattern.test(record.evidence)) {
-    reasons.push("The report did not clearly name the work performed.");
+    reasons.push("CARFAX does not clearly name the work performed for this visit.");
   }
   if (record.lineItems.some((item) => genericServicePattern.test(item.trim()))) {
-    reasons.push("The service description is too general to verify as a maintenance action.");
+    reasons.push("CARFAX uses a general service label but does not say what work was done.");
   }
   if (record.serviceDetailStatus === "not-itemized" && !record.lineItems.some((item) => genericServicePattern.test(item.trim()))) {
-    reasons.push("The report supports this visit but did not itemize the work performed.");
+    reasons.push("CARFAX shows this visit but does not list the work performed.");
   }
   if (!record.serviceDate || record.mileage === null || !record.provider) {
     reasons.push("One or more visit details were not shown in the draft.");
