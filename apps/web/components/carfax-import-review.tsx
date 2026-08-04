@@ -84,6 +84,8 @@ const locationEvidenceText = (row: CarfaxReviewRow): string => {
       return "DIY work — no shop location to validate";
     case "state_record":
       return "State inspection record — no individual shop location supplied";
+    case "owner_confirmed":
+      return `You set the location: ${evidence.location}`;
     case "ambiguous":
       return "Location needs your confirmation";
     case "not_initialized":

@@ -31,6 +31,7 @@ import {
   evaluateImportReviewVerdict,
   isDuplicateServiceRow,
   normalizeShopKey,
+  resolveCarfaxSourceTrust,
   tierImportRows,
   type ImportLocationEvidence,
   type ShopLocationHint,
@@ -185,8 +186,33 @@ const stripCarfaxReviewUiFields = ({
   alreadyOnFile: _alreadyOnFile,
   locationCandidates: _candidates,
   locationEvidence: _locationEvidence,
+  carfaxReview: _carfaxReview,
   ...service
 }: CarfaxReviewRow): VehicleOsImportService => service;
+
+const carfaxImportSubmission = (row: CarfaxReviewRow): VehicleOsImportService => {
+  const service = stripCarfaxReviewUiFields(row);
+  const carfaxReview = {
+    ...(row.locationEvidence ? { locationEvidence: row.locationEvidence } : {}),
+    ...(row.tier === "verify" && row.ownerReviewPhase === "done" ? { ownerConfirmed: true as const } : {}),
+  };
+  return Object.keys(carfaxReview).length > 0 ? { ...service, carfaxReview } : service;
+};
+
+const locationEvidenceAfterOwnerEdit = (service: Pick<VehicleOsImportService, "shop" | "shopLocation">): ImportLocationEvidence | undefined => {
+  switch (resolveCarfaxSourceTrust(service.shop)) {
+    case "owner_reported":
+      return { status: "owner_reported", message: "Owner-reported work has no service-provider location to validate." };
+    case "owner_diy":
+      return { status: "owner_diy", message: "DIY work has no service-provider location to validate." };
+    case "state_record":
+      return { status: "state_record", message: "State record" };
+    case "provider": {
+      const location = service.shopLocation?.trim();
+      return location ? { status: "owner_confirmed", location } : undefined;
+    }
+  }
+};
 
 const initCarfaxReviewRows = (
   services: VehicleOsImportService[],
@@ -549,7 +575,7 @@ export function RecordImportPanel({
 
         const payload: VehicleOsImportV1 = {
           ...carfaxPreview,
-          services: selectedCarfaxRows.map(stripCarfaxReviewUiFields),
+          services: selectedCarfaxRows.map(carfaxImportSubmission),
         };
 
         const response = await fetch(`${apiBase}/api/vehicles/${vehicleId}/import`, {
@@ -660,7 +686,19 @@ export function RecordImportPanel({
       const priorRow = rows.find((row) => row.id === id);
       const priorGuidanceCodes = priorRow?.ownerGuidance.map((guidance) => guidance.code);
 
-      const merged = rows.map((row) => (row.id === id ? { ...row, ...patch } : row));
+      const merged = rows.map((row) => {
+        if (row.id !== id) return row;
+        const shopChanged = patch.shop !== undefined && patch.shop !== row.shop;
+        const next = {
+          ...row,
+          ...patch,
+          ...(shopChanged && patch.shopLocation === undefined ? { shopLocation: undefined } : {}),
+        };
+        const editedLocation = patch.shop !== undefined || patch.shopLocation !== undefined;
+        return editedLocation
+          ? { ...next, locationEvidence: locationEvidenceAfterOwnerEdit(next) }
+          : next;
+      });
       const reTiered = reTierCarfaxRows(merged);
 
       return reTiered.map((row) => {

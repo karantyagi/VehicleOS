@@ -29,7 +29,7 @@ export type EnrichWithLookupResult = {
 
 type LookupCache = Map<string, Awaited<ReturnType<typeof resolveShopLocationWithLookup>>>;
 
-type EnrichedServiceWithEvidence = {
+export type EnrichedServiceWithLocationEvidence = {
   service: VehicleOsImportService;
   evidence: ImportLocationEvidence;
 };
@@ -49,7 +49,7 @@ const enrichServiceWithLocationEvidence = async (
   options?: EnrichWithLookupOptions,
   lookupCache?: LookupCache,
   hints?: Record<string, ShopLocationHint>,
-): Promise<EnrichedServiceWithEvidence> => {
+): Promise<EnrichedServiceWithLocationEvidence> => {
   const base = enrichVehicleOsImportService(service, {
     ownerShopLocations: options?.ownerShopLocations,
   });
@@ -192,12 +192,18 @@ export const enrichVehicleOsImportWithLookupAndHints = async (
 export const enrichVehicleOsImportServicesWithLookup = async (
   services: VehicleOsImportService[],
   options?: EnrichWithLookupOptions,
-): Promise<VehicleOsImportService[]> => {
+): Promise<VehicleOsImportService[]> =>
+  (await enrichVehicleOsImportServicesWithLookupAndEvidence(services, options)).map(({ service }) => service);
+
+export const enrichVehicleOsImportServicesWithLookupAndEvidence = async (
+  services: VehicleOsImportService[],
+  options?: EnrichWithLookupOptions,
+): Promise<EnrichedServiceWithLocationEvidence[]> => {
   const cache: LookupCache = new Map();
-  const enriched: VehicleOsImportService[] = [];
+  const enriched: EnrichedServiceWithLocationEvidence[] = [];
 
   for (const service of services) {
-    enriched.push(await enrichVehicleOsImportServiceWithLookup(service, options, cache));
+    enriched.push(await enrichServiceWithLocationEvidence(service, options, cache));
   }
 
   return enriched;

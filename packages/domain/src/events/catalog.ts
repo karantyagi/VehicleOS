@@ -1,4 +1,5 @@
 import type { DomainEventEnvelope } from "./types.js";
+import type { CarfaxImportProvenance } from "../import/carfax-import-provenance.js";
 
 export const EVENT_TYPES = {
   DOCUMENT_INGESTED: "document.ingested",
@@ -65,6 +66,7 @@ export type ServiceRecordedPayload = {
   evidenceIds: string[];
   documentId?: string;
   source?: ServiceRecordSource;
+  carfaxImport?: CarfaxImportProvenance;
 };
 
 export type ServiceUpdatedPayload = {

@@ -168,6 +168,59 @@ describe("import-handlers enrich + submit", () => {
     expect(body.importedCount).toBe(1);
   });
 
+  it("requires owner confirmation for low-trust CARFAX rows and persists that decision", async () => {
+    const { services, vehicle } = await buildServices();
+    const service = {
+      shop: "Self Reported",
+      serviceDate: "2025-05-11",
+      mileage: 43_190,
+      lineItems: ["Oil and filter changed"],
+      total: "$0.00",
+    };
+
+    const withoutConfirmation = await submitVehicleOsImport(
+      services,
+      vehicle.id,
+      { services: [service] },
+      { userId: vehicle.userId },
+    );
+    expect(withoutConfirmation.status).toBe(409);
+    expect(await services.eventStore.loadByAggregate("vehicle", vehicle.id)).toHaveLength(0);
+
+    const confirmed = await submitVehicleOsImport(
+      services,
+      vehicle.id,
+      {
+        services: [
+          {
+            ...service,
+            carfaxReview: {
+              ownerConfirmed: true,
+              locationEvidence: { status: "owner_reported" },
+            },
+          },
+        ],
+      },
+      { userId: vehicle.userId },
+    );
+
+    expect(confirmed.status).toBe(201);
+    expect(confirmed.body).toMatchObject({
+      importedCount: 1,
+      verificationTaskId: undefined,
+      importReview: { verifyCount: 0 },
+      timeline: [
+        expect.objectContaining({
+          carfaxImport: expect.objectContaining({
+            sourceTrust: "owner_reported",
+            locationEvidence: expect.objectContaining({ status: "owner_reported" }),
+            ownerConfirmedAt: expect.any(String),
+          }),
+        }),
+      ],
+    });
+  });
+
   it("does not create verification tasks when re-importing duplicate rows", async () => {
     const { services, vehicle } = await buildServices();
     const payload = {

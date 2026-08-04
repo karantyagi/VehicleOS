@@ -6,6 +6,7 @@ export type ImportLocationEvidenceStatus =
   | "owner_reported"
   | "owner_diy"
   | "state_record"
+  | "owner_confirmed"
   | "ambiguous"
   | "not_found"
   | "not_initialized";

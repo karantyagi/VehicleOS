@@ -510,6 +510,7 @@ export {
   resolveCarfaxSourceTrust,
   type CarfaxSourceTrust,
 } from "./import/carfax-source-trust.js";
+export type { CarfaxImportProvenance } from "./import/carfax-import-provenance.js";
 export {
   crossDayMileageRegressionByIndex,
   shouldFlagCrossDayMileageRegression,
@@ -549,8 +550,10 @@ export {
   enrichVehicleOsImportWithLookupAndHints,
   enrichVehicleOsImportServiceWithLookup,
   enrichVehicleOsImportServicesWithLookup,
+  enrichVehicleOsImportServicesWithLookupAndEvidence,
   type EnrichWithLookupOptions,
   type EnrichWithLookupResult,
+  type EnrichedServiceWithLocationEvidence,
 } from "./import/enrich-vehicleos-import-with-lookup.js";
 export {
   shopLocationHintFromLookup,

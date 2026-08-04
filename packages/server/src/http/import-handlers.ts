@@ -1,6 +1,11 @@
-import type { VehicleOsImportService, VehicleOsImportDraft, VehicleOsRmvRecord } from "@vehicleos/domain";
+import type {
+  ImportLocationEvidence,
+  VehicleOsImportService,
+  VehicleOsImportDraft,
+  VehicleOsRmvRecord,
+} from "@vehicleos/domain";
 import {
-  enrichVehicleOsImportServicesWithLookup,
+  enrichVehicleOsImportServicesWithLookupAndEvidence,
   enrichVehicleOsImportWithLookup,
   enrichVehicleOsImportWithLookupAndHints,
   extractCarfaxServiceHistoryFromPdfText,
@@ -14,6 +19,7 @@ import {
   reconcileImportVehicleProfile,
   recordProfileImportVerification,
   recordImportRowVerification,
+  resolveCarfaxSourceTrust,
   ownerDriverLicenseImportNeedsConfirmation,
   projectOwnerDriverLicenses,
   recordOwnerDriverLicenses,
@@ -25,6 +31,15 @@ import { jsonResponse, type JsonResponse } from "./json-response.js";
 import { vehicleStateOptionsFromVehicle } from "./vehicle-state-options-from-vehicle.js";
 import { buildVehicleStateView } from "./vehicle-state-view.js";
 
+type CarfaxReviewSubmission = {
+  ownerConfirmed?: boolean;
+  locationEvidence?: ImportLocationEvidence;
+};
+
+type VehicleOsImportSubmissionService = Omit<VehicleOsImportService, "carfaxImport"> & {
+  carfaxReview?: CarfaxReviewSubmission;
+};
+
 type VehicleOsImportBody = {
   version?: "1";
   source?: string;
@@ -32,7 +47,7 @@ type VehicleOsImportBody = {
   vehicle?: {
     currentMileage?: number;
   };
-  services?: VehicleOsImportService[];
+  services?: VehicleOsImportSubmissionService[];
 };
 
 type AuthContext = {
@@ -53,6 +68,30 @@ const enrichLookupOptions = (
   hintCity: vehicle.ownerContextMemory?.primaryCity,
   lookupPort: services.shopLocationLookup,
 });
+
+const persistedLocationEvidence = (
+  service: VehicleOsImportService,
+  sourceTrust: ReturnType<typeof resolveCarfaxSourceTrust>,
+  resolved: ImportLocationEvidence,
+  submitted?: ImportLocationEvidence,
+): ImportLocationEvidence => {
+  if (sourceTrust !== "provider" || !submitted) return resolved;
+
+  const submittedLocation = submitted.location?.trim();
+  const serviceLocation = service.shopLocation?.trim();
+  if (!submittedLocation || submittedLocation !== serviceLocation) return resolved;
+
+  switch (submitted.status) {
+    case "carfax_reported":
+    case "owner_memory":
+    case "curated_pack":
+    case "geoapify":
+    case "owner_confirmed":
+      return { status: submitted.status, location: submittedLocation };
+    default:
+      return resolved;
+  }
+};
 
 export const enrichVehicleOsImportDraftHandler = async (
   services: ApiServices,
@@ -108,9 +147,22 @@ export const submitVehicleOsImport = async (
   }
 
   const ownerShopLocations = vehicle.ownerContextMemory?.shopLocations;
-  const enrichedServices = await enrichVehicleOsImportServicesWithLookup(importServices, {
+  const enrichedWithEvidence = await enrichVehicleOsImportServicesWithLookupAndEvidence(importServices, {
     ...enrichLookupOptions(vehicle, services),
     ownerShopLocations,
+  });
+  const ownerConfirmedAt = new Date().toISOString();
+  const enrichedServices = enrichedWithEvidence.map(({ service, evidence }, index) => {
+    const submitted = importServices[index]?.carfaxReview;
+    const sourceTrust = resolveCarfaxSourceTrust(service.shop);
+    return {
+      ...service,
+      carfaxImport: {
+        sourceTrust,
+        locationEvidence: persistedLocationEvidence(service, sourceTrust, evidence, submitted?.locationEvidence),
+        ...(submitted?.ownerConfirmed === true ? { ownerConfirmedAt } : {}),
+      },
+    };
   });
 
   const snapshot = await services.goldenPath.getVehicleState(
@@ -119,6 +171,24 @@ export const submitVehicleOsImport = async (
   );
   const { newRows } = filterNewImportServices(snapshot.state.timeline, enrichedServices);
   const newRowTierSummary = tierNewImportRows(snapshot.state.timeline, newRows);
+  const blockedRows = newRowTierSummary.rows.filter((row) => row.tier === "block");
+  if (blockedRows.length > 0) {
+    return jsonResponse(422, {
+      error: "Fix the blocked CARFAX row before importing.",
+    });
+  }
+
+  const unconfirmedRows = newRowTierSummary.rows.filter(
+    (row) => row.tier === "verify" && !row.service.carfaxImport?.ownerConfirmedAt,
+  );
+  if (unconfirmedRows.length > 0) {
+    return jsonResponse(409, {
+      error:
+        unconfirmedRows.length === 1
+          ? "Confirm the CARFAX row that needs review before importing."
+          : `Confirm all ${unconfirmedRows.length} CARFAX rows that need review before importing.`,
+    });
+  }
 
   const importResult = await services.goldenPath.importVehicleOsHistory({
     vehicleId,
@@ -160,7 +230,7 @@ export const submitVehicleOsImport = async (
     eventStore: services.eventStore,
     input: {
       vehicleId,
-      rows: newRowTierSummary.rows,
+      rows: unconfirmedRows,
       importSource: body.source?.trim() || "vehicleos-import",
     },
   });
@@ -178,7 +248,7 @@ export const submitVehicleOsImport = async (
     importReview: {
       autoCount: newRowTierSummary.autoCount,
       enrichedCount: newRowTierSummary.enrichedCount,
-      verifyCount: newRowTierSummary.verifyCount,
+      verifyCount: unconfirmedRows.length,
       blockCount: newRowTierSummary.blockCount,
       alreadyOnFileCount: enrichedServices.length - newRows.length,
     },

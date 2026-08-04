@@ -17,6 +17,7 @@ export type OwnerHistoryItem = {
   evidenceIds?: string[];
   source?: ServiceTimelineEntry["source"];
   recordKind?: ServiceTimelineEntry["recordKind"];
+  carfaxImport?: ServiceTimelineEntry["carfaxImport"];
   agency?: string;
   eventType?: OwnershipRecordEntry["eventType"];
   description?: string;
@@ -39,6 +40,7 @@ export const buildOwnerHistoryTimeline = (input: {
     evidenceIds: entry.evidenceIds,
     source: entry.source,
     recordKind: entry.recordKind,
+    carfaxImport: entry.carfaxImport,
   }));
 
   const ownershipItems: OwnerHistoryItem[] = input.ownershipRecords.map((record) => ({

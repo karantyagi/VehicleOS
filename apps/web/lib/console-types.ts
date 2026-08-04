@@ -9,6 +9,7 @@ export type TimelineEntry = {
   evidenceIds: string[];
   source?: "receipt" | "voice" | "owner_note" | "dealer" | "carfax_import";
   recordKind?: import("@vehicleos/domain").ServiceRecordKind;
+  carfaxImport?: import("@vehicleos/domain").CarfaxImportProvenance;
 };
 
 export type QueueItem = {

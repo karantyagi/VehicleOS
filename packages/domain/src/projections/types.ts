@@ -6,6 +6,7 @@ import type {
   VehicleRecordSource,
 } from "../events/catalog.js";
 import type { ServiceRecordKind } from "../service/service-record-kind.js";
+import type { CarfaxImportProvenance } from "../import/carfax-import-provenance.js";
 
 export type ServiceTimelineEntry = {
   serviceId: string;
@@ -19,6 +20,7 @@ export type ServiceTimelineEntry = {
   source?: ServiceRecordSource;
   /** Present on new projections; legacy snapshots derive this from source and line items. */
   recordKind?: ServiceRecordKind;
+  carfaxImport?: CarfaxImportProvenance;
 };
 
 export type NowQueueItem = {
