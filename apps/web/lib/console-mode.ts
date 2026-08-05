@@ -5,7 +5,7 @@ export type ConsoleMode = "owner" | "developer";
 export const CONSOLE_MODE_STORAGE_KEY = "vehicleos:console-mode";
 
 /** Owner peek — aligned with assistant-product-model.md console map. Capture is mobile-only (see /capture/receipt). */
-export const OWNER_MODE_SECTIONS: AppSection[] = ["reminders", "timeline", "imports"];
+export const OWNER_MODE_SECTIONS: AppSection[] = ["reminders", "attention", "timeline", "imports"];
 
 export const DEVELOPER_ONLY_SECTIONS: AppSection[] = ["receipts", "evidence", "context", "notes", "quotes"];
 

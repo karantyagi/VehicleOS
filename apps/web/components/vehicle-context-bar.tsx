@@ -50,11 +50,11 @@ export function VehicleContextBar() {
               variant="ghost"
               size="sm"
               className="h-7 rounded-full bg-primary/10 px-2.5 text-primary hover:bg-primary/15 hover:text-primary"
-              aria-label={`Open ${snapshot.pendingReminderCount} item${snapshot.pendingReminderCount === 1 ? "" : "s"} needing attention`}
-              onClick={() => setActiveSection("reminders")}
+              aria-label={`Open ${snapshot.pendingReminderCount} car action${snapshot.pendingReminderCount === 1 ? "" : "s"} in your attention`}
+              onClick={() => setActiveSection("attention")}
             >
               <CircleAlert className="h-3 w-3" aria-hidden />
-              {snapshot.pendingReminderCount} {snapshot.pendingReminderCount === 1 ? "needs" : "need"} attention
+              {snapshot.pendingReminderCount} car action{snapshot.pendingReminderCount === 1 ? "" : "s"}
             </Button>
           ) : null}
           {!isDeveloper && snapshot && snapshot.pendingVerificationCount > 0 ? (
@@ -63,11 +63,11 @@ export function VehicleContextBar() {
               variant="ghost"
               size="sm"
               className="h-7 rounded-full border border-amber-200 bg-amber-50 px-2.5 text-amber-900 hover:bg-amber-100 hover:text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200 dark:hover:bg-amber-950/60 dark:hover:text-amber-100"
-              aria-label={`Open ${snapshot.pendingVerificationCount} item${snapshot.pendingVerificationCount === 1 ? "" : "s"} to verify`}
-              onClick={() => setActiveSection("now")}
+              aria-label={`Open ${snapshot.pendingVerificationCount} assistant question${snapshot.pendingVerificationCount === 1 ? "" : "s"} in your attention`}
+              onClick={() => setActiveSection("attention")}
             >
               <ListChecks className="h-3 w-3" aria-hidden />
-              {snapshot.pendingVerificationCount} to verify
+              {snapshot.pendingVerificationCount} question{snapshot.pendingVerificationCount === 1 ? "" : "s"}
             </Button>
           ) : null}
         </div>

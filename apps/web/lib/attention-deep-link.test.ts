@@ -9,7 +9,7 @@ import {
 describe("owner attention deep links", () => {
   it("round-trips the exact reminder task", () => {
     const href = buildOwnerAttentionDeepLink("task:rotate tires/2026");
-    expect(href).toBe("/?attention=task%3Arotate%20tires%2F2026");
+    expect(href).toBe("/?section=attention&attention=task%3Arotate%20tires%2F2026");
     expect(parseOwnerAttentionDeepLink(href.slice(1))).toBe("task:rotate tires/2026");
   });
 

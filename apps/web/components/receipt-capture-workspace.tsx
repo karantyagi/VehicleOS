@@ -166,7 +166,7 @@ export function ReceiptCaptureWorkspace() {
           description="The record is saved. The assistant found one detail that needs your confirmation on the web."
         >
           <Button asChild type="button" size="sm">
-            <Link href="/?section=reminders">Review on Home</Link>
+            <Link href="/?section=attention">Review in Your attention</Link>
           </Button>
         </PanelCard>
       ) : null}

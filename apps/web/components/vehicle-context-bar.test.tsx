@@ -51,10 +51,10 @@ describe("VehicleContextBar", () => {
   it("renders owner attention and verification counts as accessible buttons", () => {
     const markup = renderToStaticMarkup(<VehicleContextBar />);
 
-    expect(markup).toContain('aria-label="Open 1 item needing attention"');
-    expect(markup).toContain('aria-label="Open 3 items to verify"');
-    expect(markup).toContain("1 needs attention");
-    expect(markup).toContain("3 to verify");
+    expect(markup).toContain('aria-label="Open 1 car action in your attention"');
+    expect(markup).toContain('aria-label="Open 3 assistant questions in your attention"');
+    expect(markup).toContain("1 car action");
+    expect(markup).toContain("3 questions");
     expect((markup.match(/<button/g) ?? []).length).toBeGreaterThanOrEqual(2);
   });
 });

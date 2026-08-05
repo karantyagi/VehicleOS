@@ -1,6 +1,11 @@
-import type { AppSection } from "@/lib/store/app-ui-store";
+import { APP_SECTIONS, type AppSection } from "@/lib/store/app-ui-store";
 
 export const dashboardSectionHref = (section: AppSection): string => `/?section=${section}`;
+
+export const parseDashboardSection = (search: string): AppSection | null => {
+  const section = new URLSearchParams(search).get("section");
+  return APP_SECTIONS.some((entry) => entry.id === section) ? (section as AppSection) : null;
+};
 
 type SectionRouter = {
   push: (href: string) => void;
