@@ -34,6 +34,7 @@ import { ManualKnowledgePanel } from "./manual-knowledge-panel";
 import { MaintenanceTimelineSection } from "./maintenance-timeline-section";
 import { NowQueueConsole } from "./now-queue-console";
 import { RemindersConsole } from "./reminders-console";
+import { OwnerHomeBrief } from "./owner-home-brief";
 import { OwnerServiceNotePanel } from "./owner-service-note-panel";
 import { openEvidenceDocument } from "../lib/evidence-access";
 import { useVehicleConsole } from "@/lib/vehicle-console-context";
@@ -730,13 +731,21 @@ export function OwnerDashboard() {
 
   const pendingReminderCount = reminders.filter((item) => item.effectiveStatus === "pending").length;
   const pendingVerifications = verifications.filter((item) => item.status === "pending");
-  const blockingVerifications = pendingVerifications.filter((item) => item.severity !== "advisory");
-  const advisoryVerifications = pendingVerifications.filter((item) => item.severity === "advisory");
   const pendingVerificationCount = pendingVerifications.length;
 
-  const openVerificationTask = (taskId: string) => {
-    setFocusedVerificationTaskId(taskId);
+  const openAttentionTask = (taskId?: string) => {
+    if (taskId) {
+      if (reminders.some((item) => item.taskId === taskId)) {
+        setFocusedReminderTaskId(taskId);
+      } else {
+        setFocusedVerificationTaskId(taskId);
+      }
+    }
     setActiveSection("attention");
+  };
+
+  const openVerificationTask = (taskId: string) => {
+    openAttentionTask(taskId);
   };
 
   const reviewVerificationTarget = (item: QueueItem) => {
@@ -855,125 +864,23 @@ export function OwnerDashboard() {
         Viewing {sectionMeta.label} section
       </p>
 
-      {activeSection === "reminders" &&
-      timeline.length === 0 &&
-      !reminders.some((item) => isOnboardingBaselineRule(item.ruleId)) ? (
-        <ImportHistoryNudge
-          vehicleId={vehicle.id}
-          timelineEmpty={timeline.length === 0}
-          onImport={() => setActiveSection("imports")}
-        />
-      ) : null}
-
       {activeSection === "reminders" ? (
         <div className="space-y-6">
-          {blockingVerifications.length > 0 ? (
-            <PanelCard
-              title={
-                blockingVerifications.length === 1
-                  ? "The assistant needs your confirmation"
-                  : `${blockingVerifications.length} details need your confirmation`
-              }
-              description="A record cannot be settled safely until you confirm it."
-            >
-              <NowQueueConsole
-                items={blockingVerifications}
-                disabled={isBusy}
-                vehicleId={vehicle.id}
-                apiBase={apiBase}
-                currentMileage={vehicle.currentMileage}
-                onDecide={decide}
-                onReviewTarget={reviewVerificationTarget}
-                focusTaskId={focusedVerificationTaskId}
-                ownerSimple
-                onOdometerSaved={() => {
-                  if (vehicle) void loadVehicleState(vehicle);
-                }}
-                onVerificationResolved={() => {
-                  if (vehicle) void loadVehicleState(vehicle);
-                  feedback("Saved. The assistant will use this context going forward.");
-                }}
-                onError={(message) => feedback(message)}
-              />
-            </PanelCard>
-          ) : null}
-
-          <PanelCard
-            hideHeader={!isDeveloper}
-            title="What needs attention"
-            description="This week leads. Next week and this month stay visible for planning."
-          >
-            <RemindersConsole
-              items={reminders}
-              disabled={isBusy}
-              focusTaskId={focusedReminderTaskId}
-              onScheduled={(taskId) => void decide(taskId, "schedule")}
-              onNotNeeded={(taskId) => void decide(taskId, "dismiss")}
-              onRecordDone={(item) => {
-                setHistoryCompletionTaskId(item.taskId);
-                setHistoryCompletionLineItem(
-                  item.intelligence?.serviceAction.recordLineItem ?? item.title,
-                );
-                setServiceHistoryTab("history");
-                setHistoryAddRequest((current) => current + 1);
-                setActiveSection("timeline");
-                feedback("Add the completed service so the schedule can update from the record.");
-              }}
-              onStartBaseline={() => {
-                setHistoryCompletionTaskId(null);
-                setHistoryCompletionLineItem(null);
-                setServiceHistoryTab("history");
-                setHistoryAddRequest((current) => current + 1);
-                setActiveSection("timeline");
-                feedback("Add any completed service to set your maintenance baseline.");
-              }}
-              onFixData={(item) => {
-                const serviceAction = item.intelligence?.serviceAction;
-                setServiceHistoryTab("history");
-                setActiveSection("timeline");
-                if (serviceAction?.baselineServiceId) {
-                  setSelectedTimelineId(serviceAction.baselineServiceId);
-                  feedback("Opened the exact service record that anchors this reminder.");
-                  return;
-                }
-                setHistoryCompletionTaskId(null);
-                setHistoryCompletionLineItem(serviceAction?.recordLineItem ?? item.title);
-                setHistoryAddRequest((current) => current + 1);
-                feedback("No baseline exists yet. Add the missing service record here.");
-              }}
-              minimal={!isDeveloper}
+          <PanelCard hideHeader>
+            <OwnerHomeBrief
+              reminders={reminders}
+              verifications={verifications.length > 0 ? verifications : nowQueue}
+              onOpenAttention={openAttentionTask}
+              onOpenMaintenance={() => setActiveSection("timeline")}
             />
           </PanelCard>
 
-          {advisoryVerifications.length > 0 ? (
-            <PanelCard
-              title={
-                advisoryVerifications.length === 1
-                  ? "One detail to confirm"
-                  : `${advisoryVerifications.length} details to confirm`
-              }
-              description="This improves future timing, but it does not block today's maintenance record."
-            >
-              <NowQueueConsole
-                items={advisoryVerifications}
-                disabled={isBusy}
-                vehicleId={vehicle.id}
-                apiBase={apiBase}
-                currentMileage={vehicle.currentMileage}
-                onDecide={decide}
-                onReviewTarget={reviewVerificationTarget}
-                focusTaskId={focusedVerificationTaskId}
-                ownerSimple
-                onOdometerSaved={() => {
-                  if (vehicle) void loadVehicleState(vehicle);
-                }}
-                onVerificationResolved={() => {
-                  if (vehicle) void loadVehicleState(vehicle);
-                  feedback("Saved. The assistant will use this context going forward.");
-                }}
-                onError={(message) => feedback(message)}
-              />
-            </PanelCard>
+          {timeline.length === 0 && !reminders.some((item) => isOnboardingBaselineRule(item.ruleId)) ? (
+            <ImportHistoryNudge
+              vehicleId={vehicle.id}
+              timelineEmpty={timeline.length === 0}
+              onImport={() => setActiveSection("imports")}
+            />
           ) : null}
         </div>
       ) : null}

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { QueueItem } from "@/lib/console-types";
 import { downloadCsv, filterByQuery, sortRows } from "@/lib/data-grid-utils";
+import { getOwnerQuestionPresentation, sortOwnerQuestions } from "@/lib/owner-attention";
 import { useConsoleListKeyboard } from "@/lib/use-console-list-keyboard";
 import { useAppUiStore } from "@/lib/store/app-ui-store";
 import { cn } from "@/lib/utils";
@@ -50,7 +51,7 @@ export function NowQueueConsole({
   const setSelectedId = useAppUiStore((s) => s.setSelectedNowTaskId);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("status-asc");
-  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(focusTaskId);
 
   useEffect(() => {
     if (!focusTaskId) return;
@@ -93,7 +94,7 @@ export function NowQueueConsole({
   if (ownerSimple) {
     return (
       <ul className="space-y-3">
-        {pending.map((item) => {
+        {sortOwnerQuestions(pending).map((item) => {
           const showOdometerForm =
             item.verificationCode === "VERIFY_ODOMETER" && vehicleId && apiBase && currentMileage !== undefined;
           const showDeviationForm =
@@ -101,6 +102,8 @@ export function NowQueueConsole({
           const showIntervalForm =
             item.verificationCode === "VERIFY_OWNER_INTERVAL" && vehicleId && apiBase;
           const isExpanded = expandedTaskId === item.taskId;
+          const presentation = getOwnerQuestionPresentation(item);
+          const sourceReviewLabel = item.target?.label ? `Review ${item.target.label.toLowerCase()}` : "Review source";
 
           return (
             <li
@@ -109,7 +112,7 @@ export function NowQueueConsole({
               className={cn(
                 "overflow-hidden rounded-xl border bg-card shadow-sm",
                 item.severity === "blocking" ? "border-amber-300/80 dark:border-amber-800/70" : "border-border",
-                focusTaskId === item.taskId && "ring-2 ring-primary/50 ring-offset-2 ring-offset-background",
+                isExpanded && "border-primary/55 bg-primary/[0.035] ring-2 ring-primary/40 ring-offset-2 ring-offset-background",
               )}
             >
               <button
@@ -120,14 +123,10 @@ export function NowQueueConsole({
               >
                 <span className="min-w-0 flex-1 space-y-1.5">
                   <span className="flex flex-wrap items-center gap-2">
-                    <span className="font-semibold leading-tight">{item.title}</span>
-                    {item.severity === "blocking" ? (
-                      <Badge variant="warning">Needs confirmation</Badge>
-                    ) : null}
+                    <span className="font-semibold leading-tight">{presentation.title}</span>
+                    <Badge variant={presentation.kind === "verify" ? "warning" : "oem"}>{presentation.label}</Badge>
                   </span>
-                  {item.target?.label ? (
-                    <span className="block text-xs text-muted-foreground">{item.target.label}</span>
-                  ) : null}
+                  <span className="block text-sm text-muted-foreground">{presentation.impact}</span>
                 </span>
                 <span className="shrink-0 pt-0.5 text-muted-foreground">
                   {isExpanded ? (
@@ -139,7 +138,6 @@ export function NowQueueConsole({
               </button>
               {isExpanded ? (
                 <div className="space-y-3 border-t border-border/60 px-4 pb-4 pt-3">
-                  <p className="text-sm text-muted-foreground">{item.reason}</p>
                   {showIntervalForm ? (
                     <IntervalConfirmForm
                       vehicleId={vehicleId}
@@ -192,20 +190,27 @@ export function NowQueueConsole({
                           disabled={disabled}
                           onClick={() => onReviewTarget?.(item)}
                         >
-                          Review {item.target.label.toLowerCase()}
+                          {sourceReviewLabel}
                         </Button>
                       ) : null}
-                      <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
-                        Confirm
-                      </Button>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="secondary"
-                        disabled={disabled}
-                        onClick={() => onDecide(item.taskId, "dismiss")}
-                      >
-                        Keep existing
+                      {!showOdometerForm ? (
+                        <Button type="button" size="sm" disabled={disabled} onClick={() => onDecide(item.taskId, "approve")}>
+                          {presentation.approveLabel}
+                        </Button>
+                      ) : null}
+                      {!showOdometerForm ? (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="secondary"
+                          disabled={disabled}
+                          onClick={() => onDecide(item.taskId, "dismiss")}
+                        >
+                          Keep it unconfirmed
+                        </Button>
+                      ) : null}
+                      <Button type="button" size="sm" variant="ghost" onClick={() => setExpandedTaskId(null)}>
+                        {presentation.deferLabel}
                       </Button>
                     </div>
                   ) : showDeviationForm ? (
@@ -217,10 +222,23 @@ export function NowQueueConsole({
                         disabled={disabled}
                         onClick={() => onDecide(item.taskId, "dismiss")}
                       >
-                        Keep existing
+                        Keep OEM timing
+                      </Button>
+                      <Button type="button" size="sm" variant="ghost" onClick={() => setExpandedTaskId(null)}>
+                        {presentation.deferLabel}
+                      </Button>
+                    </div>
+                  ) : showIntervalForm ? (
+                    <div className="flex flex-wrap gap-2">
+                      <Button type="button" size="sm" variant="ghost" onClick={() => setExpandedTaskId(null)}>
+                        {presentation.deferLabel}
                       </Button>
                     </div>
                   ) : null}
+                  <details className="rounded-lg border border-border/70 bg-background/65 px-3 py-2.5 text-sm">
+                    <summary className="cursor-pointer font-medium">Why am I being asked?</summary>
+                    <p className="mt-2 text-muted-foreground">{item.reason}</p>
+                  </details>
                 </div>
               ) : null}
             </li>

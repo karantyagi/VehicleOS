@@ -1,6 +1,6 @@
 # Owner attention model
 
-**Status:** Accepted product direction; implementation pending
+**Status:** Accepted product direction; Slices 0-1 merged in PR #105 and Slices 2-4 implemented in the owner-attention completion PR
 
 **Decision:** [ADR-018](../../docs-lite/adr/ADR-018-owner-attention-center-and-assistant-work-model.md)
 
@@ -8,8 +8,9 @@ VehicleOS is a quiet personal assistant, not a maintenance dashboard. It
 monitors vehicle details, asks the owner only when the owner is uniquely
 needed, and keeps evidence available without forcing it into view.
 
-This is the canonical vocabulary and behavior for future owner-attention work.
-It describes the target model; it does not claim the new surfaces are deployed.
+This is the canonical vocabulary and behavior for owner-attention work. It
+describes the delivered web interaction model; notification discovery and
+delivery remain separate, deferred product decisions.
 
 ## Owner promise
 
@@ -152,6 +153,25 @@ because this model is accepted.
 | **3 — Car actions and Home** | Act for your car and a compact Home linked to the full queue. | Is Home calm while Your attention shows all work? | Push/email/browser notifications. |
 | **4 — Maintenance context** | Item callouts plus focused decision and deeper evidence reveal. | Can I act without losing service history access? | New evaluators or provider integrations. |
 | **5 — Notification discovery** | Research cadence, channels, controls, and delivery semantics. | Decide whether and how VehicleOS may interrupt me. | Delivery implementation. |
+
+## Current implementation status
+
+Slices 2-4 are delivered together in the owner-attention completion PR:
+
+- **Questions:** Verify and Personalize are distinct, context-specific question
+  types. Every unresolved question remains visible as a compact row; one can
+  be focused at a time. `Review later` closes the row without resolving,
+  accepting, or dismissing anything.
+- **Home and actions:** Home shows one primary next step plus compact counts
+  for **Act for your car** and **Help the assistant**. It links to the full
+  unresolved queue rather than rendering it again.
+- **Maintenance context:** History and schedule callouts open the same shared
+  question in Your attention. Service journeys are evidence on demand rather
+  than default card content.
+
+These surfaces use existing lifecycle items only. They do not make a new OEM
+forecast or trigger-semantic claim. That separate schedule work remains a
+follow-up before any future forecast-oriented Next Care Brief.
 
 ## Product guardrails
 
