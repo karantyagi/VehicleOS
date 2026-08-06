@@ -759,6 +759,9 @@ export function OwnerDashboard() {
     if (target.surface === "history" && target.recordId) {
       setSelectedTimelineId(target.recordId);
     }
+    if (target.surface === "schedule" && target.recordId) {
+      setFocusedScheduleEntryId(target.recordId);
+    }
   };
 
   const headerAction =
