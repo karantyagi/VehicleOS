@@ -263,6 +263,8 @@ export function MaintenanceTimelineSection({
                 onAddService={onAddService}
                 onUpdateService={onUpdateService}
                 onUpdateCurrentMileage={onUpdateCurrentMileage}
+                attentionItems={verifications}
+                onReviewAttentionTask={onReviewVerification}
               />
             ) : null}
           </div>

@@ -9,7 +9,7 @@ import type { MaintenanceRecordDraft } from "@/components/maintenance-record-fie
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { OwnerDueItemsView, ScheduleProjectionRow, TimelineEntry } from "@/lib/console-types";
+import type { OwnerDueItemsView, QueueItem, ScheduleProjectionRow, TimelineEntry } from "@/lib/console-types";
 import type { OwnerContextMemory } from "@vehicleos/domain";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +39,8 @@ type MaintenanceScheduleConsoleProps = {
   onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
   onUpdateCurrentMileage?: (mileage: number) => Promise<void>;
+  attentionItems?: QueueItem[];
+  onReviewAttentionTask?: (taskId: string) => void;
 };
 
 const emptyScheduleCopy = (hasKnowledgeSchedule: boolean) => {
@@ -117,6 +119,8 @@ export function MaintenanceScheduleConsole({
   onAddService,
   onUpdateService,
   onUpdateCurrentMileage,
+  attentionItems = [],
+  onReviewAttentionTask,
 }: MaintenanceScheduleConsoleProps) {
   const [horizon, setHorizon] = useState<ScheduleHorizonView>("near");
 
@@ -188,6 +192,8 @@ export function MaintenanceScheduleConsole({
         onAddService={onAddService}
         onUpdateService={onUpdateService}
         onUpdateCurrentMileage={onUpdateCurrentMileage}
+        attentionItems={attentionItems}
+        onReviewAttentionTask={onReviewAttentionTask}
       />
     );
   }

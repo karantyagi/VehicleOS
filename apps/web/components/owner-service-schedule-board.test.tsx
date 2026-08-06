@@ -2,6 +2,7 @@ import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { OwnerDueItemsView } from "@vehicleos/domain";
+import type { QueueItem } from "@/lib/console-types";
 
 vi.mock("./maintenance-item-trust-actions", () => ({
   MaintenanceItemTrustActions: () => null,
@@ -136,12 +137,18 @@ const tireRotationDueItems: OwnerDueItemsView = {
   ],
 };
 
-const renderBoard = (focusedEntryId: string | null, items = dueItems) =>
+const renderBoard = (
+  focusedEntryId: string | null,
+  items: OwnerDueItemsView = dueItems,
+  attentionItems: QueueItem[] = [],
+) =>
   renderToStaticMarkup(
     <OwnerServiceScheduleBoardView
       dueItems={items}
       currentMileage={38_871}
       focusedEntryId={focusedEntryId}
+      attentionItems={attentionItems}
+      onReviewAttentionTask={vi.fn()}
     />,
   );
 
@@ -162,13 +169,19 @@ describe("OwnerServiceScheduleBoardView service journey", () => {
     expect(markup).not.toContain("Quick Lube");
   });
 
-  it("keeps the service journey collapsed when an item is opened", () => {
+  it("keeps the service journey as a collapsed, deeper evidence reveal", () => {
     const markup = renderBoard("engine-oil");
     const journey = markup.match(/<details[^>]*data-testid="service-journey-engine-oil"[^>]*>/)?.[0];
 
     expect(markup).toContain("Service journey");
     expect(journey).toBeDefined();
     expect(journey).not.toContain("open");
+    expect(markup).toContain("Open for evidence");
+    expect(markup).toContain("38,871 mi");
+    expect(markup).toContain("42,045 mi");
+    expect(markup).toContain("Quick Lube");
+    expect(markup).toContain("Engine oil and filter");
+    expect(markup).toContain("<details");
   });
 
   it("opens the exact tire-rotation card at its personal interval", () => {
@@ -177,6 +190,30 @@ describe("OwnerServiceScheduleBoardView service journey", () => {
     expect(markup).toMatch(/id="maintenance-item-mm-sub-1"[\s\S]*?aria-expanded="true"/);
     expect(markup).toContain("My tire-rotation interval");
     expect(markup).toContain('aria-label="My tire-rotation interval in miles"');
+  });
+
+  it("links a schedule question to the shared attention item", () => {
+    const markup = renderBoard("engine-oil", dueItems, [
+      {
+        taskId: "confirm-oil-date",
+        title: "Confirm service date",
+        reason: "The imported date needs an owner decision.",
+        status: "pending",
+        taskKind: "verification",
+        severity: "blocking",
+        verificationCode: "VERIFY_DATE",
+        target: {
+          surface: "schedule",
+          recordId: "engine-oil",
+          field: "service_date",
+          label: "oil schedule",
+        },
+      },
+    ]);
+
+    expect(markup).toContain("VehicleOS needs your answer");
+    expect(markup).toContain("Can you confirm this service date?");
+    expect(markup).toContain("Open question");
   });
 
   it("uses a concrete time cue before the owner opens a due-soon item", () => {

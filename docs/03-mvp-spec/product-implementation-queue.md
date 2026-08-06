@@ -1,6 +1,6 @@
 # Owner product implementation queue
 
-**Updated:** 2026-08-04
+**Updated:** 2026-08-06
 **Scope:** Owner web attention and capture-first mobile
 **Attention direction:** [ADR-018](../../docs-lite/adr/ADR-018-owner-attention-center-and-assistant-work-model.md) · [owner attention model](./owner-attention-model.md)
 **Architecture:** [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md) · [ADR-016](../../docs-lite/adr/ADR-016-owner-habits-and-owner-level-compliance.md)
@@ -40,7 +40,7 @@ This queue records adopted product direction. It does not authorize notification
 
 ## Owner attention center rollout
 
-**Status:** Slice 1 is implemented in PR #101; deployment and owner dogfood are pending.
+**Status:** Slice 1 merged in PR #105. Slices 2-4 are implemented together in the owner-attention completion PR; notification discovery remains deferred.
 
 **Canonical behavior:** [owner attention model](./owner-attention-model.md)
 
@@ -50,11 +50,11 @@ authorize the next one; owner feedback may change the remaining sequence.
 
 | ID | Priority | Status | Task | Deployment and owner acceptance boundary |
 |----|----------|--------|------|------------------------------------------|
-| ATTN-0 | P0 | Implemented in PR #101 | Record vocabulary, surface roles, attention policy, progressive disclosure, and notification boundary | Product direction is reviewable in ADR-018 and `owner-attention-model.md`; no UI or domain behavior changes in this slice |
-| ATTN-1 | P0 | Implemented — owner dogfood pending | Add the **Your attention** navigation route and stable targets for current unresolved owner work | Exposes existing car actions and assistant questions under distinct labels on shared task state. Home remains unchanged until the next delivery slice; no notification delivery. |
-| ATTN-2 | P0 | Next after ATTN-1 dogfood | Group existing verify/personalize work as **Help the assistant** and retain one shared resolution state across source context and attention | After deployment, imported-record questions are clear, answerable, and never duplicated; the owner explicitly approves the interaction before the next slice |
-| ATTN-3 | P0 | Next after ATTN-2 dogfood and schedule-semantic prerequisites | Group actionable reminders as **Act for your car**, make Home a calm summary linked to the full queue, and add the **Next Care Brief** | After deployment, the brief gives one compact, source-grounded next-care explanation without replacing the full queue. It does not present a mileage forecast as an actual due date, and only describes an earlier trigger when the OEM source explicitly supports it. Home remains reassuring while Your attention shows all open work; no arbitrary item truncation or auto-expanded pile of details |
-| ATTN-4 | P1 | Next after ATTN-3 dogfood | Add compact item-level callouts in Maintenance and move long evidence/history into deeper reveals | After deployment, the owner can act from Maintenance without losing access to the service journey and records |
+| ATTN-0 | P0 | Implemented in PR #105 | Record vocabulary, surface roles, attention policy, progressive disclosure, and notification boundary | Product direction is reviewable in ADR-018 and `owner-attention-model.md`; no UI or domain behavior changes in this slice |
+| ATTN-1 | P0 | Implemented in PR #105 | Add the **Your attention** navigation route and stable targets for current unresolved owner work | Exposes existing car actions and assistant questions under shared task state. Home is refined in the completion PR; no notification delivery. |
+| ATTN-2 | P0 | Implemented in completion PR | Group existing verify/personalize work as **Help the assistant** and retain one shared resolution state across source context and attention | All questions remain visible as compact rows, with one focused question at a time. Context surfaces only link to the shared question; Review later never resolves it. |
+| ATTN-3 | P0 | Implemented in completion PR | Group actionable reminders as **Act for your car** and make Home a calm summary linked to the full queue | Home shows one primary next step plus compact counts for both work types; Your attention keeps every open item visible. It uses existing lifecycle items and makes no new OEM forecast claim. |
+| ATTN-4 | P1 | Implemented in completion PR | Add compact item-level callouts in Maintenance and move long evidence/history into deeper reveals | A related History or Maintenance item links to the same question, while Service journey is opt-in evidence. |
 | ATTN-5 | P1 | Deferred product discovery | Research notification cadence, channels, interruption policy, and owner controls using the proven attention model | Separate decision before any notification delivery build |
 
 ## Schedule semantics and demo evidence
@@ -64,9 +64,9 @@ behavior remains the default until a source-backed semantic says otherwise.
 
 | ID | Priority | Status | Task | Acceptance boundary |
 |----|----------|--------|------|---------------------|
-| OEM-SEM-1 | P0 | Next before ATTN-3 | Carry an explicit OEM trigger semantic through the schedule contract and projector | The runtime can distinguish at least calendar-first, mileage-only, source-backed earlier-of, and minder-or-condition behavior. A mileage forecast never rewrites a hard calendar schedule; it may explain planning only. Only an OEM entry explicitly marked earlier-of can identify the earlier expected trigger. Tests cover each semantic and current calendar-first behavior remains the fallback for unclassified packs |
-| OEM-SEM-2 | P0 | Next before ATTN-3 | Preserve OEM `itemType` from source extract through the validated runtime pack | The runtime pack and public schedule contract retain source values such as inspect, replace, and rotate without reconstructing them with an LLM. Validation and fixture tests prove the field survives extraction, loading, and projection |
-| DEMO-OEM-1 | P0 | Next before ATTN-3 | Audit the Hyundai Elantra demo schedule pack against its OEM evidence | Every demo item used by the owner flow has a traceable source, interval, trigger semantic, and `itemType`; missing or ambiguous source evidence is visible to maintainers and does not support a misleading Next Care Brief claim |
+| OEM-SEM-1 | P0 | Deferred follow-up | Carry an explicit OEM trigger semantic through the schedule contract and projector | The runtime can distinguish at least calendar-first, mileage-only, source-backed earlier-of, and minder-or-condition behavior. This is required before a forecast-oriented Next Care Brief, not for the current attention UI. |
+| OEM-SEM-2 | P0 | Deferred follow-up | Preserve OEM `itemType` from source extract through the validated runtime pack | The runtime pack and public schedule contract retain source values such as inspect, replace, and rotate without reconstructing them with an LLM. This is required before source-semantic explanations expand beyond current lifecycle items. |
+| DEMO-OEM-1 | P0 | Deferred follow-up | Audit the Hyundai Elantra demo schedule pack against its OEM evidence | Required before a future Next Care Brief claims source-specific trigger semantics. It is not represented as completed by the current owner-attention UI. |
 
 ## Explicitly deferred
 

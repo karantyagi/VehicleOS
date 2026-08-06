@@ -150,6 +150,12 @@ export function RemindersConsole({
                     "overflow-hidden rounded-xl border border-border bg-card shadow-sm",
                     isOverdue &&
                       "border-red-500/45 bg-red-500/[0.06] shadow-[inset_3px_0_0_hsl(var(--destructive))]",
+                    isExpanded &&
+                      !isOverdue &&
+                      "border-primary/55 bg-primary/[0.035] ring-2 ring-primary/40 ring-offset-2 ring-offset-background",
+                    isExpanded &&
+                      isOverdue &&
+                      "ring-2 ring-red-500/35 ring-offset-2 ring-offset-background",
                   )}
                 >
                   <button

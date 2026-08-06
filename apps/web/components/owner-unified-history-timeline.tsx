@@ -49,6 +49,7 @@ import {
   type OwnerHistoryFilter,
 } from "@/lib/owner-history-filter";
 import { RMV_EVENT_LABELS } from "@/lib/record-import-types";
+import { getOwnerQuestionPresentation } from "@/lib/owner-attention";
 import { cn } from "@/lib/utils";
 
 type OwnerUnifiedHistoryTimelineProps = {
@@ -1069,8 +1070,14 @@ export function OwnerUnifiedHistoryTimeline({
                                   {importEvidence}
                                 </p>
                               ) : null}
-                              <div className="mt-3 flex flex-wrap gap-2">
-                                {pendingVerification && onReviewVerification ? (
+                              {pendingVerification && onReviewVerification ? (
+                                <aside className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/[0.045] p-3">
+                                  <div>
+                                    <p className="text-sm font-semibold text-foreground">VehicleOS needs your answer</p>
+                                    <p className="mt-0.5 text-xs text-muted-foreground">
+                                      {getOwnerQuestionPresentation(pendingVerification).title}
+                                    </p>
+                                  </div>
                                   <Button
                                     type="button"
                                     size="sm"
@@ -1078,9 +1085,11 @@ export function OwnerUnifiedHistoryTimeline({
                                     disabled={disabled}
                                     onClick={() => onReviewVerification(pendingVerification.taskId)}
                                   >
-                                    Review confirmation
+                                    Open question
                                   </Button>
-                                ) : null}
+                                </aside>
+                              ) : null}
+                              <div className="mt-3 flex flex-wrap gap-2">
                                 {showDuplicateFlag && duplicateCandidate && onMergeService ? (
                                   <Button
                                     type="button"

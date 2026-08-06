@@ -24,7 +24,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { isoDateToLocalDate, todayIsoDate } from "@/lib/date-input";
-import type { TimelineEntry } from "@/lib/console-types";
+import type { QueueItem, TimelineEntry } from "@/lib/console-types";
+import { getOwnerQuestionPresentation } from "@/lib/owner-attention";
 import { cn } from "@/lib/utils";
 
 type OwnerServiceScheduleBoardProps = {
@@ -42,6 +43,8 @@ type OwnerServiceScheduleBoardProps = {
   onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
   onUpdateCurrentMileage?: (mileage: number) => Promise<void>;
+  attentionItems?: QueueItem[];
+  onReviewAttentionTask?: (taskId: string) => void;
 };
 
 type GroupFilter = "All" | "Engine" | "Fluids" | "Filters" | "Brakes" | "Tires" | "Other";
@@ -262,7 +265,9 @@ function ServiceJourney({ row, currentMileage }: { row: OwnerServiceScheduleRow;
           <p id={`service-journey-${row.entryId}`} className="text-sm font-semibold text-foreground">
             Service journey
           </p>
-          <p className="mt-0.5 text-xs text-muted-foreground">Completed service → current odometer → projected next service</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {row.historyEvents.length} completed record{row.historyEvents.length === 1 ? "" : "s"} · Open for evidence
+          </p>
         </div>
         <span className="flex items-center gap-2">
           <Badge variant="secondary">
@@ -334,6 +339,8 @@ function MaintenanceDueCard({
   onAddService,
   onUpdateService,
   onUpdateCurrentMileage,
+  attentionTask,
+  onReviewAttentionTask,
 }: {
   row: OwnerServiceScheduleRow;
   currentMileage: number;
@@ -350,6 +357,8 @@ function MaintenanceDueCard({
   onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
   onUpdateCurrentMileage?: (mileage: number) => Promise<void>;
+  attentionTask?: QueueItem;
+  onReviewAttentionTask?: (taskId: string) => void;
 }) {
   const [intervalInput, setIntervalInput] = useState("");
   const [saveError, setSaveError] = useState("");
@@ -458,7 +467,11 @@ function MaintenanceDueCard({
   return (
     <article
       id={`maintenance-item-${row.entryId}`}
-      className={cn("overflow-hidden rounded-xl border shadow-sm transition-colors", verdictAccentClass(row.verdict))}
+      className={cn(
+        "overflow-hidden rounded-xl border shadow-sm transition-colors",
+        verdictAccentClass(row.verdict),
+        open && "ring-2 ring-primary/40 ring-offset-2 ring-offset-background",
+      )}
     >
       <button
         type="button"
@@ -512,6 +525,20 @@ function MaintenanceDueCard({
               </p>
             </div>
           </div>
+
+          {attentionTask && onReviewAttentionTask ? (
+            <aside className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/[0.045] p-3.5">
+              <div>
+                <p className="text-sm font-semibold">VehicleOS needs your answer</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  {getOwnerQuestionPresentation(attentionTask).title}
+                </p>
+              </div>
+              <Button type="button" size="sm" variant="outline" onClick={() => onReviewAttentionTask(attentionTask.taskId)}>
+                Open question
+              </Button>
+            </aside>
+          ) : null}
 
           <ServiceJourney row={row} currentMileage={currentMileage} />
 
@@ -721,6 +748,8 @@ function OwnerDueItemCard({
   onAddService,
   onUpdateService,
   onUpdateCurrentMileage,
+  attentionTask,
+  onReviewAttentionTask,
 }: {
   item: OwnerDueItem;
   open: boolean;
@@ -737,6 +766,8 @@ function OwnerDueItemCard({
   onAddService?: (draft: MaintenanceRecordDraft) => Promise<void>;
   onUpdateService?: (serviceId: string, patch: Partial<TimelineEntry>) => Promise<void>;
   onUpdateCurrentMileage?: (mileage: number) => Promise<void>;
+  attentionTask?: QueueItem;
+  onReviewAttentionTask?: (taskId: string) => void;
 }) {
   if (item.kind === "ownership" && item.ownershipRenewal) {
     return <OwnershipDueCard renewal={item.ownershipRenewal} open={open} onOpenChange={onOpenChange} />;
@@ -756,6 +787,8 @@ function OwnerDueItemCard({
         onAddService={onAddService}
         onUpdateService={onUpdateService}
         onUpdateCurrentMileage={onUpdateCurrentMileage}
+        attentionTask={attentionTask}
+        onReviewAttentionTask={onReviewAttentionTask}
       />
     );
   }
@@ -774,6 +807,8 @@ export function OwnerServiceScheduleBoardView({
   onAddService,
   onUpdateService,
   onUpdateCurrentMileage,
+  attentionItems = [],
+  onReviewAttentionTask,
 }: OwnerServiceScheduleBoardProps) {
   const [group, setGroup] = useState<GroupFilter>("All");
   const [openTimeGroups, setOpenTimeGroups] = useState<Record<TimeGroup, boolean>>(() =>
@@ -802,6 +837,21 @@ export function OwnerServiceScheduleBoardView({
         .map((item) => item.maintenanceRow),
     [dueItems],
   );
+
+  const attentionByEntryId = useMemo(() => {
+    const next = new Map<string, QueueItem>();
+    for (const item of attentionItems) {
+      if (
+        item.taskKind === "verification" &&
+        item.status === "pending" &&
+        item.target?.surface === "schedule" &&
+        item.target.recordId
+      ) {
+        next.set(item.target.recordId, item);
+      }
+    }
+    return next;
+  }, [attentionItems]);
 
   const filteredItems = useMemo(() => {
     if (!dueItems) return [];
@@ -983,6 +1033,12 @@ export function OwnerServiceScheduleBoardView({
                     onAddService={onAddService}
                     onUpdateService={onUpdateService}
                     onUpdateCurrentMileage={onUpdateCurrentMileage}
+                    attentionTask={
+                      item.kind === "maintenance" && item.maintenanceRow
+                        ? attentionByEntryId.get(item.maintenanceRow.entryId)
+                        : undefined
+                    }
+                    onReviewAttentionTask={onReviewAttentionTask}
                   />
                 ))}
               </div>
