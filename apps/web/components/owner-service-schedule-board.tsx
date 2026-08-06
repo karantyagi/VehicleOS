@@ -252,63 +252,72 @@ function ServiceJourney({ row, currentMileage }: { row: OwnerServiceScheduleRow;
   if (row.historyEvents.length === 0) return null;
 
   return (
-    <section className="space-y-3 rounded-lg border border-border/70 bg-background/65 p-3.5" aria-labelledby={`service-journey-${row.entryId}`}>
-      <div className="flex flex-wrap items-start justify-between gap-2">
+    <details
+      className="group rounded-lg border border-border/70 bg-background/65"
+      aria-labelledby={`service-journey-${row.entryId}`}
+      data-testid={`service-journey-${row.entryId}`}
+    >
+      <summary className="flex cursor-pointer list-none flex-wrap items-start justify-between gap-2 px-3.5 py-3 [&::-webkit-details-marker]:hidden">
         <div>
           <p id={`service-journey-${row.entryId}`} className="text-sm font-semibold text-foreground">
             Service journey
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground">Completed service → current odometer → projected next service</p>
         </div>
-        <Badge variant="secondary">
-          {row.historyEvents.length} record{row.historyEvents.length === 1 ? "" : "s"}
-        </Badge>
-      </div>
+        <span className="flex items-center gap-2">
+          <Badge variant="secondary">
+            {row.historyEvents.length} record{row.historyEvents.length === 1 ? "" : "s"}
+          </Badge>
+          <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden />
+        </span>
+      </summary>
 
-      <MileageTimeline events={row.historyEvents} nextMileage={row.dueMileage} currentMileage={currentMileage} />
+      <div className="space-y-3 border-t border-border/60 px-3.5 pb-3.5 pt-3">
+        <MileageTimeline events={row.historyEvents} nextMileage={row.dueMileage} currentMileage={currentMileage} />
 
-      <dl className="grid gap-2 text-xs sm:grid-cols-3">
-        <div className="rounded-md bg-muted/45 px-2.5 py-2">
-          <dt className="font-medium text-muted-foreground">Last completed</dt>
-          <dd className="mt-0.5 font-medium tabular-nums text-foreground">
-            {formatMi(row.serviceBaseline.performedMileage ?? row.historyEvents[0]?.mileage)}
-          </dd>
-        </div>
-        <div className="rounded-md bg-primary/[0.06] px-2.5 py-2">
-          <dt className="font-medium text-muted-foreground">Current</dt>
-          <dd className="mt-0.5 font-medium tabular-nums text-foreground">{formatMi(currentMileage)}</dd>
-        </div>
-        <div className="rounded-md bg-muted/45 px-2.5 py-2">
-          <dt className="font-medium text-muted-foreground">Next due</dt>
-          <dd className="mt-0.5 font-medium tabular-nums text-foreground">
-            {row.dueMileage ? formatMi(row.dueMileage) : formatDate(row.dueDate)}
-          </dd>
-        </div>
-      </dl>
+        <dl className="grid gap-2 text-xs sm:grid-cols-3">
+          <div className="rounded-md bg-muted/45 px-2.5 py-2">
+            <dt className="font-medium text-muted-foreground">Last completed</dt>
+            <dd className="mt-0.5 font-medium tabular-nums text-foreground">
+              {formatMi(row.serviceBaseline.performedMileage ?? row.historyEvents[0]?.mileage)}
+            </dd>
+          </div>
+          <div className="rounded-md bg-primary/[0.06] px-2.5 py-2">
+            <dt className="font-medium text-muted-foreground">Current</dt>
+            <dd className="mt-0.5 font-medium tabular-nums text-foreground">{formatMi(currentMileage)}</dd>
+          </div>
+          <div className="rounded-md bg-muted/45 px-2.5 py-2">
+            <dt className="font-medium text-muted-foreground">Next due</dt>
+            <dd className="mt-0.5 font-medium tabular-nums text-foreground">
+              {row.dueMileage ? formatMi(row.dueMileage) : formatDate(row.dueDate)}
+            </dd>
+          </div>
+        </dl>
 
-      <div className="overflow-x-auto rounded-lg border border-border/70">
-        <Table className="min-w-[38rem]">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Mileage</TableHead>
-              <TableHead>Shop</TableHead>
-              <TableHead>Line item</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {row.historyEvents.map((event, index) => (
-              <TableRow key={`${event.serviceId}-${index}`}>
-                <TableCell className="whitespace-nowrap">{formatDate(event.serviceDate)}</TableCell>
-                <TableCell className="text-right tabular-nums">{formatMi(event.mileage)}</TableCell>
-                <TableCell>{event.shop}</TableCell>
-                <TableCell className="min-w-[16rem] whitespace-normal">{event.lineItem}</TableCell>
+        <div className="overflow-x-auto rounded-lg border border-border/70">
+          <Table className="min-w-[38rem]">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Date</TableHead>
+                <TableHead className="text-right">Mileage</TableHead>
+                <TableHead>Shop</TableHead>
+                <TableHead>Line item</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {row.historyEvents.map((event, index) => (
+                <TableRow key={`${event.serviceId}-${index}`}>
+                  <TableCell className="whitespace-nowrap">{formatDate(event.serviceDate)}</TableCell>
+                  <TableCell className="text-right tabular-nums">{formatMi(event.mileage)}</TableCell>
+                  <TableCell>{event.shop}</TableCell>
+                  <TableCell className="min-w-[16rem] whitespace-normal">{event.lineItem}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
-    </section>
+    </details>
   );
 }
 

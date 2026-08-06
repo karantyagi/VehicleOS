@@ -70,10 +70,76 @@ const dueItems: OwnerDueItemsView = {
   ],
 };
 
-const renderBoard = (focusedEntryId: string | null) =>
+const tireRotationDueItems: OwnerDueItemsView = {
+  ...dueItems,
+  items: [
+    {
+      ...dueItems.items[0]!,
+      id: "maintenance:mm-sub-1",
+      title: "Rotate tires",
+      maintenanceRow: {
+        ...dueItems.items[0]!.maintenanceRow!,
+        entryId: "mm-sub-1",
+        serviceName: "Rotate tires",
+        displayName: "Rotate tires",
+        mmCode: "1",
+        oemRuleLabel: "7,500 mi / 12 mo",
+        intelligence: {
+          itemKind: "tire_rotation",
+          whyNow: "Your documented tire rotations support a personal interval.",
+          reminderConfidence: "medium",
+          axes: [],
+          intervalRecommendation: {
+            status: "active",
+            recommendedMiles: 6_000,
+            projectedDueMileage: 42_045,
+            recentGapsMiles: [6_200, 5_800, 6_000],
+            recentAverageMiles: 6_000,
+            recentMedianMiles: 6_000,
+            evidenceNote: "3 documented tire rotations",
+            rationale: "Your recent tire rotations are consistent at about 6,000 miles.",
+            confidence: "medium",
+            activeSource: "oem",
+            activeLabel: "7,500 mi / 12 mo",
+          },
+          actionRecommendation: {
+            status: "upcoming",
+            method: null,
+            providerName: null,
+            providerLocation: null,
+            expectedTimeLabel: "Not available",
+            expectedCost: {
+              amount: null,
+              currency: "USD",
+              label: "Cost unavailable",
+              basis: "unknown",
+              requiresConfirmation: false,
+            },
+            whyThisOption: [],
+            ownerFit: [],
+            confidence: { provider: "not_scored", cost: "not_scored", booking: "not_scored" },
+            nextAction: { label: "", url: null, verifiedAt: null },
+            evidenceIds: [],
+            confirmationPrompt: null,
+          },
+          serviceAction: {
+            entryId: "mm-sub-1",
+            canonicalServiceId: "generic.tire_rotation",
+            recordLineItem: "Tires rotated",
+            baselineServiceId: "service-rotation-1",
+            baselineServiceDate: "2025-12-20",
+            baselineMileage: 34_045,
+          },
+        },
+      },
+    },
+  ],
+};
+
+const renderBoard = (focusedEntryId: string | null, items = dueItems) =>
   renderToStaticMarkup(
     <OwnerServiceScheduleBoardView
-      dueItems={dueItems}
+      dueItems={items}
       currentMileage={38_871}
       focusedEntryId={focusedEntryId}
     />,
@@ -96,15 +162,21 @@ describe("OwnerServiceScheduleBoardView service journey", () => {
     expect(markup).not.toContain("Quick Lube");
   });
 
-  it("shows the timeline and every matching service record on the first item expansion", () => {
+  it("keeps the service journey collapsed when an item is opened", () => {
     const markup = renderBoard("engine-oil");
+    const journey = markup.match(/<details[^>]*data-testid="service-journey-engine-oil"[^>]*>/)?.[0];
 
     expect(markup).toContain("Service journey");
-    expect(markup).toContain("Completed service");
-    expect(markup).toContain("38,871 mi");
-    expect(markup).toContain("42,045 mi");
-    expect(markup).toContain("Quick Lube");
-    expect(markup).toContain("Engine oil and filter");
+    expect(journey).toBeDefined();
+    expect(journey).not.toContain("open");
+  });
+
+  it("opens the exact tire-rotation card at its personal interval", () => {
+    const markup = renderBoard("mm-sub-1", tireRotationDueItems);
+
+    expect(markup).toMatch(/id="maintenance-item-mm-sub-1"[\s\S]*?aria-expanded="true"/);
+    expect(markup).toContain("My tire-rotation interval");
+    expect(markup).toContain('aria-label="My tire-rotation interval in miles"');
   });
 
   it("uses a concrete time cue before the owner opens a due-soon item", () => {
