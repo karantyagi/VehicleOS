@@ -22,7 +22,7 @@ export const privacySections = [
     id: "overview",
     title: "Overview",
     paragraphs: [
-      "VehicleOS is a reminding assistant for vehicle ownership. During early access we collect only what we need to run the hosted app at app.vehicleos.app — not to sell data or build ad profiles.",
+      "VehicleOS is an owner-controlled maintenance decision system. During early access we collect only what we need to run the hosted app at app.vehicleos.app — not to sell data or build ad profiles.",
     ],
   },
   {
@@ -69,7 +69,7 @@ export const privacySections = [
       "Vercel — hosts the hosted early-access app and API route handlers.",
       "Supabase — hosts Postgres and authentication (Google/GitHub OAuth).",
       "Geoapify — receives a shop name, US scope, and optional city hint only to propose a shop location. We do not send VINs, mileage, or imported files.",
-      "We do not share your vehicle data with CARFAX, dealers, or LLM providers as part of the golden-path loop today.",
+      "The owner product does not send receipt photos or PDFs to an LLM today. A separate consented CARFAX research study does not write to owner history.",
     ],
   },
   {
@@ -95,7 +95,7 @@ export const termsSections = [
     title: "What we provide",
     bullets: [
       "A hosted workspace to store vehicle context you confirm — receipts, notes, manuals, and schedule rules.",
-      "Recommendations and reminders driven by rules-first policy — calendar-first nudges; Owner verification when data conflicts.",
+      "Owner-controlled maintenance history and source-aware next-action explanations driven by rules-first policy.",
       "Early access may change, pause, or limit features without notice while we dogfood and improve the product.",
     ],
   },
@@ -175,7 +175,7 @@ export const securitySections = [
     bullets: [
       "The schedule engine is rules-first — deterministic OEM packs and alias matching, not an LLM deciding what is due.",
       "Import enrichment may call Geoapify location lookup for a shop city/state — you confirm before we save. Location data by Geoapify and OpenStreetMap contributors.",
-      "LLM-assisted extraction for receipts and messy PDFs is rolling out on async paths — documented before fields leave your account.",
+      "The owner product does not call an LLM for receipt photos or PDFs today. The separate consented CARFAX research study is isolated from owner history and makes no production-readiness claim.",
       "Golden-path confirmations still use structured fields you review in the UI — nothing auto-commits without owner action.",
     ],
   },

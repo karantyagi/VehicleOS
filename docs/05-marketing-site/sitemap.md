@@ -1,67 +1,64 @@
-# Marketing Site Sitemap
+# Marketing site scope
 
-**Status:** Initial plan (v0). Grow pages only when each link has real content.
+**Status:** Scope frozen for the January-February 2027 interview cycle
+**App:** `apps/marketing` -> `vehicleos.app`
+**Owner app:** `apps/web` -> `app.vehicleos.app`
 
-**App:** `apps/marketing` → deploy to `vehicleos.app` (product site)
-**Product app:** `apps/web` → deploy to `app.vehicleos.app`
+## Core intent
 
----
+The marketing site is the owner-facing trust and activation front door for a
+narrow, invite-only early-access product. Its job is to help a qualified owner
+understand the supported value, trust why a next action is shown, and enter the
+app to get that value.
 
-## Phase 0 — Launch (minimal)
+It is not a cold-call landing page for interviews. A hiring reviewer should be
+able to verify that a real, carefully scoped product exists, then follow the
+GitHub link for architecture and evaluation evidence.
 
-Single-page home + small footer. No mega-menu.
+The owner activation event is: select a supported vehicle, confirm a service
+fact, and see an explainable next action.
 
-| Route | Purpose |
-|-------|---------|
-| `/` | Hero, problem, core loop diagram, demo embed, CTAs |
-| `/how-it-works` | Vertical slice story (optional separate page or anchor) |
-| External | GitHub, Loom demo, ADRs |
-
-**Footer columns (minimal):**
+## One-page product story
 
 ```text
-Product          Learn            Trust            Connect
-────────         ─────            ─────            ───────
-How it works     Docs (GitHub)    Privacy          GitHub
-Demo             Architecture     Security         Contact
-Roadmap          —                —                —
+confirmed maintenance evidence
+  -> deterministic, source-aware next action
+  -> owner schedules, completes, corrects, or declines
+  -> auditable recalculation
 ```
 
----
+| Route | Purpose | Scope rule |
+| --- | --- | --- |
+| `/` | Owner story, five-policy focus, product loop, existing video walkthrough, and vehicle-support CTA | The only product-marketing page needed now |
+| `/privacy` | Plain-language data collection, retention, and research boundary | Must say the owner product does not send PDFs/receipt photos to an LLM today |
+| `/security` | Hosting, access control, deterministic policy, and research isolation | Must not claim SOC 2, enterprise certification, or production inference controls that do not exist |
+| `/terms` | Early-access expectations and safe-use rules | Must say VehicleOS is not mechanical advice |
+| External GitHub link | Architecture and evaluation proof | Link only to current, scoped ADRs and evaluation methodology |
 
-## Phase 1 — v1 live
+## Homepage rules
 
-Add journey-shaped Product links (Linear-inspired):
+- Lead with the owner outcome: confirmed history and one explainable next action.
+- Use **Check your car** as the single primary CTA. The support result can lead a
+  supported owner into the app.
+- Keep the existing video demo section intact while YouTube is the active host.
+- Keep technical proof low prominence: a footer link to GitHub, not engineering
+  marketing or a second homepage audience.
+- State only the product capability that is current and tested. Tire rotation is
+  the implemented reference policy; the other four policies are in progress.
 
-| Route | Purpose |
-|-------|---------|
-| `/product/intake` | Receipt upload; future email ingest |
-| `/product/recommend` | What's due, why, cost bands |
-| `/architecture` | Diagram + ADR links |
-| `/roadmap` | Honest v1 / v2 / v3 |
-| `/changelog` | Version tags as chapters |
-| `/about` | Founder story + AI-native operating model |
-| `/privacy` | **Data privacy** — plain English: what we collect, why, retention, delete/export, no selling data |
-| `/security` | **Data security** — encryption, hosting, access controls, Connect local import, AI data boundaries (or merge with `/privacy` as Trust section) |
+## Claims prohibited on the home page
 
-**Ship privacy/security before or with hosted app** — Owners path requires trust. See `strategy/task-queue.md` P2 #12.
+- Always-on reminders or notification delivery.
+- General AI, automatic OCR/vision extraction, or CARFAX import as an owner
+  product capability.
+- Provider ranking, price/offer estimates, bookings, free-service guarantees,
+  or dealership integrations.
+- Competitive comparison against ChatGPT, Gemini, CARFAX, or portal reports.
+- CARFAX research cards, roadmap ladders, ship logs, agent factories, job
+  queues, workers, vector databases, or "Staff-level" marketing language.
 
-**CTA pattern:** "Open app" → `app.vehicleos.app` | "View source" → GitHub
+## Change rule
 
----
-
-## Phase 2 — v2+ (Vercel-inspired depth)
-
-Add platform layers when real: Data (lakehouse), Developers, Security, Partners.
-
-Expand footer only when the page exists — no placeholder nav.
-
----
-
-## Design references
-
-- [Linear Asks](https://linear.app/asks) — user journey Product column
-- [Vercel AI](https://vercel.com/ai) — platform depth when v2 ships
-- Infrastructure aesthetic — diagrams over stock photography
-
-Full strategy: workspace `strategy/showcase_strategy.md`.
+Add a marketing route only when it supports a current owner decision or a
+verified product demonstration. Architecture detail belongs in the public
+repository, not in a growing marketing navigation tree.
