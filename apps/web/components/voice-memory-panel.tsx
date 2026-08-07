@@ -30,6 +30,7 @@ type ServiceNotePanelProps = {
     transcript?: string;
   }) => void;
   onError: (message: string) => void;
+  onDraftActivityChange?: (hasDraft: boolean) => void;
 };
 
 type ServiceNoteForm = {
@@ -55,6 +56,7 @@ export function ServiceNotePanel({
   isOnline = true,
   onSubmitted,
   onError,
+  onDraftActivityChange,
 }: ServiceNotePanelProps) {
   const speech = useSpeechRecognition();
   const [captureChannel, setCaptureChannel] = useState<"text" | "voice">("text");
@@ -100,6 +102,12 @@ export function ServiceNotePanel({
   const hasNoteText = noteText.length > 0;
   const lastKnownMileage = new Intl.NumberFormat("en-US").format(defaultMileage);
   const draftStorageKey = serviceNoteDraftStorageKey(vehicleId);
+
+  useEffect(() => {
+    onDraftActivityChange?.(hasNoteText);
+  }, [hasNoteText, onDraftActivityChange]);
+
+  useEffect(() => () => onDraftActivityChange?.(false), [onDraftActivityChange]);
 
   useEffect(() => {
     if (!persistDraft || !isDraftReady) return;

@@ -13,9 +13,13 @@ type OwnerReceiptHandoffProps = {
   apiBase: string;
   currentMileage: number;
   disabled?: boolean;
+  initialFile?: File | null;
   onHandedOff: (result: { needsReview: boolean }) => void;
   onError: (message: string) => void;
   onRouteOwnership?: () => void;
+  onInitialFileStored?: () => void;
+  onInitialFileDiscarded?: () => void;
+  onPendingChange?: (pending: boolean) => void;
 };
 
 export function OwnerReceiptHandoff({
@@ -23,9 +27,13 @@ export function OwnerReceiptHandoff({
   apiBase,
   currentMileage,
   disabled = false,
+  initialFile = null,
   onHandedOff,
   onError,
   onRouteOwnership,
+  onInitialFileStored,
+  onInitialFileDiscarded,
+  onPendingChange,
 }: OwnerReceiptHandoffProps) {
   const [uploadedReceipt, setUploadedReceipt] = useState<UploadedReceipt | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -106,8 +114,12 @@ export function OwnerReceiptHandoff({
         apiBase={apiBase}
         disabled={disabled || isSubmitting}
         minimal
+        initialFile={initialFile}
         onUploaded={setUploadedReceipt}
         onError={onError}
+        onInitialFileStored={onInitialFileStored}
+        onInitialFileDiscarded={onInitialFileDiscarded}
+        onPendingChange={onPendingChange}
       />
       {captureIntent ? (
         <Badge variant="outline" className="text-[10px]">

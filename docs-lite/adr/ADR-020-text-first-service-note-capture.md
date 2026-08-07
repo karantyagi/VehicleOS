@@ -21,6 +21,8 @@ This decision is deliberately about record capture. It does not establish a gene
 5. **Mobile remains capture-only.** The PWA does not gain a second history, attention, notification, chat, or workflow-recommendation surface.
 6. **Contextual starters remain deterministic and owner-controlled.** The PWA may show up to two clipped, deduplicated line-item labels from the authenticated vehicle's existing history alongside fixed common-service starters. It never generates a service suggestion, calls an LLM, or changes the note without an owner tap.
 7. **Saving ends in a clear capture completion state.** The PWA confirms the saved artifact and offers either another capture or a Home handoff. This is in-app feedback, not notification delivery.
+8. **PWA sharing remains owner-confirmed and local-first.** Home-screen shortcuts open directly to the short **Note** or **Receipt** flow. Where an installed PWA browser supports Web Share Target, a shared image/PDF is held only in browser storage, shown with its selected vehicle, and uploads only after the owner explicitly chooses **Upload receipt**. Unsupported browsers retain the normal camera/file path.
+9. **Capture stays vehicle-safe and retryable.** The current capture target is always visible and vehicle switching is locked while a note or receipt is unfinished. A failed direct receipt upload is retained in browser storage under that vehicle until the owner chooses **Retry upload** or discards it. There is no background retry, delayed upload, or local queue of confirmed vehicle records.
 
 ## Consequences
 
@@ -29,6 +31,8 @@ This decision is deliberately about record capture. It does not establish a gene
 - Text capture works on every supported PWA browser, including those without speech recognition.
 - An accidental PWA reload does not throw away an in-progress note, without creating a second cloud record or expanding the capture surface into offline sync.
 - A short, explicit offline state lets an owner continue writing safely while making the network boundary clear.
+- A shared receipt can enter the installed PWA without a server-side redirect uploading it to an arbitrary vehicle; the owner sees and confirms its target first.
+- A compact **Saved just now** trail says whether a record is ready in history or has one outstanding confirmation, without creating a second mobile review surface.
 - Existing history can reduce typing without treating a prior service as a prediction, recommendation, or automatic action.
 - Owners have one understandable record to inspect before it becomes maintenance history.
 - Audit history distinguishes manual text from browser dictation without inventing a server-side audio pipeline.
@@ -37,6 +41,7 @@ This decision is deliberately about record capture. It does not establish a gene
 ### Negative
 
 - Browser dictation quality depends on the owner's browser and device.
+- Local receipt recovery depends on browser storage; clearing site data removes a pending file, and Web Share Target is not available in every installed-PWA browser.
 - The existing deterministic parser remains intentionally narrow; it may require owner correction.
 - A later general-language or messaging experience would need its own public contract, privacy boundary, evaluation plan, and explicit product decision.
 
