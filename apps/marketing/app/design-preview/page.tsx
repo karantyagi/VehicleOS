@@ -5,7 +5,6 @@ import {
   siteConfig,
 } from "../../lib/site-config";
 import { LogoMark } from "../../lib/logo-marks";
-import { PositioningPreview } from "./positioning-preview";
 import "./preview.css";
 
 function ShippedDemo() {
@@ -42,7 +41,6 @@ export default function DesignPreviewPage() {
           </Link>
           <nav className="nav-links">
             <Link href="/">← Main site</Link>
-            <a href="#positioning-preview">Positioning A/B</a>
             <a href={`${siteConfig.appUrl}/design-preview`}>Product design preview</a>
           </nav>
         </div>
@@ -127,8 +125,6 @@ export default function DesignPreviewPage() {
             <p className="shipped-note">Nav CTA: Open the app → app.vehicleos.app</p>
           </div>
         </section>
-
-        <PositioningPreview />
 
         <section className="preview-section">
           <span className="section-label">Demo</span>

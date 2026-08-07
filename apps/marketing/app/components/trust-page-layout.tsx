@@ -50,7 +50,7 @@ export function TrustPageLayout({ title, updated, children }: TrustPageLayoutPro
               <LogoMark />
               {siteConfig.name}
             </Link>
-            <p>Your car&apos;s reminding assistant — free early access.</p>
+            <p>Confirmed history and one explainable next action — free early access.</p>
           </div>
           <div className="footer-col">
             <h3>Trust</h3>

@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { OrbitIcon } from "../../../packages/ui/src/logo-mark";
 
 export const runtime = "edge";
-export const alt = "VehicleOS — Your car's reminding assistant";
+export const alt = "VehicleOS — Evidence-backed maintenance decisions";
 export const size = { width: 1280, height: 640 };
 export const contentType = "image/png";
 
@@ -48,13 +48,13 @@ export default function OpenGraphImage() {
             maxWidth: 900,
           }}
         >
-          Stop planning. Just show up.
+          Know what your car needs next.
         </p>
         <p style={{ margin: "20px 0 0", fontSize: 26, color: "#a1a1aa", maxWidth: 820, lineHeight: 1.4 }}>
-          Hire a reminding assistant for your car — free early access
+          Confirmed history and one explainable next action — free early access
         </p>
       </div>
     ),
-    { ...size }
+    { ...size },
   );
 }
