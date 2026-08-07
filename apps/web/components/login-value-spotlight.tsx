@@ -80,37 +80,43 @@ export function LoginValueSpotlight() {
 
   return (
     <figure
-      className="login-spotlight relative mx-auto flex w-full max-w-[30rem] flex-col px-2 outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-4 focus-visible:ring-offset-background sm:px-4 lg:max-w-[32rem]"
+      className="login-spotlight login-spotlight--refined relative mx-auto flex w-full max-w-[30rem] flex-col px-2 outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-4 focus-visible:ring-offset-background sm:px-4 lg:max-w-[32rem]"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocus={() => setIsPaused(true)}
       onBlur={handleBlur}
-      aria-label="Why we built VehicleOS"
+      aria-label="VehicleOS owner benefits"
     >
-      <header className="mb-8 flex shrink-0 items-stretch gap-3 pl-1 sm:pl-2">
-        <span className="login-spotlight__eyebrow-accent w-0.5 shrink-0 rounded-full" aria-hidden />
-        <div className="min-w-0 pt-0.5">
-          <p className="text-[13px] font-medium uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
-            Why we built
-          </p>
-          <p className="mt-0.5 text-lg font-semibold tracking-tight text-primary sm:text-xl">VehicleOS</p>
+      <header className="login-spotlight__header mb-8 flex shrink-0 items-center justify-between gap-4 pl-1 sm:pl-2">
+        <div className="flex min-w-0 items-stretch gap-3">
+          <span className="login-spotlight__eyebrow-accent h-10 w-0.5 shrink-0 rounded-full" aria-hidden />
+          <div className="min-w-0 pt-0.5">
+            <p className="text-[12px] font-medium uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+              Care, without the clutter
+            </p>
+            <p className="mt-0.5 text-lg font-semibold tracking-tight text-primary sm:text-xl">VehicleOS</p>
+          </div>
         </div>
+        <span className="login-spotlight__status shrink-0">
+          <span className="login-spotlight__status-dot" aria-hidden />
+          Calm by default
+        </span>
       </header>
 
-      <div className="relative shrink-0" ref={listRef} style={{ minHeight: LIST_MIN_HEIGHT }}>
+      <div className="login-spotlight__stage relative shrink-0" ref={listRef} style={{ minHeight: LIST_MIN_HEIGHT }}>
         <div
-          className="login-spotlight__rail pointer-events-none absolute bottom-2 left-2 top-2 w-px"
+          className="login-spotlight__rail pointer-events-none absolute bottom-3 left-5 top-3 w-px"
           aria-hidden
         />
         <div
-          className="login-spotlight__rail-dot pointer-events-none absolute left-2 z-[1] h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          className="login-spotlight__rail-dot pointer-events-none absolute left-5 z-[1] h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{ top: railDotTop }}
           aria-hidden
         />
 
-        <div className="relative space-y-1 pl-7" role="list">
+        <div className="relative space-y-1 px-1 py-1 pl-10" role="list">
           {LOGIN_VALUE_CARDS.map((card, index) => {
             const isActive = index === activeIndex;
             return (
@@ -126,7 +132,7 @@ export function LoginValueSpotlight() {
                 onFocus={() => goToIndex(index)}
                 onClick={() => goToIndex(index)}
                 className={cn(
-                  "login-spotlight__row block w-full rounded-xl px-4 py-3 text-left sm:px-5",
+                  "login-spotlight__row block w-full rounded-2xl px-4 py-3.5 text-left sm:px-5",
                   isActive ? "login-spotlight__row--active" : "login-spotlight__row--idle",
                 )}
               >
@@ -134,8 +140,8 @@ export function LoginValueSpotlight() {
                   className={cn(
                     "login-spotlight__title flex min-h-[2rem] items-center font-medium tracking-tight sm:min-h-[2.25rem]",
                     isActive
-                      ? "login-spotlight__title--active text-2xl text-slate-700 dark:text-slate-100"
-                      : "login-spotlight__title--idle text-lg text-slate-400 dark:text-slate-500",
+                      ? "login-spotlight__title--active text-[1.65rem] text-slate-700 dark:text-slate-100 sm:text-[1.8rem]"
+                      : "login-spotlight__title--idle text-[1.05rem] text-slate-400 dark:text-slate-500 sm:text-lg",
                   )}
                 >
                   {card.title}
@@ -148,7 +154,7 @@ export function LoginValueSpotlight() {
                   aria-hidden={!isActive}
                 >
                   <div className="overflow-hidden">
-                    <p className="text-[17px] leading-relaxed text-slate-500 dark:text-slate-400">{card.body}</p>
+                    <p className="text-[15px] leading-6 text-slate-500 dark:text-slate-400 sm:text-base">{card.body}</p>
                   </div>
                 </div>
               </button>
@@ -158,7 +164,7 @@ export function LoginValueSpotlight() {
       </div>
 
       <figcaption className="sr-only">
-        Six reasons owners use VehicleOS. Arrow keys move the spotlight.
+        Five reasons owners use VehicleOS. Arrow keys move the spotlight.
       </figcaption>
     </figure>
   );

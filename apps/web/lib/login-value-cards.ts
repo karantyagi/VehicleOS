@@ -1,38 +1,38 @@
-/** Login spotlight stack — sync with assistant-product-model.md § Login page · oem-first-product-shape.md */
+/** Login spotlight stack - sync with assistant-product-model.md and oem-first-product-shape.md. */
 export type LoginValueCard = {
   id: string;
   title: string;
   body: string;
 };
 
-/** OEM-first arc: pain → schedule wedge → attention → quiet background → you execute */
+/** OEM-first arc: less planning, clearer schedule, useful attention, quiet background, remembered history. */
 export const LOGIN_VALUE_CARDS: LoginValueCard[] = [
   {
     id: "pain",
-    title: "Stop being the planner",
-    body: "Intervals, receipts, and “when was that?” — off your plate.",
+    title: "Stop carrying the plan",
+    body: "Intervals, receipts, and service dates - all in one clear place.",
   },
   {
     id: "schedule",
-    title: "Verified OEM schedule built in",
-    body: "Pick your car — factory intervals load, no manual upload.",
+    title: "Factory schedule, ready",
+    body: "Choose your car. Its maintenance rhythm comes with it.",
   },
   {
     id: "reminders",
-    title: "Know what needs attention",
-    body: "Oil, tires, inspection — this week first, with a plain-English why.",
+    title: "Know what matters next",
+    body: "A clear next step, with a plain-English reason when timing matters.",
   },
   {
     id: "quiet",
-    title: "Quiet unless you need it",
-    body: "No daily logbook and no premature notification prompts.",
+    title: "Quiet when nothing matters",
+    body: "No daily logbook. No needless noise.",
   },
   {
     id: "execute",
-    title: "You execute, it remembers",
-    body: "You book and show up — add CARFAX anytime to sharpen dates.",
+    title: "You do the service. It remembers.",
+    body: "Keep the useful details close when you need them later.",
   },
 ];
 
-/** Auto-advance dwell between spotlight rows (ms) */
+/** Auto-advance dwell between spotlight rows (ms). */
 export const LOGIN_SPOTLIGHT_MS = 2200;
