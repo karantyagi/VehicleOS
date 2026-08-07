@@ -97,10 +97,12 @@ The current mobile scope is intentionally narrow:
 
 - choose or confirm the vehicle;
 - capture a receipt or maintenance image;
-- record a voice note;
+- type or dictate a service note;
 - show upload, retry, and success state.
 
 The mobile phase does not duplicate the web review desk, full history, schedule, owner-attention workflow, or notification center. A capture may link the owner back to the web app when review is required.
+
+Text is the canonical service-note capture record. Browser dictation is an optional convenience that fills the same editable field; it is not a separate voice assistant or notification channel. See ADR-020.
 
 ## Consequences
 
