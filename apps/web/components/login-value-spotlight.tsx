@@ -9,10 +9,10 @@ export function LoginValueSpotlight() {
       <header className="login-concierge__intro relative z-[1] max-w-xl">
         <p className="login-concierge__eyebrow">Quiet concierge</p>
         <h2 className="login-concierge__title mt-3 text-balance text-3xl font-semibold tracking-[-0.035em] text-foreground sm:text-4xl">
-          Your car, in calm order.
+          Your car, handled.
         </h2>
         <p className="login-concierge__story mt-3 max-w-lg text-[15px] leading-7 text-muted-foreground sm:text-base">
-          The schedule, the receipts, and the next useful step — present when needed, quiet when not.
+          Start with your car. VehicleOS keeps the rest in calm order.
         </p>
       </header>
 
@@ -23,10 +23,12 @@ export function LoginValueSpotlight() {
         <div className="login-concierge__orb login-concierge__orb--two" />
         <div className="login-concierge__road" />
 
-        <div className="login-concierge__card login-concierge__card--quiet">
-          <span className="login-concierge__status-dot" />
-          <p>Quiet by default</p>
-          <strong>Only what matters</strong>
+        <div className="login-concierge__focus">
+          <span className="login-concierge__focus-index">01</span>
+          <div>
+            <p>One thing at a time</p>
+            <strong>Start with your car</strong>
+          </div>
         </div>
 
         <div className="login-concierge__vehicle">
@@ -42,31 +44,35 @@ export function LoginValueSpotlight() {
           </svg>
         </div>
 
-        <div className="login-concierge__card login-concierge__card--schedule">
-          <p>Factory schedule</p>
-          <strong>Built around your car</strong>
-          <span>Clear intervals. Clear reasons.</span>
-        </div>
+        <div className="login-concierge__scene-label">VehicleOS</div>
 
-        <div className="login-concierge__card login-concierge__card--history">
-          <span className="login-concierge__history-icon">↗</span>
-          <div>
-            <p>Remembered</p>
-            <strong>Every service detail</strong>
+        <div className="login-concierge__horizon">
+          <div className="login-concierge__horizon-item login-concierge__horizon-item--now">
+            <span className="login-concierge__horizon-mark" />
+            <div>
+              <p>Now</p>
+              <strong>Your car</strong>
+            </div>
+          </div>
+          <div className="login-concierge__horizon-item">
+            <span className="login-concierge__horizon-mark" />
+            <div>
+              <p>Soon</p>
+              <strong>OEM schedule</strong>
+            </div>
+          </div>
+          <div className="login-concierge__horizon-item">
+            <span className="login-concierge__horizon-mark" />
+            <div>
+              <p>Later</p>
+              <strong>History remembered</strong>
+            </div>
           </div>
         </div>
-
-        <div className="login-concierge__scene-label">VehicleOS</div>
-      </div>
-
-      <div className="login-concierge__benefits mt-5 grid grid-cols-3 gap-2.5 text-center sm:gap-3">
-        <span className="login-concierge__benefit">OEM-aware</span>
-        <span className="login-concierge__benefit">Next step, explained</span>
-        <span className="login-concierge__benefit">History remembered</span>
       </div>
 
       <figcaption className="sr-only">
-        VehicleOS keeps your car&apos;s maintenance schedule, history, and next useful step in calm order.
+        VehicleOS starts with your car, then keeps its maintenance schedule and service history in calm order.
       </figcaption>
     </figure>
   );
