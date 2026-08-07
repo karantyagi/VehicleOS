@@ -56,6 +56,61 @@ function DemoSection() {
   );
 }
 
+function HeroDecisionPreview() {
+  return (
+    <aside className="decision-preview reveal-card" aria-label="Example owner decision preview">
+      <div className="decision-preview-topbar">
+        <span className="decision-window-mark" aria-hidden="true" />
+        <span>YOUR VEHICLE</span>
+        <span className="decision-live"><i aria-hidden="true" /> REVIEWABLE</span>
+      </div>
+
+      <div className="decision-preview-body">
+        <div className="decision-preview-label">NEXT ACTION</div>
+        <div className="decision-preview-title-row">
+          <div className="decision-preview-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M6.5 4.5a7.5 7.5 0 1 0 10.8 1.1" />
+              <path d="M17.3 3.7h3.1v3.1" />
+              <path d="M17.4 6.8 20.4 3.8" />
+              <path d="M12 8.2v4l2.8 1.7" />
+            </svg>
+          </div>
+          <div>
+            <h2>Tire rotation</h2>
+            <p>Review the evidence, then decide.</p>
+          </div>
+        </div>
+
+        <div className="decision-preview-reason">
+          <span className="decision-preview-reason-dot" aria-hidden="true" />
+          <span>Vehicle history needs your confirmation</span>
+        </div>
+
+        <dl className="decision-preview-facts">
+          <div>
+            <dt>Evidence</dt>
+            <dd>Service record attached</dd>
+          </div>
+          <div>
+            <dt>Policy</dt>
+            <dd>Source-aware schedule</dd>
+          </div>
+          <div>
+            <dt>Your control</dt>
+            <dd>Act, correct, or decline</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div className="decision-preview-footer">
+        <span>EXPLAINABLE BEFORE YOU ACT</span>
+        <span className="decision-preview-arrow" aria-hidden="true">↗</span>
+      </div>
+    </aside>
+  );
+}
+
 export default function HomePage() {
   return (
     <div className="page">
@@ -80,36 +135,42 @@ export default function HomePage() {
       <main>
         <section className="hero shell-wide" id="top">
           <div className="hero-grid-bg" aria-hidden="true" />
-          <div className="hero-content">
-            <RevealOnScroll>
-              <div className="pill-row">
-                {heroPills.map((pill) => (
-                  <span className="pill" key={pill}>
-                    {pill === heroPills[0] ? (
-                      <>
-                        <span className="pill-dot" />
-                        {pill}
-                      </>
-                    ) : (
-                      pill
-                    )}
-                  </span>
-                ))}
-              </div>
+          <div className="hero-layout">
+            <div className="hero-content">
+              <RevealOnScroll>
+                <div className="pill-row">
+                  {heroPills.map((pill) => (
+                    <span className="pill" key={pill}>
+                      {pill === heroPills[0] ? (
+                        <>
+                          <span className="pill-dot" />
+                          {pill}
+                        </>
+                      ) : (
+                        pill
+                      )}
+                    </span>
+                  ))}
+                </div>
 
-              <h1 className="hero-headline">
-                {heroContent.headline} <span className="highlight highlight-animated">{heroContent.headlineHighlight}</span>
-              </h1>
+                <h1 className="hero-headline">
+                  {heroContent.headline} <span className="highlight highlight-animated">{heroContent.headlineHighlight}</span>
+                </h1>
 
-              <p className="hero-hook">{heroContent.hook}</p>
-              <p className="hero-sub">{heroContent.subline}</p>
+                <p className="hero-hook">{heroContent.hook}</p>
+                <p className="hero-sub">{heroContent.subline}</p>
 
-              <div className="cta-row">
-                <a className="btn btn-primary" href="#supported">
-                  Check your car
-                </a>
-              </div>
-              <p className="hero-cta-note">{releaseNote.detail}</p>
+                <div className="cta-row">
+                  <a className="btn btn-primary" href="#supported">
+                    Check your car <span aria-hidden="true">→</span>
+                  </a>
+                </div>
+                <p className="hero-cta-note">{releaseNote.detail}</p>
+              </RevealOnScroll>
+            </div>
+
+            <RevealOnScroll delay={140}>
+              <HeroDecisionPreview />
             </RevealOnScroll>
           </div>
 
