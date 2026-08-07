@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type KeyboardEvent } from "react";
 import { Camera, FileText, Smartphone } from "lucide-react";
 import { OwnerReceiptHandoff } from "@/components/owner-receipt-handoff";
 import { PageHeader } from "@/components/page-header";
@@ -30,6 +30,20 @@ export function ReceiptCaptureWorkspace() {
   const reloadGarage = useCallback(async () => {
     await garage.refreshGarage();
   }, [garage]);
+
+  const setCaptureModeAndFocus = (mode: "photo" | "note") => {
+    setCaptureMode(mode);
+    window.requestAnimationFrame(() => {
+      document.getElementById(`capture-${mode === "note" ? "service-note" : "receipt-photo"}-tab`)?.focus();
+    });
+  };
+
+  const handleCaptureTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Home" && event.key !== "End") return;
+    event.preventDefault();
+    const nextMode = event.key === "ArrowLeft" || event.key === "Home" ? "note" : "photo";
+    setCaptureModeAndFocus(nextMode);
+  };
 
   useEffect(() => {
     if (!garage.isLoading && !vehicle && garage.vehicles.length > 0 && garage.activeVehicleId) {
@@ -129,6 +143,7 @@ export function ReceiptCaptureWorkspace() {
                 captureMode === "note" && "bg-card text-foreground shadow-[0_2px_8px_hsl(var(--foreground)/0.08)]",
               )}
               onClick={() => setCaptureMode("note")}
+              onKeyDown={handleCaptureTabKeyDown}
             >
               <FileText className="mr-1.5 h-4 w-4" aria-hidden />
               Service note
@@ -146,6 +161,7 @@ export function ReceiptCaptureWorkspace() {
                 captureMode === "photo" && "bg-card text-foreground shadow-[0_2px_8px_hsl(var(--foreground)/0.08)]",
               )}
               onClick={() => setCaptureMode("photo")}
+              onKeyDown={handleCaptureTabKeyDown}
             >
               <Camera className="mr-1.5 h-4 w-4" aria-hidden />
               Photo
@@ -160,6 +176,7 @@ export function ReceiptCaptureWorkspace() {
               className="console-motion-fade"
             >
               <OwnerReceiptHandoff
+                key={vehicle.id}
                 vehicleId={vehicle.id}
                 apiBase={apiBase}
                 currentMileage={vehicle.currentMileage}
@@ -183,10 +200,12 @@ export function ReceiptCaptureWorkspace() {
               className="console-motion-fade"
             >
               <ServiceNotePanel
+                key={vehicle.id}
                 vehicleId={vehicle.id}
                 apiBase={apiBase}
                 defaultMileage={vehicle.currentMileage}
                 minimal
+                persistDraft
                 onSubmitted={(body) => {
                   setNeedsWebReview(body.conflict === true);
                   notify(

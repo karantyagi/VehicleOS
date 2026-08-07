@@ -1,6 +1,6 @@
 # Owner product implementation queue
 
-**Updated:** 2026-08-06
+**Updated:** 2026-08-07
 **Scope:** Owner web attention and capture-first mobile
 **Attention direction:** [ADR-018](../../docs-lite/adr/ADR-018-owner-attention-center-and-assistant-work-model.md) · [owner attention model](./owner-attention-model.md)
 **Architecture:** [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md) · [ADR-016](../../docs-lite/adr/ADR-016-owner-habits-and-owner-level-compliance.md) · [ADR-019](../../docs-lite/adr/ADR-019-vin-assisted-supported-schedule-selection.md)
@@ -34,7 +34,7 @@ This queue records adopted product direction. It does not authorize notification
 | MOBILE-CAP-1 | P1 | Implemented | Specify the capture-only mobile flow | Vehicle target, photo/PDF, text-first service note with optional browser dictation, upload progress, retry, and success are covered |
 | MOBILE-CAP-2 | P1 | Implemented | Link uncertain captures to web review | Queued or conflicting captures expose an explicit **Review on Home** handoff instead of expanding mobile review |
 | MOBILE-CAP-3 | P1 | Implemented | Add a deliberate photo-review step before upload | Camera photos can be dragged to crop, zoomed, rotated, reset, replaced, or uploaded unchanged; editing stays on-device until the Owner confirms |
-| MOBILE-CAP-4 | P1 | Implemented | Make service-note capture text-first with optional browser dictation | One guided editable text field is the default and works without microphone support; common-service starters, last-known mileage, and review-before-save cues reduce capture effort. Dictation fills that same field, then stops for owner correction and save. Text writes manual/owner-note provenance; dictation retains voice provenance. |
+| MOBILE-CAP-4 | P1 | Implemented | Make service-note capture text-first with optional browser dictation | One guided editable text field is the default and works without microphone support; common-service starters, optional changed date/mileage, and review-before-save cues reduce capture effort. An unfinished note is restorable only from vehicle-scoped browser storage and is never a service record until saved. Dictation fills that same field, then stops for owner correction and save. Text writes manual/owner-note provenance; dictation retains voice provenance. |
 | OWNER-HABIT-1 | P0 | Implemented | Capture an owner habit by text or browser voice transcription | Rules produce `OwnerHabitProposalV1`; future LLM extraction must return the same public contract |
 | OWNER-HABIT-2 | P0 | Implemented | Require approval before an owner habit controls a schedule | Every extracted interval enters `VERIFY_OWNER_INTERVAL`; no proposal mutates schedule truth directly |
 | OWNER-COMPLIANCE-1 | P0 | Implemented | Model driver's-license renewal once per owner | `owner.driver_license.recorded` is owner-scoped, excludes license number/date of birth, and projects into the shared due-item model; its trust card shows agency, class, expiration, source, and owner scope instead |

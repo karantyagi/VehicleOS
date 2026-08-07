@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Check, CircleCheck, FileText, Gauge, Mic, RotateCcw, Square } from "lucide-react";
+import { Check, ChevronDown, CircleCheck, FileText, Gauge, Mic, RotateCcw, Square } from "lucide-react";
+import { DateField } from "@/components/date-field";
 import { FormActions, FormField } from "@/components/form-field";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { todayIsoDate } from "@/lib/date-input";
+import { parseServiceNoteDraft, serviceNoteDraftStorageKey } from "@/lib/service-note-draft";
 import { useSpeechRecognition } from "../lib/use-speech-recognition";
 
 const QUICK_NOTE_STARTERS = [
@@ -23,6 +26,7 @@ type ServiceNotePanelProps = {
   defaultMileage: number;
   disabled?: boolean;
   minimal?: boolean;
+  persistDraft?: boolean;
   onSubmitted: (body: {
     timeline: unknown[];
     nowQueue: unknown[];
@@ -49,6 +53,7 @@ export function ServiceNotePanel({
   defaultMileage,
   disabled = false,
   minimal = false,
+  persistDraft = false,
   onSubmitted,
   onError,
 }: ServiceNotePanelProps) {
@@ -57,17 +62,37 @@ export function ServiceNotePanel({
   const [storageKey, setStorageKey] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isDraftReady, setIsDraftReady] = useState(!persistDraft);
+  const [wasDraftRestored, setWasDraftRestored] = useState(false);
   const [form, setForm] = useState<ServiceNoteForm>({
     shop: "",
-    serviceDate: new Date().toISOString().slice(0, 10),
+    serviceDate: todayIsoDate(),
     mileage: defaultMileage,
     lineItems: "",
     total: "",
   });
 
   useEffect(() => {
+    if (!persistDraft) {
+      setIsDraftReady(true);
+      return;
+    }
+
+    const draft = parseServiceNoteDraft(window.localStorage.getItem(serviceNoteDraftStorageKey(vehicleId)));
+    if (draft) {
+      speech.setTranscript(draft.text);
+      setForm((current) => ({ ...current, serviceDate: draft.serviceDate, mileage: draft.mileage }));
+      setIsDetailsOpen(draft.serviceDate !== todayIsoDate() || draft.mileage !== defaultMileage);
+      setWasDraftRestored(true);
+    }
+    setIsDraftReady(true);
+  }, [defaultMileage, persistDraft, speech.setTranscript, vehicleId]);
+
+  useEffect(() => {
+    if (persistDraft || wasDraftRestored) return;
     setForm((current) => ({ ...current, mileage: defaultMileage }));
-  }, [defaultMileage]);
+  }, [defaultMileage, persistDraft, wasDraftRestored]);
 
   const noteText = useMemo(() => {
     const parts = [speech.transcript, speech.interimTranscript].filter(Boolean);
@@ -75,6 +100,29 @@ export function ServiceNotePanel({
   }, [speech.interimTranscript, speech.transcript]);
   const hasNoteText = noteText.length > 0;
   const lastKnownMileage = new Intl.NumberFormat("en-US").format(defaultMileage);
+  const draftStorageKey = serviceNoteDraftStorageKey(vehicleId);
+
+  useEffect(() => {
+    if (!persistDraft || !isDraftReady) return;
+
+    try {
+      if (!noteText.trim()) {
+        window.localStorage.removeItem(draftStorageKey);
+        return;
+      }
+
+      window.localStorage.setItem(
+        draftStorageKey,
+        JSON.stringify({
+          text: noteText,
+          serviceDate: form.serviceDate,
+          mileage: form.mileage,
+        }),
+      );
+    } catch {
+      // Storage is optional. Capture must remain usable in private mode or when it is full.
+    }
+  }, [draftStorageKey, form.mileage, form.serviceDate, isDraftReady, noteText, persistDraft]);
 
   const updateNoteText = (value: string) => {
     speech.setTranscript(value);
@@ -85,6 +133,20 @@ export function ServiceNotePanel({
     const nextText = noteText.trim() ? `${noteText.trim()}\n${starter}` : starter;
     setCaptureChannel("text");
     updateNoteText(nextText);
+  };
+
+  const discardDraft = () => {
+    try {
+      window.localStorage.removeItem(draftStorageKey);
+    } catch {
+      // A blocked storage area should not prevent clearing visible form data.
+    }
+    speech.resetTranscript();
+    setCaptureChannel("text");
+    setStorageKey(null);
+    setForm({ shop: "", serviceDate: todayIsoDate(), mileage: defaultMileage, lineItems: "", total: "" });
+    setIsDetailsOpen(false);
+    setWasDraftRestored(false);
   };
 
   const uploadNoteText = async (text: string) => {
@@ -130,6 +192,8 @@ export function ServiceNotePanel({
                 transcript: text,
                 storageKey: nextStorageKey,
                 captureChannel,
+                ...(form.serviceDate !== todayIsoDate() ? { serviceDate: form.serviceDate } : {}),
+                ...(form.mileage !== defaultMileage ? { mileage: Number(form.mileage) } : {}),
               }
             : {
                 transcript: text,
@@ -173,6 +237,18 @@ export function ServiceNotePanel({
       speech.resetTranscript();
       setCaptureChannel("text");
       setStorageKey(null);
+      setWasDraftRestored(false);
+      if (minimal) {
+        setForm({ shop: "", serviceDate: todayIsoDate(), mileage: defaultMileage, lineItems: "", total: "" });
+        setIsDetailsOpen(false);
+      }
+      if (persistDraft) {
+        try {
+          window.localStorage.removeItem(draftStorageKey);
+        } catch {
+          // The service record is already saved; a stale local draft is harmless.
+        }
+      }
     } catch (error) {
       onError(error instanceof Error ? error.message : "Service note failed.");
     } finally {
@@ -203,9 +279,25 @@ export function ServiceNotePanel({
         </div>
         <div className="relative mt-3 flex items-center gap-2 text-xs text-muted-foreground">
           <CircleCheck className="h-3.5 w-3.5 text-primary" aria-hidden />
-          Nothing is saved until you review and tap Save.
+          No service history is saved until you review and tap Save.
         </div>
       </section>
+
+      {persistDraft && hasNoteText ? (
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-border/75 bg-muted/[0.18] px-3 py-2 text-xs text-muted-foreground">
+          <span>{wasDraftRestored ? "Draft restored on this device" : "Draft saved on this device"}</span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 text-xs"
+            disabled={disabled || isSubmitting}
+            onClick={discardDraft}
+          >
+            Discard
+          </Button>
+        </div>
+      ) : null}
 
       {speech.isSupported && (speech.isListening || (hasNoteText && captureChannel === "voice")) ? (
         <div
@@ -302,9 +394,53 @@ export function ServiceNotePanel({
           ))}
         </div>
         {minimal ? (
-          <p className="text-xs text-muted-foreground">Add today&apos;s mileage if it changed.</p>
+          <Button
+            type="button"
+            variant="ghost"
+            className="h-8 -ml-2 px-2 text-xs text-muted-foreground hover:text-foreground"
+            aria-expanded={isDetailsOpen}
+            aria-controls="service-note-optional-details"
+            disabled={disabled || isSubmitting || speech.isListening}
+            onClick={() => setIsDetailsOpen((open) => !open)}
+          >
+            Add date or mileage if it changed
+            <ChevronDown
+              className={
+                isDetailsOpen ? "h-3.5 w-3.5 rotate-180 transition-transform" : "h-3.5 w-3.5 transition-transform"
+              }
+              aria-hidden
+            />
+          </Button>
         ) : null}
       </div>
+
+      {minimal && isDetailsOpen ? (
+        <section
+          id="service-note-optional-details"
+          className="grid gap-4 rounded-xl border border-border/80 bg-muted/[0.16] p-3.5 sm:grid-cols-2"
+          aria-label="Optional service details"
+        >
+          <FormField label="Service date" htmlFor="service-note-date" optional>
+            <DateField
+              id="service-note-date"
+              value={form.serviceDate}
+              max={todayIsoDate()}
+              disabled={disabled || isSubmitting}
+              onChange={(serviceDate) => setForm((current) => ({ ...current, serviceDate }))}
+            />
+          </FormField>
+          <FormField label="Mileage" htmlFor="service-note-mileage" optional>
+            <Input
+              id="service-note-mileage"
+              type="number"
+              inputMode="numeric"
+              value={form.mileage}
+              disabled={disabled || isSubmitting}
+              onChange={(event) => setForm((current) => ({ ...current, mileage: Number(event.target.value) }))}
+            />
+          </FormField>
+        </section>
+      ) : null}
 
       <FormActions className="grid grid-cols-2 pt-0 sm:flex">
         {speech.isListening ? (
