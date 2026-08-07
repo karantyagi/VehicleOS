@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   filterCatalogVehicles,
@@ -20,6 +20,9 @@ type VehicleYmmPickerProps = {
   vehicles: CatalogVehicleRow[];
   value: string;
   valueYear?: number;
+  /** VIN-decoded make/model/year; trim is deliberately never preselected. */
+  guidedIdentity?: Pick<CatalogVehicleRow, "make" | "model" | "year"> | null;
+  onGuidanceApplied?: (identity: Pick<CatalogVehicleRow, "make" | "model" | "year">) => void;
   disabled?: boolean;
   onSelect: (row: CatalogVehicleRow | null) => void;
 };
@@ -31,6 +34,8 @@ export function VehicleYmmPicker({
   vehicles,
   value,
   valueYear,
+  guidedIdentity = null,
+  onGuidanceApplied,
   disabled = false,
   onSelect,
 }: VehicleYmmPickerProps) {
@@ -39,6 +44,7 @@ export function VehicleYmmPicker({
   const [year, setYear] = useState<number | "">("");
   const [trimPackId, setTrimPackId] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const appliedGuidance = useRef<string | null>(null);
 
   useEffect(() => {
     if (!value) {
@@ -59,6 +65,25 @@ export function VehicleYmmPicker({
     setYear(row.year);
     setTrimPackId(row.packId);
   }, [value, valueYear, vehicles]);
+
+  useEffect(() => {
+    if (!guidedIdentity) {
+      appliedGuidance.current = null;
+      return;
+    }
+    const guidanceKey = `${guidedIdentity.year}:${guidedIdentity.make}:${guidedIdentity.model}`;
+    if (appliedGuidance.current === guidanceKey) return;
+
+    appliedGuidance.current = guidanceKey;
+    setMake(guidedIdentity.make);
+    setModel(guidedIdentity.model);
+    setYear(guidedIdentity.year);
+    setTrimPackId("");
+    // A VIN decoder can narrow a model, but the owner must choose the exact
+    // verified trim/powertrain before VehicleOS attaches an OEM schedule.
+    onSelect(null);
+    onGuidanceApplied?.(guidedIdentity);
+  }, [guidedIdentity, onGuidanceApplied, onSelect]);
 
   const makes = useMemo(() => listCatalogMakes(vehicles), [vehicles]);
   const models = useMemo(() => listCatalogModels(vehicles, make), [vehicles, make]);
@@ -119,7 +144,7 @@ export function VehicleYmmPicker({
   return (
     <div className="space-y-4">
       <label className="grid gap-1.5 text-sm">
-        <span className="font-medium">Quick find</span>
+        <span className="font-medium">Find a supported vehicle</span>
         <Input
           value={searchQuery}
           disabled={disabled}
@@ -149,7 +174,7 @@ export function VehicleYmmPicker({
         </ul>
       ) : null}
 
-      <p className="text-xs text-muted-foreground">Or browse:</p>
+      <p className="text-xs text-muted-foreground">Or browse verified OEM schedules:</p>
 
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="grid gap-1.5 text-sm">

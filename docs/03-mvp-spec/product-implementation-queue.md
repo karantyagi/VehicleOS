@@ -3,7 +3,7 @@
 **Updated:** 2026-08-06
 **Scope:** Owner web attention and capture-first mobile
 **Attention direction:** [ADR-018](../../docs-lite/adr/ADR-018-owner-attention-center-and-assistant-work-model.md) · [owner attention model](./owner-attention-model.md)
-**Architecture:** [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md) · [ADR-016](../../docs-lite/adr/ADR-016-owner-habits-and-owner-level-compliance.md)
+**Architecture:** [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md) · [ADR-016](../../docs-lite/adr/ADR-016-owner-habits-and-owner-level-compliance.md) · [ADR-019](../../docs-lite/adr/ADR-019-vin-assisted-supported-schedule-selection.md)
 
 This queue records adopted product direction. It does not authorize notification-system implementation.
 
@@ -23,6 +23,7 @@ This queue records adopted product direction. It does not authorize notification
 | WEB-IA-1 | P1 | Superseded by ATTN-1 | Simplify persistent owner navigation | The earlier three-surface model is replaced by the accepted **Home / Your attention / Maintenance / Add records** model in ADR-018 |
 | WEB-IA-2 | P1 | Implemented | Remove redundant owner labels and demote developer controls | Vehicle and driving settings live under **Your garage**; the account menu no longer duplicates that route; developer tools are an intentional secondary control rather than a peer owner view |
 | WEB-PROFILE-1 | P1 | Implemented | Make vehicle and driving profiles seamless owner surfaces | The garage record loads once behind a neutral skeleton; saved details render read-only first, and an explicit Edit action reveals a cancellable form without flashing default choices |
+| VEH-IDENTITY-1 | P0 | Implemented | Make VIN identity assistance safe for supported OEM schedules | An optional full-VIN lookup only narrows reviewed year/make/model choices through a versioned alias registry; the owner chooses the exact verified trim/powertrain and server validation still rejects unsupported schedule selection |
 | WEB-VERIFY-1 | P0 | Superseded by ATTN-2 | Separate blocking from advisory owner verification | The former rare/context-only verification model is replaced by **Help the assistant** in the permanent Your attention surface |
 | WEB-VERIFY-2 | P0 | Superseded by ATTN-1/2 | Deep-link verification to maintenance truth | Stable deep links remain; the target model makes each item available in both Your attention and its related source context |
 | WEB-VERIFY-3 | P1 | Implemented | Preserve verification accountability | Resolved confirmations remain available in a collapsed Maintenance history audit trail |

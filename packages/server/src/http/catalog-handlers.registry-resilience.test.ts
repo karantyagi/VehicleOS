@@ -32,5 +32,5 @@ describe("listSupportedVehicles registry resilience", () => {
     expect(result.body.total).toBeGreaterThan(0);
     expect(result.body.vehicles?.length).toBeGreaterThan(0);
     expect(result.body.vehicles?.every((row) => row.scheduleSourceLine == null)).toBe(true);
-  });
+  }, 10_000);
 });

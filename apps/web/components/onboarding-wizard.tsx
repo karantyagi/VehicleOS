@@ -51,6 +51,22 @@ type VehicleForm = {
   ownedSince: string;
 };
 
+type VinLookup =
+  | { status: "idle" }
+  | { status: "loading" }
+  | {
+      status: "supported";
+      vehicle: { make: string; model: string; year: number; trim: string | null; driveType: string | null };
+      canonicalVehicle: { make: string; model: string; year: number };
+      matchingScheduleCount: number;
+    }
+  | {
+      status: "unsupported";
+      vehicle: { make: string; model: string; year: number; trim: string | null; driveType: string | null };
+    }
+  | { status: "unavailable" }
+  | { status: "invalid" };
+
 type OnboardingWizardProps = {
   onComplete: (vehicle: OnboardingVehicle) => void | Promise<void>;
   mode?: "first" | "additional";
@@ -59,6 +75,11 @@ type OnboardingWizardProps = {
 };
 
 const DOGFOOD_PACK_ID = "acura-tlx-2021-sh-awd";
+const fullVinPattern = /^[A-HJ-NPR-Z0-9]{17}$/;
+
+const normalizedVin = (value: string): string => value.replace(/[\s-]+/g, "").toUpperCase();
+const hasFullVin = (value: string): boolean => fullVinPattern.test(normalizedVin(value));
+const sameText = (a: string, b: string): boolean => a.trim().toLowerCase() === b.trim().toLowerCase();
 
 const emptyVehicleForm = (): VehicleForm => ({
   packId: "",
@@ -132,6 +153,7 @@ export function OnboardingWizard({
   const [isBusy, setIsBusy] = useState(false);
   const [isHandoffBusy, setIsHandoffBusy] = useState(false);
   const [error, setError] = useState("");
+  const [vinLookup, setVinLookup] = useState<VinLookup>({ status: "idle" });
 
   useEffect(() => {
     if (step !== "setup" || catalog.length > 0) return;
@@ -203,6 +225,48 @@ export function OnboardingWizard({
           ? current.currentMileage
           : vehicleFormFromCatalog(row, prefillDogfood).currentMileage,
     }));
+  };
+
+  const applyVinGuidance = (identity: Pick<CatalogVehicleRow, "make" | "model" | "year">) => {
+    setForm((current) => ({
+      ...current,
+      packId: "",
+      year: identity.year,
+      make: identity.make,
+      model: identity.model,
+      trim: "",
+    }));
+  };
+
+  const lookupVin = async () => {
+    if (!hasFullVin(form.vin)) {
+      setVinLookup({ status: "invalid" });
+      return;
+    }
+
+    setVinLookup({ status: "loading" });
+    try {
+      const response = await fetch("/api/vehicle-identity/decode-vin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ vin: normalizedVin(form.vin) }),
+      });
+      const body = (await response.json()) as VinLookup;
+
+      if (!response.ok || !body || typeof body !== "object" || !("status" in body)) {
+        setVinLookup({ status: "unavailable" });
+        return;
+      }
+
+      if (body.status === "supported" || body.status === "unsupported" || body.status === "unavailable") {
+        setVinLookup(body);
+        return;
+      }
+
+      setVinLookup({ status: "unavailable" });
+    } catch {
+      setVinLookup({ status: "unavailable" });
+    }
   };
 
   const createVehicle = async (): Promise<OnboardingVehicle | null> => {
@@ -325,6 +389,17 @@ export function OnboardingWizard({
     form.currentMileage > 0 &&
     form.ownedSince.trim().length > 0 &&
     driverDraft.primaryCity.trim().length > 0;
+  const vinGuidance = vinLookup.status === "supported" ? vinLookup.canonicalVehicle : null;
+  const selectedVehicleConflictsWithVin =
+    selectedVehicle !== null &&
+    vinGuidance !== null &&
+    !(
+      selectedVehicle.year === vinGuidance.year &&
+      sameText(selectedVehicle.make, vinGuidance.make) &&
+      sameText(selectedVehicle.model, vinGuidance.model)
+    );
+  const vinNeedsSupportedSchedule = vinLookup.status === "unsupported";
+  const canContinue = setupComplete && !selectedVehicleConflictsWithVin && !vinNeedsSupportedSchedule;
 
   return (
     <Card className="overflow-hidden border-border/80 shadow-md">
@@ -353,11 +428,74 @@ export function OnboardingWizard({
         {step === "setup" ? (
           <>
             <div className="grid gap-4 sm:grid-cols-2">
-              <FormField label="Vehicle" htmlFor="ob-vehicle-make" className="sm:col-span-2">
+              <FormField
+                label="VIN"
+                htmlFor="ob-vin"
+                optional
+                hint="A full 17-character VIN can narrow the supported choices."
+                className="sm:col-span-2"
+              >
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <Input
+                    id="ob-vin"
+                    placeholder="17-character VIN"
+                    value={form.vin}
+                    maxLength={17}
+                    onChange={(event) => {
+                      setForm({ ...form, vin: event.target.value.toUpperCase() });
+                      setVinLookup({ status: "idle" });
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={vinLookup.status === "loading" || !hasFullVin(form.vin)}
+                    onClick={() => void lookupVin()}
+                  >
+                    {vinLookup.status === "loading" ? "Checking VIN…" : "Find my car"}
+                  </Button>
+                </div>
+              </FormField>
+
+              {vinLookup.status === "supported" ? (
+                <div className="rounded-lg border border-primary/25 bg-primary/5 px-3 py-3 text-sm sm:col-span-2">
+                  <p className="font-medium text-foreground">
+                    We found a {vinLookup.canonicalVehicle.year} {vinLookup.canonicalVehicle.make} {vinLookup.canonicalVehicle.model}.
+                  </p>
+                  <p className="mt-1 text-muted-foreground">
+                    Choose its exact supported trim below. VIN data does not reliably identify the schedule trim, so VehicleOS will not guess.
+                  </p>
+                </div>
+              ) : null}
+
+              {vinLookup.status === "unsupported" ? (
+                <div className="rounded-lg border border-history-highlight/30 bg-history-highlight/[0.06] px-3 py-3 text-sm sm:col-span-2">
+                  <p className="font-medium text-foreground">
+                    We found a {vinLookup.vehicle.year} {vinLookup.vehicle.make} {vinLookup.vehicle.model}, but it does not have a verified OEM schedule in VehicleOS yet.
+                  </p>
+                  <p className="mt-1 text-muted-foreground">
+                    We did not choose a schedule. Clear a mistyped VIN or request this car below.
+                  </p>
+                </div>
+              ) : null}
+
+              {vinLookup.status === "unavailable" ? (
+                <p className="text-sm text-muted-foreground sm:col-span-2">
+                  We could not identify that VIN right now. You can still choose your car from the verified schedule list.
+                </p>
+              ) : null}
+
+              {vinLookup.status === "invalid" ? (
+                <p className="text-sm text-destructive sm:col-span-2">Enter all 17 VIN characters to look up your car.</p>
+              ) : null}
+
+              <FormField label="Choose your vehicle" htmlFor="ob-vehicle-make" className="sm:col-span-2">
                 <VehicleYmmPicker
                   vehicles={catalog}
                   value={form.packId}
                   valueYear={form.year}
+                  guidedIdentity={vinGuidance}
+                  onGuidanceApplied={applyVinGuidance}
                   disabled={isCatalogLoading || catalog.length === 0}
                   onSelect={selectVehicle}
                 />
@@ -366,6 +504,12 @@ export function OnboardingWizard({
               {selectedVehicle ? (
                 <p className="sm:col-span-2 text-xs text-muted-foreground">
                   OEM schedule loads for {formatCatalogVehicleLabel(selectedVehicle)}.
+                </p>
+              ) : null}
+
+              {selectedVehicleConflictsWithVin ? (
+                <p className="text-sm text-destructive sm:col-span-2">
+                  This verified schedule does not match the vehicle identified by your VIN. Choose the matching car or clear the VIN.
                 </p>
               ) : null}
 
@@ -378,14 +522,6 @@ export function OnboardingWizard({
                   placeholder="Odometer"
                   value={form.currentMileage || ""}
                   onChange={(event) => setForm({ ...form, currentMileage: Number(event.target.value) })}
-                />
-              </FormField>
-              <FormField label="VIN" htmlFor="ob-vin" optional>
-                <Input
-                  id="ob-vin"
-                  placeholder="Last 8 OK"
-                  value={form.vin}
-                  onChange={(event) => setForm({ ...form, vin: event.target.value })}
                 />
               </FormField>
               <FormField
@@ -468,7 +604,7 @@ export function OnboardingWizard({
           {step === "setup" ? (
             <Button
               type="button"
-              disabled={isBusy || isCatalogLoading || !setupComplete}
+              disabled={isBusy || isCatalogLoading || !canContinue}
               onClick={() => void continueFromSetup()}
             >
               {isBusy ? "Saving…" : "Continue"}
