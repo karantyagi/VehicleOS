@@ -11,14 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { todayIsoDate } from "@/lib/date-input";
 import { parseServiceNoteDraft, serviceNoteDraftStorageKey } from "@/lib/service-note-draft";
+import { DEFAULT_SERVICE_NOTE_STARTERS } from "@/lib/service-note-starters";
 import { useSpeechRecognition } from "../lib/use-speech-recognition";
-
-const QUICK_NOTE_STARTERS = [
-  "Oil and filter changed",
-  "Tires rotated",
-  "Inspection completed",
-  "Battery replaced",
-] as const;
 
 type ServiceNotePanelProps = {
   vehicleId: string;
@@ -27,10 +21,13 @@ type ServiceNotePanelProps = {
   disabled?: boolean;
   minimal?: boolean;
   persistDraft?: boolean;
+  recentStarters?: string[];
+  isOnline?: boolean;
   onSubmitted: (body: {
     timeline: unknown[];
     nowQueue: unknown[];
     conflict?: boolean;
+    transcript?: string;
   }) => void;
   onError: (message: string) => void;
 };
@@ -54,6 +51,8 @@ export function ServiceNotePanel({
   disabled = false,
   minimal = false,
   persistDraft = false,
+  recentStarters = [],
+  isOnline = true,
   onSubmitted,
   onError,
 }: ServiceNotePanelProps) {
@@ -215,6 +214,7 @@ export function ServiceNotePanel({
         timeline: unknown[];
         nowQueue: unknown[];
         conflict?: boolean;
+        transcript?: string;
         error?: string;
       };
 
@@ -272,32 +272,30 @@ export function ServiceNotePanel({
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">
               {minimal
-                ? "One short sentence is enough. Add miles or cost when you have them."
+                ? "One short sentence is enough. Add a date or mileage only if it changed."
                 : "Start with the service, then add the details you know. You can correct everything before saving."}
             </p>
           </div>
         </div>
-        <div className="relative mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="relative mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
           <CircleCheck className="h-3.5 w-3.5 text-primary" aria-hidden />
-          No service history is saved until you review and tap Save.
+          <span>No service history is saved until you review and tap Save.</span>
+          {persistDraft && hasNoteText ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-auto px-0 py-0 text-[11px] font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
+              disabled={disabled || isSubmitting}
+              aria-label="Discard saved service-note draft"
+              onClick={discardDraft}
+            >
+              <RotateCcw className="h-3 w-3" aria-hidden />
+              {wasDraftRestored ? "Draft restored" : "Draft saved"} · Discard
+            </Button>
+          ) : null}
         </div>
       </section>
-
-      {persistDraft && hasNoteText ? (
-        <div className="flex items-center justify-between gap-3 rounded-lg border border-border/75 bg-muted/[0.18] px-3 py-2 text-xs text-muted-foreground">
-          <span>{wasDraftRestored ? "Draft restored on this device" : "Draft saved on this device"}</span>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="h-7 px-2 text-xs"
-            disabled={disabled || isSubmitting}
-            onClick={discardDraft}
-          >
-            Discard
-          </Button>
-        </div>
-      ) : null}
 
       {speech.isSupported && (speech.isListening || (hasNoteText && captureChannel === "voice")) ? (
         <div
@@ -370,7 +368,7 @@ export function ServiceNotePanel({
 
       <div className="space-y-2.5">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-xs font-medium text-muted-foreground">Start with a common service</p>
+          <p className="text-xs font-medium text-muted-foreground">Start with a service</p>
           {minimal ? (
             <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
               <Gauge className="h-3.5 w-3.5" aria-hidden />
@@ -378,8 +376,30 @@ export function ServiceNotePanel({
             </span>
           ) : null}
         </div>
-        <div className="flex flex-wrap gap-2" aria-label="Common service note starters">
-          {QUICK_NOTE_STARTERS.map((starter) => (
+        {recentStarters.length > 0 ? (
+          <div className="space-y-2">
+            <p className="text-[11px] font-medium text-muted-foreground">Recent services</p>
+            <div className="flex flex-wrap gap-2" aria-label="Recent service note starters">
+              {recentStarters.map((starter) => (
+                <Button
+                  key={starter}
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-8 rounded-full border-primary/20 bg-primary/[0.04] px-3 text-xs shadow-none hover:border-primary/35 hover:bg-primary/[0.08]"
+                  disabled={disabled || isSubmitting || speech.isListening}
+                  onClick={() => addQuickStarter(starter)}
+                >
+                  {starter}
+                </Button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+        <div className="space-y-2">
+          {recentStarters.length > 0 ? <p className="text-[11px] font-medium text-muted-foreground">Common services</p> : null}
+          <div className="flex flex-wrap gap-2" aria-label="Common service note starters">
+            {DEFAULT_SERVICE_NOTE_STARTERS.map((starter) => (
             <Button
               key={starter}
               type="button"
@@ -391,7 +411,8 @@ export function ServiceNotePanel({
             >
               {starter}
             </Button>
-          ))}
+            ))}
+          </div>
         </div>
         {minimal ? (
           <Button
@@ -538,15 +559,23 @@ export function ServiceNotePanel({
         </FormField>
       ) : null}
 
-      <Button
-        type="button"
-        className="h-12 w-full rounded-xl text-[15px] shadow-[0_10px_22px_-14px_hsl(var(--primary)/0.7)]"
-        disabled={disabled || isSubmitting || isUploading || speech.isListening || !hasNoteText}
-        onClick={() => void submitServiceNote()}
+      <div
+        className={
+          minimal
+            ? "sticky bottom-0 z-10 -mx-1 border-t border-border/70 bg-background/95 px-1 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur"
+            : undefined
+        }
       >
-        {!isSubmitting ? <Check className="h-4 w-4" aria-hidden /> : null}
-        {isSubmitting ? "Saving service note..." : "Save service note"}
-      </Button>
+        <Button
+          type="button"
+          className="h-12 w-full rounded-xl text-[15px] shadow-[0_10px_22px_-14px_hsl(var(--primary)/0.7)]"
+          disabled={disabled || !isOnline || isSubmitting || isUploading || speech.isListening || !hasNoteText}
+          onClick={() => void submitServiceNote()}
+        >
+          {!isSubmitting ? <Check className="h-4 w-4" aria-hidden /> : null}
+          {!isOnline ? "Reconnect to save" : isSubmitting ? "Saving service note..." : "Save service note"}
+        </Button>
+      </div>
     </div>
   );
 }
