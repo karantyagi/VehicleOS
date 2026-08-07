@@ -1,11 +1,13 @@
 # Owner product implementation queue
 
-**Updated:** 2026-08-06
+**Updated:** 2026-08-07
 **Scope:** Owner web attention and capture-first mobile
 **Attention direction:** [ADR-018](../../docs-lite/adr/ADR-018-owner-attention-center-and-assistant-work-model.md) · [owner attention model](./owner-attention-model.md)
 **Architecture:** [ADR-015](../../docs-lite/adr/ADR-015-owner-attention-and-deferred-notification-control.md) · [ADR-016](../../docs-lite/adr/ADR-016-owner-habits-and-owner-level-compliance.md) · [ADR-019](../../docs-lite/adr/ADR-019-vin-assisted-supported-schedule-selection.md)
 
 This queue records adopted product direction. It does not authorize notification-system implementation.
+
+**Capture direction:** [ADR-020](../../docs-lite/adr/ADR-020-text-first-service-note-capture.md)
 
 ## Current focus
 
@@ -29,10 +31,12 @@ This queue records adopted product direction. It does not authorize notification
 | WEB-VERIFY-3 | P1 | Implemented | Preserve verification accountability | Resolved confirmations remain available in a collapsed Maintenance history audit trail |
 | WEB-HISTORY-1 | P0 | Implemented | Keep imported history owner-correctable | The unified history timeline supports manual edits and only offers manual merge for deterministic consecutive duplicate candidates |
 | MOBILE-CAP-0 | P1 | Implemented | Choose the smallest capture delivery shell | The existing responsive PWA is the capture shell; no native app dependency was introduced |
-| MOBILE-CAP-1 | P1 | Implemented | Specify the capture-only mobile flow | Vehicle target, photo/PDF, minimal voice note, upload progress, retry, and success are covered |
+| MOBILE-CAP-1 | P1 | Implemented | Specify the capture-only mobile flow | Visible vehicle target, photo/PDF, text-first service note with optional browser dictation, Note/Receipt home-screen shortcuts, supported-PWA share intake, explicit upload/retry, connection-aware save boundary, and explicit success/completion are covered |
 | MOBILE-CAP-2 | P1 | Implemented | Link uncertain captures to web review | Queued or conflicting captures expose an explicit **Review on Home** handoff instead of expanding mobile review |
 | MOBILE-CAP-3 | P1 | Implemented | Add a deliberate photo-review step before upload | Camera photos can be dragged to crop, zoomed, rotated, reset, replaced, or uploaded unchanged; editing stays on-device until the Owner confirms |
-| MOBILE-CAP-4 | P1 | Implemented | Make voice transcription visibly real time | Listening state, live transcript, stop-and-review, correction, start-over, and review-before-save are explicit; unsupported browsers retain typed-note fallback |
+| MOBILE-CAP-4 | P1 | Implemented | Make service-note capture text-first with optional browser dictation | One guided editable text field is the default and works without microphone support; short Note/Receipt choices, common starters, up to two exact deduplicated history labels, optional changed date/mileage, and review-before-save cues reduce capture effort. An unfinished note is restorable only from vehicle-scoped browser storage and is never a service record until saved. Dictation fills that same field, then stops for owner correction and save. Text writes manual/owner-note provenance; dictation retains voice provenance. |
+| MOBILE-CAP-5 | P1 | Implemented | Make capture feedback resilient and conclusive | A subtle local-draft status replaces a prominent banner; phone save stays reachable above the safe area; offline mode allows note drafting but blocks confirmed saves; every successful note or receipt ends with a compact summary plus **Add another** or a deliberate Home handoff. |
+| MOBILE-CAP-6 | P1 | Implemented | Keep shared and failed receipts under explicit owner control | A shared receipt stays in browser storage until the owner selects the visible vehicle target and presses **Upload receipt**; failed direct uploads are stored locally per vehicle and offer only **Retry upload** or discard. Switching vehicles is locked while any capture is unfinished; there is no background upload or mobile review queue. |
 | OWNER-HABIT-1 | P0 | Implemented | Capture an owner habit by text or browser voice transcription | Rules produce `OwnerHabitProposalV1`; future LLM extraction must return the same public contract |
 | OWNER-HABIT-2 | P0 | Implemented | Require approval before an owner habit controls a schedule | Every extracted interval enters `VERIFY_OWNER_INTERVAL`; no proposal mutates schedule truth directly |
 | OWNER-COMPLIANCE-1 | P0 | Implemented | Model driver's-license renewal once per owner | `owner.driver_license.recorded` is owner-scoped, excludes license number/date of birth, and projects into the shared due-item model; its trust card shows agency, class, expiration, source, and owner scope instead |
@@ -79,6 +83,7 @@ behavior remains the default until a source-backed semantic says otherwise.
 | NOTIFY-DESIGN-4 | Deferred | Define future mute/defer semantics | Separate attention state, actual due time, and next allowed nudge |
 | NOTIFY-BUILD | Blocked by design | Implement notification delivery and user controls | NOTIFY-DESIGN-1 through NOTIFY-DESIGN-4 accepted |
 | OWNER-HABIT-LLM | Deferred | Expand natural-language habit extraction beyond the deterministic Techron pilot | Private tuned prompt/evals that emit the public `OwnerHabitProposalV1` schema |
+| SERVICE-NOTE-LLM | Deferred | Consider broader natural-language service-note interpretation only after a proven need | Requires explicit public contract, evaluation, privacy/cost review, and a decision that deterministic parsing plus owner review is insufficient |
 | QUOTE-CONTAIN-1 | Next containment slice | Hide quote analysis from the active product and disable new analysis | No Owner or Developer surface presents quote analysis as an available capability, and no new analysis can be started. Existing stored evidence is retained rather than deleted or rewritten |
 | QUOTE-EXEC-1 | Far future / blocked | Reconsider quote analysis only within an owner-authorized execution assistant | First establish trusted recommendations, explicit per-action owner approval, constrained tool permissions, provenance, cost/merchant safeguards, audit history, cancellation, and recovery. The assistant may then execute on the owner's behalf after a recommendation; quote analysis is not an early standalone feature |
 
@@ -94,6 +99,8 @@ behavior remains the default until a source-backed semantic says otherwise.
 - Do not change a schedule globally to "whichever occurs first". Respect the OEM entry's explicit trigger semantic; calendar-first is the compatibility default.
 - Do not expose or run quote analysis while `QUOTE-CONTAIN-1` is incomplete. Retaining prior evidence does not make the feature active.
 - Do not expand mobile into a second full review application during the capture phase.
+- Do not require microphone support or an LLM call to create a service note; editable text is the canonical PWA record.
+- Do not turn service-note capture into a real-time conversational assistant, ChatGPT connector, or messaging channel without a separate accepted product decision.
 - Do not let voice, rules, or LLM extraction silently change an owner interval.
 - Do not store a driver's-license number or date of birth in the compliance-deadline contract.
 - Do not attach personal compliance deadlines to a vehicle aggregate.

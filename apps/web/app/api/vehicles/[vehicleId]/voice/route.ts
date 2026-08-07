@@ -13,6 +13,7 @@ export async function POST(request: Request, context: RouteContext) {
   const body = (await request.json()) as {
     transcript: string;
     storageKey: string;
+    captureChannel?: "text" | "voice";
     shop?: string;
     serviceDate?: string;
     mileage?: number;

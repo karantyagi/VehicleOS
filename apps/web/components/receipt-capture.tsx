@@ -1,10 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FileDropzone } from "@/components/file-dropzone";
 import { MobileCaptureActions } from "@/components/mobile-capture-actions";
 import { ReceiptPhotoEditor } from "@/components/receipt-photo-editor";
 import { Button } from "@/components/ui/button";
+import {
+  ACCEPTED_RECEIPT_TYPES,
+  MAX_RECEIPT_BYTES,
+  clearFailedReceiptDraft,
+  isAcceptedReceiptFile,
+  loadFailedReceiptDraft,
+  saveFailedReceiptDraft,
+} from "@/lib/local-receipt-draft";
 import type { ReceiptUploadChannel } from "../lib/receipt-storage";
 
 type UploadedReceipt = {
@@ -18,21 +26,43 @@ type ReceiptCaptureProps = {
   apiBase: string;
   disabled?: boolean;
   minimal?: boolean;
+  initialFile?: File | null;
   onUploaded: (upload: UploadedReceipt | null) => void;
   onError: (message: string) => void;
+  onInitialFileStored?: () => void;
+  onInitialFileDiscarded?: () => void;
+  onPendingChange?: (pending: boolean) => void;
 };
 
 const ACCEPT = "image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf";
-const MAX_RECEIPT_BYTES = 10 * 1024 * 1024;
-const ALLOWED_RECEIPT_TYPES = new Set(ACCEPT.split(","));
+const receiptFileError = (file: Pick<File, "size" | "type">) => {
+  if (file.size === 0) return "This file is empty. Take another photo or choose a different file.";
+  if (file.size > MAX_RECEIPT_BYTES) return "This file is over the 10 MB limit. Crop it, lower the camera resolution, or choose a smaller file.";
+  if (!ACCEPTED_RECEIPT_TYPES.has(file.type)) return "Unsupported file type. Use JPEG, PNG, WebP, HEIC, or PDF.";
+  return null;
+};
 
-export function ReceiptCapture({ vehicleId, apiBase, disabled, minimal = false, onUploaded, onError }: ReceiptCaptureProps) {
+export function ReceiptCapture({
+  vehicleId,
+  apiBase,
+  disabled,
+  minimal = false,
+  initialFile = null,
+  onUploaded,
+  onError,
+  onInitialFileStored,
+  onInitialFileDiscarded,
+  onPendingChange,
+}: ReceiptCaptureProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preparedFile, setPreparedFile] = useState<File | null>(null);
   const [uploaded, setUploaded] = useState<UploadedReceipt | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadFailed, setUploadFailed] = useState(false);
   const [isReviewingPhoto, setIsReviewingPhoto] = useState(false);
+  const [requiresUploadConfirmation, setRequiresUploadConfirmation] = useState(false);
+  const incomingFileRef = useRef<File | null>(null);
+  const restoredVehicleIdRef = useRef<string | null>(null);
 
   const previewUrl = useMemo(() => {
     if (!preparedFile || !preparedFile.type.startsWith("image/")) return undefined;
@@ -45,7 +75,7 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, minimal = false, 
     };
   }, [previewUrl]);
 
-  const uploadFile = async (file: File) => {
+  const uploadFile = useCallback(async (file: File) => {
     setPreparedFile(file);
     setIsReviewingPhoto(false);
     setIsUploading(true);
@@ -70,43 +100,30 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, minimal = false, 
       };
       setUploaded(next);
       onUploaded(next);
+      void clearFailedReceiptDraft(vehicleId).catch(() => undefined);
+      if (incomingFileRef.current === file) {
+        incomingFileRef.current = null;
+        onInitialFileStored?.();
+      }
     } catch (error) {
       setUploaded(null);
       setUploadFailed(true);
       onUploaded(null);
+      if (incomingFileRef.current !== file) {
+        void saveFailedReceiptDraft(vehicleId, file).catch(() => undefined);
+      }
       onError(error instanceof Error ? error.message : "Upload failed");
     } finally {
       setIsUploading(false);
     }
-  };
+  }, [apiBase, onError, onInitialFileStored, onUploaded, vehicleId]);
 
-  const clearFile = () => {
-    setSelectedFile(null);
-    setPreparedFile(null);
-    setUploaded(null);
-    setUploadFailed(false);
-    setIsReviewingPhoto(false);
-    onUploaded(null);
-  };
-
-  const handlePick = (file: File) => {
-    if (file.size === 0) {
-      onError("This file is empty. Take another photo or choose a different file.");
-      return;
-    }
-    if (file.size > MAX_RECEIPT_BYTES) {
-      onError("This file is over the 10 MB limit. Crop it, lower the camera resolution, or choose a smaller file.");
-      return;
-    }
-    if (!ALLOWED_RECEIPT_TYPES.has(file.type)) {
-      onError("Unsupported file type. Use JPEG, PNG, WebP, HEIC, or PDF.");
-      return;
-    }
-
+  const beginFile = useCallback((file: File, options?: { requireUploadConfirmation?: boolean; restoredFailure?: boolean }) => {
     setSelectedFile(file);
-    setPreparedFile(null);
+    setPreparedFile(file.type.startsWith("image/") ? null : file);
     setUploaded(null);
-    setUploadFailed(false);
+    setUploadFailed(options?.restoredFailure === true);
+    setRequiresUploadConfirmation(options?.requireUploadConfirmation === true || options?.restoredFailure === true);
     onUploaded(null);
     onError("");
 
@@ -115,7 +132,67 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, minimal = false, 
       return;
     }
 
-    void uploadFile(file);
+    setIsReviewingPhoto(false);
+    if (!options?.requireUploadConfirmation && !options?.restoredFailure) {
+      void uploadFile(file);
+    }
+  }, [onError, onUploaded, uploadFile]);
+
+  useEffect(() => {
+    if (!initialFile || incomingFileRef.current === initialFile) return;
+    const error = receiptFileError(initialFile);
+    if (error || !isAcceptedReceiptFile(initialFile)) {
+      onError(error ?? "This shared file cannot be added as a receipt.");
+      onInitialFileDiscarded?.();
+      return;
+    }
+    incomingFileRef.current = initialFile;
+    beginFile(initialFile, { requireUploadConfirmation: true });
+  }, [beginFile, initialFile, onError, onInitialFileDiscarded]);
+
+  useEffect(() => {
+    if (initialFile || restoredVehicleIdRef.current === vehicleId) return;
+    restoredVehicleIdRef.current = vehicleId;
+    let cancelled = false;
+    void loadFailedReceiptDraft(vehicleId)
+      .then((file) => {
+        if (!cancelled && file) beginFile(file, { restoredFailure: true });
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [beginFile, initialFile, vehicleId]);
+
+  useEffect(() => {
+    onPendingChange?.(Boolean(selectedFile));
+  }, [onPendingChange, selectedFile]);
+
+  useEffect(() => () => onPendingChange?.(false), [onPendingChange]);
+
+  const clearFile = () => {
+    const isIncomingFile = incomingFileRef.current === selectedFile;
+    setSelectedFile(null);
+    setPreparedFile(null);
+    setUploaded(null);
+    setUploadFailed(false);
+    setIsReviewingPhoto(false);
+    setRequiresUploadConfirmation(false);
+    onUploaded(null);
+    void clearFailedReceiptDraft(vehicleId).catch(() => undefined);
+    if (isIncomingFile) {
+      incomingFileRef.current = null;
+      onInitialFileDiscarded?.();
+    }
+  };
+
+  const handlePick = (file: File) => {
+    const error = receiptFileError(file);
+    if (error || !isAcceptedReceiptFile(file)) {
+      onError(error ?? "This file cannot be added as a receipt.");
+      return;
+    }
+    beginFile(file);
   };
 
   return (
@@ -174,7 +251,11 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, minimal = false, 
                 ? minimal
                   ? "Uploading…"
                   : "Uploading to evidence storage…"
-                : "Waiting to upload…"}
+                : uploadFailed
+                  ? "Saved on this device. Retry when you are ready."
+                  : requiresUploadConfirmation
+                    ? "Ready to upload. Nothing has left your phone."
+                    : "Waiting to upload…"}
           </p>
           <Button type="button" variant="ghost" size="sm" className="mt-2" disabled={disabled || isUploading} onClick={clearFile}>
             {uploaded ? "Choose another" : "Cancel"}
@@ -189,6 +270,18 @@ export function ReceiptCapture({ vehicleId, apiBase, disabled, minimal = false, 
               onClick={() => void uploadFile(preparedFile)}
             >
               Retry upload
+            </Button>
+          ) : null}
+          {!uploadFailed && requiresUploadConfirmation && preparedFile ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="ml-2 mt-2"
+              disabled={disabled || isUploading}
+              onClick={() => void uploadFile(preparedFile)}
+            >
+              Upload receipt
             </Button>
           ) : null}
         </div>

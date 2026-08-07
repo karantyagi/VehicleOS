@@ -8,6 +8,7 @@ import { buildVehicleStateView } from "./vehicle-state-view.js";
 type VoiceBody = {
   transcript: string;
   storageKey: string;
+  captureChannel?: "text" | "voice";
   shop?: string;
   serviceDate?: string;
   mileage?: number;
@@ -38,7 +39,12 @@ export const submitVoiceMemory = async (
   const transcript = body.transcript?.trim();
   if (!transcript) return jsonResponse(400, { error: "transcript is required" });
   if (!body.storageKey) {
-    return jsonResponse(400, { error: "storageKey is required — upload a voice note first" });
+    return jsonResponse(400, { error: "storageKey is required - save the service note first" });
+  }
+
+  const captureChannel = body.captureChannel ?? "voice";
+  if (captureChannel !== "text" && captureChannel !== "voice") {
+    return jsonResponse(400, { error: "captureChannel must be text or voice" });
   }
 
   const parsed = parseVoiceServiceNote({
@@ -65,7 +71,7 @@ export const submitVoiceMemory = async (
   const { documentId, correlationId } = await services.goldenPath.ingestReceipt({
     vehicleId,
     storageKey: body.storageKey,
-    channel: "voice",
+    channel: captureChannel === "voice" ? "voice" : "manual",
   });
 
   await services.goldenPath.completeExtraction({
@@ -85,7 +91,7 @@ export const submitVoiceMemory = async (
     evidenceIds: [documentId],
     documentId,
     correlationId,
-    source: "voice",
+    source: captureChannel === "voice" ? "voice" : "owner_note",
     ...recommendationContextFromVehicle(vehicle),
   });
 
@@ -126,6 +132,7 @@ export const submitVoiceMemory = async (
 
   return jsonResponse(result.result.skippedDuplicate ? 200 : 201, {
     documentId,
+    captureChannel,
     duplicateSkipped: result.result.skippedDuplicate ?? false,
     parsed: extracted,
     transcript,

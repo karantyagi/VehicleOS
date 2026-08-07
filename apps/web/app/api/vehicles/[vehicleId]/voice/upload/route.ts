@@ -32,6 +32,8 @@ export async function POST(request: Request, context: RouteContext) {
   const formData = await request.formData();
   const file = formData.get("file");
   const transcriptField = formData.get("transcript");
+  const captureChannelField = formData.get("captureChannel");
+  const captureChannel = captureChannelField === "text" ? "text" : "voice";
 
   let bytes: Buffer;
   let contentType: string;
@@ -54,7 +56,7 @@ export async function POST(request: Request, context: RouteContext) {
     fileName = file.name;
   } else if (typeof transcriptField === "string" && transcriptField.trim().length > 0) {
     contentType = "text/plain";
-    fileName = "voice-note.txt";
+    fileName = captureChannel === "text" ? "service-note.txt" : "voice-note.txt";
     bytes = Buffer.from(transcriptField.trim(), "utf8");
   } else {
     return NextResponse.json({ error: "file or transcript is required" }, { status: 400 });
@@ -81,7 +83,8 @@ export async function POST(request: Request, context: RouteContext) {
   return NextResponse.json(
     {
       storageKey,
-      channel: "voice" as const,
+      channel: captureChannel === "text" ? "manual" as const : "voice" as const,
+      captureChannel,
       fileName,
       contentType,
       stored: isReceiptStorageConfigured(),

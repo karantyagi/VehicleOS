@@ -2,7 +2,21 @@ import type { MetadataRoute } from "next";
 import { pwaConfig } from "../lib/pwa-config";
 import { siteConfig } from "../lib/site-config";
 
-export default function manifest(): MetadataRoute.Manifest {
+type VehicleOsManifest = Omit<MetadataRoute.Manifest, "share_target"> & {
+  share_target: {
+    action: string;
+    method: "POST";
+    enctype: "multipart/form-data";
+    params: {
+      files: Array<{
+        name: string;
+        accept: string[];
+      }>;
+    };
+  };
+};
+
+export default function manifest(): VehicleOsManifest {
   return {
     name: pwaConfig.name,
     short_name: pwaConfig.shortName,
@@ -45,10 +59,17 @@ export default function manifest(): MetadataRoute.Manifest {
         icons: [{ src: "/icons/icon.svg", sizes: "512x512", type: "image/svg+xml" }],
       },
       {
-        name: "Add a record",
-        short_name: "Capture",
-        description: "Capture a receipt photo or voice note",
-        url: "/capture/receipt",
+        name: "Service note",
+        short_name: "Note",
+        description: "Write a service note",
+        url: "/capture/receipt?capture=note",
+        icons: [{ src: "/icons/icon.svg", sizes: "512x512", type: "image/svg+xml" }],
+      },
+      {
+        name: "Receipt",
+        short_name: "Receipt",
+        description: "Capture a receipt photo or PDF",
+        url: "/capture/receipt?capture=receipt",
         icons: [{ src: "/icons/icon.svg", sizes: "512x512", type: "image/svg+xml" }],
       },
       {
@@ -59,5 +80,18 @@ export default function manifest(): MetadataRoute.Manifest {
         icons: [{ src: "/icons/icon.svg", sizes: "512x512", type: "image/svg+xml" }],
       },
     ],
+    share_target: {
+      action: "/capture/receipt?shared=ready",
+      method: "POST",
+      enctype: "multipart/form-data",
+      params: {
+        files: [
+          {
+            name: "receipt",
+            accept: ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif", "application/pdf"],
+          },
+        ],
+      },
+    },
   };
 }
