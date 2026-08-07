@@ -12,20 +12,12 @@ import type { GarageVehicleSummary } from "@/lib/garage/types";
 import { notify } from "@/lib/notify";
 
 type VehicleForm = {
-  year: string;
-  make: string;
-  model: string;
-  trim: string;
   mileage: string;
   vin: string;
   ownedSince: string;
 };
 
 const vehicleFormFromRecord = (vehicle: GarageVehicleSummary | null): VehicleForm => ({
-  year: vehicle ? String(vehicle.year) : "",
-  make: vehicle?.make ?? "",
-  model: vehicle?.model ?? "",
-  trim: vehicle?.trim ?? "",
   mileage: vehicle ? String(vehicle.currentMileage) : "",
   vin: vehicle?.vin ?? "",
   ownedSince: vehicle?.ownedSince ?? "",
@@ -72,10 +64,6 @@ export function VehicleSettingsPanel({
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          year: Number(form.year),
-          make: form.make.trim(),
-          model: form.model.trim(),
-          trim: form.trim.trim() || undefined,
           currentMileage: Number(form.mileage),
           vin: form.vin.trim() || undefined,
           ownedSince: form.ownedSince.trim(),
@@ -129,15 +117,13 @@ export function VehicleSettingsPanel({
       <CardContent className="space-y-4">
         {isEditing ? (
           <>
+            <div className="rounded-lg border border-primary/20 bg-primary/5 px-3 py-3 text-sm">
+              <p className="font-medium text-foreground">{vehicleLabel}</p>
+              <p className="mt-1 text-muted-foreground">
+                This vehicle is anchored to a verified OEM schedule. To use a different car, add it to your garage so its history stays separate.
+              </p>
+            </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <FormField label="Year" htmlFor="vehicle-year">
-                <Input
-                  id="vehicle-year"
-                  type="number"
-                  value={form.year}
-                  onChange={(event) => setForm({ ...form, year: event.target.value })}
-                />
-              </FormField>
               <FormField label="Current mileage" htmlFor="vehicle-mileage">
                 <Input
                   id="vehicle-mileage"
@@ -159,14 +145,14 @@ export function VehicleSettingsPanel({
                   onChange={(ownedSince) => setForm({ ...form, ownedSince })}
                 />
               </FormField>
-              <FormField label="Make" htmlFor="vehicle-make">
-                <Input id="vehicle-make" value={form.make} onChange={(event) => setForm({ ...form, make: event.target.value })} />
-              </FormField>
-              <FormField label="Model" htmlFor="vehicle-model">
-                <Input id="vehicle-model" value={form.model} onChange={(event) => setForm({ ...form, model: event.target.value })} />
-              </FormField>
-              <FormField label="Trim (optional)" htmlFor="vehicle-trim">
-                <Input id="vehicle-trim" value={form.trim} onChange={(event) => setForm({ ...form, trim: event.target.value })} />
+              <FormField label="VIN" htmlFor="vehicle-vin" optional hint="A full 17-character VIN is best.">
+                <Input
+                  id="vehicle-vin"
+                  value={form.vin}
+                  maxLength={17}
+                  placeholder="17-character VIN"
+                  onChange={(event) => setForm({ ...form, vin: event.target.value.toUpperCase() })}
+                />
               </FormField>
             </div>
 

@@ -33,6 +33,8 @@ export { mergeVehicleServices, updateVehicleService } from "./http/service-handl
 export { refreshNowQueue } from "./http/now-handlers.js";
 export { checkVehicleSupport, listSupportedVehicles, assertVehicleCreateAllowed } from "./http/catalog-handlers.js";
 export type { VehicleSupportQuery, ListSupportedVehiclesOptions } from "./http/catalog-handlers.js";
+export { decodeVinIdentity, isFullVin, normalizeVinForLookup } from "./http/vin-identity-handlers.js";
+export type { VinIdentityDecodeBody } from "./http/vin-identity-handlers.js";
 export {
   previewVehicleRequestContact,
   resolveVehicleRequestContactEmail,

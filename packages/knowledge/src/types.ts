@@ -54,6 +54,37 @@ export type SupportedVehicleCatalog = {
   vehicles: SupportedVehicleRow[];
 };
 
+/**
+ * Maps an external vehicle-decoder name to the spelling used by VehicleOS's
+ * verified OEM schedule catalog. This is identity vocabulary only: it never
+ * selects a schedule pack or trim on an owner's behalf.
+ */
+export type VehicleIdentityAliasRegistry = {
+  version: number;
+  aliases: VehicleIdentityAlias[];
+};
+
+export type VehicleIdentityAlias = {
+  source: "nhtsa_vpic";
+  externalMake: string;
+  externalModel: string;
+  canonicalMake: string;
+  canonicalModel: string;
+  /** The verified OEM packs that establish this product identity. */
+  oemPackIds: string[];
+};
+
+export type CanonicalVehicleIdentity = {
+  make: string;
+  model: string;
+  year: number;
+};
+
+export type SupportedVehicleIdentityResolution = {
+  canonical: CanonicalVehicleIdentity | null;
+  candidates: SupportedVehicleRow[];
+};
+
 export type SupportedVehicleRow = {
   packId: string;
   make: string;

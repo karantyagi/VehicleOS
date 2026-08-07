@@ -3,8 +3,10 @@ import {
   loadOemSchedulePack,
   loadServiceAliasBundles,
   loadSupportedVehicleCatalog,
+  resolveCanonicalVehicleIdentity,
   runPackQaRules,
   resolvePackIdForVehicle,
+  resolveSupportedVehicleIdentity,
 } from "../src/index.js";
 
 describe("OEM schedule packs", () => {
@@ -41,6 +43,42 @@ describe("OEM schedule packs", () => {
       trim: "Technology SH-AWD",
     });
     expect(packId).toBe("acura-tlx-2021-sh-awd");
+  });
+
+  it("maps reviewed NHTSA identity vocabulary to the canonical TLX catalog identity", () => {
+    expect(
+      resolveCanonicalVehicleIdentity({
+        source: "nhtsa_vpic",
+        make: "ACURA",
+        model: "TLX",
+        year: 2021,
+      }),
+    ).toEqual({ make: "Acura", model: "TLX", year: 2021 });
+  });
+
+  it("narrows a decoded TLX to supported choices without selecting its trim", () => {
+    const resolution = resolveSupportedVehicleIdentity({
+      source: "nhtsa_vpic",
+      make: "Acura",
+      model: "TLX",
+      year: 2021,
+    });
+
+    expect(resolution.canonical).toEqual({ make: "Acura", model: "TLX", year: 2021 });
+    expect(resolution.candidates.map((row) => row.packId)).toEqual(
+      expect.arrayContaining(["acura-tlx-2021-technology", "acura-tlx-2021-sh-awd"]),
+    );
+  });
+
+  it("does not make an unreviewed external name canonical", () => {
+    expect(
+      resolveSupportedVehicleIdentity({
+        source: "nhtsa_vpic",
+        make: "Honda",
+        model: "Civic",
+        year: 2021,
+      }),
+    ).toEqual({ canonical: null, candidates: [] });
   });
 
   it("resolves Ayush dogfood 2022 Hyundai Elantra SEL", () => {

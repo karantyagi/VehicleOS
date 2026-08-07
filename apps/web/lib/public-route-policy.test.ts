@@ -13,6 +13,7 @@ describe("isPublicAppRoute", () => {
 
   it("blocks protected owner APIs", () => {
     expect(isPublicAppRoute("/api/vehicles")).toBe(false);
+    expect(isPublicAppRoute("/api/vehicle-identity/decode-vin")).toBe(false);
     expect(isPublicAppRoute("/")).toBe(false);
     expect(isPublicAppRoute("/garage")).toBe(false);
   });

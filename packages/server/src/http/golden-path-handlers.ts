@@ -194,6 +194,39 @@ export const updateVehicle = async (
 ): Promise<JsonResponse> => {
   if (!auth?.userId) return unauthorized();
 
+  const owned = await assertVehicleOwner(services, vehicleId, auth.userId);
+  if (!owned.ok) return owned.response;
+
+  const isVehicleIdentityPatch =
+    body.year !== undefined ||
+    body.make !== undefined ||
+    body.model !== undefined ||
+    body.trim !== undefined;
+
+  if (isVehicleIdentityPatch) {
+    const selectedSchedule = assertVehicleCreateAllowed({
+      year: body.year ?? owned.vehicle.year,
+      make: body.make ?? owned.vehicle.make,
+      model: body.model ?? owned.vehicle.model,
+      trim: body.trim ?? owned.vehicle.trim ?? "",
+    });
+    if (!selectedSchedule.ok) return jsonResponse(selectedSchedule.status, selectedSchedule.body);
+
+    const existingSchedule = assertVehicleCreateAllowed({
+      year: owned.vehicle.year,
+      make: owned.vehicle.make,
+      model: owned.vehicle.model,
+      trim: owned.vehicle.trim ?? "",
+    });
+    if (existingSchedule.ok && existingSchedule.packId !== selectedSchedule.packId) {
+      return jsonResponse(409, {
+        error:
+          "This car already has its own history and OEM schedule. Add the corrected vehicle to your garage instead of moving records to a different schedule.",
+        code: "vehicle_identity_locked",
+      });
+    }
+  }
+
   const updated = await services.vehicles.update(vehicleId, auth.userId, {
     vin: body.vin,
     year: body.year,

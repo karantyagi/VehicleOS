@@ -1,6 +1,8 @@
 export type { OemSchedulePack, OemSchedulePackEntry, ServiceAlias, ServiceAliasBundle, SupportedVehicleCatalog } from "./types.js";
 export { loadOemSchedulePack, loadServiceAliasBundles, loadSupportedVehicleCatalog, packToKnowledgeScheduleDraft, resolvePackIdForVehicle, createRuntimeServiceAliasRegistry } from "./load-catalog.js";
 export type { KnowledgeScheduleDraftRow } from "./load-catalog.js";
+export { resolveCanonicalVehicleIdentity, resolveSupportedVehicleIdentity } from "./vehicle-identity.js";
+export type { CanonicalVehicleIdentity, SupportedVehicleIdentityResolution, VehicleIdentityAlias, VehicleIdentityAliasRegistry } from "./types.js";
 export {
   formatScheduleSourceLine,
   formatScheduleSourceVehicleLabel,

@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "aliases": [
+    {
+      "source": "nhtsa_vpic",
+      "externalMake": "Acura",
+      "externalModel": "TLX",
+      "canonicalMake": "Acura",
+      "canonicalModel": "TLX",
+      "oemPackIds": [
+        "acura-tlx-2021-technology",
+        "acura-tlx-2021-sh-awd"
+      ]
+    },
+    {
+      "source": "nhtsa_vpic",
+      "externalMake": "Honda",
+      "externalModel": "Accord",
+      "canonicalMake": "Honda",
+      "canonicalModel": "Accord",
+      "oemPackIds": [
+        "honda-accord-2024-ex",
+        "honda-accord-2024-sport"
+      ]
+    },
+    {
+      "source": "nhtsa_vpic",
+      "externalMake": "Hyundai",
+      "externalModel": "Elantra",
+      "canonicalMake": "Hyundai",
+      "canonicalModel": "Elantra",
+      "oemPackIds": [
+        "hyundai-elantra-2022-sel",
+        "hyundai-elantra-2024-se",
+        "hyundai-elantra-2024-sel"
+      ]
+    },
+    {
+      "source": "nhtsa_vpic",
+      "externalMake": "Mazda",
+      "externalModel": "CX-30",
+      "canonicalMake": "Mazda",
+      "canonicalModel": "CX-30",
+      "oemPackIds": [
+        "mazda-cx-30-2024-select",
+        "mazda-cx-30-2024-preferred"
+      ]
+    },
+    {
+      "source": "nhtsa_vpic",
+      "externalMake": "Subaru",
+      "externalModel": "Forester",
+      "canonicalMake": "Subaru",
+      "canonicalModel": "Forester",
+      "oemPackIds": [
+        "subaru-forester-2024-premium",
+        "subaru-forester-2024-limited"
+      ]
+    }
+  ]
+}
